@@ -105,8 +105,10 @@ def validate(jobs, slots, config):
             evidence = j.get("qa_evidence")
             if not isinstance(evidence, dict) or evidence.get("verdict") != "PASS" or not evidence.get("subject_ref"):
                 errors.append(f"{jid}: verified job requires exact-subject independent QA PASS")
-            elif evidence.get("reviewer_slot") == j.get("slot") and j.get("slot"):
+            elif evidence.get("reviewer_slot") in (j.get("slot"), j.get("submitted_by_slot")) and evidence.get("reviewer_slot"):
                 errors.append(f"{jid}: author cannot self-review")
+            if kind not in {"code", "integration"} and j.get("artifact_ref") and isinstance(evidence, dict) and evidence.get("subject_ref") != j.get("artifact_ref"):
+                errors.append(f"{jid}: QA must target submitted artifact revision")
             if kind in {"code", "integration"}:
                 if isinstance(evidence, dict) and evidence.get("subject_ref") != j.get("final_commit_sha"):
                     errors.append(f"{jid}: QA must target final commit SHA")
@@ -264,6 +266,7 @@ def record(jobs, slots, receipt):
             raise ValueError("Non-code submission requires an exact artifact revision")
         j["state"] = "SUBMITTED"
         j["artifact_ref"] = receipt["artifact_ref"]
+        j["submitted_by_slot"] = w["id"]
         j.pop("slot", None)
         j.pop("assignment_epoch", None)
         w["job"] = None
