@@ -36,7 +36,7 @@ DEPARTMENTS = frozenset(("production", "design", "narrative",
 WIRE_KEYS = frozenset(("schema_version", "job_id", "worker_id",
     "assignment_epoch", "event_type", "recipient_job_id",
     "recipient_department", "summary", "requested_action", "source_ref",
-    "evidence_refs", "causation_id", "requires_ack", "role_id"))
+    "evidence_refs", "causation_id", "requires_ack", "role_id", "recipient_worker_id"))
 MAX_BODY_BYTES = 8192
 MAX_SCAN_PAGES = 10
 
@@ -156,7 +156,10 @@ def same_workstream(left, right):
         return True
     if left.get("parent_feature") and left.get("parent_feature") == right.get("parent_feature"):
         return True
-    return left["id"] in right.get("dependencies", []) or right["id"] in left.get("dependencies", [])
+    return (left["id"] in right.get("dependencies", []) or
+            right["id"] in left.get("dependencies", []) or
+            left.get("subject_job") == right["id"] or
+            right.get("subject_job") == left["id"])
 
 
 def iso_utc(value):
@@ -180,7 +183,9 @@ def validate_wire(wire, jobs, issue_number, registry=None):
     job = jobs.get(jid)
     if not job or job.get("approved") is not True or job.get("state") in ("CANCELLED", "FAILED"):
         raise MessageError("JOB_NOT_APPROVED_OR_ACTIVE")
-    if issue_number not in issue_for_job(job):
+    subject = jobs.get(job.get("subject_job", ""))
+    if issue_number not in issue_for_job(job) and (
+            subject is None or issue_number not in issue_for_job(subject)):
         raise MessageError("COMMENT_ISSUE_JOB_MISMATCH")
     assert_registered_worker(wire, job, registry)
     department = wire["recipient_department"]
@@ -192,6 +197,16 @@ def validate_wire(wire, jobs, issue_number, registry=None):
     target = jobs.get(target_id)
     if not target or not same_workstream(job, target):
         raise MessageError("UNAUTHORIZED_CROSS_JOB_MESSAGE")
+    explicit = wire.get("recipient_worker_id")
+    if explicit is not None:
+        if (not isinstance(explicit, str) or not WORKER.fullmatch(explicit)
+            or explicit == worker):
+            raise MessageError("INVALID_RECIPIENT_WORKER")
+        if registry is not None:
+            registered = registry.get(explicit)
+            if (registered is None or registered.get("status") != "ASSIGNED"
+                or registered.get("job_id") != target_id):
+                raise MessageError("INVALID_RECIPIENT_WORKER")
     summary = wire["summary"]
     if not isinstance(summary, str) or not 1 <= len(summary.strip()) <= 600:
         raise MessageError("INVALID_SUMMARY")
@@ -252,7 +267,8 @@ def normalize_comment(comment, issue_number, jobs, source_repo=HUB, registry=Non
         "role_id": wire.get("role_id"),
         "identity_assurance": "REGISTRY_MATCHED_SHARED_CONNECTOR" if registry is not None else "UNVERIFIED_SHARED_OWNER",
         "delivery_authority": "ARCHIVE_ONLY",
-        "recipient": {"department_id": wire["recipient_department"], "job_id": target},
+        "recipient": {"department_id": wire["recipient_department"],
+                      "job_id": target, "worker_id": wire.get("recipient_worker_id")},
         "transport": {"repo": source_repo, "issue_number": issue_number,
                       "comment_id": comment_id, "actor_login": actor},
         "summary": wire["summary"].strip(),
