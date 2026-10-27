@@ -1,0 +1,113 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T202829170Z-run-until-drained",
+  "recorded_at_utc": "2026-10-27T20:28:29.170Z",
+  "request_id": "CHAT-20261027-run-until-drained-executor-architecture",
+  "department_id": "production",
+  "role_id": "rpg-autonomous-workgroup-controller",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Explained ChatGPT response lifetime vs durable multi-hour queued studio execution; verified supported event-triggered/scheduled Work limits and Responses API background execution. Proposed owner-authorized RUN_UNTIL_DRAINED execution-loop with independent bounded model invocations, per-job checkpoints/leases, retry/DLQ, budget/capacity gates, hourly GitHub pulse and idle/blocked terminal detection. Current Studio runtime source_writes_enabled=false, auto_ai_enabled=false, writer cap=2, reviewer cap=1, worker registry empty. No unattended workers launched or production settings changed.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T202829170Z-run-until-drained",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "executor-adapter",
+      "description": "Build actual authorized persistent executor adapter for bounded successive GPT API/Work/Codex executions; ChatGPT ordinary chats cannot autonomously relaunch",
+      "state": "OPEN"
+    },
+    {
+      "id": "session-controller",
+      "description": "Implement RUN_UNTIL_DRAINED/PAUSE/DRAINING/IDLE/BLOCKED transitions with admission and cost budget gates",
+      "state": "OPEN"
+    },
+    {
+      "id": "recovery",
+      "description": "Checkpoint exact source SHA and evidence on every execution, idempotent retries, heartbeat fencing, dead-letter handling and owner escalation",
+      "state": "OPEN"
+    },
+    {
+      "id": "production-proof",
+      "description": "Demonstrate end-to-end source commit, CI, independent QA and back-to-back worker execution while owner is absent",
+      "state": "OPEN"
+    },
+    {
+      "id": "owner-gate",
+      "description": "Require explicit owner-approved credentials, spending ceiling, source write permissions, model worker invocation and repository scopes before unattended activation",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "load-benchmark",
+      "description": "Measure actual continuous 100-worker throughput and enforce rate limits before scaling beyond supported platform quotas",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "runtime_configuration",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/config.json",
+      "revision": "studio/runtime",
+      "verified": true
+    },
+    {
+      "kind": "worker_registry",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/chat_workers.json",
+      "revision": "studio/runtime",
+      "verified": true
+    },
+    {
+      "kind": "architecture_design",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/studio/architecture/hyperscale/v1/00_ARCHITECTURE.md",
+      "revision": "main",
+      "verified": true
+    },
+    {
+      "kind": "hourly_audit_workflow",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/.github/workflows/studio-director-pulse.yml",
+      "revision": "main",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Live Studio runtime source/AI gates and roster readback",
+      "status": "PASS"
+    },
+    {
+      "name": "Hourly Director scheduled workflow present on main",
+      "status": "PASS"
+    },
+    {
+      "name": "Official ChatGPT scheduled/event-trigger limits consulted",
+      "status": "PASS",
+      "evidence_uri": "https://help.openai.com/en/articles/10291617-scheduled-tasks-in-chatgpt"
+    },
+    {
+      "name": "Official asynchronous Responses API support consulted",
+      "status": "PASS",
+      "evidence_uri": "https://developers.openai.com/api/docs/guides/background"
+    },
+    {
+      "name": "Full autonomous RUN_UNTIL_DRAINED execution demonstration",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Continuous 100-worker user-absent load trial",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Approve deployment of a persistent API/Work executor pool, separate from ordinary ChatGPT threads, with a capped spending and source-write policy?",
+      "status": "REQUESTED"
+    },
+    {
+      "question": "Select the exact worker execution budget, concurrency ramp and idle/blocked stop policy?",
+      "status": "REQUESTED"
+    }
+  ]
+}
