@@ -2,7 +2,7 @@
 
 The current merged controller is non-spending. Work through these gates in order and record actual evidence:
 
-1. Confirm main/head SHA, studio/runtime and studio/comms refs; **never** merge the data-plane branches into main. Current live config has source_writes_enabled=false, auto_ai_enabled=false and auto_dispatch_enabled=false until the owner separately authorizes activation.
+1. Confirm main/head SHA, studio/runtime and studio/comms refs; **never** merge the data-plane branches into main. Current live config has source_writes_enabled=false and auto_ai_enabled=false; auto_dispatch_enabled=true was already authorized for the unpaid pilot. Retain these exact observed switches unless separately changed with owner approval.
 2. Run `python -m unittest discover -s tests -q`; `python scripts/studio.py validate`; `python scripts/production.py validate`; V1 role/mapping validator. Verify CI in a PR at its actual SHA.
 3. Register only approved logical chat workers in studio/runtime/studio/chat_workers.json (worker ID, role, head, job, epoch, audit interval); do not seed fake STARTED states. Actual scheduled S00–S09 and event Work W01–W06 task IDs must be read back in the platform.
 4. Ensure each worker can read the corresponding inbox and write its department ledger via a verified connector. Test a real approved Issue STARTED -> broker archive -> inbox -> ACK -> ledger CHECKPOINT -> auditor; verify normalized event ID and source comment. Run a negative test for wrong assignment epoch.
