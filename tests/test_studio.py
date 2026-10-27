@@ -109,7 +109,7 @@ class StudioTests(unittest.TestCase):
     def test_code_blocked_without_source_permission(self):
         jobs, slots, config = fixture()
         candidate = job("ENG-101", kind="code", paths=["src/ai"])
-        candidate.update({"repository": "SIGAAMDAD/NomadFramework", "branch": "develop", "baseline_sha": "1" * 40})
+        candidate.update({"repository": "SIGAAMDAD/NomadFramework", "branch": "develop", "work_branch": "studio/ENG-101", "baseline_sha": "1" * 40})
         jobs["jobs"].append(candidate)
         self.assertEqual(studio.validate(jobs, slots, config), [])
         self.assertEqual(studio.dispatch(jobs, slots, config), [])
@@ -149,7 +149,7 @@ class StudioTests(unittest.TestCase):
     def test_code_submission_requires_external_readback(self):
         jobs, slots, config = fixture()
         candidate = job("ENG-101", kind="code")
-        candidate.update({"repository": "SIGAAMDAD/NomadFramework", "branch": "develop", "baseline_sha": "1" * 40})
+        candidate.update({"repository": "SIGAAMDAD/NomadFramework", "branch": "develop", "work_branch": "studio/ENG-101", "baseline_sha": "1" * 40})
         jobs["jobs"].append(candidate)
         config["source_writes_enabled"] = True
         studio.dispatch(jobs, slots, config)
