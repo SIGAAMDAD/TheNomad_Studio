@@ -35,6 +35,9 @@ class V1EndToEndTests(unittest.TestCase):
         sender="CW-ENG-001";recipient="CW-ENG-002"
         with tempfile.TemporaryDirectory() as root:
             root=pathlib.Path(root)
+            # A sender must also record its own STARTED lifecycle event.
+            sender_start=comment("STARTED",sender,9000,minutes=-1)
+            self.assertTrue(comms.write_event(root,comms.normalize_comment(sender_start,6,jobs,registry=registry)))
             msg=comment("HANDOFF_READY",sender,9001,recipient_worker_id=recipient,
                         requires_ack=True)
             first=comms.normalize_comment(msg,6,jobs,registry=registry)
