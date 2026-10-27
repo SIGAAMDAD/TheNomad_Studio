@@ -47,7 +47,7 @@ class WorkerPromptTests(unittest.TestCase):
                 self.assertIn("auto_ai_enabled=true", p)
                 self.assertIn("source_targets.v1.json", p)
                 self.assertIn("architecture_policy.v1.json", p)
-                self.assertIn("exclusive", p)
+                self.assertIn("lease", p)
                 self.assertIn("BLOCKED", p)
                 for route in ROUTES:
                     self.assertIn(route, p)
