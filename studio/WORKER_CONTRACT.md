@@ -61,3 +61,13 @@ The hashes above are **illustrative**, not real commits. Use actual GitHub/Drive
 Code final submission uses outcome SUBMITTED with actual final_commit_sha and drive_report_url, and can only occur when source_writes_enabled is true. The controller leaves it unverified until real matching CI and independent QA; the worker may not provide fabricated CI PASS. Never merge source branches or promote canon automatically.
 
 The Director is responsible for scoping new FEATURE-N requests and assigning roles but does **not** submit worker receipts. When no job is present, exit NO_WORK without reading the whole 174-role catalog.
+
+## Required actual asset evidence
+
+For kinds art, animation, audio, vfx, ui and cinematic, a plain text description or concept specification does **not** count as the requested produced asset. If a real deliverable was generated, a SUBMITTED receipt must additionally include an asset_manifest with actual bytes and independently verifiable SHA256 for each file:
+
+```json
+{"files":[{"filename":"example.glb","ref":"github:OWNER/REPO@ACTUAL_40_HEX_COMMIT:assets/example.glb","bytes":1234,"sha256":"ACTUAL_64_HEX_HASH","license":"original"}]}
+```
+
+Placeholder hashes are only documentation and must never be submitted. The controller validates the manifest schema, checks small GitHub-hosted assets against their actual SHA256, and leaves large/Drive/LFS artifacts in REVIEW until S00 records exact independent readback. If no mesh, animation, image, audio or other authoring tool is available to the scheduled task, produce a truthful BLOCKED receipt with the missing capability, not a substitute markdown file. Asset *briefs* can instead be explicit scoped docs jobs.
