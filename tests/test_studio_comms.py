@@ -123,6 +123,42 @@ class CommsTests(unittest.TestCase):
     def test_issue_discovery(self):
         self.assertEqual(c.issue_for_job(self.jobs["FEATURE-6-G00"]), {6})
 
+    def test_registered_chat_worker_binding(self):
+        registry = c.chat_registry({"schema_version": 1, "workers": [{
+            "worker_id": "CW-ENG-001", "job_id": "FEATURE-6-G00",
+            "role_id": "rpg-ai-programmer", "status": "ASSIGNED",
+            "assignment_epoch": 9, "audit_interval_minutes": 60,
+        }]})
+        self.payload["assignment_epoch"] = 9
+        self.payload["role_id"] = "rpg-ai-programmer"
+        record = c.normalize_comment(comment(self.payload), 6, self.jobs, registry=registry)
+        self.assertEqual(record["identity_assurance"], "REGISTRY_MATCHED_SHARED_CONNECTOR")
+        with tempfile.TemporaryDirectory() as folder:
+            c.write_event(folder, record)
+            audited = c.audit(folder, self.jobs, registry)
+            self.assertEqual(audited["observed_workers"], 1)
+            self.assertIn("audit_health", audited["last_observed"]["CW-ENG-001"])
+        self.payload["assignment_epoch"] = 8
+        with self.assertRaisesRegex(c.MessageError, "CHAT_WORKER_ASSIGNMENT_MISMATCH"):
+            c.normalize_comment(comment(self.payload), 6, self.jobs, registry=registry)
+
+    def test_unregistered_worker_denied(self):
+        registry = c.chat_registry({"schema_version": 1, "workers": []})
+        with self.assertRaisesRegex(c.MessageError, "CHAT_WORKER_UNREGISTERED"):
+            c.normalize_comment(comment(self.payload), 6, self.jobs, registry=registry)
+
+    def test_registered_worker_not_chat_authentication(self):
+        registry = c.chat_registry({"schema_version": 1, "workers": [{
+            "worker_id": "CW-ENG-001", "job_id": "FEATURE-6-G00",
+            "role_id": "rpg-ai-programmer", "status": "ASSIGNED",
+            "assignment_epoch": 1, "audit_interval_minutes": 60,
+        }]})
+        self.payload["assignment_epoch"] = 1
+        record = c.normalize_comment(comment(self.payload), 6, self.jobs, registry=registry)
+        self.assertEqual(record["delivery_authority"], "ARCHIVE_ONLY")
+        self.assertNotEqual(record["identity_assurance"], "INDIVIDUALLY_AUTHENTICATED")
+
+
 
 if __name__ == "__main__":
     unittest.main()
