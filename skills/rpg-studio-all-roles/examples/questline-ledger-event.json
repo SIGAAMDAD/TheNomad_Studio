@@ -1,0 +1,26 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T200000Z-QUEST01",
+  "recorded_at_utc": "2026-10-27T20:00:00Z",
+  "request_id": "FEATURE-42",
+  "department_id": "design",
+  "role_id": "rpg-quest-designer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "IN_PROGRESS",
+  "summary": "Authored quest graph draft, awaiting narrative branch revision",
+  "issue": {"repo": "SIGAAMDAD/TheNomad_Studio", "number": 42, "url": "https://github.com/SIGAAMDAD/TheNomad_Studio/issues/42"},
+  "job_id": "FEATURE-42-DES-01",
+  "attempt_id": "CHAT-20261027T200000Z-QUEST01",
+  "worker_slot": null,
+  "todo": [
+    {"id": "Q-001", "description": "Quest graph state table", "state": "DONE"},
+    {"id": "Q-002", "description": "Integrate reviewed dialogue branches", "state": "BLOCKED", "issue_number": 43}
+  ],
+  "dependencies": [
+    {"department_id": "narrative", "issue_number": 43, "state": "WAITING", "reason": "Final dialogue branch revision needed"}
+  ],
+  "artifacts": [],
+  "checks": [{"name": "save-reload-negative-path", "status": "NOT_RUN"}],
+  "owner_decisions": []
+}

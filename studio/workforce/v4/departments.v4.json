@@ -1,0 +1,2018 @@
+{
+  "schema_version": 4,
+  "title": "The Nomad Studio V4: hierarchical home departments for 174 roles",
+  "source_manifest": "references/roles_manifest.json",
+  "control_plane": "SIGAAMDAD/TheNomad_Studio",
+  "governance_branch": "main",
+  "runtime_branch": "studio/runtime",
+  "legacy_department_map": {
+    "Leadership and Production": "production",
+    "Game Design": "design",
+    "Narrative and Cinematics": "narrative",
+    "Engineering": "engineering",
+    "Visual Art": "visual_art",
+    "Technical Art and VFX": "tech_art",
+    "Animation and Capture": "animation",
+    "Audio": "audio",
+    "UX UI and Player Research": "ux",
+    "Quality Assurance": "qa",
+    "Publishing Localization and Release": "publishing",
+    "Studio Operations and Business": "studio_ops"
+  },
+  "role_home_overrides": {
+    "rpg-design-director": "design",
+    "rpg-narrative-director": "narrative",
+    "rpg-art-director": "visual_art",
+    "rpg-audio-director": "audio",
+    "rpg-animation-director": "animation",
+    "rpg-technical-director": "engineering"
+  },
+  "departments": {
+    "production": {
+      "display_name": "Leadership and Production",
+      "head_role": "rpg-lead-producer",
+      "leadership_scope": "Plan, allocate, synthesize and unblock authorized work"
+    },
+    "design": {
+      "display_name": "Game Design",
+      "head_role": "rpg-design-director",
+      "leadership_scope": "Gameplay, quests, combat, systems and world"
+    },
+    "narrative": {
+      "display_name": "Narrative and Cinematics",
+      "head_role": "rpg-narrative-director",
+      "leadership_scope": "Story, dialogue, continuity and interactive fiction"
+    },
+    "engineering": {
+      "display_name": "Engineering",
+      "head_role": "rpg-lead-engineer",
+      "leadership_scope": "Engine, tools, framework, gameplay and performance"
+    },
+    "visual_art": {
+      "display_name": "Visual Art",
+      "head_role": "rpg-art-director",
+      "leadership_scope": "Environment, concept, character, prop and material art"
+    },
+    "tech_art": {
+      "display_name": "Technical Art and VFX",
+      "head_role": "rpg-technical-art-director",
+      "leadership_scope": "Technical art, shaders, VFX and procedural asset workflows"
+    },
+    "animation": {
+      "display_name": "Animation and Capture",
+      "head_role": "rpg-animation-director",
+      "leadership_scope": "Animation, rigging and capture"
+    },
+    "audio": {
+      "display_name": "Audio",
+      "head_role": "rpg-audio-director",
+      "leadership_scope": "Music, sound, VO, mixing and audio tech"
+    },
+    "ux": {
+      "display_name": "UX UI and Player Research",
+      "head_role": "rpg-ux-director",
+      "leadership_scope": "UI, UX and player research"
+    },
+    "qa": {
+      "display_name": "Quality Assurance",
+      "head_role": "rpg-qa-lead",
+      "leadership_scope": "Independent discipline-specific QA"
+    },
+    "publishing": {
+      "display_name": "Publishing Localization and Release",
+      "head_role": "rpg-release-manager",
+      "leadership_scope": "Publishing, localization and release management"
+    },
+    "studio_ops": {
+      "display_name": "Studio Operations and Business",
+      "head_role": "rpg-studio-operations-manager",
+      "leadership_scope": "Studio operations and documentation"
+    }
+  },
+  "role_to_department": {
+    "rpg-creative-director": "production",
+    "rpg-game-director": "production",
+    "rpg-technical-director": "engineering",
+    "rpg-art-director": "visual_art",
+    "rpg-design-director": "design",
+    "rpg-narrative-director": "narrative",
+    "rpg-audio-director": "audio",
+    "rpg-animation-director": "animation",
+    "rpg-executive-producer": "production",
+    "rpg-lead-producer": "production",
+    "rpg-technical-producer": "production",
+    "rpg-production-coordinator": "production",
+    "rpg-external-development-producer": "production",
+    "rpg-lead-game-designer": "design",
+    "rpg-gameplay-designer": "design",
+    "rpg-combat-designer": "design",
+    "rpg-player-movement-designer": "design",
+    "rpg-weapons-designer": "design",
+    "rpg-systems-designer": "design",
+    "rpg-progression-designer": "design",
+    "rpg-economy-designer": "design",
+    "rpg-ai-behavior-designer": "design",
+    "rpg-level-designer": "design",
+    "rpg-world-designer": "design",
+    "rpg-encounter-designer": "design",
+    "rpg-quest-designer": "design",
+    "rpg-mission-designer": "design",
+    "rpg-technical-game-designer": "design",
+    "rpg-balance-designer": "design",
+    "rpg-accessibility-designer": "design",
+    "rpg-narrative-designer": "narrative",
+    "rpg-game-writer": "narrative",
+    "rpg-lore-writer": "narrative",
+    "rpg-dialogue-designer": "narrative",
+    "rpg-cinematic-designer": "narrative",
+    "rpg-narrative-editor": "narrative",
+    "rpg-storyboard-artist": "narrative",
+    "rpg-lead-engineer": "engineering",
+    "rpg-engine-programmer": "engineering",
+    "rpg-rendering-programmer": "engineering",
+    "rpg-gameplay-programmer": "engineering",
+    "rpg-combat-programmer": "engineering",
+    "rpg-ai-programmer": "engineering",
+    "rpg-navigation-programmer": "engineering",
+    "rpg-physics-programmer": "engineering",
+    "rpg-animation-programmer": "engineering",
+    "rpg-ui-programmer": "engineering",
+    "rpg-tools-programmer": "engineering",
+    "rpg-world-streaming-programmer": "engineering",
+    "rpg-memory-systems-programmer": "engineering",
+    "rpg-audio-programmer": "engineering",
+    "rpg-platform-programmer": "engineering",
+    "rpg-build-engineer": "engineering",
+    "rpg-integration-engineer": "engineering",
+    "rpg-ci-devops-engineer": "engineering",
+    "rpg-network-programmer": "engineering",
+    "rpg-performance-engineer": "engineering",
+    "rpg-save-systems-programmer": "engineering",
+    "rpg-concept-artist": "visual_art",
+    "rpg-character-artist": "visual_art",
+    "rpg-creature-artist": "visual_art",
+    "rpg-environment-artist": "visual_art",
+    "rpg-level-artist": "visual_art",
+    "rpg-prop-artist": "visual_art",
+    "rpg-weapon-artist": "visual_art",
+    "rpg-material-artist": "visual_art",
+    "rpg-lighting-artist": "visual_art",
+    "rpg-ui-artist": "visual_art",
+    "rpg-illustration-artist": "visual_art",
+    "rpg-procedural-environment-artist": "visual_art",
+    "rpg-technical-art-director": "tech_art",
+    "rpg-technical-artist": "tech_art",
+    "rpg-shader-technical-artist": "tech_art",
+    "rpg-environment-technical-artist": "tech_art",
+    "rpg-character-technical-artist": "tech_art",
+    "rpg-procedural-tools-tech-artist": "tech_art",
+    "rpg-vfx-artist": "tech_art",
+    "rpg-vfx-technical-artist": "tech_art",
+    "rpg-gameplay-animator": "animation",
+    "rpg-combat-animator": "animation",
+    "rpg-creature-animator": "animation",
+    "rpg-cinematic-animator": "animation",
+    "rpg-facial-animator": "animation",
+    "rpg-character-rigger": "animation",
+    "rpg-technical-animator": "animation",
+    "rpg-motion-capture-specialist": "animation",
+    "rpg-ui-motion-designer": "animation",
+    "rpg-sound-designer": "audio",
+    "rpg-technical-sound-designer": "audio",
+    "rpg-audio-implementer": "audio",
+    "rpg-composer": "audio",
+    "rpg-interactive-music-designer": "audio",
+    "rpg-dialogue-editor": "audio",
+    "rpg-audio-mixer": "audio",
+    "rpg-voice-director": "audio",
+    "rpg-ux-director": "ux",
+    "rpg-ux-designer": "ux",
+    "rpg-ui-designer": "ux",
+    "rpg-user-researcher": "ux",
+    "rpg-player-insights-analyst": "ux",
+    "rpg-qa-lead": "qa",
+    "rpg-functional-qa-tester": "qa",
+    "rpg-technical-qa-analyst": "qa",
+    "rpg-automation-qa-engineer": "qa",
+    "rpg-performance-qa-analyst": "qa",
+    "rpg-compatibility-tester": "qa",
+    "rpg-accessibility-tester": "qa",
+    "rpg-localization-qa-tester": "qa",
+    "rpg-playtest-coordinator": "qa",
+    "rpg-release-manager": "publishing",
+    "rpg-certification-specialist": "publishing",
+    "rpg-localization-producer": "publishing",
+    "rpg-localization-specialist": "publishing",
+    "rpg-product-manager": "publishing",
+    "rpg-brand-marketing-manager": "publishing",
+    "rpg-community-manager": "publishing",
+    "rpg-public-relations-manager": "publishing",
+    "rpg-marketing-capture-artist": "publishing",
+    "rpg-trailer-editor": "publishing",
+    "rpg-player-support-specialist": "publishing",
+    "rpg-studio-operations-manager": "studio_ops",
+    "rpg-finance-producer": "studio_ops",
+    "rpg-vendor-outsourcing-manager": "studio_ops",
+    "rpg-business-development-manager": "studio_ops",
+    "rpg-legal-licensing-manager": "studio_ops",
+    "rpg-documentation-manager": "studio_ops",
+    "rpg-player-controller-programmer": "engineering",
+    "rpg-ability-framework-programmer": "engineering",
+    "rpg-interaction-systems-programmer": "engineering",
+    "rpg-inventory-equipment-programmer": "engineering",
+    "rpg-quest-runtime-programmer": "engineering",
+    "rpg-gameplay-scripting-programmer": "engineering",
+    "rpg-locomotion-physics-programmer": "engineering",
+    "rpg-boss-behavior-programmer": "engineering",
+    "rpg-gameplay-debugging-engineer": "engineering",
+    "rpg-render-graph-engineer": "engineering",
+    "rpg-gpu-memory-engineer": "engineering",
+    "rpg-shader-compiler-engineer": "engineering",
+    "rpg-visibility-occlusion-engineer": "engineering",
+    "rpg-lighting-renderer-engineer": "engineering",
+    "rpg-material-system-engineer": "engineering",
+    "rpg-post-processing-engineer": "engineering",
+    "rpg-volumetric-rendering-engineer": "engineering",
+    "rpg-graphics-backend-engineer": "engineering",
+    "rpg-terrain-rendering-engineer": "engineering",
+    "rpg-gpu-driven-rendering-engineer": "engineering",
+    "rpg-godot-editor-extension-programmer": "engineering",
+    "rpg-asset-import-pipeline-engineer": "engineering",
+    "rpg-terrain-authoring-tools-programmer": "engineering",
+    "rpg-hlod-cook-tools-programmer": "engineering",
+    "rpg-gameplay-data-editor-programmer": "engineering",
+    "rpg-shader-build-tools-programmer": "engineering",
+    "rpg-engine-profiler-tools-programmer": "engineering",
+    "rpg-content-validation-engineer": "engineering",
+    "rpg-designer-workflow-tools-programmer": "engineering",
+    "rpg-boss-encounter-designer": "design",
+    "rpg-loot-itemization-designer": "design",
+    "rpg-difficulty-designer": "design",
+    "rpg-traversal-encounter-designer": "design",
+    "rpg-environmental-interaction-designer": "design",
+    "rpg-combat-feedback-designer": "design",
+    "rpg-gameplay-data-designer": "design",
+    "rpg-tutorial-onboarding-designer": "design",
+    "rpg-narrative-creator": "narrative",
+    "rpg-character-arc-writer": "narrative",
+    "rpg-branching-dialogue-writer": "narrative",
+    "rpg-environmental-storytelling-designer": "narrative",
+    "rpg-cinematic-scriptwriter": "narrative",
+    "rpg-narrative-systems-designer": "narrative",
+    "rpg-canon-continuity-keeper": "narrative",
+    "rpg-combat-test-engineer": "qa",
+    "rpg-narrative-validation-engineer": "qa",
+    "rpg-rendering-regression-engineer": "qa",
+    "rpg-autonomous-workgroup-controller": "production"
+  },
+  "role_detail": {
+    "rpg-creative-director": {
+      "title": "Creative Director",
+      "department_id": "production",
+      "reports_to": "rpg-lead-producer",
+      "partners": [
+        "rpg-game-director",
+        "rpg-art-director",
+        "rpg-narrative-director"
+      ]
+    },
+    "rpg-game-director": {
+      "title": "Game Director",
+      "department_id": "production",
+      "reports_to": "rpg-lead-producer",
+      "partners": [
+        "rpg-creative-director",
+        "rpg-design-director",
+        "rpg-lead-producer"
+      ]
+    },
+    "rpg-technical-director": {
+      "title": "Technical Director",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-lead-engineer",
+        "rpg-technical-producer",
+        "rpg-performance-engineer"
+      ]
+    },
+    "rpg-art-director": {
+      "title": "Art Director",
+      "department_id": "visual_art",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-concept-artist",
+        "rpg-technical-art-director",
+        "rpg-lighting-artist"
+      ]
+    },
+    "rpg-design-director": {
+      "title": "Design Director",
+      "department_id": "design",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-game-director",
+        "rpg-combat-designer",
+        "rpg-systems-designer"
+      ]
+    },
+    "rpg-narrative-director": {
+      "title": "Narrative Director",
+      "department_id": "narrative",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-narrative-designer",
+        "rpg-game-writer",
+        "rpg-quest-designer"
+      ]
+    },
+    "rpg-audio-director": {
+      "title": "Audio Director",
+      "department_id": "audio",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-sound-designer",
+        "rpg-composer",
+        "rpg-audio-mixer"
+      ]
+    },
+    "rpg-animation-director": {
+      "title": "Animation Director",
+      "department_id": "animation",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-gameplay-animator",
+        "rpg-technical-animator",
+        "rpg-combat-designer"
+      ]
+    },
+    "rpg-executive-producer": {
+      "title": "Executive Producer",
+      "department_id": "production",
+      "reports_to": "rpg-lead-producer",
+      "partners": [
+        "rpg-lead-producer",
+        "rpg-game-director",
+        "rpg-technical-director"
+      ]
+    },
+    "rpg-lead-producer": {
+      "title": "Lead Producer",
+      "department_id": "production",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-technical-producer",
+        "rpg-production-coordinator",
+        "rpg-release-manager"
+      ]
+    },
+    "rpg-technical-producer": {
+      "title": "Technical Producer",
+      "department_id": "production",
+      "reports_to": "rpg-lead-producer",
+      "partners": [
+        "rpg-technical-director",
+        "rpg-lead-engineer",
+        "rpg-build-engineer"
+      ]
+    },
+    "rpg-production-coordinator": {
+      "title": "Production Coordinator",
+      "department_id": "production",
+      "reports_to": "rpg-lead-producer",
+      "partners": [
+        "rpg-lead-producer",
+        "rpg-technical-producer",
+        "rpg-qa-lead"
+      ]
+    },
+    "rpg-external-development-producer": {
+      "title": "External Development Producer",
+      "department_id": "production",
+      "reports_to": "rpg-lead-producer",
+      "partners": [
+        "rpg-art-director",
+        "rpg-technical-producer",
+        "rpg-vendor-outsourcing-manager"
+      ]
+    },
+    "rpg-lead-game-designer": {
+      "title": "Lead Game Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-design-director",
+        "rpg-gameplay-programmer",
+        "rpg-qa-lead"
+      ]
+    },
+    "rpg-gameplay-designer": {
+      "title": "Gameplay Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-gameplay-programmer",
+        "rpg-ux-designer",
+        "rpg-combat-designer"
+      ]
+    },
+    "rpg-combat-designer": {
+      "title": "Combat Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-combat-programmer",
+        "rpg-combat-animator",
+        "rpg-encounter-designer"
+      ]
+    },
+    "rpg-player-movement-designer": {
+      "title": "Player Movement Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-gameplay-programmer",
+        "rpg-level-designer",
+        "rpg-gameplay-animator"
+      ]
+    },
+    "rpg-weapons-designer": {
+      "title": "Weapons Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-combat-designer",
+        "rpg-combat-programmer",
+        "rpg-sound-designer"
+      ]
+    },
+    "rpg-systems-designer": {
+      "title": "Systems Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-gameplay-programmer",
+        "rpg-progression-designer",
+        "rpg-technical-game-designer"
+      ]
+    },
+    "rpg-progression-designer": {
+      "title": "Progression Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-systems-designer",
+        "rpg-balance-designer",
+        "rpg-quest-designer"
+      ]
+    },
+    "rpg-economy-designer": {
+      "title": "Economy Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-systems-designer",
+        "rpg-progression-designer",
+        "rpg-balance-designer"
+      ]
+    },
+    "rpg-ai-behavior-designer": {
+      "title": "AI Behavior Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-ai-programmer",
+        "rpg-encounter-designer",
+        "rpg-combat-designer"
+      ]
+    },
+    "rpg-level-designer": {
+      "title": "Level Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-world-designer",
+        "rpg-environment-artist",
+        "rpg-encounter-designer"
+      ]
+    },
+    "rpg-world-designer": {
+      "title": "World Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-level-designer",
+        "rpg-world-streaming-programmer",
+        "rpg-narrative-designer"
+      ]
+    },
+    "rpg-encounter-designer": {
+      "title": "Encounter Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-ai-behavior-designer",
+        "rpg-level-designer",
+        "rpg-qa-lead"
+      ]
+    },
+    "rpg-quest-designer": {
+      "title": "Quest Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-narrative-designer",
+        "rpg-gameplay-programmer",
+        "rpg-qa-lead"
+      ]
+    },
+    "rpg-mission-designer": {
+      "title": "Mission Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-level-designer",
+        "rpg-quest-designer",
+        "rpg-technical-game-designer"
+      ]
+    },
+    "rpg-technical-game-designer": {
+      "title": "Technical Game Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-tools-programmer",
+        "rpg-systems-designer",
+        "rpg-ai-programmer"
+      ]
+    },
+    "rpg-balance-designer": {
+      "title": "Balance Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-combat-designer",
+        "rpg-progression-designer",
+        "rpg-performance-qa-analyst"
+      ]
+    },
+    "rpg-accessibility-designer": {
+      "title": "Accessibility Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-ux-designer",
+        "rpg-accessibility-tester",
+        "rpg-ui-programmer"
+      ]
+    },
+    "rpg-narrative-designer": {
+      "title": "Narrative Designer",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-quest-designer",
+        "rpg-game-writer",
+        "rpg-gameplay-programmer"
+      ]
+    },
+    "rpg-game-writer": {
+      "title": "Game Writer",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-narrative-designer",
+        "rpg-dialogue-designer",
+        "rpg-localization-specialist"
+      ]
+    },
+    "rpg-lore-writer": {
+      "title": "Lore and Worldbuilding Writer",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-narrative-director",
+        "rpg-world-designer",
+        "rpg-narrative-editor"
+      ]
+    },
+    "rpg-dialogue-designer": {
+      "title": "Dialogue Designer",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-game-writer",
+        "rpg-audio-implementer",
+        "rpg-quest-designer"
+      ]
+    },
+    "rpg-cinematic-designer": {
+      "title": "Cinematic Designer",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-cinematic-animator",
+        "rpg-game-writer",
+        "rpg-ui-programmer"
+      ]
+    },
+    "rpg-narrative-editor": {
+      "title": "Narrative Editor",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-game-writer",
+        "rpg-lore-writer",
+        "rpg-localization-producer"
+      ]
+    },
+    "rpg-storyboard-artist": {
+      "title": "Storyboard Artist",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-cinematic-designer",
+        "rpg-cinematic-animator",
+        "rpg-narrative-director"
+      ]
+    },
+    "rpg-lead-engineer": {
+      "title": "Lead Engineer",
+      "department_id": "engineering",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-technical-director",
+        "rpg-engine-programmer",
+        "rpg-build-engineer"
+      ]
+    },
+    "rpg-engine-programmer": {
+      "title": "Engine Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-lead-engineer",
+        "rpg-build-engineer",
+        "rpg-technical-qa-analyst"
+      ]
+    },
+    "rpg-rendering-programmer": {
+      "title": "Rendering Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-technical-director",
+        "rpg-shader-technical-artist",
+        "rpg-performance-engineer"
+      ]
+    },
+    "rpg-gameplay-programmer": {
+      "title": "Gameplay Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-gameplay-designer",
+        "rpg-combat-programmer",
+        "rpg-qa-lead"
+      ]
+    },
+    "rpg-combat-programmer": {
+      "title": "Combat Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-combat-designer",
+        "rpg-animation-programmer",
+        "rpg-technical-qa-analyst"
+      ]
+    },
+    "rpg-ai-programmer": {
+      "title": "AI Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-ai-behavior-designer",
+        "rpg-navigation-programmer",
+        "rpg-performance-engineer"
+      ]
+    },
+    "rpg-navigation-programmer": {
+      "title": "Navigation Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-ai-programmer",
+        "rpg-level-designer",
+        "rpg-world-streaming-programmer"
+      ]
+    },
+    "rpg-physics-programmer": {
+      "title": "Physics Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-engine-programmer",
+        "rpg-combat-programmer",
+        "rpg-performance-engineer"
+      ]
+    },
+    "rpg-animation-programmer": {
+      "title": "Animation Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-technical-animator",
+        "rpg-gameplay-animator",
+        "rpg-combat-programmer"
+      ]
+    },
+    "rpg-ui-programmer": {
+      "title": "UI Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-ui-designer",
+        "rpg-ux-designer",
+        "rpg-accessibility-tester"
+      ]
+    },
+    "rpg-tools-programmer": {
+      "title": "Tools Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-technical-game-designer",
+        "rpg-technical-artist",
+        "rpg-build-engineer"
+      ]
+    },
+    "rpg-world-streaming-programmer": {
+      "title": "World Streaming Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-environment-technical-artist",
+        "rpg-performance-engineer",
+        "rpg-level-designer"
+      ]
+    },
+    "rpg-memory-systems-programmer": {
+      "title": "Memory Systems Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-engine-programmer",
+        "rpg-performance-engineer",
+        "rpg-technical-director"
+      ]
+    },
+    "rpg-audio-programmer": {
+      "title": "Audio Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-audio-implementer",
+        "rpg-sound-designer",
+        "rpg-performance-engineer"
+      ]
+    },
+    "rpg-platform-programmer": {
+      "title": "Platform Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-engine-programmer",
+        "rpg-compatibility-tester",
+        "rpg-release-manager"
+      ]
+    },
+    "rpg-build-engineer": {
+      "title": "Build Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-ci-devops-engineer",
+        "rpg-release-manager",
+        "rpg-technical-qa-analyst"
+      ]
+    },
+    "rpg-integration-engineer": {
+      "title": "Integration Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-technical-producer",
+        "rpg-build-engineer",
+        "rpg-technical-qa-analyst"
+      ]
+    },
+    "rpg-ci-devops-engineer": {
+      "title": "CI and DevOps Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-build-engineer",
+        "rpg-automation-qa-engineer",
+        "rpg-lead-producer"
+      ]
+    },
+    "rpg-network-programmer": {
+      "title": "Network Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-platform-programmer",
+        "rpg-qa-lead",
+        "rpg-release-manager"
+      ]
+    },
+    "rpg-performance-engineer": {
+      "title": "Performance Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-rendering-programmer",
+        "rpg-memory-systems-programmer",
+        "rpg-performance-qa-analyst"
+      ]
+    },
+    "rpg-save-systems-programmer": {
+      "title": "Save and Serialization Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-gameplay-programmer",
+        "rpg-quest-designer",
+        "rpg-technical-qa-analyst"
+      ]
+    },
+    "rpg-concept-artist": {
+      "title": "Concept Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-art-director",
+        "rpg-character-artist",
+        "rpg-environment-artist"
+      ]
+    },
+    "rpg-character-artist": {
+      "title": "Character Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-character-rigger",
+        "rpg-character-technical-artist",
+        "rpg-technical-animator"
+      ]
+    },
+    "rpg-creature-artist": {
+      "title": "Creature Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-creature-animator",
+        "rpg-character-rigger",
+        "rpg-combat-designer"
+      ]
+    },
+    "rpg-environment-artist": {
+      "title": "Environment Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-level-artist",
+        "rpg-environment-technical-artist",
+        "rpg-world-designer"
+      ]
+    },
+    "rpg-level-artist": {
+      "title": "Level Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-level-designer",
+        "rpg-environment-artist",
+        "rpg-lighting-artist"
+      ]
+    },
+    "rpg-prop-artist": {
+      "title": "Prop Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-environment-artist",
+        "rpg-technical-artist",
+        "rpg-gameplay-programmer"
+      ]
+    },
+    "rpg-weapon-artist": {
+      "title": "Weapon Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-weapons-designer",
+        "rpg-gameplay-animator",
+        "rpg-combat-programmer"
+      ]
+    },
+    "rpg-material-artist": {
+      "title": "Material and Texture Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-shader-technical-artist",
+        "rpg-environment-artist",
+        "rpg-rendering-programmer"
+      ]
+    },
+    "rpg-lighting-artist": {
+      "title": "Lighting Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-art-director",
+        "rpg-rendering-programmer",
+        "rpg-level-artist"
+      ]
+    },
+    "rpg-ui-artist": {
+      "title": "UI Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-ui-designer",
+        "rpg-ui-programmer",
+        "rpg-ux-designer"
+      ]
+    },
+    "rpg-illustration-artist": {
+      "title": "2D Illustration Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-art-director",
+        "rpg-lore-writer",
+        "rpg-brand-marketing-manager"
+      ]
+    },
+    "rpg-procedural-environment-artist": {
+      "title": "Procedural Environment Artist",
+      "department_id": "visual_art",
+      "reports_to": "rpg-art-director",
+      "partners": [
+        "rpg-environment-technical-artist",
+        "rpg-environment-artist",
+        "rpg-world-streaming-programmer"
+      ]
+    },
+    "rpg-technical-art-director": {
+      "title": "Technical Art Director",
+      "department_id": "tech_art",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-art-director",
+        "rpg-technical-director",
+        "rpg-technical-artist"
+      ]
+    },
+    "rpg-technical-artist": {
+      "title": "Technical Artist",
+      "department_id": "tech_art",
+      "reports_to": "rpg-technical-art-director",
+      "partners": [
+        "rpg-tools-programmer",
+        "rpg-environment-artist",
+        "rpg-character-artist"
+      ]
+    },
+    "rpg-shader-technical-artist": {
+      "title": "Shader Technical Artist",
+      "department_id": "tech_art",
+      "reports_to": "rpg-technical-art-director",
+      "partners": [
+        "rpg-rendering-programmer",
+        "rpg-material-artist",
+        "rpg-lighting-artist"
+      ]
+    },
+    "rpg-environment-technical-artist": {
+      "title": "Environment Technical Artist",
+      "department_id": "tech_art",
+      "reports_to": "rpg-technical-art-director",
+      "partners": [
+        "rpg-world-streaming-programmer",
+        "rpg-environment-artist",
+        "rpg-procedural-environment-artist"
+      ]
+    },
+    "rpg-character-technical-artist": {
+      "title": "Character Technical Artist",
+      "department_id": "tech_art",
+      "reports_to": "rpg-technical-art-director",
+      "partners": [
+        "rpg-character-artist",
+        "rpg-character-rigger",
+        "rpg-animation-programmer"
+      ]
+    },
+    "rpg-procedural-tools-tech-artist": {
+      "title": "Procedural Tools Technical Artist",
+      "department_id": "tech_art",
+      "reports_to": "rpg-technical-art-director",
+      "partners": [
+        "rpg-tools-programmer",
+        "rpg-environment-artist",
+        "rpg-technical-game-designer"
+      ]
+    },
+    "rpg-vfx-artist": {
+      "title": "VFX Artist",
+      "department_id": "tech_art",
+      "reports_to": "rpg-technical-art-director",
+      "partners": [
+        "rpg-combat-designer",
+        "rpg-rendering-programmer",
+        "rpg-vfx-technical-artist"
+      ]
+    },
+    "rpg-vfx-technical-artist": {
+      "title": "VFX Technical Artist",
+      "department_id": "tech_art",
+      "reports_to": "rpg-technical-art-director",
+      "partners": [
+        "rpg-vfx-artist",
+        "rpg-rendering-programmer",
+        "rpg-performance-engineer"
+      ]
+    },
+    "rpg-gameplay-animator": {
+      "title": "Gameplay Animator",
+      "department_id": "animation",
+      "reports_to": "rpg-animation-director",
+      "partners": [
+        "rpg-player-movement-designer",
+        "rpg-animation-programmer",
+        "rpg-technical-animator"
+      ]
+    },
+    "rpg-combat-animator": {
+      "title": "Combat Animator",
+      "department_id": "animation",
+      "reports_to": "rpg-animation-director",
+      "partners": [
+        "rpg-combat-designer",
+        "rpg-combat-programmer",
+        "rpg-weapon-artist"
+      ]
+    },
+    "rpg-creature-animator": {
+      "title": "Creature Animator",
+      "department_id": "animation",
+      "reports_to": "rpg-animation-director",
+      "partners": [
+        "rpg-creature-artist",
+        "rpg-ai-behavior-designer",
+        "rpg-technical-animator"
+      ]
+    },
+    "rpg-cinematic-animator": {
+      "title": "Cinematic Animator",
+      "department_id": "animation",
+      "reports_to": "rpg-animation-director",
+      "partners": [
+        "rpg-cinematic-designer",
+        "rpg-storyboard-artist",
+        "rpg-facial-animator"
+      ]
+    },
+    "rpg-facial-animator": {
+      "title": "Facial Animator",
+      "department_id": "animation",
+      "reports_to": "rpg-animation-director",
+      "partners": [
+        "rpg-dialogue-designer",
+        "rpg-cinematic-animator",
+        "rpg-character-rigger"
+      ]
+    },
+    "rpg-character-rigger": {
+      "title": "Character Rigger",
+      "department_id": "animation",
+      "reports_to": "rpg-animation-director",
+      "partners": [
+        "rpg-character-artist",
+        "rpg-technical-animator",
+        "rpg-animation-programmer"
+      ]
+    },
+    "rpg-technical-animator": {
+      "title": "Technical Animator",
+      "department_id": "animation",
+      "reports_to": "rpg-animation-director",
+      "partners": [
+        "rpg-animation-programmer",
+        "rpg-character-rigger",
+        "rpg-gameplay-animator"
+      ]
+    },
+    "rpg-motion-capture-specialist": {
+      "title": "Motion Capture Specialist",
+      "department_id": "animation",
+      "reports_to": "rpg-animation-director",
+      "partners": [
+        "rpg-cinematic-animator",
+        "rpg-technical-animator",
+        "rpg-voice-director"
+      ]
+    },
+    "rpg-ui-motion-designer": {
+      "title": "UI Motion Designer",
+      "department_id": "animation",
+      "reports_to": "rpg-animation-director",
+      "partners": [
+        "rpg-ui-designer",
+        "rpg-ui-programmer",
+        "rpg-accessibility-designer"
+      ]
+    },
+    "rpg-sound-designer": {
+      "title": "Sound Designer",
+      "department_id": "audio",
+      "reports_to": "rpg-audio-director",
+      "partners": [
+        "rpg-audio-implementer",
+        "rpg-combat-designer",
+        "rpg-audio-mixer"
+      ]
+    },
+    "rpg-technical-sound-designer": {
+      "title": "Technical Sound Designer",
+      "department_id": "audio",
+      "reports_to": "rpg-audio-director",
+      "partners": [
+        "rpg-audio-programmer",
+        "rpg-sound-designer",
+        "rpg-audio-implementer"
+      ]
+    },
+    "rpg-audio-implementer": {
+      "title": "Audio Implementer",
+      "department_id": "audio",
+      "reports_to": "rpg-audio-director",
+      "partners": [
+        "rpg-audio-programmer",
+        "rpg-sound-designer",
+        "rpg-dialogue-editor"
+      ]
+    },
+    "rpg-composer": {
+      "title": "Music Composer",
+      "department_id": "audio",
+      "reports_to": "rpg-audio-director",
+      "partners": [
+        "rpg-audio-director",
+        "rpg-interactive-music-designer",
+        "rpg-cinematic-designer"
+      ]
+    },
+    "rpg-interactive-music-designer": {
+      "title": "Interactive Music Designer",
+      "department_id": "audio",
+      "reports_to": "rpg-audio-director",
+      "partners": [
+        "rpg-composer",
+        "rpg-audio-implementer",
+        "rpg-combat-designer"
+      ]
+    },
+    "rpg-dialogue-editor": {
+      "title": "Dialogue Editor",
+      "department_id": "audio",
+      "reports_to": "rpg-audio-director",
+      "partners": [
+        "rpg-voice-director",
+        "rpg-game-writer",
+        "rpg-audio-implementer"
+      ]
+    },
+    "rpg-audio-mixer": {
+      "title": "Audio Mixer",
+      "department_id": "audio",
+      "reports_to": "rpg-audio-director",
+      "partners": [
+        "rpg-audio-director",
+        "rpg-sound-designer",
+        "rpg-technical-sound-designer"
+      ]
+    },
+    "rpg-voice-director": {
+      "title": "Voice Director",
+      "department_id": "audio",
+      "reports_to": "rpg-audio-director",
+      "partners": [
+        "rpg-game-writer",
+        "rpg-dialogue-editor",
+        "rpg-cinematic-designer"
+      ]
+    },
+    "rpg-ux-director": {
+      "title": "UX Director",
+      "department_id": "ux",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-ux-designer",
+        "rpg-ui-designer",
+        "rpg-user-researcher"
+      ]
+    },
+    "rpg-ux-designer": {
+      "title": "UX Designer",
+      "department_id": "ux",
+      "reports_to": "rpg-ux-director",
+      "partners": [
+        "rpg-ui-designer",
+        "rpg-ui-programmer",
+        "rpg-accessibility-designer"
+      ]
+    },
+    "rpg-ui-designer": {
+      "title": "UI Designer",
+      "department_id": "ux",
+      "reports_to": "rpg-ux-director",
+      "partners": [
+        "rpg-ui-artist",
+        "rpg-ui-programmer",
+        "rpg-ux-designer"
+      ]
+    },
+    "rpg-user-researcher": {
+      "title": "User Researcher",
+      "department_id": "ux",
+      "reports_to": "rpg-ux-director",
+      "partners": [
+        "rpg-playtest-coordinator",
+        "rpg-ux-director",
+        "rpg-game-director"
+      ]
+    },
+    "rpg-player-insights-analyst": {
+      "title": "Player Insights Analyst",
+      "department_id": "ux",
+      "reports_to": "rpg-ux-director",
+      "partners": [
+        "rpg-user-researcher",
+        "rpg-balance-designer",
+        "rpg-lead-producer"
+      ]
+    },
+    "rpg-qa-lead": {
+      "title": "QA Lead",
+      "department_id": "qa",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-technical-qa-analyst",
+        "rpg-automation-qa-engineer",
+        "rpg-release-manager"
+      ]
+    },
+    "rpg-functional-qa-tester": {
+      "title": "Functional QA Tester",
+      "department_id": "qa",
+      "reports_to": "rpg-qa-lead",
+      "partners": [
+        "rpg-qa-lead",
+        "rpg-gameplay-programmer",
+        "rpg-quest-designer"
+      ]
+    },
+    "rpg-technical-qa-analyst": {
+      "title": "Technical QA Analyst",
+      "department_id": "qa",
+      "reports_to": "rpg-qa-lead",
+      "partners": [
+        "rpg-engine-programmer",
+        "rpg-build-engineer",
+        "rpg-qa-lead"
+      ]
+    },
+    "rpg-automation-qa-engineer": {
+      "title": "Automation QA Engineer",
+      "department_id": "qa",
+      "reports_to": "rpg-qa-lead",
+      "partners": [
+        "rpg-ci-devops-engineer",
+        "rpg-qa-lead",
+        "rpg-technical-qa-analyst"
+      ]
+    },
+    "rpg-performance-qa-analyst": {
+      "title": "Performance QA Analyst",
+      "department_id": "qa",
+      "reports_to": "rpg-qa-lead",
+      "partners": [
+        "rpg-performance-engineer",
+        "rpg-qa-lead",
+        "rpg-world-streaming-programmer"
+      ]
+    },
+    "rpg-compatibility-tester": {
+      "title": "Compatibility Tester",
+      "department_id": "qa",
+      "reports_to": "rpg-qa-lead",
+      "partners": [
+        "rpg-platform-programmer",
+        "rpg-build-engineer",
+        "rpg-release-manager"
+      ]
+    },
+    "rpg-accessibility-tester": {
+      "title": "Accessibility Tester",
+      "department_id": "qa",
+      "reports_to": "rpg-qa-lead",
+      "partners": [
+        "rpg-accessibility-designer",
+        "rpg-ux-designer",
+        "rpg-qa-lead"
+      ]
+    },
+    "rpg-localization-qa-tester": {
+      "title": "Localization QA Tester",
+      "department_id": "qa",
+      "reports_to": "rpg-qa-lead",
+      "partners": [
+        "rpg-localization-specialist",
+        "rpg-localization-producer",
+        "rpg-ui-programmer"
+      ]
+    },
+    "rpg-playtest-coordinator": {
+      "title": "Playtest Coordinator",
+      "department_id": "qa",
+      "reports_to": "rpg-qa-lead",
+      "partners": [
+        "rpg-user-researcher",
+        "rpg-qa-lead",
+        "rpg-lead-producer"
+      ]
+    },
+    "rpg-release-manager": {
+      "title": "Release Manager",
+      "department_id": "publishing",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-build-engineer",
+        "rpg-qa-lead",
+        "rpg-certification-specialist"
+      ]
+    },
+    "rpg-certification-specialist": {
+      "title": "Certification Specialist",
+      "department_id": "publishing",
+      "reports_to": "rpg-release-manager",
+      "partners": [
+        "rpg-release-manager",
+        "rpg-compatibility-tester",
+        "rpg-platform-programmer"
+      ]
+    },
+    "rpg-localization-producer": {
+      "title": "Localization Producer",
+      "department_id": "publishing",
+      "reports_to": "rpg-release-manager",
+      "partners": [
+        "rpg-game-writer",
+        "rpg-localization-specialist",
+        "rpg-localization-qa-tester"
+      ]
+    },
+    "rpg-localization-specialist": {
+      "title": "Localization Specialist",
+      "department_id": "publishing",
+      "reports_to": "rpg-release-manager",
+      "partners": [
+        "rpg-localization-producer",
+        "rpg-narrative-editor",
+        "rpg-localization-qa-tester"
+      ]
+    },
+    "rpg-product-manager": {
+      "title": "Product Manager",
+      "department_id": "publishing",
+      "reports_to": "rpg-release-manager",
+      "partners": [
+        "rpg-game-director",
+        "rpg-lead-producer",
+        "rpg-brand-marketing-manager"
+      ]
+    },
+    "rpg-brand-marketing-manager": {
+      "title": "Brand and Marketing Manager",
+      "department_id": "publishing",
+      "reports_to": "rpg-release-manager",
+      "partners": [
+        "rpg-product-manager",
+        "rpg-public-relations-manager",
+        "rpg-marketing-capture-artist"
+      ]
+    },
+    "rpg-community-manager": {
+      "title": "Community Manager",
+      "department_id": "publishing",
+      "reports_to": "rpg-release-manager",
+      "partners": [
+        "rpg-public-relations-manager",
+        "rpg-player-support-specialist",
+        "rpg-qa-lead"
+      ]
+    },
+    "rpg-public-relations-manager": {
+      "title": "Public Relations Manager",
+      "department_id": "publishing",
+      "reports_to": "rpg-release-manager",
+      "partners": [
+        "rpg-brand-marketing-manager",
+        "rpg-lead-producer",
+        "rpg-game-director"
+      ]
+    },
+    "rpg-marketing-capture-artist": {
+      "title": "Marketing Capture Artist",
+      "department_id": "publishing",
+      "reports_to": "rpg-release-manager",
+      "partners": [
+        "rpg-trailer-editor",
+        "rpg-brand-marketing-manager",
+        "rpg-art-director"
+      ]
+    },
+    "rpg-trailer-editor": {
+      "title": "Trailer Editor",
+      "department_id": "publishing",
+      "reports_to": "rpg-release-manager",
+      "partners": [
+        "rpg-marketing-capture-artist",
+        "rpg-composer",
+        "rpg-brand-marketing-manager"
+      ]
+    },
+    "rpg-player-support-specialist": {
+      "title": "Player Support Specialist",
+      "department_id": "publishing",
+      "reports_to": "rpg-release-manager",
+      "partners": [
+        "rpg-community-manager",
+        "rpg-qa-lead",
+        "rpg-release-manager"
+      ]
+    },
+    "rpg-studio-operations-manager": {
+      "title": "Studio Operations Manager",
+      "department_id": "studio_ops",
+      "reports_to": "HUMAN_LEAD_DIRECTOR",
+      "partners": [
+        "rpg-lead-producer",
+        "rpg-ci-devops-engineer",
+        "rpg-finance-producer"
+      ]
+    },
+    "rpg-finance-producer": {
+      "title": "Finance and Budget Producer",
+      "department_id": "studio_ops",
+      "reports_to": "rpg-studio-operations-manager",
+      "partners": [
+        "rpg-executive-producer",
+        "rpg-lead-producer",
+        "rpg-vendor-outsourcing-manager"
+      ]
+    },
+    "rpg-vendor-outsourcing-manager": {
+      "title": "Vendor and Outsourcing Manager",
+      "department_id": "studio_ops",
+      "reports_to": "rpg-studio-operations-manager",
+      "partners": [
+        "rpg-external-development-producer",
+        "rpg-art-director",
+        "rpg-legal-licensing-manager"
+      ]
+    },
+    "rpg-business-development-manager": {
+      "title": "Business Development Manager",
+      "department_id": "studio_ops",
+      "reports_to": "rpg-studio-operations-manager",
+      "partners": [
+        "rpg-executive-producer",
+        "rpg-legal-licensing-manager",
+        "rpg-product-manager"
+      ]
+    },
+    "rpg-legal-licensing-manager": {
+      "title": "Legal and Licensing Manager",
+      "department_id": "studio_ops",
+      "reports_to": "rpg-studio-operations-manager",
+      "partners": [
+        "rpg-technical-director",
+        "rpg-vendor-outsourcing-manager",
+        "rpg-release-manager"
+      ]
+    },
+    "rpg-documentation-manager": {
+      "title": "Documentation and Knowledge Manager",
+      "department_id": "studio_ops",
+      "reports_to": "rpg-studio-operations-manager",
+      "partners": [
+        "rpg-production-coordinator",
+        "rpg-technical-director",
+        "rpg-narrative-editor"
+      ]
+    },
+    "rpg-player-controller-programmer": {
+      "title": "Player Controller Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-gameplay-programmer",
+        "rpg-combat-programmer",
+        "rpg-animation-programmer"
+      ]
+    },
+    "rpg-ability-framework-programmer": {
+      "title": "Ability Framework Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-gameplay-programmer",
+        "rpg-systems-designer",
+        "rpg-save-systems-programmer"
+      ]
+    },
+    "rpg-interaction-systems-programmer": {
+      "title": "Interaction Systems Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-gameplay-programmer",
+        "rpg-ui-programmer",
+        "rpg-world-streaming-programmer"
+      ]
+    },
+    "rpg-inventory-equipment-programmer": {
+      "title": "Inventory and Equipment Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-gameplay-programmer",
+        "rpg-weapons-designer",
+        "rpg-save-systems-programmer"
+      ]
+    },
+    "rpg-quest-runtime-programmer": {
+      "title": "Quest Runtime Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-quest-designer",
+        "rpg-narrative-designer",
+        "rpg-save-systems-programmer"
+      ]
+    },
+    "rpg-gameplay-scripting-programmer": {
+      "title": "Gameplay Scripting Integration Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-gameplay-programmer",
+        "rpg-tools-programmer",
+        "rpg-ai-programmer"
+      ]
+    },
+    "rpg-locomotion-physics-programmer": {
+      "title": "Locomotion Physics Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-player-controller-programmer",
+        "rpg-physics-programmer",
+        "rpg-world-streaming-programmer"
+      ]
+    },
+    "rpg-boss-behavior-programmer": {
+      "title": "Boss Behavior Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-ai-programmer",
+        "rpg-boss-encounter-designer",
+        "rpg-combat-programmer"
+      ]
+    },
+    "rpg-gameplay-debugging-engineer": {
+      "title": "Gameplay Diagnostics Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-gameplay-programmer",
+        "rpg-technical-qa-analyst",
+        "rpg-ai-programmer"
+      ]
+    },
+    "rpg-render-graph-engineer": {
+      "title": "Render Graph Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-rendering-programmer",
+        "rpg-gpu-memory-engineer",
+        "rpg-post-processing-engineer"
+      ]
+    },
+    "rpg-gpu-memory-engineer": {
+      "title": "GPU Memory and Residency Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-rendering-programmer",
+        "rpg-world-streaming-programmer",
+        "rpg-performance-engineer"
+      ]
+    },
+    "rpg-shader-compiler-engineer": {
+      "title": "Shader Compiler and Pipeline Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-rendering-programmer",
+        "rpg-shader-technical-artist",
+        "rpg-build-engineer"
+      ]
+    },
+    "rpg-visibility-occlusion-engineer": {
+      "title": "Visibility and Occlusion Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-world-streaming-programmer",
+        "rpg-rendering-programmer",
+        "rpg-performance-engineer"
+      ]
+    },
+    "rpg-lighting-renderer-engineer": {
+      "title": "Lighting Renderer Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-rendering-programmer",
+        "rpg-lighting-artist",
+        "rpg-gpu-memory-engineer"
+      ]
+    },
+    "rpg-material-system-engineer": {
+      "title": "Material Rendering Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-rendering-programmer",
+        "rpg-shader-technical-artist",
+        "rpg-terrain-rendering-engineer"
+      ]
+    },
+    "rpg-post-processing-engineer": {
+      "title": "Post-Processing Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-render-graph-engineer",
+        "rpg-rendering-programmer",
+        "rpg-ui-programmer"
+      ]
+    },
+    "rpg-volumetric-rendering-engineer": {
+      "title": "Atmospherics and Volumetric Renderer Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-lighting-renderer-engineer",
+        "rpg-post-processing-engineer",
+        "rpg-lighting-artist"
+      ]
+    },
+    "rpg-graphics-backend-engineer": {
+      "title": "Graphics Backend Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-rendering-programmer",
+        "rpg-shader-compiler-engineer",
+        "rpg-build-engineer"
+      ]
+    },
+    "rpg-terrain-rendering-engineer": {
+      "title": "Terrain Rendering Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-world-streaming-programmer",
+        "rpg-material-system-engineer",
+        "rpg-terrain-authoring-tools-programmer"
+      ]
+    },
+    "rpg-gpu-driven-rendering-engineer": {
+      "title": "GPU-Driven Rendering Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-rendering-programmer",
+        "rpg-visibility-occlusion-engineer",
+        "rpg-world-streaming-programmer"
+      ]
+    },
+    "rpg-godot-editor-extension-programmer": {
+      "title": "Godot Editor Extension Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-tools-programmer",
+        "rpg-terrain-authoring-tools-programmer",
+        "rpg-technical-game-designer"
+      ]
+    },
+    "rpg-asset-import-pipeline-engineer": {
+      "title": "Asset Import Pipeline Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-tools-programmer",
+        "rpg-character-artist",
+        "rpg-build-engineer"
+      ]
+    },
+    "rpg-terrain-authoring-tools-programmer": {
+      "title": "Terrain Authoring Tools Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-godot-editor-extension-programmer",
+        "rpg-terrain-rendering-engineer",
+        "rpg-procedural-environment-artist"
+      ]
+    },
+    "rpg-hlod-cook-tools-programmer": {
+      "title": "HLOD Cooking Tools Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-world-streaming-programmer",
+        "rpg-asset-import-pipeline-engineer",
+        "rpg-gpu-driven-rendering-engineer"
+      ]
+    },
+    "rpg-gameplay-data-editor-programmer": {
+      "title": "Gameplay Data Editor Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-technical-game-designer",
+        "rpg-gameplay-scripting-programmer",
+        "rpg-ai-programmer"
+      ]
+    },
+    "rpg-shader-build-tools-programmer": {
+      "title": "Shader Build Tools Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-shader-compiler-engineer",
+        "rpg-rendering-programmer",
+        "rpg-build-engineer"
+      ]
+    },
+    "rpg-engine-profiler-tools-programmer": {
+      "title": "Engine Profiler Tools Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-performance-engineer",
+        "rpg-rendering-programmer",
+        "rpg-memory-systems-programmer"
+      ]
+    },
+    "rpg-content-validation-engineer": {
+      "title": "Content Validation Engineer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-gameplay-data-editor-programmer",
+        "rpg-qa-lead",
+        "rpg-narrative-designer"
+      ]
+    },
+    "rpg-designer-workflow-tools-programmer": {
+      "title": "Designer Workflow Tools Programmer",
+      "department_id": "engineering",
+      "reports_to": "rpg-lead-engineer",
+      "partners": [
+        "rpg-tools-programmer",
+        "rpg-gameplay-data-editor-programmer",
+        "rpg-level-designer"
+      ]
+    },
+    "rpg-boss-encounter-designer": {
+      "title": "Boss Encounter Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-boss-behavior-programmer",
+        "rpg-combat-designer",
+        "rpg-level-designer"
+      ]
+    },
+    "rpg-loot-itemization-designer": {
+      "title": "Loot and Itemization Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-economy-designer",
+        "rpg-inventory-equipment-programmer",
+        "rpg-balance-designer"
+      ]
+    },
+    "rpg-difficulty-designer": {
+      "title": "Difficulty and Accessibility Tuning Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-combat-designer",
+        "rpg-ai-behavior-designer",
+        "rpg-accessibility-designer"
+      ]
+    },
+    "rpg-traversal-encounter-designer": {
+      "title": "Traversal Encounter Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-player-movement-designer",
+        "rpg-encounter-designer",
+        "rpg-level-designer"
+      ]
+    },
+    "rpg-environmental-interaction-designer": {
+      "title": "Environmental Interaction Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-interaction-systems-programmer",
+        "rpg-ai-behavior-designer",
+        "rpg-world-designer"
+      ]
+    },
+    "rpg-combat-feedback-designer": {
+      "title": "Combat Feedback Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-combat-designer",
+        "rpg-audio-implementer",
+        "rpg-combat-programmer"
+      ]
+    },
+    "rpg-gameplay-data-designer": {
+      "title": "Gameplay Data Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-technical-game-designer",
+        "rpg-gameplay-data-editor-programmer",
+        "rpg-systems-designer"
+      ]
+    },
+    "rpg-tutorial-onboarding-designer": {
+      "title": "Tutorial and Onboarding Designer",
+      "department_id": "design",
+      "reports_to": "rpg-design-director",
+      "partners": [
+        "rpg-level-designer",
+        "rpg-ux-designer",
+        "rpg-gameplay-designer"
+      ]
+    },
+    "rpg-narrative-creator": {
+      "title": "Narrative Content Creator",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-narrative-director",
+        "rpg-narrative-editor",
+        "rpg-quest-designer"
+      ]
+    },
+    "rpg-character-arc-writer": {
+      "title": "Character Arc Writer",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-narrative-director",
+        "rpg-game-writer",
+        "rpg-dialogue-designer"
+      ]
+    },
+    "rpg-branching-dialogue-writer": {
+      "title": "Branching Dialogue Writer",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-narrative-designer",
+        "rpg-dialogue-designer",
+        "rpg-voice-director"
+      ]
+    },
+    "rpg-environmental-storytelling-designer": {
+      "title": "Environmental Storytelling Designer",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-world-designer",
+        "rpg-level-artist",
+        "rpg-lore-writer"
+      ]
+    },
+    "rpg-cinematic-scriptwriter": {
+      "title": "Cinematic Scriptwriter",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-cinematic-designer",
+        "rpg-voice-director",
+        "rpg-narrative-director"
+      ]
+    },
+    "rpg-narrative-systems-designer": {
+      "title": "Narrative Systems Designer",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-narrative-designer",
+        "rpg-quest-runtime-programmer",
+        "rpg-world-designer"
+      ]
+    },
+    "rpg-canon-continuity-keeper": {
+      "title": "Canon and Continuity Editor",
+      "department_id": "narrative",
+      "reports_to": "rpg-narrative-director",
+      "partners": [
+        "rpg-narrative-director",
+        "rpg-narrative-editor",
+        "rpg-lore-writer"
+      ]
+    },
+    "rpg-combat-test-engineer": {
+      "title": "Combat Systems Test Engineer",
+      "department_id": "qa",
+      "reports_to": "rpg-qa-lead",
+      "partners": [
+        "rpg-combat-programmer",
+        "rpg-combat-designer",
+        "rpg-automation-qa-engineer"
+      ]
+    },
+    "rpg-narrative-validation-engineer": {
+      "title": "Narrative and Quest QA Engineer",
+      "department_id": "qa",
+      "reports_to": "rpg-qa-lead",
+      "partners": [
+        "rpg-quest-designer",
+        "rpg-narrative-director",
+        "rpg-content-validation-engineer"
+      ]
+    },
+    "rpg-rendering-regression-engineer": {
+      "title": "Rendering Regression Engineer",
+      "department_id": "qa",
+      "reports_to": "rpg-qa-lead",
+      "partners": [
+        "rpg-rendering-programmer",
+        "rpg-performance-engineer",
+        "rpg-qa-lead"
+      ]
+    },
+    "rpg-autonomous-workgroup-controller": {
+      "title": "Autonomous Workgroup Controller",
+      "department_id": "production",
+      "reports_to": "rpg-lead-producer",
+      "partners": [
+        "studio-director",
+        "rpg-integration-engineer",
+        "rpg-technical-qa-analyst"
+      ]
+    }
+  },
+  "operating_roles": {
+    "studio_coordinator": "rpg-lead-producer",
+    "quest_workstream_lead": "rpg-quest-designer",
+    "engineering_architecture": "rpg-technical-director",
+    "independent_qa": "rpg-qa-lead"
+  },
+  "approved_issue_entrypoint": "TheNomad_Studio Issue -> runtime FEATURE-N",
+  "write_policy": "Owner permission and source/architecture gates remain mandatory"
+}
