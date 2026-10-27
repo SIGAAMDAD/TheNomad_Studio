@@ -1,0 +1,83 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T194927567Z-comms-batching-audit",
+  "recorded_at_utc": "2026-10-27T19:49:27.567Z",
+  "request_id": "CHAT-20261027-communication-batching-status",
+  "department_id": "production",
+  "role_id": "rpg-autonomous-workgroup-controller",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Live audit confirms Studio has functioning typed message broker, GitHub Issue comment input, scheduled reconciliation that ingests multiple comments per run, a single-batch Git commit, deterministic event IDs, recipient inbox/ACK projections, CI evidence relay and Director pulse. It lacks durable, cursor-based high-throughput batch queue and incremental per-worker inbox updates; every Issue comment may trigger separate Action and a full historic inbox reprojection. Worker registry empty; source writes disabled.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T194927567Z-comms-batching-audit",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "batch-ingress",
+      "description": "Design durable GitHub-only microbatch reconciliation with processing cursors, bounded batch sizes, idempotent retries and backpressure",
+      "state": "OPEN"
+    },
+    {
+      "id": "incremental-inboxes",
+      "description": "Implement incremental worker inbox projection rather than full historical traversal per message",
+      "state": "OPEN"
+    },
+    {
+      "id": "load-tests",
+      "description": "Run synthetic 100-worker burst and sustained message-rate tests before activation",
+      "state": "OPEN"
+    },
+    {
+      "id": "live-pilot",
+      "description": "Register authorized test workers and complete GitHub Issue comment to ACK loop after approval",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "broker_source",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/scripts/studio_comms.py",
+      "revision": "main",
+      "verified": true
+    },
+    {
+      "kind": "inbox_source",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/scripts/studio_inbox.py",
+      "revision": "main",
+      "verified": true
+    },
+    {
+      "kind": "broker_workflow",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/.github/workflows/studio-comms-broker.yml",
+      "revision": "main",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Live main broker and workflow code inspected",
+      "status": "PASS"
+    },
+    {
+      "name": "Live chat-worker registry readback",
+      "status": "PASS"
+    },
+    {
+      "name": "Comms event storage and inbox presence readback",
+      "status": "PASS"
+    },
+    {
+      "name": "End-to-end real worker batching load test",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Approve implementation of durable microbatch queue and incremental inbox projector as next non-spending Studio workstream?",
+      "status": "REQUESTED"
+    }
+  ]
+}
