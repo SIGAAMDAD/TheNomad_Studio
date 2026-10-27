@@ -1,0 +1,32 @@
+name: Optional AI execution - manual only
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: "Existing approved job ID (audit reference)"
+        type: string
+        required: true
+permissions:
+  contents: read
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate job and spending policy
+        env:
+          JOB_ID: ${{ inputs.job_id }}
+        run: |
+          python scripts/studio.py validate
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          jobs=json.loads(Path("studio/jobs.json").read_text())["jobs"]
+          job=next((j for j in jobs if j.get("id")==os.environ["JOB_ID"]),None)
+          if job is None or job.get("state") not in ("READY","RESERVED"):
+              raise SystemExit("Job missing or not eligible")
+          print("Validated manual request; no paid model invocation configured.")
+          PY

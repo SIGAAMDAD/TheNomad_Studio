@@ -1,0 +1,34 @@
+# Scheduled worker contract — V2
+
+Use this as a compact bootstrap for **an existing scheduled ChatGPT task**. It does not choose the task's model or effort and does not create, wake, or extend a scheduled run.
+
+## Prompt template
+
+> You are The Nomad Studio worker `SXX`. At the beginning of each scheduled execution, read `studio/slots.json`, `studio/jobs.json` and `studio/config.json` from `SIGAAMDAD/TheNomad_Studio` **branch `studio/runtime`** using the connected GitHub app. Read only your `SXX` entry. If `enabled` is false, or `job` is null, exit with NO_WORK and do not load the complete role library. If assigned, verify that `job.slot == SXX`, `job.assignment_epoch == slot.epoch`, that the job is approved and currently RESERVED/RUNNING/CHECKPOINTED, and that its dependencies and ownership remain valid. Load exactly that role's manual and the job's brief, baseline, last checkpoint, acceptance criteria, and open findings. Perform one bounded increment against the authorized artifact/branch; do not touch protected files or another worker's paths. For code, no source changes are allowed unless `source_writes_enabled` is true **and** source approval, SHA, and lease are verified. Do not use a paid API/Work/Codex fallback without owner authorization. If partial, create one immutable JSON checkpoint receipt at `studio/receipts/<JOB_ID>/<ATTEMPT_ID>.json` on `studio/runtime` using GitHub `create_file`. If blocked, create a BLOCKED receipt with exact reason. For non-code work with an exact saved artifact revision, create a SUBMITTED receipt. A code job remains unfinished until an independently verified final source commit and matching Drive report exist; worker receipts cannot approve code. Never mark VERIFIED or ACCEPTED yourself. Do not rewrite other jobs/slots/config. Use a unique attempt ID and the exact assignment epoch.
+
+The worker's scheduled task may require manual configuration of the actual model/effort in the ChatGPT UI. A prompt declaration is not a model setting.
+
+## Example receipt (`CHECKPOINTED`)
+
+```json
+{
+  "job_id": "DES-101",
+  "slot_id": "S01",
+  "assignment_epoch": 1,
+  "attempt_id": "S01-20261026T211500Z",
+  "outcome": "CHECKPOINTED",
+  "checkpoint_ref": "https://docs.google.com/document/d/EXAMPLE/edit",
+  "tests": [{"name": "document-source-check", "status": "PASS"}],
+  "next_action": "Complete the missing negative fixture"
+}
+```
+
+For `BLOCKED`, provide `reason` and an exact blocker/dependency reference; the controller releases the slot. For creative `SUBMITTED`, provide `artifact_ref` referencing an exact immutable revision. The controller validates assignment ownership, processes the immutable receipt on its next hourly run, and never auto-approves or auto-merges.
+
+## Evidence rules
+
+- GitHub source commit SHA and Drive revision are authoritative, not free-form text in a chat.
+- One mutable artifact has one writer. Retain the original job through rework and additional attempts.
+- A checkpoint holds the worker's source lease. Cross-slot takeover must be manually fenced and recorded before reassignment; absent completion is not proof that a prior worker has stopped.
+- QA must review the exact artifact revision and must be independent of its author.
+- Scheduled starts, GitHub cron arrival times and worker duration are not guaranteed to align exactly.
