@@ -2,6 +2,11 @@
 
 STATUS: REVIEW DRAFT. Work subscriptions are not installed, no paid calls are made.
 Machine-readable policy: studio/workforce/hierarchy.v2.json (174 specialist roles).
+Authoritative native Work task prompts: studio/workforce/WORKER_PROMPTS_V2.md
+(the only maintained complete set; GENERALIST_WORK_SETUP.md links here).
+All five task prompts must be copied as EXECUTION instructions, while model
+and event trigger are configured separately in ChatGPT Work settings.
+
 Controller repository only: SIGAAMDAD/TheNomad_Studio. Game/framework/mod/rendering source lives in their own repositories.
 Production Director: S00. Human owner retains architecture, canon, spending and merge authority.
 
@@ -68,6 +73,17 @@ Workers must read back authentic owner APPROVED review on the exact head SHA
 and owner merge before resuming from the newly accepted source baseline.
 A PR label, generated review or cached JSON record does not authorize a
 change. See `studio/workforce/ARCHITECTURE_ENFORCER.md`.
+
+## Branch creation and continuation policy
+
+A first authorized implementation attempt may CREATE the missing
+`studio/<JOB_ID>` work branch in the actual source repository from the
+approved and verified source baseline, after a valid exclusive writer lease.
+A later attempt MUST continue that existing branch, verified checkpoint and
+same-source PR after lease handoff. Never force-push, reset another worker,
+silently rebase protected code, or write implementation source into the
+Studio hub. W05 can only review source and write QA receipts.
+All worker prompts in WORKER_PROMPTS_V2.md implement this rule.
 
 ## Full engineering production sequence
 
