@@ -21,7 +21,10 @@
     "never_write_game_source_to_studio": true,
     "require_exact_job_source_repository_and_work_branch": true,
     "goap_source_repository": "SIGAAMDAD/TheNomad_GOAP",
-    "goap_target_branch": "main"
+    "goap_target_branch": "main",
+    "require_explicit_owner_approved_workstream": true,
+    "require_mod_specific_csharp": true,
+    "worker_role_does_not_determine_source_repo": true
   },
   "capacity": {
     "business_active_task_limit_reference": 10,
@@ -3251,5 +3254,31 @@
   ],
   "description": "V2 revised: Terra is the dedicated mid-level engineer between Luna junior and Sol senior roles.",
   "source_repository_contract": "studio/workforce/SOURCE_REPOSITORIES.md",
-  "source_targets_registry": "studio/workforce/source_targets.v1.json"
+  "source_targets_registry": "studio/workforce/source_targets.v1.json",
+  "source_workstream_graph": {
+    "rendering_engine": {
+      "repo": "SIGAAMDAD/Terrain3D",
+      "branch": "Terrain3D_NomadRenderer"
+    },
+    "framework_engine": {
+      "repo": "SIGAAMDAD/NomadFramework",
+      "branch": "develop",
+      "development_primary": true
+    },
+    "core_gameplay": {
+      "repo": "SIGAAMDAD/The_Nomad",
+      "branch": "Nomad3D",
+      "mod_dependent": false
+    },
+    "mod_gameplay": {
+      "repo": "SIGAAMDAD/NomadMain",
+      "branch": "main",
+      "language": "C#"
+    },
+    "goap_core": {
+      "repo": "SIGAAMDAD/TheNomad_GOAP",
+      "branch": "main"
+    }
+  },
+  "source_ownership_rule": "The approved job workstream selects repository, language and branch; worker role is the specialist capability, not a Git destination."
 }
