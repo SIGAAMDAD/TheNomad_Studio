@@ -1,4 +1,64 @@
 {
   "schema": 1,
-  "jobs": []
+  "jobs": [
+    {
+      "id": "OPS-BOOT-001",
+      "kind": "docs",
+      "state": "READY",
+      "approved": true,
+      "role": "studio-ops-pilot",
+      "role_manual_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/roles/studio-ops-pilot.md",
+      "priority": 0,
+      "brief": "Studio infrastructure ONLY: write an actual readback and commit-specific handshake report in the Studio runtime repository, then an immutable SUBMITTED receipt. No game code, design canon, cost or config changes.",
+      "repository": "SIGAAMDAD/TheNomad_Studio",
+      "branch": "studio/runtime",
+      "owned_paths": [
+        "studio/evidence/OPS-BOOT-001.md"
+      ],
+      "protected_paths": [
+        "studio/config.json",
+        "studio/jobs.json",
+        "studio/slots.json",
+        "game/*"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "Report real GitHub repository/branch, S01 assignment epoch and current policy switches",
+        "Exact nonempty report commit SHA readback",
+        "SUBMITTED receipt references that immutable report SHA"
+      ],
+      "qa_owner": "S08"
+    },
+    {
+      "id": "OPS-QA-001",
+      "kind": "review",
+      "state": "READY",
+      "approved": true,
+      "role": "studio-ops-qa",
+      "role_manual_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/roles/studio-ops-pilot.md",
+      "priority": 1,
+      "subject_job": "OPS-BOOT-001",
+      "brief": "Independently review actual OPS-BOOT-001 immutable GitHub artifact revision; publish PASS/REWORK QA report plus immutable SUBMITTED receipt. No source, config or canon changes.",
+      "repository": "SIGAAMDAD/TheNomad_Studio",
+      "branch": "studio/runtime",
+      "owned_paths": [
+        "studio/evidence/OPS-QA-001.md"
+      ],
+      "protected_paths": [
+        "studio/config.json",
+        "studio/jobs.json",
+        "studio/slots.json",
+        "game/*"
+      ],
+      "dependencies": [
+        "OPS-BOOT-001"
+      ],
+      "acceptance": [
+        "Read original committed artifact at exact subject SHA",
+        "Inspect real contents and claims; classify PASS or REWORK with findings",
+        "Commit independent QA report and SUBMITTED receipt"
+      ],
+      "qa_owner": "S00"
+    }
+  ]
 }
