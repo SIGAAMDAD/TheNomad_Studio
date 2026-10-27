@@ -1,0 +1,74 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T173730Z-comms-oversight-01",
+  "recorded_at_utc": "2026-10-27T17:37:30Z",
+  "request_id": "CHAT-20261027-comms-oversight",
+  "department_id": "studio_ops",
+  "role_id": "rpg-studio-operations-manager",
+  "mode": "interactive",
+  "event_type": "ARTIFACT_SUBMITTED",
+  "status": "SUBMITTED",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T173730Z-comms-oversight-01",
+  "worker_slot": null,
+  "summary": "Created draft communications V1 design PR, seeded inert studio/comms branch, created independent Oversight V1 design PR; no automation or confidential intake activated.",
+  "todo": [
+    {
+      "id": "comms-controller",
+      "description": "Review and implement deterministic event broker on a separately authorized work order",
+      "state": "OPEN"
+    },
+    {
+      "id": "comms-schema",
+      "description": "Add validated normalized message schema and CI fixtures on a reviewed follow-up",
+      "state": "OPEN"
+    },
+    {
+      "id": "oversight-access",
+      "description": "Verify separate oversight credentials or sealed intake key custody before handling real complaints",
+      "state": "BLOCKED"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "design_pr",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/18",
+      "revision": "dbb1991b8d9be056ff12cb4748ba151afcfc8c96",
+      "verified": true
+    },
+    {
+      "kind": "data_branch_seed",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/tree/studio/comms",
+      "revision": "f94b33a9c1239635cd654811d26dbcf9b3cab2b1",
+      "verified": true
+    },
+    {
+      "kind": "design_pr",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio_Oversight/pull/1",
+      "revision": "608f0ee08e268828111b84455b0e27ca8d4a69a1",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "GitHub draft PR creation readback",
+      "status": "PASS"
+    },
+    {
+      "name": "Broker deployment and integration tests",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Confidential access isolation test",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Approve the two V1 design PRs before implementation and any bot/credential changes?",
+      "status": "REQUESTED"
+    }
+  ]
+}
