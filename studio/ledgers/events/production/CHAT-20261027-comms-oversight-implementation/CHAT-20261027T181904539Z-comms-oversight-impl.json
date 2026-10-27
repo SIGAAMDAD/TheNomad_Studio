@@ -1,0 +1,125 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T181904539Z-comms-oversight-impl",
+  "recorded_at_utc": "2026-10-27T18:19:04.539Z",
+  "request_id": "CHAT-20261027-comms-oversight-implementation",
+  "department_id": "production",
+  "role_id": "rpg-autonomous-workgroup-controller",
+  "mode": "interactive",
+  "event_type": "ARTIFACT_SUBMITTED",
+  "status": "SUBMITTED",
+  "summary": "Implemented and GitHub-verified deterministic Studio communications broker, per-chat registry and snapshot follow-up, encrypted Oversight case handling and signed enforcement verification; deployed source only by owner merges, no AI worker activation.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T181904539Z-comms-oversight-impl",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "comms-hourly-snapshot",
+      "description": "Review and merge snapshot follow-up PR #20; perform live issue-comment to comms end-to-end check",
+      "state": "OPEN"
+    },
+    {
+      "id": "comms-workers",
+      "description": "Assign actual chat worker IDs, job leases and audit cadences before accepting messages",
+      "state": "OPEN"
+    },
+    {
+      "id": "oversight-keys",
+      "description": "Provision independent X25519 recipient keys and Ed25519 signing keys outside ordinary chat tools",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "oversight-private-access",
+      "description": "Verify separate Oversight App identity/access and protect oversight/cases from unauthorized plaintext intake",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "comms-branch-protection",
+      "description": "Configure and read back append-only ruleset/backup for studio/comms and oversight/cases",
+      "state": "OPEN"
+    },
+    {
+      "id": "oversight-enforcement",
+      "description": "Separately implement verified signed-notice handoff to deterministic Studio controller",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "source_pr",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/19",
+      "revision": "259d97c7eb571beb336a7582ca60828afb117c72",
+      "verified": true
+    },
+    {
+      "kind": "source_pr",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/20",
+      "revision": "939b569a3585b0c5f3485a5f60c8e0a03e115752",
+      "verified": true
+    },
+    {
+      "kind": "source_pr",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio_Oversight/pull/2",
+      "revision": "234074f635ad3021f83a5bc1ac98bbc8865208d3",
+      "verified": true
+    },
+    {
+      "kind": "data_branch",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/tree/studio/comms",
+      "revision": "f94b33a9c1239635cd654811d26dbcf9b3cab2b1",
+      "verified": true
+    },
+    {
+      "kind": "data_branch",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio_Oversight/tree/oversight/cases",
+      "revision": "23dec7dbb3a9ae2e99877bce92f0a8aaf0cb1604",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Studio communications broker code and unit tests on PR #19 exact commit",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40557270493"
+    },
+    {
+      "name": "Studio communications snapshot follow-up tests on PR #20 exact SHA",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40558548537"
+    },
+    {
+      "name": "Studio control validation for snapshot PR #20",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40558548269"
+    },
+    {
+      "name": "Oversight sealed intake and signature tests",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio_Oversight/actions/runs/40556601974"
+    },
+    {
+      "name": "Live comms GitHub issue-comment through branch push integration",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Confidential intake access isolation and key custody",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Oversight signed-notice production enforcement",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Merge reviewed Studio communications follow-up PR #20 after independent review?",
+      "status": "REQUESTED"
+    },
+    {
+      "question": "Approve provision of separate Oversight keys, app permissions and case branch protection?",
+      "status": "REQUESTED"
+    }
+  ]
+}
