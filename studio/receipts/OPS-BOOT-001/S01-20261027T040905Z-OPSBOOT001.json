@@ -1,0 +1,45 @@
+{
+  "job_id": "OPS-BOOT-001",
+  "slot_id": "S01",
+  "assignment_epoch": 1,
+  "attempt_id": "S01-20261027T040905Z-OPSBOOT001",
+  "outcome": "SUBMITTED",
+  "artifact_ref": "github:SIGAAMDAD/TheNomad_Studio@d072dd868130ca8f7d298e20ebbe5efbd883c47f:studio/evidence/OPS-BOOT-001.md",
+  "artifact_commit_sha": "d072dd868130ca8f7d298e20ebbe5efbd883c47f",
+  "baseline_ref": "github:SIGAAMDAD/TheNomad_Studio@596ea94f4443d6cf5c10340644826333dea5c9b0:studio/runtime",
+  "tests": [
+    {
+      "name": "slot_job_epoch_approval_readback",
+      "status": "PASS",
+      "details": "S01 enabled, job OPS-BOOT-001, slot and job epoch 1, approved RESERVED docs job"
+    },
+    {
+      "name": "studio_runtime_branch_head_readback",
+      "status": "PASS",
+      "details": "GitHub refs/heads/studio/runtime head before report 596ea94f4443d6cf5c10340644826333dea5c9b0"
+    },
+    {
+      "name": "report_pinned_content_readback",
+      "status": "PASS",
+      "details": "GitHub fetched studio/evidence/OPS-BOOT-001.md at commit d072dd868130ca8f7d298e20ebbe5efbd883c47f; blob 91c05a78cd52fb88524b49261243cd858442adeb"
+    },
+    {
+      "name": "commit_changed_paths",
+      "status": "PASS",
+      "details": "GitHub commit readback shows exactly studio/evidence/OPS-BOOT-001.md"
+    },
+    {
+      "name": "game_engine_build",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "independent_qa",
+      "status": "NOT_RUN"
+    }
+  ],
+  "next_action": "S00 reconcile immutable receipt; independent S08 OPS-QA-001 review exact artifact commit, then determine QA verdict. No worker self-verification or canon/source promotion.",
+  "limitations": [
+    "Job has no separately provided frozen baseline_sha; observed studio/runtime branch head recorded as infrastructure readback baseline.",
+    "No game-source writes or paid API/Work/Codex used."
+  ]
+}
