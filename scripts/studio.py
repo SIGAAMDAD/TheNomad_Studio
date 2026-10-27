@@ -268,7 +268,7 @@ def context(jobs, slots, slot_id):
     if not w.get("enabled") or not job:
         return {"slot": slot_id, "status": "NO_WORK", "epoch": w["epoch"]}
     selected = ("id", "kind", "role", "role_manual_uri", "state", "assignment_epoch",
-                "brief_uri", "brief", "source_refs", "repository", "branch", "work_branch", "baseline_sha",
+                "brief_uri", "brief", "source_refs", "repository", "branch", "work_branch", "workstream", "language", "baseline_sha",
                 "owned_paths", "protected_paths", "acceptance", "checkpoint_ref", "qa_findings",
                 "artifact_ref", "drive_report_url")
     return {"slot": slot_id, "status": "ASSIGNED", "epoch": w["epoch"],
