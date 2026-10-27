@@ -191,13 +191,13 @@ def validate_wire(wire, jobs, issue_number):
 def normalize_comment(comment, issue_number, jobs, source_repo=HUB):
     if source_repo != HUB or type(issue_number) is not int or issue_number <= 0:
         raise MessageError("WRONG_SOURCE_REPOSITORY")
+    wire = parse_wire(comment.get("body"))
     actor = (comment.get("user") or {}).get("login")
     if actor != OWNER:
         raise MessageError("UNAUTHORIZED_GITHUB_ACTOR")
     comment_id = comment.get("id")
     if type(comment_id) is not int or comment_id < 1:
         raise MessageError("INVALID_COMMENT_ID")
-    wire = parse_wire(comment.get("body"))
     target = validate_wire(wire, jobs, issue_number)
     digest = hashlib.sha256(f"{source_repo}:{comment_id}".encode("ascii")).hexdigest()[:32]
     return {
@@ -327,7 +327,8 @@ def main(argv=None):
             event = read_json(args.github_event)
             issue = event.get("issue") or {}
             if event.get("action") != "created" or issue.get("pull_request"):
-                raise MessageError("IGNORED_EVENT")
+                print(json.dumps({"status": "IGNORED_NON_ISSUE_EVENT"}))
+                return 0
             inputs = [(issue.get("number"), event.get("comment") or {},
                        (event.get("repository") or {}).get("full_name"))]
         elif args.mode == "reconcile":
@@ -360,7 +361,7 @@ def main(argv=None):
             return 0
         print(json.dumps({"new": new, "duplicates_or_nonmessages": duplicate,
                           "rejected": dict(rejected)}, sort_keys=True))
-        return 0 if not rejected else 2
+        return 0
     except (MessageError, urllib.error.URLError) as exc:
         print(json.dumps({"status": "BLOCKED", "reason": str(exc)}), file=sys.stderr)
         return 2
