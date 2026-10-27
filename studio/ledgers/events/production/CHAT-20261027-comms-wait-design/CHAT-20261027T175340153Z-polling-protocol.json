@@ -1,0 +1,31 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T175340153Z-polling-protocol",
+  "recorded_at_utc": "2026-10-27T17:53:40.153Z",
+  "request_id": "CHAT-20261027-comms-wait-design",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Reviewed live communications branch and V1 broker/worker contracts; outlined bounded active-chat polling for normalized commit messages, with cursor/ACK/idempotence and rate-limit constraints. No workflow activation or implementation requested.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": null,
+  "worker_slot": null,
+  "todo": [],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "live-studio-comms-branch-readback",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/comms/README.md"
+    },
+    {
+      "name": "poller-runtime-integration-tests",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
