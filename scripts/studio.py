@@ -22,6 +22,40 @@ KINDS = {"design", "writing", "art", "animation", "audio", "vfx", "ui", "cinemat
 WRITERS = KINDS - {"review", "analysis"}
 ID_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_.-]{2,79}$")
 SHA_RE = re.compile(r"^[0-9a-fA-F]{40}$")
+ASSET_KINDS = {"art", "animation", "audio", "vfx", "ui", "cinematic"}
+ASSET_EXTENSIONS = {
+    "art": {".png", ".jpg", ".jpeg", ".webp", ".svg", ".glb", ".gltf", ".obj", ".blend", ".fbx"},
+    "animation": {".glb", ".gltf", ".fbx", ".blend", ".dae", ".anim", ".tscn"},
+    "audio": {".wav", ".ogg", ".flac", ".mp3", ".fsb", ".fspro"},
+    "vfx": {".png", ".webp", ".glb", ".tscn", ".tres", ".gdshader"},
+    "ui": {".svg", ".png", ".webp", ".tscn", ".tres"},
+    "cinematic": {".mp4", ".mov", ".webm", ".tscn", ".glb"}
+}
+
+
+def valid_asset_manifest(manifest, kind):
+    """Only real binary/scene deliverables count as assets, never a Markdown brief."""
+    if not isinstance(manifest, dict):
+        return False
+    files = manifest.get("files")
+    if not isinstance(files, list) or not 0 < len(files) <= 50:
+        return False
+    for asset in files:
+        if not isinstance(asset, dict):
+            return False
+        name, ref = asset.get("filename"), asset.get("ref")
+        if not isinstance(name, str) or not isinstance(ref, str) or not ref:
+            return False
+        if pathlib.PurePosixPath(name.lower()).suffix not in ASSET_EXTENSIONS.get(kind, set()):
+            return False
+        if type(asset.get("bytes")) is not int or asset["bytes"] <= 0:
+            return False
+        if not isinstance(asset.get("sha256"), str) or not re.fullmatch(r"[0-9a-fA-F]{64}", asset["sha256"]):
+            return False
+        if not isinstance(asset.get("license"), str) or not asset["license"].strip():
+            return False
+    return True
+
 
 
 def read(root, filename):
@@ -93,6 +127,9 @@ def validate(jobs, slots, config):
                     errors.append(f"{jid}: source repository/branch not whitelisted")
                 if not isinstance(j.get("baseline_sha"), str) or not SHA_RE.fullmatch(j["baseline_sha"]):
                     errors.append(f"{jid}: missing pinned 40-digit baseline SHA")
+        if state in {"SUBMITTED", "REVIEW", "VERIFIED", "ACCEPTED"} and kind in ASSET_KINDS:
+            if not valid_asset_manifest(j.get("asset_manifest"), kind):
+                errors.append(f"{jid}: asset deliverable requires verified-format manifest")
         if state in {"SUBMITTED", "REVIEW", "VERIFIED", "ACCEPTED"} and kind in {"code", "integration"}:
             if not (isinstance(j.get("final_commit_sha"), str) and
                     SHA_RE.fullmatch(j["final_commit_sha"]) and j.get("drive_report_url")):
@@ -274,6 +311,11 @@ def record(jobs, slots, receipt):
         else:
             if not receipt.get("artifact_ref"):
                 raise ValueError("Non-code submission requires an exact artifact revision")
+            if j["kind"] in ASSET_KINDS:
+                manifest = receipt.get("asset_manifest")
+                if not valid_asset_manifest(manifest, j["kind"]):
+                    raise ValueError("Asset submission requires actual format, byte size, SHA256 and license manifest")
+                j["asset_manifest"] = manifest
             j["state"] = "SUBMITTED"
             j["artifact_ref"] = receipt["artifact_ref"]
             if j["kind"] == "review":
