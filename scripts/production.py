@@ -202,6 +202,22 @@ def github_ref_verified(ref, gh):
         return False
 
 
+def source_sha_verified(subject, gh):
+    """Verify a raw source SHA on the exact allowed source repository."""
+    if not gh or subject.get("kind") not in SOURCE:
+        return False
+    sha, repo = subject.get("final_commit_sha"), subject.get("repository", "")
+    if not isinstance(sha, str) or not studio.SHA_RE.fullmatch(sha):
+        return False
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repo):
+        return False
+    try:
+        commit = gh.request("GET", f"/repos/{repo}/commits/{sha}")
+        return commit.get("sha", "").lower() == sha.lower()
+    except GitHubError:
+        return False
+
+
 def adjudicate(jobs, gh=None, external_verifier=None):
     """Consume structured reviewer verdicts. Never trust a bare PASS without real readback."""
     changes = []
@@ -229,7 +245,8 @@ def adjudicate(jobs, gh=None, external_verifier=None):
                        and readback.get("report_ref") == reviewer.get("artifact_ref")
                        and readback.get("verified_by") == "S00"
                        and bool(readback.get("evidence_uri")))
-        if not external_ok and (not verify(reviewer.get("artifact_ref")) or not verify(expected)):
+        subject_ok = verify(expected) or source_sha_verified(subject, gh)
+        if not external_ok and (not verify(reviewer.get("artifact_ref")) or not subject_ok):
             subject["state"] = "REVIEW"
             subject["review_blocker"] = "Independent report or exact subject not externally readable"
             continue
