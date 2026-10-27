@@ -1,0 +1,50 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T200718675Z-forecast",
+  "recorded_at_utc": "2026-10-27T20:07:18.675Z",
+  "request_id": "CHAT-20261027-studio-timeline",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Prepared conditional calendar-duration forecast for 100 vs 300 manually coordinated AI workers after inspecting live five-repository project skeleton, framework roadmap, gameplay assets, native GOAP bootstrap and active Studio runtime assignments. Planning estimates only; no actual 100-worker throughput measured and no configuration changed.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": null,
+  "worker_slot": null,
+  "todo": [],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "project_status",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_GOAP/blob/main/README.md",
+      "revision": "36e94c4086dcc913a48829118927ab7a7ddbc391",
+      "verified": true
+    },
+    {
+      "kind": "project_status",
+      "uri": "https://github.com/SIGAAMDAD/The_Nomad/blob/Nomad3D/NomadGDExtension/README.md",
+      "revision": "a5c6eec4f88d52e444eea28619fcaa0e1d0d5fa0",
+      "verified": true
+    },
+    {
+      "kind": "studio_runtime",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/config.json",
+      "revision": "fc08278e4cc1a48faa404e6bd287a9914327d214",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "cross-repository-high-level-readback",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/The_Nomad/tree/Nomad3D"
+    },
+    {
+      "name": "measured-100-to-300-worker-throughput",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
