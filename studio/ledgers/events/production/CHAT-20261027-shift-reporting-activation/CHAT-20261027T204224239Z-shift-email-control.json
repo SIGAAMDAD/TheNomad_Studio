@@ -1,0 +1,116 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T204224239Z-shift-email-control",
+  "recorded_at_utc": "2026-10-27T20:42:24.239Z",
+  "request_id": "CHAT-20261027-shift-reporting-activation",
+  "department_id": "production",
+  "role_id": "rpg-autonomous-workgroup-controller",
+  "mode": "interactive",
+  "event_type": "ARTIFACT_SUBMITTED",
+  "status": "SUBMITTED",
+  "summary": "Created and read-verified an enabled hourly ChatGPT automation at :35 America/Chicago to email source-grounded The Nomad Studio shift results to the connected Gmail account. The task reads GitHub Director pulse and authoritative jobs, worker register, CI and immutable ledger; falls back to live evidence with missing/stale pulse alert, deduplicates sent reporting windows. Committed and validated shift authorization/session continuation/stop state and hourly productivity metrics design in draft PR #28. No worker execution started or runtime/source/spending gate changed.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T204224239Z-shift-email-control",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "hourly-first-delivery",
+      "description": "Verify first real unattended hourly Gmail report, sent Gmail message ID and deduplicated window",
+      "state": "OPEN"
+    },
+    {
+      "id": "director-pulse",
+      "description": "Investigate why studio/comms reports/hourly is currently absent and no completed Studio Director pulse run was found in recent GitHub Actions history; verify actual scheduled execution",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "shift-owner-approval",
+      "description": "Review draft shift execution contract PR #28 and approve scoped session chaining policy",
+      "state": "OPEN"
+    },
+    {
+      "id": "actual-executor",
+      "description": "Select supported runtime executor for successive bounded ChatGPT responses; ordinary inactive chats cannot be resumed by queue or hourly audit",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "shift-credentials",
+      "description": "Authorize independent worker credentials and source lease fencing before enabling any privileged automatic worker loop",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "capacity",
+      "description": "Load-test 100+ shift attempts, transient retries, race-safe stop/drain, queue empty and stalled worker observation",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "design_pr",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/28",
+      "revision": "9f43b32fb99979f13deb57fe09cdc84848384ea3",
+      "verified": true
+    },
+    {
+      "kind": "shift_contract",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/design/shift-execution-contract-v1/studio/architecture/hyperscale/v1/07_SHIFT_EXECUTION_CONTRACT.md",
+      "revision": "9f43b32fb99979f13deb57fe09cdc84848384ea3",
+      "verified": true
+    },
+    {
+      "kind": "reporting_metrics",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/design/shift-execution-contract-v1/studio/architecture/hyperscale/v1/08_HOURLY_REPORTING_METRICS.md",
+      "revision": "9f43b32fb99979f13deb57fe09cdc84848384ea3",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Gmail connector read-only profile and intended recipient verification",
+      "status": "PASS"
+    },
+    {
+      "name": "Hourly report ChatGPT automation creation, enabled/schedule readback",
+      "status": "PASS"
+    },
+    {
+      "name": "Studio source config and auditor workflow readback",
+      "status": "PASS"
+    },
+    {
+      "name": "PR28 Hyperscale coordination design validation at exact commit",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40580289196"
+    },
+    {
+      "name": "PR28 Studio event-worker routing validation",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40580289056"
+    },
+    {
+      "name": "PR28 Studio control validation",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40580289065"
+    },
+    {
+      "name": "First unattended hourly Gmail email delivery",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Current GitHub Director hourly published report",
+      "status": "BLOCKED"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Approve PR28 shift controls prior to executor integration?",
+      "status": "REQUESTED"
+    },
+    {
+      "question": "Select supported execution host/Work/API and budget for successive sessions, while keeping ordinary manual chats manual?",
+      "status": "REQUESTED"
+    }
+  ]
+}
