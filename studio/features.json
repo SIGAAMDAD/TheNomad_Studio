@@ -1,4 +1,35 @@
 {
   "schema": 1,
-  "features": []
+  "features": [
+    {
+      "id": "FEATURE-3",
+      "source": "github_issue",
+      "issue_number": 3,
+      "repo": "SIGAAMDAD/TheNomad_Studio",
+      "state": "INBOX",
+      "jobs": [],
+      "approved": false,
+      "issue_url": "https://github.com/SIGAAMDAD/TheNomad_Studio/issues/3",
+      "title": "Create a default C# .NET 11 modding interface for the INomadItem",
+      "issue_digest": "57e0f9db7032df4718d05d4a81c6b141c1628244c4c4843d3a33dbeecb310d6a",
+      "issue_updated_at": "2026-10-27T02:29:36Z",
+      "owner_accept_requested": false,
+      "owner_finalize_requested": false
+    },
+    {
+      "id": "FEATURE-6",
+      "source": "github_issue",
+      "issue_number": 6,
+      "repo": "SIGAAMDAD/TheNomad_Studio",
+      "state": "INBOX",
+      "jobs": [],
+      "approved": false,
+      "issue_url": "https://github.com/SIGAAMDAD/TheNomad_Studio/issues/6",
+      "title": "[Studio][P0][GOAP] Bootstrap native GOAP infrastructure, archetype cooker and C# behavior bridge",
+      "issue_digest": "7b537dd5d242182131c903ceda9b15ac6e8404116eed8c5280edc40de9581e87",
+      "issue_updated_at": "2026-10-27T03:52:02Z",
+      "owner_accept_requested": false,
+      "owner_finalize_requested": false
+    }
+  ]
 }

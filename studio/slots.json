@@ -14,8 +14,8 @@
       "id": "S01",
       "role": "dynamic",
       "enabled": true,
-      "job": null,
-      "epoch": 0,
+      "job": "OPS-BOOT-001",
+      "epoch": 1,
       "schedule_minute": 6,
       "capabilities": [
         "design",
