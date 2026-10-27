@@ -24,7 +24,6 @@
     "scheduled_slots_proposed_active": [
       "S00",
       "S01",
-      "S02",
       "S03",
       "S04",
       "S08"
@@ -33,55 +32,65 @@
       "W01",
       "W02",
       "W03",
-      "W04"
+      "W04",
+      "W05"
     ],
     "reserved_on_demand": [
-      "W05"
+      "W06"
     ],
     "max_writers": 2,
     "max_independent_reviewers": 1,
-    "actual_task_configuration": "NOT_CHANGED"
+    "actual_task_configuration": "NOT_CHANGED",
+    "scheduled_role_routing_note": "S01 dynamically covers systems/technical design formerly on S02; paused S02/S05/S06/S07/S09 slots remain reusable when staffing changes."
   },
   "profiles": {
     "W01": {
-      "title": "Junior Implementation and Alpha Draft Engineer",
+      "title": "Junior Alpha Implementation Engineer",
       "model": "GPT-6 Luna",
-      "reasoning": "default",
+      "reasoning": "Default",
       "mode": "event_triggered_work",
-      "activation": "GitHub PR activity with authorized alpha stage",
-      "role_contract": "bounded approved code/boilerplate/tests only; compile & checkpoint; never invent ABI"
+      "activation": "approved alpha source PR; code scaffolding and bounded first passes",
+      "role_contract": "frozen interfaces, junior alpha features, boilerplate, fixtures, targeted tests; exact commit and receipt"
     },
     "W02": {
+      "title": "Mid-Level Feature Completion Engineer",
+      "model": "GPT-6.1 Terra",
+      "reasoning": "Medium",
+      "mode": "event_triggered_work",
+      "activation": "approved implement stage; junior checkpoint or source-ready self-contained feature",
+      "role_contract": "complete conventional features, cross-file bounded changes, refactor, routine debugging, build/negative tests, commit; escalate architectural issues"
+    },
+    "W03": {
       "title": "Senior Debugging Engineer",
       "model": "GPT-6 Sol",
       "reasoning": "Medium",
       "mode": "event_triggered_work",
-      "activation": "PR update/comment signaling verified failed CI or recorded defect",
-      "role_contract": "reproduce isolated failure, minimal repair, new final SHA, fresh CI; same job/branch"
+      "activation": "verified failed CI, crash, or independent QA REWORK",
+      "role_contract": "diagnose difficult failures at exact source SHA, minimal root-cause fixes, regression tests; no uncontrolled integration"
     },
-    "W03": {
+    "W04": {
       "title": "Senior Integration Engineer",
       "model": "GPT-6 Sol",
       "reasoning": "Medium",
       "mode": "event_triggered_work",
-      "activation": "PR review/ready event with upstream jobs independently QA verified",
-      "role_contract": "stitch interfaces and branches, reconcile ABI/source boundaries, validate integration; no new features"
+      "activation": "multiple independently accepted upstream jobs and frozen ABI",
+      "role_contract": "reconcile system boundaries and merge-safe changes, test link/build, publish integration commit; hand defects to W03"
     },
-    "W04": {
+    "W05": {
       "title": "Independent Technical QA Engineer",
       "model": "GPT-6 Sol",
       "reasoning": "Medium",
       "mode": "event_triggered_work",
-      "activation": "PR ready/review event, immutable final commit",
-      "role_contract": "independent QA at exact SHA; never edit reviewed artifact"
+      "activation": "immutable final source SHA after CI and reviewer reservation",
+      "role_contract": "independent exact-SHA review, tests, PASS/REWORK, no source changes"
     },
-    "W05": {
-      "title": "Principal Integration and Architecture Escalation",
+    "W06": {
+      "title": "Principal Architecture and Integration Escalation",
       "model": "GPT-6.1 Sol",
       "reasoning": "High",
       "mode": "manual_or_reallocated_work",
-      "activation": "owner-authorized high-risk escalation; not a permanently active task",
-      "role_contract": "cross-system ABI, memory, concurrency or repeated failures; report decision owner must approve"
+      "activation": "explicit human owner escalation only; not a sixth active event worker",
+      "role_contract": "memory/concurrency/ABI or cross-system architecture decisions; owner must accept resulting changes"
     }
   },
   "stages": [
@@ -91,7 +100,7 @@
       "required_labels": [
         "studio:work:alpha"
       ],
-      "default_reviewer": "W04",
+      "default_reviewer": "W05",
       "gates": [
         "approved_issue",
         "frozen_contract",
@@ -100,15 +109,33 @@
         "source_writes_enabled",
         "spend_approved"
       ],
-      "exit": "new_commit_and_ci"
+      "exit": "checkpoint_or_final_commit_and_ci"
+    },
+    {
+      "id": "implement",
+      "profile": "W02",
+      "required_labels": [
+        "studio:work:implement"
+      ],
+      "default_reviewer": "W05",
+      "gates": [
+        "approved_issue",
+        "frozen_contract",
+        "verified_source_sha",
+        "exclusive_lease",
+        "source_writes_enabled",
+        "spend_approved",
+        "junior_checkpoint_if_continuing_alpha"
+      ],
+      "exit": "feature_commit_and_ci"
     },
     {
       "id": "debug",
-      "profile": "W02",
+      "profile": "W03",
       "required_labels": [
         "studio:work:debug"
       ],
-      "default_reviewer": "W04",
+      "default_reviewer": "W05",
       "gates": [
         "approved_issue",
         "verified_failure",
@@ -121,11 +148,11 @@
     },
     {
       "id": "integrate",
-      "profile": "W03",
+      "profile": "W04",
       "required_labels": [
         "studio:work:integrate"
       ],
-      "default_reviewer": "W04",
+      "default_reviewer": "W05",
       "gates": [
         "approved_issue",
         "all_upstream_verified",
@@ -138,7 +165,7 @@
     },
     {
       "id": "qa",
-      "profile": "W04",
+      "profile": "W05",
       "required_labels": [
         "studio:work:qa"
       ],
@@ -153,11 +180,11 @@
     },
     {
       "id": "escalate",
-      "profile": "W05",
+      "profile": "W06",
       "required_labels": [
         "studio:work:escalate"
       ],
-      "default_reviewer": "W04",
+      "default_reviewer": "W05",
       "gates": [
         "approved_issue",
         "owner_escalation",
@@ -186,15 +213,31 @@
     },
     {
       "state": "DETERMINISTIC_CI",
-      "when": "FAIL",
-      "next": "DEBUG_REWORK",
+      "when": "FAIL_ROUTINE",
+      "next": "MID_IMPLEMENT_REWORK",
       "executor": "W02"
     },
     {
       "state": "DETERMINISTIC_CI",
-      "when": "PASS",
-      "next": "INTEGRATION_READY",
-      "executor": "S00"
+      "when": "FAIL_COMPLEX",
+      "next": "DEBUG_REWORK",
+      "executor": "W03"
+    },
+    {
+      "state": "DETERMINISTIC_CI",
+      "when": "PASS_BUT_INCOMPLETE",
+      "next": "MID_IMPLEMENT",
+      "executor": "W02"
+    },
+    {
+      "state": "MID_IMPLEMENT",
+      "next": "DETERMINISTIC_CI",
+      "executor": "GitHub Actions"
+    },
+    {
+      "state": "MID_IMPLEMENT_REWORK",
+      "next": "DETERMINISTIC_CI",
+      "executor": "GitHub Actions"
     },
     {
       "state": "DEBUG_REWORK",
@@ -202,10 +245,15 @@
       "executor": "GitHub Actions"
     },
     {
+      "state": "DETERMINISTIC_CI",
+      "when": "PASS_COMPLETE_AND_DEPENDENCIES_QA_VERIFIED",
+      "next": "INTEGRATION_READY",
+      "executor": "S00"
+    },
+    {
       "state": "INTEGRATION_READY",
-      "when": "dependencies_and_design_QA_pass",
       "next": "INTEGRATING",
-      "executor": "W03"
+      "executor": "W04"
     },
     {
       "state": "INTEGRATING",
@@ -216,19 +264,19 @@
       "state": "INTEGRATION_CI",
       "when": "FAIL",
       "next": "DEBUG_REWORK",
-      "executor": "W02"
+      "executor": "W03"
     },
     {
       "state": "INTEGRATION_CI",
       "when": "PASS",
       "next": "INDEPENDENT_QA",
-      "executor": "W04"
+      "executor": "W05"
     },
     {
       "state": "INDEPENDENT_QA",
       "when": "REWORK",
       "next": "DEBUG_REWORK",
-      "executor": "W02"
+      "executor": "W03"
     },
     {
       "state": "INDEPENDENT_QA",
@@ -840,11 +888,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-engine-programmer",
@@ -856,11 +907,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-rendering-programmer",
@@ -872,11 +926,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-gameplay-programmer",
@@ -887,12 +944,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-combat-programmer",
@@ -903,12 +963,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-ai-programmer",
@@ -920,11 +983,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-navigation-programmer",
@@ -936,11 +1002,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-physics-programmer",
@@ -952,11 +1021,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-animation-programmer",
@@ -967,12 +1039,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-ui-programmer",
@@ -983,12 +1058,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-tools-programmer",
@@ -999,12 +1077,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-world-streaming-programmer",
@@ -1016,11 +1097,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-memory-systems-programmer",
@@ -1032,11 +1116,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-audio-programmer",
@@ -1047,12 +1134,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-platform-programmer",
@@ -1064,11 +1154,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-build-engineer",
@@ -1079,12 +1172,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-integration-engineer",
@@ -1096,11 +1192,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-ci-devops-engineer",
@@ -1111,12 +1210,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-network-programmer",
@@ -1128,11 +1230,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-performance-engineer",
@@ -1144,11 +1249,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-save-systems-programmer",
@@ -1160,11 +1268,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-concept-artist",
@@ -1852,7 +1963,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6 Sol Medium",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-functional-qa-tester",
@@ -1868,7 +1981,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6 Sol Medium",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-technical-qa-analyst",
@@ -1884,7 +1999,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-automation-qa-engineer",
@@ -1900,7 +2017,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-performance-qa-analyst",
@@ -1916,7 +2035,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-compatibility-tester",
@@ -1932,7 +2053,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6 Sol Medium",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-accessibility-tester",
@@ -1948,7 +2071,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6 Sol Medium",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-localization-qa-tester",
@@ -1964,7 +2089,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6 Sol Medium",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-playtest-coordinator",
@@ -1980,7 +2107,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6 Sol Medium",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-release-manager",
@@ -2263,12 +2392,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-ability-framework-programmer",
@@ -2279,12 +2411,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-interaction-systems-programmer",
@@ -2295,12 +2430,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-inventory-equipment-programmer",
@@ -2311,12 +2449,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-quest-runtime-programmer",
@@ -2328,11 +2469,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-gameplay-scripting-programmer",
@@ -2343,12 +2487,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-locomotion-physics-programmer",
@@ -2359,12 +2506,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-boss-behavior-programmer",
@@ -2375,12 +2525,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-gameplay-debugging-engineer",
@@ -2391,12 +2544,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-render-graph-engineer",
@@ -2408,11 +2564,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-gpu-memory-engineer",
@@ -2424,11 +2583,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-shader-compiler-engineer",
@@ -2440,11 +2602,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-visibility-occlusion-engineer",
@@ -2456,11 +2621,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-lighting-renderer-engineer",
@@ -2472,11 +2640,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-material-system-engineer",
@@ -2487,12 +2658,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-post-processing-engineer",
@@ -2503,12 +2677,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-volumetric-rendering-engineer",
@@ -2519,12 +2696,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-graphics-backend-engineer",
@@ -2536,11 +2716,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-terrain-rendering-engineer",
@@ -2552,11 +2735,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-gpu-driven-rendering-engineer",
@@ -2568,11 +2754,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-godot-editor-extension-programmer",
@@ -2583,12 +2772,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-asset-import-pipeline-engineer",
@@ -2599,12 +2791,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-terrain-authoring-tools-programmer",
@@ -2615,12 +2810,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-hlod-cook-tools-programmer",
@@ -2632,11 +2830,14 @@
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
       "implement_model": "GPT-6 Sol Medium",
-      "debug_model": "GPT-6 Sol Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-gameplay-data-editor-programmer",
@@ -2647,12 +2848,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-shader-build-tools-programmer",
@@ -2663,12 +2867,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-engine-profiler-tools-programmer",
@@ -2679,12 +2886,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-content-validation-engineer",
@@ -2695,12 +2905,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-designer-workflow-tools-programmer",
@@ -2711,12 +2924,15 @@
       "review_slot": "S09",
       "default_execution": "work_approved",
       "draft_model": "GPT-6 Luna",
-      "implement_model": "GPT-6 Luna",
-      "debug_model": "GPT-6 Sol Medium",
+      "implement_model": "GPT-6.1 Terra Medium",
+      "debug_model": "GPT-6.1 Terra Medium (routine)",
       "integration_model": "GPT-6 Sol Medium",
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": true,
-      "luna_boilerplate_and_tests": true
+      "luna_boilerplate_and_tests": true,
+      "mid_level_model": "GPT-6.1 Terra Medium",
+      "senior_debug_model": "GPT-6 Sol Medium (complex)",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-boss-encounter-designer",
@@ -2972,7 +3188,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-narrative-validation-engineer",
@@ -2988,7 +3206,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6 Sol Medium",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-rendering-regression-engineer",
@@ -3004,7 +3224,9 @@
       "integration_model": null,
       "high_risk_model": "GPT-6.1 Sol High",
       "luna_bounded_alpha": false,
-      "luna_boilerplate_and_tests": false
+      "luna_boilerplate_and_tests": false,
+      "technical_triage_model": "GPT-6.1 Terra Medium",
+      "independent_technical_qa_model": "GPT-6 Sol Medium"
     },
     {
       "id": "rpg-autonomous-workgroup-controller",
@@ -3022,5 +3244,6 @@
       "luna_bounded_alpha": false,
       "luna_boilerplate_and_tests": false
     }
-  ]
+  ],
+  "description": "V2 revised: Terra is the dedicated mid-level engineer between Luna junior and Sol senior roles."
 }
