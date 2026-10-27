@@ -1,0 +1,30 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T235113-585Z-COMMS",
+  "recorded_at_utc": "2026-10-27T23:51:13.585Z",
+  "request_id": "CHAT-20261027-COMMS-ISOLATION",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Advised against per-worker Git communication branches for 100-500-worker Studio. Recommended PostgreSQL per-job/per-worker routed inboxes with ACK and cursors, department-level batched Git audit archives under a single broker writer, and Drive for single-writer long-form briefs. Verified existing studio/comms remains an inert design seed; no department communication branches active.",
+  "issue": null,
+  "todo": [
+    {
+      "id": "comms-topology",
+      "description": "Decide whether to retain department-scoped archival branches or use directories on studio/comms after existing waves complete",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "github-branches-and-comms-readme",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/comms/README.md"
+    }
+  ],
+  "owner_decisions": []
+}
