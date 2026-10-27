@@ -1,7 +1,8 @@
 name: Studio read-only production report
 on:
   schedule:
-    - cron: "15 6 * * *"
+    - cron: "30 23 * * *"
+      timezone: "America/Chicago"
   workflow_dispatch:
 permissions:
   contents: read
