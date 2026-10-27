@@ -1,5 +1,7 @@
 # Scheduled worker contract — V2
 
+**Scope:** S01–S09 only. The permanent S00 Production Director uses [DIRECTOR_CONTRACT.md](DIRECTOR_CONTRACT.md) to supervise this contract, not to perform worker tasks.
+
 Use this as a compact bootstrap for **an existing scheduled ChatGPT task**. It does not choose the task's model or effort and does not create, wake, or extend a scheduled run.
 
 ## Prompt template
@@ -22,6 +24,8 @@ The worker's scheduled task may require manual configuration of the actual model
   "next_action": "Complete the missing negative fixture"
 }
 ```
+
+For independent `review` jobs, inspect the exact submitted subject artifact (the job's `subject_job`), write a PASS/REWORK report as a separate immutable artifact, and submit that QA report. Do not self-approve the subject; the Director must verify the evidence before updating its status.
 
 For `BLOCKED`, provide `reason` and an exact blocker/dependency reference; the controller releases the slot. For creative `SUBMITTED`, provide `artifact_ref` referencing an exact immutable revision. The controller validates assignment ownership, processes the immutable receipt on its next hourly run, and never auto-approves or auto-merges.
 
