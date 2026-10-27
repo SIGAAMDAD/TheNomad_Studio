@@ -1,0 +1,72 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T224358426Z-V16PLAN",
+  "recorded_at_utc": "2026-10-27T22:43:58.426Z",
+  "request_id": "CHAT-20261027-STUDIO-V16-PLAN",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Planning-only V1.6 proposal: private-repository credential-isolated gateway, department-head work direction, local-first batched changes, worker-chat access preflight, managed PostgreSQL durable queue/fencing/outbox, oversight isolation, staged rollout and negative tests. No code, configuration, source jobs, merges or paid workers activated.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T224358426Z-V16PLAN",
+  "todo": [
+    {
+      "id": "AUTHZ_V16",
+      "description": "Review and approve source writer gateway and restricted identity/capability matrix",
+      "state": "OPEN"
+    },
+    {
+      "id": "WORKER_V16",
+      "description": "Approve local-first worker bootstrap and job-scoped GitHub/Drive access preflight",
+      "state": "OPEN"
+    },
+    {
+      "id": "DATABASE_V16",
+      "description": "Choose managed PostgreSQL hosting and freeze schema/authority migration plan",
+      "state": "OPEN"
+    },
+    {
+      "id": "TESTS_V16",
+      "description": "Implement independent negative authorization, recovery and load validation after owner approval",
+      "state": "OPEN"
+    },
+    {
+      "id": "CUTOVER_V16",
+      "description": "Shadow migration then owner-gated production cutover",
+      "state": "BLOCKED"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "Local source reviewed for planning",
+      "status": "PASS"
+    },
+    {
+      "name": "V1.6 implementation",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Live database provisioned",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "New security acceptance tests",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Authorize the V1.6 implementation plan before any code edits or settings changes",
+      "status": "REQUESTED"
+    },
+    {
+      "question": "Select managed PostgreSQL hosting and attested gateway execution provider",
+      "status": "REQUESTED"
+    }
+  ]
+}
