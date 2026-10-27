@@ -25,6 +25,7 @@ class WorkerRouterTests(unittest.TestCase):
         return {"schema": 1, "jobs": [
             {"id": "FEATURE-100-CODE-01", "approved": True,
              "role": role, "kind": "code", "repository": SOURCE_REPO,
+             "workstream": "framework_engine", "language": "C++17",
              "branch": "develop", "work_branch": "studio/FEATURE-100-CODE-01",
              "baseline_sha": BASE, "state": "READY"}
         ]}
@@ -162,7 +163,8 @@ class WorkerRouterTests(unittest.TestCase):
         j = self.job("rpg-gameplay-data-editor-programmer")
         source = j["jobs"][0]
         source.update({"repository": "SIGAAMDAD/TheNomad_GOAP",
-                       "branch": "main", "work_branch": "studio/FEATURE-100-CODE-01"})
+                       "workstream": "goap_core", "branch": "main",
+                       "work_branch": "studio/FEATURE-100-CODE-01"})
         e = self.event()
         e["pull_request"]["base"]["repo"]["full_name"] = source["repository"]
         e["pull_request"]["base"]["ref"] = "main"
@@ -171,6 +173,23 @@ class WorkerRouterTests(unittest.TestCase):
         self.assertEqual(x["reason"], "AUTO_AI_DISABLED")
         self.assertEqual(x["source_repository"], "SIGAAMDAD/TheNomad_GOAP")
         self.assertEqual(x["target_branch"], "main")
+
+    def test_mod_csharp_event_routes_to_nomadmain_not_legacy_game(self):
+        job = self.job("rpg-gameplay-programmer")
+        source = job["jobs"][0]
+        source.update({"repository": "SIGAAMDAD/NomadMain",
+                       "workstream": "mod_gameplay", "language": "C#",
+                       "branch": "main"})
+        e = self.event()
+        e["pull_request"]["base"]["repo"]["full_name"] = "SIGAAMDAD/NomadMain"
+        e["pull_request"]["base"]["ref"] = "main"
+        e["pull_request"]["head"]["repo"]["full_name"] = "SIGAAMDAD/NomadMain"
+        x = router.route_event(e, self.policy, job)
+        self.assertEqual(x["reason"], "AUTO_AI_DISABLED")
+        self.assertEqual(x["source_repository"], "SIGAAMDAD/NomadMain")
+        source["language"] = "GDScript"
+        self.assertEqual(router.route_event(e, self.policy, job)["reason"],
+                         "MOD_GAMEPLAY_REQUIRES_CSHARP")
 
     def test_control_repo_cannot_be_implementation_repository(self):
         j = self.job()

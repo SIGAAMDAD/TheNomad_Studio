@@ -23,12 +23,13 @@ def route_table(routes):
     if not isinstance(routes, dict) or routes.get("schema_version") != 1:
         raise ValueError("Invalid source routing policy schema")
     entries = routes.get("source_routes")
-    if not isinstance(entries, list) or len(entries) != 4:
-        raise ValueError("Exactly four reviewed source routes are required")
+    if not isinstance(entries, list) or len(entries) != 5:
+        raise ValueError("Exactly five reviewed source routes are required")
     hub = routes.get("control_repository")
     if hub != "SIGAAMDAD/TheNomad_Studio":
         raise ValueError("Control repository identity is incorrect")
     table = {}
+    workstreams = set()
     for entry in entries:
         repo, branch = entry.get("repository"), entry.get("target_branch")
         if not isinstance(repo, str) or not REPO_RE.fullmatch(repo):
@@ -37,15 +38,29 @@ def route_table(routes):
             raise ValueError("Invalid source target branch")
         if repo == hub or repo in table:
             raise ValueError("Control repository or duplicate route cannot own game source")
+        workstream = entry.get("workstream")
+        if not isinstance(workstream, str) or workstream in workstreams:
+            raise ValueError("Source workstreams must be unique and explicit")
+        workstreams.add(workstream)
         table[repo] = branch
     expected = {
         "SIGAAMDAD/TheNomad_GOAP": "main",
         "SIGAAMDAD/NomadFramework": "develop",
         "SIGAAMDAD/The_Nomad": "Nomad3D",
-        "SIGAAMDAD/Terrain3D": "Terrain3D_NomadRenderer"
+        "SIGAAMDAD/Terrain3D": "Terrain3D_NomadRenderer",
+        "SIGAAMDAD/NomadMain": "main"
     }
     if table != expected:
         raise ValueError("Source routes differ from approved owner selection")
+    approved_workstreams = {
+        "goap_core": "SIGAAMDAD/TheNomad_GOAP",
+        "framework_engine": "SIGAAMDAD/NomadFramework",
+        "core_gameplay": "SIGAAMDAD/The_Nomad",
+        "rendering_engine": "SIGAAMDAD/Terrain3D",
+        "mod_gameplay": "SIGAAMDAD/NomadMain",
+    }
+    if {entry["workstream"]: entry["repository"] for entry in entries} != approved_workstreams:
+        raise ValueError("Workstream ownership differs from approved owner graph")
     return table
 
 
@@ -65,6 +80,15 @@ def validate_source_job(job, routes, require_baseline=True):
         return "UNRECOGNIZED_SOURCE_REPOSITORY"
     if base != target:
         return "SOURCE_TARGET_BRANCH_MISMATCH"
+    workstream = job.get("workstream")
+    if not isinstance(workstream, str) or not workstream:
+        return "SOURCE_WORKSTREAM_REQUIRED"
+    reviewed_workstream = next((x["workstream"] for x in routes["source_routes"]
+                                if x["repository"] == repo), None)
+    if workstream != reviewed_workstream:
+        return "SOURCE_WORKSTREAM_REPOSITORY_MISMATCH"
+    if workstream == "mod_gameplay" and job.get("language") != "C#":
+        return "MOD_GAMEPLAY_REQUIRES_CSHARP"
     expect = expected_work_branch(job.get("id"))
     if expect is None or job.get("work_branch") != expect:
         return "SOURCE_WORK_BRANCH_MISMATCH"

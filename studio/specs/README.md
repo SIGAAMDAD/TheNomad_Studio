@@ -17,17 +17,25 @@ See `docs/PRODUCTION_PIPELINE.md` for complete flow.
 Studio is intake/control/QA only. An implementation or integration job
 must name a real allowed source repository and its exact owner-selected
 integration target branch. Required fields are:
-repository, branch (target), work_branch (studio/<JOB_ID> created in the
-same repository), baseline_sha (live pinned source SHA), owned_paths,
-protected_paths, QA role, frozen contract and acceptance tests.
+workstream (approved source responsibility), repository, branch (target),
+work_branch (studio/<JOB_ID> created in the same repository), baseline_sha
+(live pinned source SHA), owned_paths, protected_paths, QA role, frozen
+contract and acceptance tests. For mod_gameplay, language must be "C#".
 See studio/workforce/source_targets.v1.json for the current authorized
-mapping. GOAP source is SIGAAMDAD/TheNomad_GOAP:main; framework adapters
-belong to SIGAAMDAD/NomadFramework:develop; game integration belongs to
-SIGAAMDAD/The_Nomad:Nomad3D. Do not put native source in TheNomad_Studio
-or substitute another repository's default branch.
+mapping. Approved owner workstream graph:
+rendering_engine -> SIGAAMDAD/Terrain3D:Terrain3D_NomadRenderer;
+framework_engine -> SIGAAMDAD/NomadFramework:develop (logical main);
+core_gameplay -> SIGAAMDAD/The_Nomad:Nomad3D (not mod dependent);
+mod_gameplay -> SIGAAMDAD/NomadMain:main in C#;
+goap_core -> SIGAAMDAD/TheNomad_GOAP:main.
+Select by the work owned by the job, never by the worker's title alone.
+Do not put game source in TheNomad_Studio or substitute a GitHub default
+branch for an owner-selected development branch.
 
 The Studio runtime config currently needs GOAP/main added to its allowed
 source-repository list before code is made READY. Keep source-write and
 paid Work gates disabled until separately authorized. The job's source
 work branch and PR must live in the actual source repository. CI and
 source SHA must come from there; Studio stores receipts only.
+
+See `studio/workforce/SOURCE_REPOSITORIES.md` for the exact source ownership graph, example mod-specific C# source job, and cross-repository dependency requirements.
