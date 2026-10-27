@@ -4,15 +4,16 @@
     {
       "id": "S00",
       "role": "director",
-      "enabled": false,
+      "enabled": true,
       "job": null,
       "epoch": 0,
-      "schedule_minute": 0
+      "schedule_minute": 0,
+      "scheduled_task_id": "6adff2cd931481918a6884fad843ea84"
     },
     {
       "id": "S01",
       "role": "dynamic",
-      "enabled": false,
+      "enabled": true,
       "job": null,
       "epoch": 0,
       "schedule_minute": 6,
@@ -20,7 +21,8 @@
         "design",
         "docs",
         "analysis"
-      ]
+      ],
+      "scheduled_task_id": "6adfd282c3c88191a16f9d800833b773"
     },
     {
       "id": "S02",
@@ -33,7 +35,8 @@
         "design",
         "analysis",
         "docs"
-      ]
+      ],
+      "scheduled_task_id": "6adfd28bd8148191959b49b2be958e4b"
     },
     {
       "id": "S03",
@@ -46,7 +49,8 @@
         "writing",
         "docs",
         "design"
-      ]
+      ],
+      "scheduled_task_id": "6adf0a4e23c8819194ceb34d56d33851"
     },
     {
       "id": "S04",
@@ -59,7 +63,8 @@
         "writing",
         "docs",
         "design"
-      ]
+      ],
+      "scheduled_task_id": "6adfeb1bd6b8819189df8349fb7cee5b"
     },
     {
       "id": "S05",
@@ -72,7 +77,8 @@
         "art",
         "writing",
         "docs"
-      ]
+      ],
+      "scheduled_task_id": "6adf0a4166848191b474623ab692f6c6"
     },
     {
       "id": "S06",
@@ -85,7 +91,8 @@
         "analysis",
         "docs",
         "code"
-      ]
+      ],
+      "scheduled_task_id": "6adf0a756b788191b96b6863a415e1e0"
     },
     {
       "id": "S07",
@@ -98,19 +105,21 @@
         "code",
         "integration",
         "analysis"
-      ]
+      ],
+      "scheduled_task_id": "6adf182048e4819195ab250fa46b91ca"
     },
     {
       "id": "S08",
       "role": "dynamic",
-      "enabled": false,
+      "enabled": true,
       "job": null,
       "epoch": 0,
       "schedule_minute": 48,
       "capabilities": [
         "review",
         "analysis"
-      ]
+      ],
+      "scheduled_task_id": "6adf0a60a9d081919ecb520e0598c3f0"
     },
     {
       "id": "S09",
@@ -123,7 +132,8 @@
         "review",
         "analysis",
         "integration"
-      ]
+      ],
+      "scheduled_task_id": "6adf9581b12c819191ec861524be25aa"
     }
   ]
 }
