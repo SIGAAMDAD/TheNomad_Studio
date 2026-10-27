@@ -8,7 +8,7 @@
 - GitHub Actions is the deterministic broker, not an AI runner. Active/manual chats fetch the inbox when executing. Each logical CW worker is registered explicitly; a GitHub commit does not awaken an inactive chat.
 - Source execution W01–W05 targets the authorized *source repository*, not this Studio hub. Source merge requires a separately authenticated department head with exact-SHA QA/CI and Lead Director gates.
 - Worker-health auditor cross-checks STARTED/HEARTBEAT/YIELDED/SUBMITTED events against immutable per-response ledger attempts and flags missing checkpoints, overdue progress and unacknowledged handoffs.
-- Bootstrap authorization: source_writes_enabled=false; auto_ai_enabled=false; auto_dispatch_enabled=false. Existing runtime jobs and features are not erased by the V1 product version reset. Current live chat-worker registry is empty.
+- Live runtime gates: source_writes_enabled=false; auto_ai_enabled=false; auto_dispatch_enabled=true (owner-enabled non-spending pilot dispatch). Existing runtime jobs and features are not erased by the V1 product version reset. Current live chat-worker registry is empty.
 
 **Validation:** `python -m unittest discover -s tests -q`, `python scripts/studio.py validate`, `python scripts/production.py validate` and reviewed GitHub Actions checks. These prove code invariants; cross-chat runtime, Gmail delivery, source CI publisher credentials and head merge permissions need their own witnessed acceptance runs.
 
