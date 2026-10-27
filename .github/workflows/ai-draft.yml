@@ -1,0 +1,41 @@
+name: AI draft - manual opt-in only
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: "Existing approved non-code job ID"
+        required: true
+        type: string
+      model:
+        description: "Provider model ID (must be available to the API key)"
+        required: true
+        type: string
+        default: "gpt-5-mini"
+permissions:
+  contents: read
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: ai-spend-approved
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate inputs and policies
+        run: python scripts/studio.py validate
+      - name: Run one bounded model call
+        env:
+          JOB_ID: ${{ inputs.job_id }}
+          OPENAI_MODEL: ${{ inputs.model }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python scripts/ai_draft.py
+      - name: Upload draft for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-draft
+          path: ai-output/
+          retention-days: 7
