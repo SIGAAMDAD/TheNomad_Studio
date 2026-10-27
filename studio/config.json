@@ -9,20 +9,24 @@
   "source_registry": "https://docs.google.com/document/d/1HVUomdnsfZv0xb1sFvN1U-eXWpoMwKLVV3IlBBco1RQ/edit",
   "repos": [
     {
-      "repo": "SIGAAMDAD/TheNomad_GOAP",
+      "repo": "SIGAAMDAD/NomadFramework",
+      "branch": "develop"
+    },
+    {
+      "repo": "SIGAAMDAD/NomadMain",
       "branch": "main"
+    },
+    {
+      "repo": "SIGAAMDAD/Terrain3D",
+      "branch": "Terrain3D_NomadRenderer"
     },
     {
       "repo": "SIGAAMDAD/The_Nomad",
       "branch": "Nomad3D"
     },
     {
-      "repo": "SIGAAMDAD/NomadFramework",
-      "branch": "develop"
-    },
-    {
-      "repo": "SIGAAMDAD/Terrain3D",
-      "branch": "Terrain3D_NomadRenderer"
+      "repo": "SIGAAMDAD/TheNomad_GOAP",
+      "branch": "main"
     }
   ]
 }
