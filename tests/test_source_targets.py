@@ -150,6 +150,39 @@ class SourceTargetTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "CONTROL_REPOSITORY_FORBIDDEN"):
             production.build_jobs(feature, invalid, config, existing)
 
+    def test_production_admission_preserves_mod_language_and_owner_repo(self):
+        feature = {
+            "id": "FEATURE-6",
+            "issue_url": "https://github.com/SIGAAMDAD/TheNomad_Studio/issues/6"
+        }
+        mod = self.source_job(repo="SIGAAMDAD/NomadMain", target="main")
+        mod.update({
+            "id": "FEATURE-6-MOD-01", "work_branch": "studio/FEATURE-6-MOD-01",
+            "role": "rpg-gameplay-programmer",
+            "role_manual_uri": "skills://rpg-gameplay-programmer",
+            "brief": "Implement mod-dependent C# behavior",
+            "owned_paths": ["Source/Items"],
+            "acceptance": ["Build NomadMain.csproj and run behavior tests"],
+            "qa_role": "rpg-technical-qa-analyst"
+        })
+        spec = {"schema": 1, "feature_id": "FEATURE-6",
+                "source_issue": feature["issue_url"], "jobs": [mod]}
+        cfg = {"schema": 1, "source_writes_enabled": False}
+        out, _ = production.build_jobs(feature, spec, cfg, {"schema": 1, "jobs": []})
+        self.assertEqual(out[0]["state"], "BLOCKED")
+        self.assertEqual(out[0]["repository"], "SIGAAMDAD/NomadMain")
+        self.assertEqual(out[0]["workstream"], "mod_gameplay")
+        self.assertEqual(out[0]["language"], "C#")
+        bad = copy.deepcopy(spec)
+        bad["jobs"][0]["language"] = "C++17"
+        with self.assertRaisesRegex(ValueError, "MOD_GAMEPLAY_REQUIRES_CSHARP"):
+            production.build_jobs(feature, bad, cfg, {"schema": 1, "jobs": []})
+        wrong_owner = copy.deepcopy(spec)
+        wrong_owner["jobs"][0]["repository"] = "SIGAAMDAD/The_Nomad"
+        wrong_owner["jobs"][0]["branch"] = "Nomad3D"
+        with self.assertRaisesRegex(ValueError, "SOURCE_WORKSTREAM_REPOSITORY_MISMATCH"):
+            production.build_jobs(feature, wrong_owner, cfg, {"schema": 1, "jobs": []})
+
     def test_source_gate_validates_real_work_branch(self):
         config = {"schema": 1, "director_slot": "S00", "max_concurrent_writers": 2,
                   "max_reviewers": 1, "source_writes_enabled": False,
