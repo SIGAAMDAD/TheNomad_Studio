@@ -28,7 +28,11 @@ class SourceTargetTests(unittest.TestCase):
         return {"id": "FEATURE-6-G00", "kind": "code", "role": "rpg-ai-programmer",
                 "repository": repo, "branch": target,
                 "workstream": workstreams.get(repo), "language": "C#" if repo.endswith("/NomadMain") else "C++17",
-                "work_branch": "studio/FEATURE-6-G00", "baseline_sha": "a"*40}
+                "work_branch": "studio/FEATURE-6-G00", "baseline_sha": "a"*40,
+                "architecture_impact": "none",
+                "architecture_review": {"reviewer_role": "architecture_enforcer",
+                                        "reviewed_baseline_sha": "a"*40,
+                                        "verdict": "NO_CHANGE"}}
 
     def pr(self, job):
         repo = job["repository"]
