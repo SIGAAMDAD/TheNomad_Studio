@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "feature_id": "FEATURE-6",
+  "source_issue": "https://github.com/SIGAAMDAD/TheNomad_Studio/issues/6",
+  "jobs": [
+    {
+      "id": "FEATURE-6-G00-01",
+      "kind": "code",
+      "role": "rpg-ai-programmer",
+      "role_manual_uri": "skills://rpg-ai-programmer",
+      "brief": "Studio first controlled source-work pilot on owner-approved G00 FEAR behavior reference fixtures only. Inspect the pinned FEAR 1.08 gitlink without copying donor source, write machine-readable GOAP planning scenarios and source symbol map in authorized paths. Do not implement G02+ runtime or alter any ABI, memory, EASTL pin, CMake or framework integration.",
+      "priority": 0,
+      "repository": "SIGAAMDAD/TheNomad_GOAP",
+      "branch": "main",
+      "work_branch": "studio/FEATURE-6-G00-01",
+      "workstream": "goap_core",
+      "language": "C++17",
+      "baseline_sha": "258a2623aa5de9d422be02c59855861570ede4ac",
+      "architecture_impact": "none",
+      "owned_paths": [
+        "tests/reference",
+        "docs/source-map.md"
+      ],
+      "protected_paths": [
+        "CMakeLists.txt",
+        "cmake",
+        "deps",
+        "third_party/fear_sdk",
+        "tests/bootstrap_core.cpp",
+        "tests/bootstrap_shared.cpp",
+        "tests/dynamic_smoke.cpp",
+        "include",
+        "src"
+      ],
+      "source_refs": [
+        "https://github.com/SIGAAMDAD/TheNomad_GOAP/commit/258a2623aa5de9d422be02c59855861570ede4ac",
+        "https://github.com/SIGAAMDAD/TheNomad_GOAP/actions/runs/40474509032",
+        "https://github.com/SIGAAMDAD/TheNomad_Studio/issues/6"
+      ],
+      "acceptance": [
+        "Record exact baseline, FEAR reference gitlink SHA and provenance; do not copy donor source into the standalone implementation.",
+        "Produce machine-readable G00 reference cases covering one-step, chained, conflicting preconditions, impossible goals, repeated actions, bindings and plan replay, including explicit assumptions and expected validity.",
+        "Add source symbol mapping and structural validation tests; report NOT_RUN for behavioral assertions requiring the unimplemented solver.",
+        "Commit only owned test/reference and documentation paths to source branch studio/FEATURE-6-G00-01, with exact SHA, source PR, CI evidence and Drive receipt.",
+        "Preserve the owner-frozen architecture and request a source-repo architecture proposal rather than inventing new GOAP interfaces."
+      ],
+      "qa_role": "rpg-technical-qa-analyst",
+      "qa_manual_uri": "skills://rpg-technical-qa-analyst"
+    }
+  ]
+}
