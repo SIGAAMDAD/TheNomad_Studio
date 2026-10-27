@@ -22,7 +22,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Preserve reviewed controller
-        run: cp scripts/studio.py "$RUNNER_TEMP/studio_controller.py"
+        run: |
+          mkdir -p "$RUNNER_TEMP/nomad_scripts"
+          cp scripts/studio.py scripts/production.py scripts/github_api.py "$RUNNER_TEMP/nomad_scripts/"
       - name: Checkout dedicated runtime branch
         shell: bash
         run: |
@@ -32,25 +34,31 @@ jobs:
           else
             git switch -c studio/runtime
           fi
-      - name: Validate, apply receipts, and reserve eligible work
+      - name: Validate, apply receipts, reconcile reviews and reserve eligible work
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PYTHONPATH: ${{ runner.temp }}/nomad_scripts
         run: |
-          python "$RUNNER_TEMP/studio_controller.py" --root "$GITHUB_WORKSPACE" validate
-          python "$RUNNER_TEMP/studio_controller.py" --root "$GITHUB_WORKSPACE" process --write > receipt-results.json
-          python "$RUNNER_TEMP/studio_controller.py" --root "$GITHUB_WORKSPACE" dispatch --write > dispatch-results.json
-          python "$RUNNER_TEMP/studio_controller.py" --root "$GITHUB_WORKSPACE" validate
+          python "$RUNNER_TEMP/nomad_scripts/studio.py" --root "$GITHUB_WORKSPACE" validate
+          python "$RUNNER_TEMP/nomad_scripts/studio.py" --root "$GITHUB_WORKSPACE" process --write > receipt-results.json
+          python "$RUNNER_TEMP/nomad_scripts/production.py" adjudicate --root "$GITHUB_WORKSPACE" --write > review-results.json
+          python "$RUNNER_TEMP/nomad_scripts/production.py" status --root "$GITHUB_WORKSPACE" --write > feature-results.json
+          python "$RUNNER_TEMP/nomad_scripts/studio.py" --root "$GITHUB_WORKSPACE" dispatch --write > dispatch-results.json
+          python "$RUNNER_TEMP/nomad_scripts/studio.py" --root "$GITHUB_WORKSPACE" validate
           cat receipt-results.json
+          cat review-results.json
           cat dispatch-results.json
       - name: Commit only runtime state to runtime branch
         shell: bash
         run: |
           git config user.name 'nomad-studio-controller[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add studio/jobs.json studio/slots.json
+          git add studio/jobs.json studio/slots.json studio/features.json
           if ! git diff --cached --quiet; then
             git commit -m "studio(runtime): reconcile receipts and reservations"
+            git push origin HEAD:refs/heads/studio/runtime
           fi
-          git push origin HEAD:refs/heads/studio/runtime
       - name: Upload exact hourly decision receipts
         if: always()
         uses: actions/upload-artifact@v4
@@ -58,6 +66,8 @@ jobs:
           name: studio-reconcile-${{ github.run_id }}
           path: |
             receipt-results.json
+            review-results.json
+            feature-results.json
             dispatch-results.json
           if-no-files-found: ignore
           retention-days: 7
