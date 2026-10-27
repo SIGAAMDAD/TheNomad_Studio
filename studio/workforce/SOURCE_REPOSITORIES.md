@@ -132,6 +132,19 @@ separate downstream integration jobs only where explicit dependencies
 exist. The arrows above are an *example*, not permission to move
 code or create any implicit feature dependencies.
 
+## Architecture-change ownership
+
+An implementation that needs an architectural change cannot silently
+cross repositories or modify approved interfaces. S00 invokes the
+Architecture Enforcer and creates a contributor-style **architecture
+proposal PR in the repository that owns the affected contract**, using
+`studio/arch/<JOB_ID>` as its dedicated proposal branch.
+For example, a new reusable GOAP predicate belongs in TheNomad_GOAP,
+not the Zurgut Hulk's NomadMain feature branch. No source implementation
+resumes until the human owner has explicitly accepted the exact source
+PR revision through a verified GitHub owner review and merge. See
+`studio/workforce/ARCHITECTURE_ENFORCER.md`.
+
 ## Current safety and activation state
 
 - The reviewed `main` controller allowlist can name all five
