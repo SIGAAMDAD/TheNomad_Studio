@@ -75,6 +75,11 @@
       "schedule_minute": 30,
       "capabilities": [
         "art",
+        "animation",
+        "audio",
+        "vfx",
+        "ui",
+        "cinematic",
         "writing",
         "docs"
       ],
