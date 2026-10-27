@@ -1,0 +1,161 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T210237010Z-shift-efficiency-audit",
+  "recorded_at_utc": "2026-10-27T21:02:37.010Z",
+  "request_id": "CHAT-20261027-project-shift-efficiency-audit",
+  "department_id": "production",
+  "role_id": "rpg-autonomous-workgroup-controller",
+  "mode": "interactive",
+  "event_type": "AUDIT_RECORDED",
+  "status": "SUBMITTED",
+  "summary": "Source-grounded V1.5 audit of repeated per-attempt startup work and Studio-wide quality/security/throughput risks. Proposed versioned per-job resume capsules, repo-level source map, one shift preflight, change-delta retrieval, canonical attempt receipt with derived projections, selective QA packets, per-path lease scheduling, and measured worker utilization. Live main evolved to include merged PR29 reconciliation import fix, but successful subsequent scheduled execution not verified. Found latent studio.py:record config NameError on valid code SUBMITTED path, ACK projector lacking recipient epoch binding, serialized comms Actions queue, full-history inbox replay, limited S slots vs 1024 CW registry, and no independently authenticated executions/shift controller. No source code, PRs or permissions changed.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T210237010Z-shift-efficiency-audit",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "P0-controller-restore",
+      "description": "Verify post-merge PR29 scheduled reconcile; add run-level watchdog and error-budget alert if no successful pulse/reconcile",
+      "state": "OPEN"
+    },
+    {
+      "id": "P0-record-config",
+      "description": "Fix studio.py record signature and all callers to receive config; add positive valid source SUBMITTED path regression when gate true and negative gate-false path",
+      "state": "OPEN"
+    },
+    {
+      "id": "P0-epoch-ack",
+      "description": "Bind ACK delivery effects to event recipient and original recipient assignment_epoch; test stale ACK and reassignment replay",
+      "state": "OPEN"
+    },
+    {
+      "id": "P0-chat-dispatch",
+      "description": "Separate 10 S scheduled slots from 1024 logical CW workers in an authorized deterministic shift dispatcher; maintain owner approvals and source gates",
+      "state": "OPEN"
+    },
+    {
+      "id": "P1-capsule",
+      "description": "Design self-contained per-job immutable Resume Capsule at exact source SHA with bounded role/context manifest, checkpoint, TODO, blockers, test targets and inbox cursor",
+      "state": "OPEN"
+    },
+    {
+      "id": "P1-bootstrap",
+      "description": "Build versioned project source-map/test/toolchain manifest once per source revision; worker attempt gets delta since last verified checkpoint rather than full rediscovery",
+      "state": "OPEN"
+    },
+    {
+      "id": "P1-journal",
+      "description": "Introduce durable cursor-based microbatch ingestion and incremental per-worker/project inbox projections; remove O(all archive) replay and singleton Actions hot path",
+      "state": "OPEN"
+    },
+    {
+      "id": "P1-receipt",
+      "description": "Generate V4 ledger and operational notifications/report metrics from one canonical attempt receipt without weakening per-response evidence or independent verification",
+      "state": "OPEN"
+    },
+    {
+      "id": "P1-credentials",
+      "description": "Provision independently authenticated role identities and enforce source path lease fencing before privileged multi-writer execution",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "P2-ci-evidence",
+      "description": "Prioritize cheap CI, produce exact-SHA targeted changed-symbol AST/SARIF review packets, require independent QA on final artifact bytes",
+      "state": "OPEN"
+    },
+    {
+      "id": "P2-metrics",
+      "description": "Measure context-load tokens/time per attempt, retries, git/API rate cost, QA/review wait, blocked idle, work per verified attempt and per-department queue age",
+      "state": "OPEN"
+    },
+    {
+      "id": "P2-pilot",
+      "description": "Complete genuine 2-worker end-to-end pilot before 25/100/500 workers; synthetic fixtures alone are not production capacity evidence",
+      "state": "BLOCKED"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "controller_source",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/scripts/studio.py",
+      "revision": "505d8e59003e5d5c938c46bc056370ca2a2802fa",
+      "verified": true
+    },
+    {
+      "kind": "inbox_source",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/scripts/studio_inbox.py",
+      "revision": "505d8e59003e5d5c938c46bc056370ca2a2802fa",
+      "verified": true
+    },
+    {
+      "kind": "v15_kernel",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/studio/v1/PROMPT_KERNEL_V15.md",
+      "revision": "505d8e59003e5d5c938c46bc056370ca2a2802fa",
+      "verified": true
+    },
+    {
+      "kind": "failed_scheduled_run",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40579563334",
+      "revision": "755740cb46b1ea281876c9eeb7ba17385c4e2908",
+      "verified": true
+    },
+    {
+      "kind": "merged_fix_pr",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/29",
+      "revision": "6f44b90f0c0cb7b6737503b1756f959461b0be0d",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "GitHub main and runtime config, worker registry, active PRs, Actions inventory and source contracts inspected",
+      "status": "PASS"
+    },
+    {
+      "name": "Scheduled reconciliation failure logs inspected (ModuleNotFoundError: source_targets)",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40579563334"
+    },
+    {
+      "name": "PR29 merged readback",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/29"
+    },
+    {
+      "name": "Scheduled run after PR29 merge",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Controller valid source-submission NameError runtime reproduction",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "ACK epoch replay negative test",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "100+ real simultaneous ChatGPT worker throughput",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Actual nightly Director pulse and first scheduled Gmail sent ID",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Approve a bounded P0 correctness test/repair batch after fresh main readback, including controller valid-submission and epoch-ACK fixtures?",
+      "status": "REQUESTED"
+    },
+    {
+      "question": "Prioritize deterministic per-project Resume Capsules and single-source attempt receipts as the next efficiency-focused Studio migration?",
+      "status": "REQUESTED"
+    },
+    {
+      "question": "Select GitHub-only microbatch pilot versus separate durable queue architecture after evidence of real ingress cost?",
+      "status": "REQUESTED"
+    }
+  ]
+}
