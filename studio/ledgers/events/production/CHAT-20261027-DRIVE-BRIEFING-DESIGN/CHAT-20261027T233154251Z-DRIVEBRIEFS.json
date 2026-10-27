@@ -1,0 +1,55 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T233154251Z-DRIVEBRIEFS",
+  "recorded_at_utc": "2026-10-27T23:31:54.251Z",
+  "request_id": "CHAT-20261027-DRIVE-BRIEFING-DESIGN",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Proposed Google Drive as authoritative long-form briefing and content store, one authenticated document writer/lease and many readers. PostgreSQL routes compact pointers and change notifications, while GitHub carries code and immutable evidence. Propose revision guard, accepted immutable snapshot hashes, section-level cached reads, reassignable writer epoch, per-document ACL and integration into V1.6 existing workgroups. Planning only, no document/permission/system configuration changes.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T233154251Z-DRIVEBRIEFS",
+  "todo": [
+    {
+      "id": "DRIVE-DOC-CONTRACT",
+      "description": "Freeze one-writer/many-reader Google Docs document publication, ownership and revision contract with WG-A",
+      "state": "OPEN"
+    },
+    {
+      "id": "DRIVE-DOC-REGISTRY",
+      "description": "Add document IDs, scoped ACLs, assigned writer, writer epoch, review status, immutable snapshot hash and reader cache/cursor metadata to PostgreSQL in WG-C",
+      "state": "OPEN"
+    },
+    {
+      "id": "DRIVE-DOC-ADAPTER",
+      "description": "Add revision-guarded writer, section-aware reader and immutable accepted snapshot publishing in WG-G",
+      "state": "OPEN"
+    },
+    {
+      "id": "DRIVE-DOC-CACHE",
+      "description": "Load only relevant changed document sections to minimize worker tokens and reads in WG-F",
+      "state": "OPEN"
+    },
+    {
+      "id": "DRIVE-DOC-TESTS",
+      "description": "Test stale document writer, unauthorized edit, review revision drift, multiple readers and short/long content publication in WG-H",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "Reviewed Google Docs official revision-guard semantics",
+      "status": "PASS"
+    },
+    {
+      "name": "Document publication protocol implementation",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
