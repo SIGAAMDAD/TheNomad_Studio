@@ -5,6 +5,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
 import studio
@@ -18,6 +19,10 @@ def fixture():
     config = studio.read(ROOT, "config.json")
     config["auto_dispatch_enabled"] = True
     for w in slots["slots"]:
+        # The checked-out tree may be the live studio/runtime branch.
+        # Unit tests must never inherit an actual worker claim or epoch.
+        w["job"] = None
+        w["epoch"] = 0
         w["enabled"] = w["id"] != "S00"
     return jobs, slots, config
 
@@ -30,6 +35,27 @@ def job(jid, kind="design", paths=None, deps=None, state="READY", priority=10):
 
 
 class StudioTests(unittest.TestCase):
+    def test_fixture_discards_real_runtime_assignment(self):
+        # Reproduce the S01 -> OPS-BOOT-001 reservation from the failed
+        # runtime-branch Actions job without modifying the actual queue.
+        recorded_slots = studio.read(ROOT, "slots.json")
+        recorded_slots["slots"][1]["job"] = "OPS-BOOT-001"
+        recorded_slots["slots"][1]["epoch"] = 7
+        original_read = studio.read
+
+        def simulated_runtime_read(root, filename):
+            if filename == "slots.json":
+                return copy.deepcopy(recorded_slots)
+            return original_read(root, filename)
+
+        with mock.patch.object(studio, "read", side_effect=simulated_runtime_read):
+            jobs, slots, config = fixture()
+        self.assertIsNone(slots["slots"][1]["job"])
+        self.assertEqual(slots["slots"][1]["epoch"], 0)
+        self.assertEqual(studio.validate(jobs, slots, config), [])
+        jobs["jobs"].append(job("DES-101"))
+        self.assertEqual(studio.dispatch(jobs, slots, config)[0]["job"], "DES-101")
+
     def test_clean_bootstrap_validates(self):
         jobs, slots, config = fixture()
         self.assertEqual(studio.validate(jobs, slots, config), [])
