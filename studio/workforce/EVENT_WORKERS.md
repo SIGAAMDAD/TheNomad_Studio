@@ -25,6 +25,13 @@ HUMAN OWNER
 The original 174 role manuals remain authoritative; W lanes are execution
 functions, not additional professional disciplines or permanent assistants.
 
+All engineering jobs must pin repository, target branch, work branch and a
+verified baseline SHA in the actual source repository. Every W01–W05
+worker must clone/pull/push against that exact source repo, not the Studio
+hub. The Studio receives only job status and immutable commit/QA receipts.
+A source-work order PR is created in the source repo before a native PR
+event can activate an implementation worker.
+
 ## Live task capacity proposal, NOT applied
 
 Five active scheduled chat slots: S00, S01, S03, S04 and S08.
@@ -95,10 +102,20 @@ GitHub Actions can independently process Issues, PRs, CI and GitHub labels.
 The reviewed Studio PR router is non-spending. It emits routing evidence
 for Studio-repository PR events but does not launch AI.
 
-The Work subscriptions should monitor authorized pull request activity in:
-SIGAAMDAD/NomadFramework, SIGAAMDAD/The_Nomad, TheNomad_Studio, as permitted
-in each subscription's UI. Events in other repositories are not magically
-forwarded by the Studio workflow.
+The Work subscriptions must monitor pull-request activity in the ACTUAL
+source repository for their assigned job, not the Studio controller:
+SIGAAMDAD/TheNomad_GOAP:main (GOAP), SIGAAMDAD/NomadFramework:develop
+(framework), SIGAAMDAD/The_Nomad:Nomad3D (game), and
+SIGAAMDAD/Terrain3D:Terrain3D_NomadRenderer (terrain).
+Each source job uses its own studio/<JOB_ID> work branch IN THAT REPO.
+TheNomad_Studio is a control-plane hub for manifests and receipts only.
+Never commit real game/GOAP/GDExtension/Terrain code to the Studio hub.
+Do not assume the native Work UI can subscribe to multiple repositories
+in one task; reconfigure or separately authorize when changing systems.
+See studio/workforce/SOURCE_REPOSITORIES.md and source_targets.v1.json.
+The Studio PR routing GitHub Action by itself cannot observe source PR
+events in other repositories; native Work must watch the source repo or
+an owner-authorized cross-repo bridge must be installed.
 
 Routing labels: studio:work:alpha (W01), studio:work:implement (W02),
 studio:work:debug (W03), studio:work:integrate (W04), studio:work:qa (W05),
@@ -199,8 +216,10 @@ python -m unittest discover -s tests -v
 Read-only PR event audit workflow:
 .github/workflows/studio-event-route.yml
 
-After owner review, separately configure the five Work subscriptions in
-Work mode and explicitly approve a credit budget. Verify event triggers
+After owner review, separately configure the five Work subscriptions
+in Work mode against the current ACTUAL source repository and explicitly
+approve a credit budget. For GOAP use SIGAAMDAD/TheNomad_GOAP, never
+SIGAAMDAD/TheNomad_Studio as the code worker PR trigger. Verify event triggers
 and model selection in Scheduled. Run a non-spending PR routing pilot,
 then a single owner-authorized junior Luna code pilot, followed by CI,
 senior integration and independent QA. Record actual credit cost, rework
