@@ -1,131 +1,147 @@
-# Source repository ownership contract (Studio V2)
+# Source repository ownership graph — Studio V3
 
-STATUS: REVIEW DRAFT. No paid workers, source writes, or cross-repo Work triggers activated.
-Authoritative registry: studio/workforce/source_targets.v1.json
+STATUS: OWNER-DEFINED ROUTING DRAFT. No paid workers or source writes activated.
+Authoritative structured map: `studio/workforce/source_targets.v1.json`.
 
-## Control plane versus source plane
+## Control plane and real source repositories
 
-SIGAAMDAD/TheNomad_Studio is a control-plane repository only. It may hold
-approved work manifests, controller code, worker policies, routing rules,
-immutable evidence pointers, QA reports and job receipts. No GOAP DLL source,
-game code, GDExtension implementation, terrain source or raw code snapshot
-belongs in the Studio repository. Controller maintenance PRs are allowed
-because that is Studio infrastructure rather than game implementation.
+`SIGAAMDAD/TheNomad_Studio` is the production HUB. It owns intake, source
+ownership records, role assignments, review and CI coordination, reporting,
+authorizations, immutable Git references and receipts. It is NOT the source
+repository for gameplay, rendering, framework, mods or GOAP implementation.
 
-Verified source repository and integration branch selections:
-- GOAP source: SIGAAMDAD/TheNomad_GOAP — target main.
-- Framework/GDExtension: SIGAAMDAD/NomadFramework — target develop.
-- Active game: SIGAAMDAD/The_Nomad — target Nomad3D.
-- Terrain fork: SIGAAMDAD/Terrain3D — target Terrain3D_NomadRenderer.
+The owner's five current source routes are:
 
-Do not default The_Nomad or Terrain3D work to main. No code may be written
-in TheNomad_Studio for any of these source components.
+| Workstream | Source repository | Canonical development target | Language |
+| --- | --- | --- | --- |
+| `rendering_engine` | `SIGAAMDAD/Terrain3D` | `Terrain3D_NomadRenderer` | Approved per-job |
+| `framework_engine` | `SIGAAMDAD/NomadFramework` | `develop` | Approved per-job |
+| `core_gameplay` | `SIGAAMDAD/The_Nomad` | `Nomad3D` | Approved per-job |
+| `mod_gameplay` | `SIGAAMDAD/NomadMain` | `main` | **C#** |
+| `goap_core` | `SIGAAMDAD/TheNomad_GOAP` | `main` | C++17 / approved interop |
 
-TheNomad_GOAP currently has only README.md and LICENSE on main. Its
-inspected head is 5258a0a05d4240cc772c225bdb1868c652b7a052.
-This is source provenance only, NOT an owner-accepted compile/source freeze.
-Its main branch was unprotected when inspected; configure PR-only source
-merges and required CI checks before unattended source edits.
+The `NomadFramework/develop` branch is the *logical main development
+branch* for framework engine programming, even though GitHub's configured
+repository default branch may be `main`. Do not substitute the default.
 
-## Required source job fields
+`NomadMain` is a separate private repository. The `main` branch contains
+`NomadMain.csproj` and C# gameplay source under `Source/`.
+Its repository and branch were verified at intake. Keep mod-dependent
+gameplay implementations and associated feature changes there, rather
+than in the reusable core-gameplay repository.
 
-EXAMPLE ONLY (not an admitted production job):
+Rendering-engine programming belongs in the Terrain3D fork's active
+`Terrain3D_NomadRenderer` branch. Framework-engine development belongs
+in `NomadFramework/develop`. Gameplay code with reusable/non-mod-specific
+ownership belongs in `The_Nomad/Nomad3D`. Mod-specific code belongs in
+`NomadMain/main` and is authored in C#. GOAP remains a standalone library
+in `TheNomad_GOAP/main`.
 
-    {
-      "id": "FEATURE-6-G00",
-      "kind": "code",
-      "role": "rpg-ai-programmer",
-      "repository": "SIGAAMDAD/TheNomad_GOAP",
-      "branch": "main",
-      "work_branch": "studio/FEATURE-6-G00",
-      "baseline_sha": "<PIN_EXACT_VERIFIED_SOURCE_SHA>",
-      "owned_paths": ["include", "src", "tests"]
-    }
+**Worker role alone does not determine source ownership.** A gameplay
+programmer may be assigned either `core_gameplay` or `mod_gameplay`.
+S00 must select an explicit workstream in the *owner-approved job spec*;
+the same worker's GitHub repository access then follows that job.
+No heuristic based on role name, default branch or file suffix is allowed.
 
-Branch means integration BASE, work_branch means the exclusive writable
-branch inside the SAME source repository. Source baseline SHA must be
-retrieved and verified at job intake; never copy an old SHA from planning.
-No unapproved fork, default-branch fallback or cross-repo source push.
+## Exact source job contract
 
-## Worker clone, commit and push sequence
+Example only, not admitted source work:
 
-1. Read the owner-approved Studio job, exact repo, target branch, pinned
-   source SHA, writable paths, source freeze and exclusive writer lease.
-2. Authenticate and clone the source repository from the job record.
-3. Fetch and verify exact target SHA; verify branch ancestry and source
-   lock, not merely the branch name.
-4. Create work_branch studio/<JOB_ID> from approved SHA, or resume that
-   exact existing work branch and checkpoint after a fenced handoff.
-5. Commit implementation and tests only into work_branch IN SOURCE REPO.
-6. Push only the work branch to origin IN SOURCE REPO. Never push to main,
-   Nomad3D, develop, Terrain3D_NomadRenderer or a Studio hub code branch.
-7. Open/update PR in same source repo, head=work_branch, base=job.branch.
-   Include one PR body line: Studio-Job: <JOB_ID>.
-8. CI runs against source commit in source repo. Studio stores SHA, URL,
-   tested results, failure fingerprints and Drive handoff; never code.
-9. W02 Terra can complete the feature on the same job branch after a safe
-   lease handoff. W03 Sol debugging owns exact defect repair; W04 Sol
-   integration owns separate approved integration jobs/branches; W05 Sol
-   independently reviews the final SHA without touching source.
-10. Owner reviews and merges accepted PR IN THE SOURCE REPOSITORY.
+```json
+{
+  "id": "FEATURE-100-MOD-01",
+  "kind": "code",
+  "role": "rpg-gameplay-programmer",
+  "workstream": "mod_gameplay",
+  "language": "C#",
+  "repository": "SIGAAMDAD/NomadMain",
+  "branch": "main",
+  "work_branch": "studio/FEATURE-100-MOD-01",
+  "baseline_sha": "<VERIFY_REAL_SOURCE_SHA_BEFORE_JOB>",
+  "owned_paths": ["Source/Items"],
+  "acceptance": ["Compile NomadMain.csproj and run the specific behavior tests"]
+}
+```
 
-Illustrative GOAP bootstrap, NOT to execute before source freeze:
+The `workstream` and `repository` must agree with the reviewed
+source_targets registry. `mod_gameplay` additionally requires
+`language: "C#"`. Missing or mismatched workstream, branch,
+work branch or language makes an engineering job invalid.
+`baseline_sha` must be read from the actual source branch and
+verified at job admission; observed SHAs in the registry are not
+automatically frozen baselines.
 
-    git clone https://github.com/SIGAAMDAD/TheNomad_GOAP.git
-    cd TheNomad_GOAP
-    git fetch origin main
-    git switch -c studio/FEATURE-6-G00 <PINNED_GOAP_SHA>
-    # Edit only approved paths and run actual build/tests
-    git add <OWNED_PATHS>
-    git commit -m "feat(goap): initial implementation for FEATURE-6-G00"
-    git push -u origin studio/FEATURE-6-G00
+## Worker pull, commit, push and source PR rules
 
-Do not re-create/reset an existing work branch or force-push. A worker
-continuing an interrupted job must verify that its prior owner is done
-or fenced and resume the same branch/PR from the verified checkpoint.
+1. S00 admits an owner-approved scoped job with exact source repository,
+   workstream, branch, baseline SHA, authorized paths and exclusivity.
+2. W01–W04 fetch from THAT source repository. The work branch is
+   `studio/<JOB_ID>` **inside that same source repository**.
+3. The worker modifies only approved paths, commits/pushes only its
+   work branch and opens/updates a source PR with base equal to the
+   canonical development target. It must never push to source
+   integration branches directly.
+4. Source CI tests the exact source commit. Studio stores immutable
+   source commit SHA, PR URL, CI run, Drive completion report and QA
+   receipt. Studio receives no implementation source.
+5. W02 can continue W01's branch after an exclusive-lease handoff;
+   W03 performs difficult debugging; W04 integrates independently
+   verified systems under a separate integration job; W05 reviews
+   the exact source revision without editing it.
+6. Only the owner accepts and merges changes **inside the source repo**.
 
-## Correct event triggers
+If a job crosses source boundaries, it must be split into child jobs
+with separately pinned baselines, paths, reviews and explicit
+dependencies. Never push or cherry-pick one repo's code into another
+as an automatic substitute for a planned adapter.
 
-Work native PR tasks must subscribe to the *actual source repository*,
-e.g. SIGAAMDAD/TheNomad_GOAP for GOAP. They should not subscribe to
-TheNomad_Studio and accidentally operate on its controller PRs.
-A Work task must read the authoritative Studio runtime job on every event,
-verify real owner approval, source SHA, source repo, work branch, CI status,
-lease, source-write and spending gates.
+For a new, authorized NomadMain C# job, the source Git flow is:
 
-The Studio repository's own PR GitHub Action is only a read-only audit.
-It cannot observe a GOAP PR unless the event is explicitly delivered by
-an authorized cross-repository mechanism. Do not pretend labels in Studio
-automatically trigger Work in another repo.
+```bash
+git clone https://github.com/SIGAAMDAD/NomadMain.git
+cd NomadMain
+git fetch origin main
+git switch -c studio/FEATURE-100-MOD-01 <PINNED_MAIN_SHA>
+# Edit only approved mod-specific C# paths, compile and test
+git add Source/Items
+git commit -m "feat(mod): approved mod behavior - FEATURE-100-MOD-01"
+git push -u origin studio/FEATURE-100-MOD-01
+```
 
-For a NEW job before source PR exists, S00 must create a bounded source
-work-order PR in the SOURCE repository (or owner manually creates one).
-The bootstrap PR artifact, if necessary, stays IN THE SOURCE repository and
-only points to the Studio job. Alternatively use a supported Work event
-that genuinely exists for that source repo. Never stage implementation
-source in Studio as a trigger workaround.
+This is illustrative only. Do not create/reset or force-push a work
+branch without the source baseline, owner approval and source-write gate.
 
-## GOAP dependency path
+## Production dependencies
 
-1. TheNomad_GOAP:main — standalone library, cooker, schemas, managed
-   contracts, deterministic tests and build.
-2. NomadFramework:develop — independent adapter integration, consuming
-   exact verified GOAP revision; version/submodule linkage requires an
-   approved design choice.
-3. The_Nomad:Nomad3D — game-specific GOAP agents/Sortior Blader integration.
+The Director records a dependency graph **per feature**, not a
+globally assumed chain. For example a GOAP feature might contain:
 
-Each downstream job is separate, pinned to a distinct actual repository,
-branch and commit. No game code is moved into Studio. The Sortior Blader
-design document can be drafted earlier without manufacturing runtime code.
+```text
+TheNomad_GOAP/main   (standalone library)
+       |
+       v
+NomadFramework/develop   (framework integration where needed)
+       |
+       +------> The_Nomad/Nomad3D   (non-mod-dependent integration)
+       |
+       +------> NomadMain/main      (mod-specific C# behaviors when needed)
+```
 
-## Validation and outstanding gates
+Rendering changes run in Terrain3D/Terrain3D_NomadRenderer, with
+separate downstream integration jobs only where explicit dependencies
+exist. The arrows above are an *example*, not permission to move
+code or create any implicit feature dependencies.
 
-- source_targets.py verifies exact allowed repo/base and work_branch.
-- production.py refuses wrong-repo source specs during admission.
-- studio.py refuses active source jobs routed to Studio or bad branches.
-- work_event_router.py rejects wrong source PR base/head/fork.
-- The live runtime allowlist currently lacks TheNomad_GOAP/main, and needs
-  a separately reviewed configuration update. Existing source_writes_enabled
-  and auto_ai_enabled switches remain FALSE until source and owner gates.
-- Source baseline and build evidence have not been accepted. No Work
-  subscription or push permission is activated by this document.
+## Current safety and activation state
+
+- The reviewed `main` controller allowlist can name all five
+  source targets. `studio/runtime/studio/config.json` must be
+  reconciled separately; do not treat this draft as live dispatch.
+- `source_writes_enabled=false` and `auto_ai_enabled=false`
+  remain in effect. Work spending/credentials are separately gated.
+- S00 must acquire source baselines and actual build evidence before
+  admitting source jobs. The canonical source registry is not frozen.
+- Native Work event triggers must subscribe to PR activity in the
+  actual source repository, not in TheNomad_Studio. The Studio PR
+  routing GitHub Action is only a read-only control-plane audit.
+- The source-repo-specific commit/QA/owner-merge gates remain binding.
