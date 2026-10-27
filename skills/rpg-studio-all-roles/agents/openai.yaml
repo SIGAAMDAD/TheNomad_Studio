@@ -1,0 +1,12 @@
+interface:
+  display_name: RPG Studio - All 174 Roles
+  short_description: Select and execute all 174 specialist RPG production workflows
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
