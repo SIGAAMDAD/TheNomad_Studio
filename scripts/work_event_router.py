@@ -27,7 +27,7 @@ def validate_hierarchy(policy):
     if policy.get("schema_version") != 2:
         errors.append("schema_version must be 2")
     profiles = policy.get("profiles", {})
-    if set(profiles) != {"W01", "W02", "W03", "W04", "W05"}:
+    if set(profiles) != {"W01", "W02", "W03", "W04", "W05", "W06"}:
         errors.append("expected exactly W01..W05 Work profiles")
     if any(p.get("model") == "GPT-6 Astra" for p in profiles.values()):
         errors.append("Astra cannot be a default profile")
@@ -69,7 +69,7 @@ def validate_hierarchy(policy):
                 break
             cursor = parent
     stages = policy.get("stages", [])
-    if {s.get("id") for s in stages} != {"alpha", "debug", "integrate", "qa", "escalate"}:
+    if {s.get("id") for s in stages} != {"alpha", "implement", "debug", "integrate", "qa", "escalate"}:
         errors.append("all five stages are required")
     if any(s.get("profile") not in profiles for s in stages):
         errors.append("stage references unknown profile")
@@ -148,13 +148,13 @@ def route_event(event, policy, runtime_jobs=None, config=None):
     elif job.get("repository") != repo:
         result.update({"status": "BLOCKED", "reason": "SOURCE_REPOSITORY_MISMATCH"})
         return result
-    if stage["id"] == "alpha" and job.get("kind") != "code":
-        result.update({"status": "BLOCKED", "reason": "ALPHA_REQUIRES_CODE_JOB"})
+    if stage["id"] in {"alpha", "implement"} and job.get("kind") != "code":
+        result.update({"status": "BLOCKED", "reason": "IMPLEMENTATION_REQUIRES_CODE_JOB"})
         return result
     if stage["id"] == "integrate" and job.get("kind") != "integration":
         result.update({"status": "BLOCKED", "reason": "INTEGRATION_REQUIRES_OWN_JOB"})
         return result
-    if stage["id"] in {"alpha", "debug", "integrate", "escalate"}:
+    if stage["id"] in {"alpha", "implement", "debug", "integrate", "escalate"}:
         if job.get("kind") not in {"code", "integration"}:
             result.update({"status": "BLOCKED", "reason": "SOURCE_JOB_REQUIRED"})
             return result
@@ -167,6 +167,13 @@ def route_event(event, policy, runtime_jobs=None, config=None):
             return result
         if not role.get("luna_bounded_alpha") and "studio:scope:boilerplate" not in labels:
             result.update({"status": "BLOCKED", "reason": "HIGH_RISK_ALPHA_REQUIRES_BOILERPLATE_SCOPE"})
+            return result
+    if stage["id"] == "implement":
+        if job.get("kind") != "code" or role.get("department") != "Engineering":
+            result.update({"status": "BLOCKED", "reason": "MIDLEVEL_IMPLEMENTATION_REQUIRES_ENGINEERING_CODE_JOB"})
+            return result
+        if not role.get("luna_bounded_alpha") and "studio:scope:boilerplate" not in labels:
+            result.update({"status": "BLOCKED", "reason": "HIGH_RISK_IMPLEMENTATION_REQUIRES_SENIOR"})
             return result
     if stage["id"] == "debug" and "studio:evidence:ci-failed" not in labels:
         result.update({"status": "BLOCKED", "reason": "VERIFIED_FAILURE_EVIDENCE_REQUIRED"})
