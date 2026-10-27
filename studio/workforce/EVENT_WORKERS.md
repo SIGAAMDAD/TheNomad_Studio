@@ -49,6 +49,26 @@ proposal to fit ten active identities and is not implemented in Scheduled.
 Actual plan capacity, subscription conditions and model picker must be read
 back before enabling paid events.
 
+## Mandatory Architecture Enforcer
+
+Every engineering job declares architecture_impact (none/change) and
+requires an Architecture Enforcer review against its frozen source baseline.
+Architecture Enforcer is a duty in the existing S00/W05 workflow, not an
+eleventh active task or a new autonomous architecture authority.
+
+**If a worker needs an explicit architectural change, stop the incompatible
+implementation, record BLOCKED_ARCHITECTURE and open a normal draft
+architectural proposal PR in the owning SOURCE repository.** The proposal
+uses `studio/arch/<JOB_ID>` and the canonical target branch, not a Studio
+hub branch or an unrelated implementation branch. The PR must explain the
+contract change, evidence, alternatives, ABI, migrations, tests and rollback.
+W05 independently reviews it; W06 provides optional Sol High analysis
+only on approved escalation. Only the human owner can approve/merge it.
+Workers must read back authentic owner APPROVED review on the exact head SHA
+and owner merge before resuming from the newly accepted source baseline.
+A PR label, generated review or cached JSON record does not authorize a
+change. See `studio/workforce/ARCHITECTURE_ENFORCER.md`.
+
 ## Full engineering production sequence
 
 OWNER_APPROVED -> S00 SOURCE_SCOPING
@@ -210,6 +230,8 @@ Keep existing studio/config.json: auto_ai_enabled=false and
 source_writes_enabled=false until separately authorized.
 Keep hierarchy.v2.json controls.auto_spend_enabled=false and
 controls.work_event_triggers_installed=false in this reviewed draft.
+Architecture proposal PRs are not an exception to owner review, protected
+source ownership, native GitHub permissions or credit authorization.
 No automated credit usage, no model selection via prompt alone,
 no Astra by default, no Ultrafast, no unattended auto-merge.
 The Work model must be chosen in the event task UI; the checked-in label
