@@ -57,7 +57,7 @@ def _require_spec(feature, spec, existing_jobs):
                                        not studio.ID_RE.fullmatch(x) or
                                        not x.startswith(fid + "-") for x in ids):
         raise ValueError(f"{fid}: duplicate, invalid, or unrelated job IDs")
-    old = {x["id"] for x in existing_jobs}
+    old = {x["id"] for x in existing_jobs["jobs"]}
     generated = set(ids) | {"QA-" + x for x in ids}
     if generated & old:
         raise ValueError(f"{fid}: child job ID already exists; do not overwrite")
