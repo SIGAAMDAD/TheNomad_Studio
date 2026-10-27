@@ -1,0 +1,60 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T203433221Z-terrain-throughput",
+  "recorded_at_utc": "2026-10-27T20:34:33.221Z",
+  "request_id": "CHAT-20261027-terrain3d-throughput",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Assessed empirical single-chat Terrain3D patching throughput using October 24-26 previous patch delivery records and verified archived source checkpoints for ENV P01-P07, AVT08/BRP/UCMP, ST01-ST06, and GlobalMesh/HLOD W1-W7/V5. Differentiated source and static-test throughput from missing real-GPU/runtime acceptance. Evaluated implications for a prospective 100-500-worker Studio; no implementation, dispatch, or source changes.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": null,
+  "worker_slot": null,
+  "todo": [],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "source_checkpoint",
+      "uri": "https://github.com/SIGAAMDAD/Terrain3D/commit/5c95b6fecde182dca2892533696588dc6a2b6745",
+      "revision": "5c95b6fecde182dca2892533696588dc6a2b6745",
+      "verified": true
+    },
+    {
+      "kind": "source_checkpoint",
+      "uri": "https://github.com/SIGAAMDAD/Terrain3D/commit/c3e259a44a95e5355b2fe4728e1578e9c1f57cd5",
+      "revision": "c3e259a44a95e5355b2fe4728e1578e9c1f57cd5",
+      "verified": true
+    },
+    {
+      "kind": "source_checkpoint",
+      "uri": "https://github.com/SIGAAMDAD/Terrain3D/commit/e94b1acfb3b49362b53aed847e922a3600741159",
+      "revision": "e94b1acfb3b49362b53aed847e922a3600741159",
+      "verified": true
+    },
+    {
+      "kind": "source_handoff",
+      "uri": "https://github.com/SIGAAMDAD/Terrain3D/blob/e94b1acfb3b49362b53aed847e922a3600741159/HLOD_INTEGRATION_HANDOFF.md",
+      "revision": "e94b1acfb3b49362b53aed847e922a3600741159",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "source-checkpoint-GitHub-readback",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/Terrain3D/commit/e94b1acfb3b49362b53aed847e922a3600741159"
+    },
+    {
+      "name": "measured-500-worker-throughput",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "live-Godot-and-GPU-validation",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
