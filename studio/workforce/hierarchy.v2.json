@@ -17,7 +17,11 @@
     "auto_source_write_enabled": false,
     "work_event_triggers_installed": false,
     "never_auto_merge": true,
-    "never_auto_accept_canon": true
+    "never_auto_accept_canon": true,
+    "never_write_game_source_to_studio": true,
+    "require_exact_job_source_repository_and_work_branch": true,
+    "goap_source_repository": "SIGAAMDAD/TheNomad_GOAP",
+    "goap_target_branch": "main"
   },
   "capacity": {
     "business_active_task_limit_reference": 10,
@@ -3245,5 +3249,7 @@
       "luna_boilerplate_and_tests": false
     }
   ],
-  "description": "V2 revised: Terra is the dedicated mid-level engineer between Luna junior and Sol senior roles."
+  "description": "V2 revised: Terra is the dedicated mid-level engineer between Luna junior and Sol senior roles.",
+  "source_repository_contract": "studio/workforce/SOURCE_REPOSITORIES.md",
+  "source_targets_registry": "studio/workforce/source_targets.v1.json"
 }
