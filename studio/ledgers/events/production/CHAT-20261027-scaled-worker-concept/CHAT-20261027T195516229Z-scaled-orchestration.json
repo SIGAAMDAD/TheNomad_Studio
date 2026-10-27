@@ -1,0 +1,26 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T195516229Z-scaled-orchestration",
+  "recorded_at_utc": "2026-10-27T19:55:16.229Z",
+  "request_id": "CHAT-20261027-scaled-worker-concept",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Discussed owner's proposed scale-up from 100 toward 200-500 concurrently active GitHub-coordinated ChatGPT workers and its distinction from conversational vibe coding. Architecture characterization only, no source changes or new worker dispatch.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": null,
+  "worker_slot": null,
+  "todo": [],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "throughput-at-500-worker-load-test",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
