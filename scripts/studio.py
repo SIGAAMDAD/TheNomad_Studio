@@ -261,11 +261,36 @@ def record(jobs, slots, receipt):
         w["job"] = None
     elif result == "SUBMITTED":
         if j["kind"] in {"code", "integration"}:
-            raise ValueError("Code submission requires independent GitHub and Drive readback")
-        if not receipt.get("artifact_ref"):
-            raise ValueError("Non-code submission requires an exact artifact revision")
-        j["state"] = "SUBMITTED"
-        j["artifact_ref"] = receipt["artifact_ref"]
+            sha = receipt.get("final_commit_sha")
+            drive = receipt.get("drive_report_url")
+            if not isinstance(sha, str) or not SHA_RE.fullmatch(sha) or not (
+                    isinstance(drive, str) and drive.startswith("https://docs.google.com/")):
+                raise ValueError("Code submission requires final source SHA and exact Drive report; external readback still pending")
+            if not config.get("source_writes_enabled", False):
+                raise ValueError("Source-write gate closed")
+            j["final_commit_sha"] = sha
+            j["drive_report_url"] = drive
+            j["state"] = "SUBMITTED"
+        else:
+            if not receipt.get("artifact_ref"):
+                raise ValueError("Non-code submission requires an exact artifact revision")
+            j["state"] = "SUBMITTED"
+            j["artifact_ref"] = receipt["artifact_ref"]
+            if j["kind"] == "review":
+                subject = next((x for x in jobs["jobs"] if x.get("id") == j.get("subject_job")), None)
+                review = receipt.get("review_result")
+                expected = (subject or {}).get("final_commit_sha") if (subject or {}).get("kind") in (
+                    "code", "integration") else (subject or {}).get("artifact_ref")
+                if not (subject and subject.get("state") in {"SUBMITTED", "REVIEW"} and
+                        isinstance(review, dict) and review.get("verdict") in {"PASS", "REWORK"} and
+                        review.get("subject_ref") == expected and
+                        isinstance(review.get("findings", []), list) and
+                        subject.get("submitted_by_slot") != w["id"]):
+                    raise ValueError("Independent QA receipt requires exact submitted subject and structured PASS/REWORK")
+                j["review_result"] = {
+                    "verdict": review["verdict"], "subject_ref": expected,
+                    "findings": review.get("findings", []), "reviewer_slot": w["id"]
+                }
         j["submitted_by_slot"] = w["id"]
         j.pop("slot", None)
         j.pop("assignment_epoch", None)
