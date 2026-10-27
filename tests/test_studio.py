@@ -231,7 +231,10 @@ class StudioTests(unittest.TestCase):
     def test_verified_code_requires_matching_ci(self):
         jobs, slots, config = fixture()
         code = job("ENG-201", kind="code", state="VERIFIED")
-        code.update({"final_commit_sha": "a" * 40, "drive_report_url": "https://docs.google.com/document/d/real/edit",
+        code.update({"repository": "SIGAAMDAD/NomadFramework",
+                      "branch": "develop", "work_branch": "studio/ENG-201",
+                      "baseline_sha": "f" * 40,
+                      "final_commit_sha": "a" * 40, "drive_report_url": "https://docs.google.com/document/d/real/edit",
                      "qa_evidence": {"verdict": "PASS", "subject_ref": "a" * 40, "reviewer_slot": "S09"}})
         jobs["jobs"] = [code]
         self.assertIn("passing CI", " ".join(studio.validate(jobs, slots, config)))
