@@ -1,0 +1,74 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T230010195Z-V16HIGHHANDOFF",
+  "recorded_at_utc": "2026-10-27T23:00:10.195Z",
+  "request_id": "CHAT-20261027-MANUAL-HIGH-HANDOFF",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "ARTIFACT_SUBMITTED",
+  "status": "SUBMITTED",
+  "summary": "Generated and locally verified a self-contained 30-file V1.6 manual High-chat implementation handoff ZIP containing two supplied repository snapshots, 9 merge-safe workgroup briefs across 4 waves, startup prompts, PostgreSQL/gateway architecture, old AI chat event-routing retirement, security and QA plans. Existing archive suites: 167 Studio and 23 Oversight tests passed. No source, task automation, Drive, DB or production changes applied.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T230010195Z-V16HIGHHANDOFF",
+  "todo": [
+    {
+      "id": "LAUNCH_A",
+      "description": "Human owner launches WG-A manually on High, obtains independently accepted contracts",
+      "state": "OPEN"
+    },
+    {
+      "id": "WAVE1",
+      "description": "Owner launches B,C,D,E,H manually after frozen A",
+      "state": "OPEN"
+    },
+    {
+      "id": "WAVE2",
+      "description": "Owner launches F/G adapters manually after B/C/D",
+      "state": "OPEN"
+    },
+    {
+      "id": "INTEGRATE",
+      "description": "Independent QA and owner-gated integration/cutover",
+      "state": "OPEN"
+    },
+    {
+      "id": "DECOMMISSION",
+      "description": "Remove previously paused platform task configurations by supported authorized platform operation; no task removal performed in handoff phase",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "handoff_zip",
+      "uri": "sandbox:/mnt/data/Nomad_Studio_V16_High_Handoff_2026-10-27.zip",
+      "revision": "sha256:585b3382cd1bbffaf12cf5f4c8509a53f5a3435ec2918ede0887e87c418ee680",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "workgroups DAG and overlap validator",
+      "status": "PASS"
+    },
+    {
+      "name": "handoff package SHA256 manifest and ZIP byte validation",
+      "status": "PASS"
+    },
+    {
+      "name": "Studio baseline 167 tests",
+      "status": "PASS"
+    },
+    {
+      "name": "Oversight baseline 23 tests",
+      "status": "PASS"
+    },
+    {
+      "name": "V1.6 production security verification",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
