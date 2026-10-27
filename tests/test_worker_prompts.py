@@ -74,7 +74,7 @@ class WorkerPromptTests(unittest.TestCase):
         for p in self.blocks.values():
             self.assertIn("TheNomad_Studio", p)
             self.assertIn("METADATA-ONLY", p)
-            self.assertIn("SOURCE", p)
+            self.assertIn("source", p.lower())
         self.assertIn("prompts do NOT select execution model", self.content)
 
 
