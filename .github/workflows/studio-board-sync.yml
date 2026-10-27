@@ -1,0 +1,86 @@
+name: Studio board intake (Issues + optional Projects V2)
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  issues:
+    types: [opened, edited, reopened, labeled, unlabeled, closed]
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: read
+concurrency:
+  group: studio-runtime-state
+  cancel-in-progress: false
+jobs:
+  synchronize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Preserve reviewed main-branch controller
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/nomad_scripts"
+          cp scripts/studio.py scripts/production.py scripts/board_sync.py scripts/github_api.py "$RUNNER_TEMP/nomad_scripts/"
+      - name: Open exclusively writable runtime branch
+        shell: bash
+        run: |
+          if git ls-remote --exit-code --heads origin studio/runtime >/dev/null 2>&1; then
+            git fetch origin refs/heads/studio/runtime:refs/remotes/origin/studio/runtime
+            git switch -c studio/runtime --track origin/studio/runtime
+          else
+            git switch -c studio/runtime
+          fi
+      - name: Sync issues, admit reviewed plans, process QA and dispatch
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          STUDIO_PROJECTS_TOKEN: ${{ secrets.STUDIO_PROJECTS_TOKEN }}
+          PYTHONPATH: ${{ runner.temp }}/nomad_scripts
+        run: |
+          python "$RUNNER_TEMP/nomad_scripts/board_sync.py" --root "$GITHUB_WORKSPACE" --write > board-result.json
+          python "$RUNNER_TEMP/nomad_scripts/production.py" admit --root "$GITHUB_WORKSPACE" --write > intake-result.json
+          python "$RUNNER_TEMP/nomad_scripts/studio.py" --root "$GITHUB_WORKSPACE" process --write > receipts-result.json
+          python "$RUNNER_TEMP/nomad_scripts/production.py" adjudicate --root "$GITHUB_WORKSPACE" --write > review-result.json
+          python "$RUNNER_TEMP/nomad_scripts/production.py" status --root "$GITHUB_WORKSPACE" --write > status-result.json
+          python "$RUNNER_TEMP/nomad_scripts/studio.py" --root "$GITHUB_WORKSPACE" dispatch --write > dispatch-result.json
+          python "$RUNNER_TEMP/nomad_scripts/studio.py" --root "$GITHUB_WORKSPACE" validate
+      - name: Persist only runtime state with a serialized fast-forward push
+        shell: bash
+        run: |
+          git config user.name 'nomad-studio-controller[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add studio/jobs.json studio/slots.json studio/features.json
+          if ! git diff --cached --quiet; then
+            git commit -m "studio(runtime): reconcile board, production and QA"
+            git push origin HEAD:refs/heads/studio/runtime
+          fi
+      - name: Optional project status mirror (separately authorized)
+        if: success()
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          STUDIO_PROJECTS_TOKEN: ${{ secrets.STUDIO_PROJECTS_TOKEN }}
+          PYTHONPATH: ${{ runner.temp }}/nomad_scripts
+        run: |
+          python "$RUNNER_TEMP/nomad_scripts/board_sync.py" --root "$GITHUB_WORKSPACE" --write --publish > project-result.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: studio-board-scan-${{ github.run_id }}
+          path: |
+            board-result.json
+            intake-result.json
+            receipts-result.json
+            review-result.json
+            status-result.json
+            dispatch-result.json
+            project-result.json
+          if-no-files-found: ignore
+          retention-days: 7
