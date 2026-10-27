@@ -10,6 +10,7 @@ import json
 import pathlib
 import re
 import source_targets
+import architecture_enforcer
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ROLE_ID = re.compile(r"^rpg-[a-z0-9-]+$")
@@ -148,6 +149,10 @@ def route_event(event, policy, runtime_jobs=None, config=None):
         if subject.get("submitted_by_slot") == job.get("slot") and job.get("slot"):
             result.update({"status": "BLOCKED", "reason": "AUTHOR_CANNOT_SELF_REVIEW"})
             return result
+    architecture_issue = architecture_enforcer.gate(source_job)
+    if architecture_issue:
+        result.update({"status": "BLOCKED", "reason": architecture_issue})
+        return result
     # Every source-producing/technical-QA PR belongs to the actual source
     # repository, never to this control-plane repository. Same-repo head
     # and the explicitly selected target branch are mandatory.
