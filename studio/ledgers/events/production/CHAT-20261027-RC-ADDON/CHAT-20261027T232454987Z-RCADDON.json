@@ -1,0 +1,80 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T232454987Z-RCADDON",
+  "recorded_at_utc": "2026-10-27T23:24:54.987Z",
+  "request_id": "CHAT-20261027-RC-ADDON",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "ARTIFACT_SUBMITTED",
+  "status": "SUBMITTED",
+  "summary": "Planning-only response completion and worker audit report card addon for manual High V1.6 Studio handoff: confirmed existing V1.5 compact summary, missing delivered report-card schema/validator, produced seven-patch RC00-RC06 addon with WG A/B/C/F/G/H/I assignments, no auto AI chat, independent acceptance tests and pilot canary. No implementation code or settings changed.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T232454987Z-RCADDON",
+  "todo": [
+    {
+      "id": "RC00",
+      "description": "Freeze per-attempt report-card wire contract with WG-A",
+      "state": "OPEN"
+    },
+    {
+      "id": "RC01",
+      "description": "Install mandatory per-worker chat response and local validator in WG-B",
+      "state": "OPEN"
+    },
+    {
+      "id": "RC02",
+      "description": "Implement durable attempt event/card persistence in WG-C",
+      "state": "OPEN"
+    },
+    {
+      "id": "RC03",
+      "description": "Implement authoritative reconciliation, missing card detection and head rollups in WG-F",
+      "state": "OPEN"
+    },
+    {
+      "id": "RC04",
+      "description": "Implement batched evidence publication in WG-G",
+      "state": "OPEN"
+    },
+    {
+      "id": "RC05",
+      "description": "Independent adversarial tests in WG-H",
+      "state": "OPEN"
+    },
+    {
+      "id": "RC06",
+      "description": "Two-attempt manual High canary and owner-gated integration in WG-I",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "planning_addon_zip",
+      "uri": "sandbox:/mnt/data/Nomad_Studio_V16_Response_Report_Card_Addon_2026-10-27.zip",
+      "revision": "sha256:b8155be5b5fdbcce201821ac693e42ea5685217af7f3c22a5864b42c3208252a",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Delivered V1.6 ZIP contains formal report-card contract",
+      "status": "FAIL"
+    },
+    {
+      "name": "Add-on 7-patch dependency DAG and path overlap check",
+      "status": "PASS"
+    },
+    {
+      "name": "Add-on SHA256 file verification and ZIP integrity",
+      "status": "PASS"
+    },
+    {
+      "name": "Report-card implementation and runtime validation",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
