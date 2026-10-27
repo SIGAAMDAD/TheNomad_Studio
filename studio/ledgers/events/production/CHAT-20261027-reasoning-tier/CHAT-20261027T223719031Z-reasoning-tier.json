@@ -1,0 +1,26 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T223719031Z-reasoning-tier",
+  "recorded_at_utc": "2026-10-27T22:37:19.031Z",
+  "request_id": "CHAT-20261027-reasoning-tier",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SUBMITTED",
+  "summary": "Recommended reserving Extra High reasoning for foundational architecture, threat analysis, and independent adversarial review; High for cross-subsystem implementation and integration; Medium for bounded implementation, fixtures, and tests. No source changes or jobs authorized.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": null,
+  "worker_slot": null,
+  "todo": [],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "source_changes",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
