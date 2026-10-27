@@ -1,0 +1,73 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T232950849Z-PYCOMMS",
+  "recorded_at_utc": "2026-10-27T23:29:50.849Z",
+  "request_id": "CHAT-20261027-PYTHON-COMMS-REVIEW",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Inspected both V1.6 repository snapshots and live main communications scripts: 46 Python files / 7,533 lines total, 20 production Python scripts / 4,219 lines, 2,796 test lines. Identified repeated GitHub Issue comment pagination, full archive inbox projections, and serialized studio/comms Git push/rebase as primary optimization opportunities. Recommended indexed PostgreSQL departmental streams and optional append-only per-department archive branches, never live-queue authority; implementation remains planning-only.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T232950849Z-PYCOMMS",
+  "todo": [
+    {
+      "id": "PY-PROFILE",
+      "description": "Add measured API call, Git publish, inbox rebuild and DB latency metrics before optimizations",
+      "state": "OPEN"
+    },
+    {
+      "id": "COMMS-CONTRACT",
+      "description": "Freeze recipient-department event routing and archive export ownership in WG-A",
+      "state": "OPEN"
+    },
+    {
+      "id": "COMMS-DB",
+      "description": "Implement indexed departmental message streams and cursors in WG-C",
+      "state": "OPEN"
+    },
+    {
+      "id": "COMMS-PROJECTIONS",
+      "description": "Replace archive-wide inbox rebuilds with incremental projection in WG-F",
+      "state": "OPEN"
+    },
+    {
+      "id": "COMMS-PUBLISH",
+      "description": "Choose and implement optional department archive branches with single restricted broker and batches in WG-G",
+      "state": "OPEN"
+    },
+    {
+      "id": "COMMS-TESTS",
+      "description": "Test per-department ordering, replay, interdepartmental routing, retries, concurrent publication in WG-H",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "Source snapshots and live communications paths inspected",
+      "status": "PASS"
+    },
+    {
+      "name": "Python production code size counted",
+      "status": "PASS"
+    },
+    {
+      "name": "Performance benchmark suite",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Department archive branches created",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Confirm whether each department should receive an optional Git archive branch in addition to PostgreSQL departmental streams",
+      "status": "REQUESTED"
+    }
+  ]
+}
