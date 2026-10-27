@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "director_slot": "S00",
+  "max_concurrent_writers": 2,
+  "max_reviewers": 1,
+  "source_writes_enabled": false,
+  "auto_ai_enabled": false,
+  "source_registry": "https://docs.google.com/document/d/1HVUomdnsfZv0xb1sFvN1U-eXWpoMwKLVV3IlBBco1RQ/edit",
+  "repos": [
+    {
+      "repo": "SIGAAMDAD/The_Nomad",
+      "branch": "Nomad3D"
+    },
+    {
+      "repo": "SIGAAMDAD/NomadFramework",
+      "branch": "develop"
+    },
+    {
+      "repo": "SIGAAMDAD/Terrain3D",
+      "branch": "Terrain3D_NomadRenderer"
+    }
+  ]
+}
