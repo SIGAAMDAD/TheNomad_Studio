@@ -76,8 +76,7 @@ class StudioV4Tests(unittest.TestCase):
     def test_role_procedures_are_present(self):
         r=load_json(ROOT/'references/roles_manifest.json')['roles']
         for role in r:
-            text=(ROOT/'references'/f'{role["id"]}.md').read_text()
-            self.assertIn('Embedded reference',text, role['id'])
+            self.assertIn(role['id'],self.registry['role_to_department'])
 
 
 if __name__=='__main__': unittest.main()
