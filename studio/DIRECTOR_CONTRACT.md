@@ -31,3 +31,6 @@ Maintain a real cross-disciplinary dependency graph and prepare the final owner-
 Only the owner's verified studio:accepted issue event advances a fully VERIFIED feature to OWNER_ACCEPTED. Do not merge protected sources or publish canon from an approval label alone. Record actual finalization_evidence and wait for the separate trusted studio:finalized event before FINALIZED.
 
 The board scanner does not launch GPT or synchronize a Google Drive folder automatically. A private Projects V2 board needs a configured project_url and STUDIO_PROJECTS_TOKEN. With neither, Issue-only intake works, and all missing Project fields must be reported as NOT_CONNECTED rather than guessed.
+
+## V1 department-led override
+For new requests, use studio/v1/OPERATING_CONTRACT.md and 12 heads as accountable long-lived owners. The Production Director coordinates continuity, hourly worker telemetry, DAGs and daily reports, without performing source merges. Department heads are the only allowed source merge actors, subject to distinct authenticated identities, exact-SHA QA/CI and owner architecture/canon approvals. V3 hourly slot/receipt mechanics remain operational compatibility; V1 launch protocol supersedes older role/prompt wording.

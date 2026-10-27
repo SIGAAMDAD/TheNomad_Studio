@@ -10,8 +10,10 @@ import sys
 from zoneinfo import ZoneInfo
 try:
     from scripts import studio_comms as comms
+    from scripts import studio_worker_health as health
 except ModuleNotFoundError:
     import studio_comms as comms
+    import studio_worker_health as health
 
 CENTRAL = ZoneInfo("America/Chicago")
 
@@ -78,6 +80,7 @@ def build(runtime, comms_root, when=None, kind="hourly"):
     registry = comms.chat_registry(comms.read_json(folder / "chat_workers.json"))
     observed = comms.audit(comms_root, jobs, registry)
     ci = ci_for_jobs(comms_root)
+    telemetry = health.audit(runtime, comms_root, registry, jobs, when=instant)
     workers = []
     for ident, item in sorted(registry.items()):
         activity = observed["last_observed"].get(ident, {})
@@ -103,6 +106,8 @@ def build(runtime, comms_root, when=None, kind="hourly"):
         missing.append("NO_VALIDATED_SOURCE_CI")
     if any(w["inbox_status"] == "NOT_AVAILABLE" for w in workers):
         missing.append("INBOXES_MISSING")
+    if telemetry["alerts"]:
+        missing.append("WORKER_TELEMETRY_ALERTS")
     counts = dict(sorted(collections.Counter(
         job.get("state", "UNKNOWN") for job in jobs.values()).items()))
     return {
@@ -118,6 +123,8 @@ def build(runtime, comms_root, when=None, kind="hourly"):
         "runtime_job_state_counts": counts,
         "source_ci_jobs_with_evidence": len(ci),
         "recent_communications_events": observed["events"],
+        "worker_health": telemetry,
+        "worker_alerts": telemetry["alerts"],
         "pending_ack_total": sum(w["pending_ack"] or 0 for w in workers),
         "data_gaps": missing, "oversight_case_details_included": False,
         "requires_exact_sha_qa_before_completion": True,

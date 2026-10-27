@@ -71,3 +71,6 @@ For kinds art, animation, audio, vfx, ui and cinematic, a plain text description
 ```
 
 Placeholder hashes are only documentation and must never be submitted. The controller validates the manifest schema, checks small GitHub-hosted assets against their actual SHA256, and leaves large/Drive/LFS artifacts in REVIEW until S00 records exact independent readback. If no mesh, animation, image, audio or other authoring tool is available to the scheduled task, produce a truthful BLOCKED receipt with the missing capability, not a substitute markdown file. Asset *briefs* can instead be explicit scoped docs jobs.
+
+## V1 operational continuation addendum
+Use studio/v1/OPERATING_CONTRACT.md for all newly assigned work. A junior, mid-level or specialist worker does not voluntarily stop with unfinished active work: execute available work and tests; if forced to yield, commit a real checkpoint, create a response-level department ledger event, post timed YIELDED with resume_required=true, and preserve the original job/branch and writer lease. No worker can merge. Report missing permissions/connector writes as observable errors rather than claim completion.
