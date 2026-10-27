@@ -15,6 +15,7 @@ import urllib.parse
 
 import studio
 import source_targets
+import architecture_enforcer
 from github_api import GitHub, GitHubError
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -94,6 +95,8 @@ def _require_spec(feature, spec, existing_jobs):
             issue = source_targets.validate_source_job(item, source_targets.read_routes())
             if issue:
                 raise ValueError(f"{jid}: invalid source route: {issue}")
+            if item.get("architecture_impact") not in architecture_enforcer.IMPACTS:
+                raise ValueError(f"{jid}: architecture_impact must explicitly be none or change")
         if item.get("qa", True) is not True:
             raise ValueError(f"{jid}: production jobs require independent QA")
         if not item.get("qa_role"):
@@ -124,11 +127,17 @@ def build_jobs(feature, spec, config, existing_jobs):
             "branch": item.get("branch"), "work_branch": item.get("work_branch"),
             "workstream": item.get("workstream"), "language": item.get("language"),
             "baseline_sha": item.get("baseline_sha"),
+            "architecture_impact": item.get("architecture_impact"),
+            "architecture_review": item.get("architecture_review"),
+            "architecture_proposal": item.get("architecture_proposal"),
+            "architecture_acceptance": item.get("architecture_acceptance"),
             "acceptance": item["acceptance"], "dependencies": dependencies,
             "qa_owner": "S09" if kind in SOURCE else "S08"
         }
         if kind in SOURCE:
-            new["blocker"] = "Engineering source freeze and build/ABI gates require owner approval"
+            new["blocker"] = ("ARCHITECTURE_PROPOSAL_REQUIRED"
+                              if item.get("architecture_impact") == "change"
+                              else "Engineering source freeze and build/ABI gates require owner approval")
         output.append(new)
         qa_role = item["qa_role"]
         review_id = "QA-" + jid
