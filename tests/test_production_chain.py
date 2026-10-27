@@ -173,7 +173,7 @@ class StudioV3Tests(unittest.TestCase):
                           "repository": "SIGAAMDAD/NomadFramework", "branch": "develop",
                           "workstream": "framework_engine", "language": "C++17",
                           "work_branch": "studio/FEATURE-3-ENG-01",
-                          "baseline_sha": "a" * 40}]}
+                          "baseline_sha": "a" * 40, "architecture_impact": "none"}]}
         out, _ = production.build_jobs(feature, spec, config, jobs)
         self.assertEqual(out[0]["state"], "BLOCKED")
         self.assertEqual(out[1]["state"], "READY")
