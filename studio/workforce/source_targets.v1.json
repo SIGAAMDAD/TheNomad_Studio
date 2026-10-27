@@ -121,5 +121,15 @@
     "core_gameplay": "SIGAAMDAD/The_Nomad:Nomad3D",
     "mod_gameplay": "SIGAAMDAD/NomadMain:main (C#)",
     "goap_core": "SIGAAMDAD/TheNomad_GOAP:main"
+  },
+  "last_head_audit": {
+    "observed_at_utc": "2026-10-27T20:01:38.711Z",
+    "observed_heads": {
+      "SIGAAMDAD/Terrain3D": "0fcf892d670db228a8b61cae1447bff38a6687a3",
+      "SIGAAMDAD/NomadFramework": "8617caecbaf4571917eac2cd2aeee459485740fc",
+      "SIGAAMDAD/The_Nomad": "b92cc734a542964c19e01cde792c62ef3538e150",
+      "SIGAAMDAD/NomadMain": "efa9840fb204cb0609869165dec6b17972dedacc",
+      "SIGAAMDAD/TheNomad_GOAP": "258a2623aa5de9d422be02c59855861570ede4ac"
+    }
   }
 }
