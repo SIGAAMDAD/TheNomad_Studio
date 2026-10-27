@@ -98,6 +98,30 @@ class WorkerRouterTests(unittest.TestCase):
         self.assertEqual(router.route_event(
             self.event(), self.policy, j)["reason"], "JOB_NOT_APPROVED_OR_MISSING")
 
+    def test_terra_is_distinct_midlevel_engineer(self):
+        profiles = self.policy["profiles"]
+        self.assertEqual(profiles["W01"]["model"], "GPT-6 Luna")
+        self.assertEqual(profiles["W02"]["model"], "GPT-6.1 Terra")
+        self.assertEqual(profiles["W03"]["model"], "GPT-6 Sol")
+        self.assertEqual(profiles["W04"]["model"], "GPT-6 Sol")
+        self.assertEqual(profiles["W05"]["model"], "GPT-6 Sol")
+        self.assertEqual(profiles["W06"]["model"], "GPT-6.1 Sol")
+        self.assertEqual(len(self.policy["capacity"]["work_slots_proposed_active"]), 5)
+        self.assertEqual(len(self.policy["capacity"]["scheduled_slots_proposed_active"]), 5)
+
+    def test_terra_can_implement_regular_code_but_not_critical_hot_paths(self):
+        e = self.event(labels=("studio:work:implement",))
+        x = router.route_event(e, self.policy, self.job())
+        self.assertEqual(x["profile"], "W02")
+        self.assertEqual(x["model"], "GPT-6.1 Terra")
+        self.assertEqual(x["reason"], "AUTO_AI_DISABLED")
+        critical = self.job("rpg-memory-systems-programmer")
+        x = router.route_event(e, self.policy, critical)
+        self.assertEqual(x["reason"], "HIGH_RISK_IMPLEMENTATION_REQUIRES_SENIOR")
+        e = self.event(labels=("studio:work:implement", "studio:scope:boilerplate"))
+        x = router.route_event(e, self.policy, critical)
+        self.assertEqual(x["reason"], "AUTO_AI_DISABLED")
+
     def test_debug_requires_verified_failure(self):
         e = self.event(labels=("studio:work:debug",))
         self.assertEqual(router.route_event(e, self.policy, self.job())["reason"],
