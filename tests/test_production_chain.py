@@ -320,5 +320,48 @@ class StudioV3Tests(unittest.TestCase):
         self.assertEqual(studio.validate(jobs, slots, config), [])
 
 
+    def test_asset_brief_is_not_an_art_asset(self):
+        valid = {"files": [{"filename": "concept.png", "ref": "github:SIGAAMDAD/TheNomad_Studio@" + "a"*40 + ":concept.png",
+                            "bytes": 10, "sha256": "b"*64, "license": "original"}]}
+        self.assertTrue(studio.valid_asset_manifest(valid, "art"))
+        broken = copy.deepcopy(valid)
+        broken["files"][0]["filename"] = "concept-plan.md"
+        self.assertFalse(studio.valid_asset_manifest(broken, "art"))
+        broken = copy.deepcopy(valid)
+        broken["files"][0]["bytes"] = 0
+        self.assertFalse(studio.valid_asset_manifest(broken, "art"))
+
+    def test_asset_production_requires_real_manifest_and_readback(self):
+        config, slots, jobs, _, _ = fixture()
+        producer = job("ART-401", kind="art")
+        jobs["jobs"] = [producer, review("QA-ART-401", "ART-401")]
+        reservation = studio.dispatch(jobs, slots, config)
+        self.assertEqual(reservation[0]["slot"], "S05")
+        bare = receipt("ART-401", "S05", 1, "RUN-201", "doc:art-brief")
+        with self.assertRaisesRegex(ValueError, "Asset submission"):
+            studio.record(jobs, slots, bare)
+        asset_ref = "github:SIGAAMDAD/TheNomad_Studio@" + "a"*40 + ":concept.png"
+        manifest = {"files": [{"filename": "concept.png", "ref": asset_ref,
+                               "bytes": 11, "sha256": "b"*64, "license": "original"}]}
+        full = receipt("ART-401", "S05", 1, "RUN-201", asset_ref)
+        full["asset_manifest"] = manifest
+        studio.record(jobs, slots, full)
+        self.assertEqual(studio.validate(jobs, slots, config), [])
+        studio.dispatch(jobs, slots, config)
+        report = "github:SIGAAMDAD/TheNomad_Studio@" + "c"*40 + ":artqa.md"
+        studio.record(jobs, slots, receipt("QA-ART-401", "S08", 1, "RUN-202", report,
+                       {"verdict": "PASS", "subject_ref": asset_ref, "findings": []}))
+        self.assertEqual(production.adjudicate(jobs, external_verifier=lambda _: True), [])
+        self.assertEqual(producer["state"], "REVIEW")
+        jobs["jobs"][1]["readback_evidence"] = {
+            "verified": True, "verified_by": "S00", "subject_ref": asset_ref,
+            "report_ref": report, "asset_manifest_verified": True,
+            "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/commit/" + "a"*40
+        }
+        self.assertEqual(production.adjudicate(jobs, external_verifier=lambda _: False)[0]["outcome"],
+                         "VERIFIED")
+        self.assertEqual(studio.validate(jobs, slots, config), [])
+
+
 if __name__ == "__main__":
     unittest.main()
