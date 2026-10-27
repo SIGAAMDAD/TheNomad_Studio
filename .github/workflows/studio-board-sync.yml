@@ -27,7 +27,9 @@ jobs:
         shell: bash
         run: |
           mkdir -p "$RUNNER_TEMP/nomad_scripts"
-          cp scripts/studio.py scripts/production.py scripts/board_sync.py scripts/project_publish.py scripts/github_api.py "$RUNNER_TEMP/nomad_scripts/"
+          cp scripts/studio.py scripts/production.py scripts/board_sync.py scripts/project_publish.py scripts/github_api.py scripts/source_targets.py scripts/architecture_enforcer.py "$RUNNER_TEMP/nomad_scripts/"
+          mkdir -p "$RUNNER_TEMP/studio/workforce"
+          cp studio/workforce/source_targets.v1.json studio/workforce/architecture_policy.v1.json "$RUNNER_TEMP/studio/workforce/"
       - name: Open exclusively writable runtime branch
         shell: bash
         run: |
