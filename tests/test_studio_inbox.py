@@ -135,6 +135,8 @@ class InboxTests(unittest.TestCase):
     def test_explicit_recipient_not_allowed_to_target_other_job(self):
         wire = candidate("FEATURE-6-G00", "CW-ENG-001", "HANDOFF_READY",
                          "QA-FEATURE-6-G00", "CW-ENG-001")
+        wire["assignment_epoch"] = 1
+        wire["role_id"] = "rpg-ai-programmer"
         body = chr(96)*3 + "studio-message\n" + json.dumps(wire) + "\n" + chr(96)*3
         with self.assertRaisesRegex(c.MessageError, "INVALID_RECIPIENT_WORKER"):
             c.normalize_comment({"id": 888, "created_at": "2026-10-27T18:15:00Z",
