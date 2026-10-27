@@ -28,3 +28,6 @@ jobs:
           python scripts/studio.py validate
           python scripts/studio.py status
           python scripts/studio.py dispatch
+          python scripts/production.py validate
+          python scripts/board_sync.py --fixture tests/fixtures/board_issues.json
+          python scripts/metrics.py > /dev/null
