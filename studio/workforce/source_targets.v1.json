@@ -54,12 +54,18 @@
       "component": "goap_core",
       "repository": "SIGAAMDAD/TheNomad_GOAP",
       "target_branch": "main",
-      "verified_branch_head_at_intake": "5258a0a05d4240cc772c225bdb1868c652b7a052",
-      "status": "REPOSITORY_EXISTS_SOURCE_NOT_INITIALIZED",
+      "verified_branch_head_at_intake": "258a2623aa5de9d422be02c59855861570ede4ac",
+      "status": "SOURCE_FREEZE_REQUIRED",
       "ownership": "Standalone GOAP planning runtime/compiler, schemas, C++17 and C# interop contracts",
       "target_url": "https://github.com/SIGAAMDAD/TheNomad_GOAP",
       "workstream": "goap_core",
-      "language_policy": "C++17 native and C# managed contracts (per job)"
+      "language_policy": "C++17 native and C# managed contracts (per job)",
+      "reference_sources": {
+        "fear_sdk_submodule": "xfw5/Fear-SDK-1.08@2fc3557b0037d5fe01ac607b907d4b8511b9e4b2",
+        "eastl": "e323f67e5d93fdadcd44f7998069d804697b1945",
+        "eabase": "0699a15efdfd20b6cecf02153bfa5663decb653c",
+        "cross_platform_ci": "https://github.com/SIGAAMDAD/TheNomad_GOAP/actions/runs/40474509032"
+      }
     }
   ],
   "branch_contract": {
@@ -69,10 +75,12 @@
     "pr_base_repository": "same_as_source_repository",
     "pr_base_branch": "source_routes[component].target_branch",
     "write_strategy": "commit_and_push_only_to_job_work_branch",
-    "owner_merge_only": true,
     "no_fallback_to_default_branch": true,
     "no_fork_source_writes": true,
-    "no_cross_repository_cherry_pick_without_owner_gate": true
+    "no_cross_repository_cherry_pick_without_owner_gate": true,
+    "department_head_merge_only": true,
+    "head_github_identity_required": true,
+    "owner_canon_architecture_gate": true
   },
   "safeguards": {
     "source_jobs_must_not_target_control_repo": true,
