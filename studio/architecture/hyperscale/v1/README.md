@@ -19,3 +19,12 @@ Important: the reported cleanup merged as PR #24. This design PR only adds or re
 **Existing behavior is unchanged:** GitHub Issue and source governance, runtime/source-write controls, source repository targets, CI/QA owner gates and ordinary ChatGPT manual activation.
 
 Design checks: structured group fields, dependency DAG and obvious same-wave allowed-path conflicts can be checked offline; actual concurrent message throughput, failover, 100/1k/10k active worker tests, storage cost, independent actor authentication and E2E source/QA gates are NOT_RUN until implementation.
+
+## Source-reviewed hardening delta (October 27, 2026)
+
+- **09_RELIABILITY_AND_EXECUTION_PATCH_PLAN.md** — fifteen H00-H14 bounded patches based on the uploaded Studio and Oversight source, ranked by architectural consequence, prerequisites, exact ownership and fault tests.
+- **hardening_patches.v1.json** — machine-readable patch DAG incorporated into the **same ten workgroups and four waves**.
+- **tools/validate_hardening_plan.py** — offline validation of patch ownership, stage gates, dependency graph, and negative plan mutation checks.
+- Implement from the **current** Studio main/runtime SHAs; the original `aa684e...` design baseline is not the implementation baseline.
+- **Both uploaded snapshots passed their existing unit suites:** Studio 167 tests, Oversight 23. This is not live traffic capacity or external account security proof.
+- **This branch is plan-only.** It neither fixes the identified controller code bug nor changes Oversight access, scheduled tasks, live queues, model execution or source permissions.

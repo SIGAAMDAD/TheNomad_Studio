@@ -68,3 +68,22 @@ Acceptance gate: Cleanup reconciled, exact-SHA CI + independent QA, shadow compa
 - **WG-I** publishes: Integration branch and source PR preserving Studio V4; Single active projector epoch cutover and rollback runbook; Actual benchmark/QA report with exact SHA
 
 Only WG-I may modify existing Studio hot scripts/workflows after cleanup reconciliation and explicit owner authorization. No workgroup may modify production source repositories from the Studio hub.
+
+## Mandatory hardening crosswalk
+
+See `hardening_patches.v1.json` and `09_RELIABILITY_AND_EXECUTION_PATCH_PLAN.md` for testable contracts and exact completion gates. Existing workgroups retain their identities and path boundaries:
+
+| Wave | Workgroup | Patch IDs | Key addition |
+|---|---|---|---|
+| 0 | A | H00, H01 | Known P0 tests, owner authority and identity |
+| 1 | B | H02 | Signed ingress, cursor and worker binding |
+| 1 | C | H03, H04 | GitHub publication reconciliation, backups and restore |
+| 1 | H | H05 | End-to-end synthetic chaos/load tests |
+| 2 | D | H06, H07 | Epoch-fenced inbox, verified project resume capsule |
+| 2 | E | H08, H09 | Shift runner/admission, isolated source worktrees |
+| 2 | F | H10 | Artifact hash, source provenance, action dependency pinning |
+| 2 | G | H11 | Independent Oversight keys and owner approval readback |
+| 2 | J | H12 | External auditor watchdog, bounded stats and alerts |
+| 3 | I | H13, H14 | Authorized P0 fixes, shadow rollout and rollback |
+
+**Dependency updates:** H now depends on C, E on D, J on D and E. These are intentional order constraints that prevent tests/schedulers/monitors from inventing upstream contracts. Do not authorize source writes in a planning workgroup.

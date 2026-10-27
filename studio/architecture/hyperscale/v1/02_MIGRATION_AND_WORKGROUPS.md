@@ -60,3 +60,14 @@ The machine-readable workgroup DAG is in workgroups.json. Detailed briefs and pr
 - The Lead Director approves spending, identity provisioning, architecture and merge policy; authenticated department heads may execute fully gated merges as authorized in Studio 1.0.0.
 - Every substantive worker response ends with immutable V4 department event ledger; the bus archives the operational counterpart.
 - A department lead may authorize routine task sequencing within the approved graph but may not fabricate owner consent.
+
+## Mandatory source-reviewed hardening gates (H00–H14)
+
+The source-verified, machine-readable **hardening_patches.v1.json** and detailed **09_RELIABILITY_AND_EXECUTION_PATCH_PLAN.md** extend this four-wave program without inventing more departments or mixing source ownership. Workgroup briefs and workgroups.json now explicitly assign each hardening patch. A wave is not accepted until its blocking hardening patches have independent reproducible test evidence and exact commit SHAs.
+
+- Wave 0, WG-A: H00 known-defect regression inventory and H01 privileged owner/identity/approval contracts.
+- Wave 1, WG-B: H02 authenticated intake; WG-C: H03 GitHub/DB publication saga and H04 disaster recovery; WG-H: H05 deterministic chaos/load harness (requires WG-C).
+- Wave 2, WG-D: H06 original-assignment ACK fencing and H07 project resume capsules; WG-E: H08 verified shift executor admission/stop and H09 isolated source worktrees/leases (requires WG-D); WG-F: H10 artifact-byte/supply-chain proof; WG-G: H11 independently keyed Oversight and approval readback; WG-J: H12 auditor watchdog/statistics (requires WG-D and WG-E).
+- Wave 3, WG-I: H13 isolated P0 corrective integration and H14 shadow/canary/rollback, with exact current main/runtime/Oversight compatibility checks.
+
+**No production switch is authorized by approval of this patch plan.** The user must separately approve spending, credentials, branch writes, source-writer capacity, and deployment.
