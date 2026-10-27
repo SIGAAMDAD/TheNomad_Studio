@@ -265,7 +265,7 @@ def record(jobs, slots, receipt):
             drive = receipt.get("drive_report_url")
             if not isinstance(sha, str) or not SHA_RE.fullmatch(sha) or not (
                     isinstance(drive, str) and drive.startswith("https://docs.google.com/")):
-                raise ValueError("Code submission requires final source SHA and exact Drive report; external readback still pending")
+                raise ValueError("Code submission requires independent GitHub and Drive readback: final source SHA and exact report missing")
             if not config.get("source_writes_enabled", False):
                 raise ValueError("Source-write gate closed")
             j["final_commit_sha"] = sha
