@@ -1,4 +1,4 @@
-# Scheduled worker contract — V2
+# Scheduled worker contract — V3
 
 **Scope:** S01–S09 only. The permanent S00 Production Director uses [DIRECTOR_CONTRACT.md](DIRECTOR_CONTRACT.md) to supervise this contract, not to perform worker tasks.
 
@@ -36,3 +36,38 @@ For `BLOCKED`, provide `reason` and an exact blocker/dependency reference; the c
 - A checkpoint holds the worker's source lease. Cross-slot takeover must be manually fenced and recorded before reassignment; absent completion is not proof that a prior worker has stopped.
 - QA must review the exact artifact revision and must be independent of its author.
 - Scheduled starts, GitHub cron arrival times and worker duration are not guaranteed to align exactly.
+## V3 exact submission and QA receipt
+
+Each producer records its parent_feature, actual source/Drive artifact and immutable revision; one generic task status is not an artifact. Source-writing remains forbidden until source_writes_enabled and an actual frozen SHA are confirmed.
+
+QA workers must read subject_job and the exact submitted artifact_ref (or final_commit_sha for code) and create a new JSON SUBMITTED receipt containing an independent artifact_ref plus:
+```json
+{
+  "job_id": "QA-FEATURE-42-DES-01",
+  "slot_id": "S08",
+  "assignment_epoch": 2,
+  "attempt_id": "S08-20261026T234800Z",
+  "outcome": "SUBMITTED",
+  "artifact_ref": "github:SIGAAMDAD/TheNomad_Studio@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:studio/reviews/QA-FEATURE-42-DES-01.md",
+  "review_result": {
+    "verdict": "PASS",
+    "subject_ref": "github:SIGAAMDAD/TheNomad_Studio@bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb:studio/evidence/DES-01.md",
+    "findings": []
+  }
+}
+```
+The hashes above are **illustrative**, not real commits. Use actual GitHub/Drive readbacks. REWORK must list actionable finding IDs. The deterministic controller can verify immutable GitHub refs; Google Drive QA requires real S00 readback evidence before VERIFIED. Never claim a missing binary art/audio/animation file was generated.
+
+Code final submission uses outcome SUBMITTED with actual final_commit_sha and drive_report_url, and can only occur when source_writes_enabled is true. The controller leaves it unverified until real matching CI and independent QA; the worker may not provide fabricated CI PASS. Never merge source branches or promote canon automatically.
+
+The Director is responsible for scoping new FEATURE-N requests and assigning roles but does **not** submit worker receipts. When no job is present, exit NO_WORK without reading the whole 174-role catalog.
+
+## Required actual asset evidence
+
+For kinds art, animation, audio, vfx, ui and cinematic, a plain text description or concept specification does **not** count as the requested produced asset. If a real deliverable was generated, a SUBMITTED receipt must additionally include an asset_manifest with actual bytes and independently verifiable SHA256 for each file:
+
+```json
+{"files":[{"filename":"example.glb","ref":"github:OWNER/REPO@ACTUAL_40_HEX_COMMIT:assets/example.glb","bytes":1234,"sha256":"ACTUAL_64_HEX_HASH","license":"original"}]}
+```
+
+Placeholder hashes are only documentation and must never be submitted. The controller validates the manifest schema, checks small GitHub-hosted assets against their actual SHA256, and leaves large/Drive/LFS artifacts in REVIEW until S00 records exact independent readback. If no mesh, animation, image, audio or other authoring tool is available to the scheduled task, produce a truthful BLOCKED receipt with the missing capability, not a substitute markdown file. Asset *briefs* can instead be explicit scoped docs jobs.

@@ -242,7 +242,8 @@ class StudioTests(unittest.TestCase):
         self.assertEqual(next_jobs, [{"slot": "S08", "job": "QA-301", "epoch": 1}])
         studio.record(jobs, slots, {"job_id": "QA-301", "slot_id": "S08",
                    "assignment_epoch": 1, "attempt_id": "RUN-302", "outcome": "SUBMITTED",
-                   "artifact_ref": "doc:qa-report302"})
+                   "artifact_ref": "doc:qa-report302",
+                   "review_result": {"verdict": "PASS", "subject_ref": "doc:revision301", "findings": []}})
         self.assertEqual(studio.validate(jobs, slots, config), [])
         self.assertEqual([j["state"] for j in jobs["jobs"]], ["SUBMITTED", "SUBMITTED"])
 

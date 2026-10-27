@@ -1,30 +1,40 @@
-# TheNomad_Studio
+# TheNomad_Studio — AI game-development control plane
 
-Private, deterministic control plane for **The Nomad** AI production studio. The design uses the existing ChatGPT scheduled tasks as bounded workers, GitHub Actions for scheduling/reconciliation, and Google Drive for original creative documents.
+The Nomad Studio uses an **owner-controlled GitHub Project/Issue board**, deterministic GitHub Actions, ten existing scheduled ChatGPT task identities, and original Google Drive/source repositories to coordinate specialists across design, narrative, art, animation, audio, engineering, integration, and QA.
 
-## What is implemented
+## Start here
 
-- [Validated ten-slot allocator](scripts/studio.py) with dependency gates, approved job admission, source-write protection, per-slot assignment epochs, maximum writer/reviewer limits, and overlapping writable-path exclusion.
-- [Immutable worker receipt protocol](studio/WORKER_CONTRACT.md) that allows hourly reconciliation to advance a partial job from an exact checkpoint or release a blocked slot.
-- [Hourly GitHub Actions reconciliation](.github/workflows/studio-reconcile.yml) with a **dedicated `studio/runtime` state branch**; it cannot automatically change the default branch, launch ChatGPT, or invoke paid inference.
-- [Deterministic regression tests](tests/test_studio.py) and [validation workflow](.github/workflows/studio-check.yml).
-- [Deployment instructions](docs/SETUP.md), including the required manual binding of actual scheduled ChatGPT tasks and engineering source-freeze gates.
+- [End-to-end production pipeline](docs/PRODUCTION_PIPELINE.md): feature intake → scoped plan → department work → real artifacts → independent QA/rework → owner acceptance → finalization
+- [Owner deployment checklist](docs/OWNER_SETUP.md): actions permissions, trusted approval labels, private Projects V2 token, GPT worker bindings and source/art gates
+- [Director contract](studio/DIRECTOR_CONTRACT.md) for S00
+- [Specialist worker contract](studio/WORKER_CONTRACT.md) for S01–S09
+- [Feature spec example](studio/specs/EXAMPLE.json)
+- [GitHub Issue template](.github/ISSUE_TEMPLATE/feature.yml)
 
-## Immediate deployment
+## Three distinct truths
 
-1. Review and merge this control-plane change to `main`.
-2. Run **Studio control validation**, then **Studio hourly reconciliation** from the repository's Actions tab. The latter initializes `studio/runtime` if needed.
-3. On `studio/runtime`, opt into deterministic dispatch using `auto_dispatch_enabled: true` and enable only real worker slots after binding their ChatGPT task prompts. Leave `auto_ai_enabled` and `source_writes_enabled` false.
-4. Add a real approved non-code job, and test the complete reservation → worker artifact → immutable receipt → independent QA loop.
+| Surface | Authority |
+| --- | --- |
+| GitHub Issues/Projects | Owner feature scope, priority and decision |
+| `studio/runtime` branch | Feature/job states, dispatch epochs, immutable receipts, QA |
+| Original repositories / Drive revisions | Actual code, art, documentation, source and accepted canon |
 
-Full instructions: **[docs/SETUP.md](docs/SETUP.md)**.
+There is **one** parent `FEATURE-N` for Issue N. The scanner checks repository Issues every 15 minutes; optional Projects V2 metadata requires a separate `STUDIO_PROJECTS_TOKEN` and `studio/runtime/studio/board.json.project_url`. No model inference occurs in GitHub Actions. A scheduled ChatGPT worker wakes on its own schedule to read assigned state; a GitHub event cannot directly wake an ordinary ChatGPT task.
 
-## Authority
+## Default safety
 
-- Operations: `SIGAAMDAD/TheNomad_Studio:studio/runtime`
-- Game: `SIGAAMDAD/The_Nomad:Nomad3D`
-- Native framework: `SIGAAMDAD/NomadFramework:develop`
-- Terrain fork: `SIGAAMDAD/Terrain3D:Terrain3D_NomadRenderer`
-- Studio source registry: https://docs.google.com/document/d/1HVUomdnsfZv0xb1sFvN1U-eXWpoMwKLVV3IlBBco1RQ/edit
+The Studio does **not** merge source branches, grant canon acceptance, use paid API/Work/Codex, or create game-source files while `source_writes_enabled=false`. An approved feature alone does not override the accepted source SHA/build/ABI or active ownership gates. Art/animation/audio/UI requests require actual file/manifest evidence, not a written brief masquerading as an asset.
 
-The current engineering source freeze remains pending. No model inference, code generation, source integration, owner approval or API spend is triggered by this repository's deterministic controller. The optional existing `ai-manual.yml` is an eligibility check only.
+The initial permanent Director is S00; worker slots S01–S09 are dynamically routed across on-demand professional manuals and limited to safe concurrency. The default bootstrap allows two writers and one independent QA reviewer, with no implied 174 parallel task executions.
+
+## Local validation
+
+```bash
+python -m unittest discover -s tests -q
+python scripts/studio.py validate
+python scripts/studio.py status
+python scripts/production.py validate
+python scripts/metrics.py
+```
+
+Controller CI proves software invariants, **not** game compilation, live image/mesh production, authenticated Projects field access, or completed scheduled tasks. Verify each independently.
