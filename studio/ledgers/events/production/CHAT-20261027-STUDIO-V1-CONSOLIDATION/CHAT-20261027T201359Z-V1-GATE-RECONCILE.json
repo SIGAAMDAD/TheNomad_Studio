@@ -1,0 +1,83 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T201359Z-V1-GATE-RECONCILE",
+  "recorded_at_utc": "2026-10-27T20:13:59.326Z",
+  "request_id": "CHAT-20261027-STUDIO-V1-CONSOLIDATION",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "LEDGER_REPAIR",
+  "status": "IN_PROGRESS",
+  "summary": "Reconciled observed runtime flags: source_writes_enabled=false, auto_ai_enabled=false, auto_dispatch_enabled=true (pre-existing owner-enabled unpaid pilot). V1 controller merged; final audit PR 26 updates prior contradictory README/checklist claims.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T201359Z-V1-GATE-RECONCILE",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "V1-RUNTIME-AUDIT",
+      "description": "Read back live runtime config and reconcile canonical V1 documentation",
+      "state": "DONE"
+    },
+    {
+      "id": "V1-AUDIT-FOLLOWUP",
+      "description": "Independent review/merge PR26 with corrected audit document",
+      "state": "OPEN"
+    },
+    {
+      "id": "V1-LIVE-PILOT",
+      "description": "Register real CW workers and verify end-to-end auth and responses",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "V1-HEAD-AUTH",
+      "description": "Configure distinct head-only merge branch protection",
+      "state": "BLOCKED"
+    }
+  ],
+  "dependencies": [
+    {
+      "department_id": "studio_ops",
+      "state": "BLOCKED",
+      "reason": "S00 scheduled task cannot be accessed in current task connection"
+    },
+    {
+      "department_id": "engineering",
+      "state": "BLOCKED",
+      "reason": "Head-only merge GitHub auth/policy and source CI publisher not deployed"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "github_pull_request",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/26",
+      "revision": "da8b1a8535846538fc5c521f76169a01fd04d304",
+      "verified": true
+    },
+    {
+      "kind": "runtime_config",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/config.json",
+      "revision": "1170920b9211bfed2c69bcec78a3a6a3cab3eeb8",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Live runtime source_writes_enabled readback false",
+      "status": "PASS"
+    },
+    {
+      "name": "Live runtime auto_ai_enabled readback false",
+      "status": "PASS"
+    },
+    {
+      "name": "Live runtime auto_dispatch_enabled readback true",
+      "status": "PASS"
+    },
+    {
+      "name": "Head-only merge branch enforcement verification",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
