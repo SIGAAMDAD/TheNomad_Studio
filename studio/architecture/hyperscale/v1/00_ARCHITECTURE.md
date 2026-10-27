@@ -1,5 +1,5 @@
 # The Nomad Studio: Hyperscale Coordination Architecture V1
-Status: PROPOSED / DESIGN ONLY. Reviewed baseline: TheNomad_Studio main @ aa684e03dc465f9e049f5ac615e1285890f8d72a (2026-10-27). Change type: architecture proposal, not deployment or approval.
+Status: PROPOSED / DESIGN ONLY. Original design baseline: main @ aa684e03dc465f9e049f5ac615e1285890f8d72a. Reconciled against merged Studio 1.0.0 cleanup #24 @ 49c3a5bba445f1dd927b930283ffdeb3bbbb8b52 (2026-10-27). See 05_V1_CLEANUP_RECONCILIATION.md. Change type: architecture proposal, not deployment or approval.
 
 ## Decision in one paragraph
 Preserve GitHub as the authoritative **work/governance/source evidence** control plane, but remove GitHub branches and Actions from the **hot path** of worker-to-worker messages as worker traffic grows. Introduce a separately deployable, horizontally partitionable coordination service using a transactional ingest ledger and outbox (PostgreSQL), a managed durable message queue with per-job ordering (recommended managed SQS FIFO or an equivalent), incremental recipient projections, and content-addressed immutable batch archives (object storage). Mirror batch manifests, source CI evidence, verified milestones and daily summaries back to GitHub. The Studio's 12-department chain, independent QA, owner controls, immutable receipts and independent Oversight remain intact. Ordinary inactive ChatGPT chats are *not* awakened by this design; job delivery is durable until an eligible interactive or scheduled executor explicitly runs.
@@ -12,11 +12,12 @@ The current V1 implementation is working scaffolding, not a service benchmarked 
 - chat-worker registry schema caps a single JSON list at 250, live registry currently holds zero workers;
 - runtime source_writes_enabled=false, auto_ai_enabled=false, max_concurrent_writers=2 and max_reviewers=1;
 - worker identity is advisory when multiple chats share the owner's GitHub connector;
-- communications cannot autonomously resume a dormant regular chat.
+- communications cannot autonomously resume a dormant regular chat;
+- Studio 1.0.0 added STARTED/HEARTBEAT/YIELDED/SUBMITTED/STOPPED lifecycle messages, per-attempt ledger correlation, worker-health audit and a **synthetic** 100-worker relay/ACK fixture. This is not measured large-scale throughput.
 These are implementation facts at the pinned baseline, not worker-execution or throughput test results.
 
 ## Non-negotiable invariants
-1. **Owner authority:** only the human Lead Director accepts canon, architecture, merges, privileged access, spending and production activation. Never infer owner authorization from a comment, model claim or PR label.
+1. **Owner authority:** the human Lead Director governs canon, architecture acceptance, spending, merge policy and activation. Under Studio 1.0.0 an independently authenticated accountable department head may execute a fully gated, owner-authorized merge; no worker or model can self-grant this authority. Never infer owner authorization from a comment, model claim or PR label.
 2. **Source truth:** the five actual source repositories and exact Git SHAs own game/code/content artifacts; Studio is not a sixth source destination. The existing source-write freeze and job-owner leases remain enforceable gates.
 3. **Independent verification:** CI metadata, artifact bytes, QA verdict and owner acceptance are separate evidence fields. A source SHA change invalidates QA tied to the old SHA.
 4. **Append-only events:** accepted messages and case provenance are immutable; materialized inboxes and summaries are replaceable projections. No forced history rewrite or deletion as a normal retry.

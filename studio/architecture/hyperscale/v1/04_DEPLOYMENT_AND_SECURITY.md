@@ -29,7 +29,7 @@ API versioning and event field schemas require executable JSON schema and negati
 4. End-to-end two-worker pilot: message -> accepted -> inbox -> ACK -> source artifact -> CI -> independent QA -> handoff; no self-approval.
 5. Independent QA of a fresh exact integrated commit after every architecture-affecting merge.
 6. Measured load trial at proposed tier with cost ceilings and actual rate-limit evidence.
-7. Owner-approved deployment/rollback and operational runbook, secret rotation and incident procedures.
+7. Owner-approved deployment/rollback, department-head merge authorization and operational runbook, secret rotation and incident procedures.
 8. Keep source_writes_enabled, auto_ai_enabled and reviewer/writer capacities unchanged until separately authorized.
 
 ## Studio-owner decision log

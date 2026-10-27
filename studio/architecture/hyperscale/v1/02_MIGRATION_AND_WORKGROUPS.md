@@ -2,7 +2,7 @@
 Status: proposed sequencing. Another chat may be cleaning TheNomad_Studio. This plan owns only new architecture paths until an explicit integration gate; do not edit its scripts, workflows, source registry or live runtime in parallel.
 
 ## Frozen baseline and concurrent-work protection
-Baseline for the design is main @ aa684e03dc465f9e049f5ac615e1285890f8d72a. On inspection 2026-10-27, studio/v1-operational-consolidation pointed to that same SHA; the only open hub PR was #16 (GOAP baseline). This is evidence of Git refs, NOT evidence that another ChatGPT conversation has finished or is running. Before implementation check all new cleanup commits/PRs and refresh the baseline; do not cherry-pick an obsolete script version over the cleaner's result.
+Baseline for the design is main @ aa684e03dc465f9e049f5ac615e1285890f8d72a. The cleanup subsequently merged PR #24 as Studio 1.0.0, commit 49c3a5bba445f1dd927b930283ffdeb3bbbb8b52. This introduces lifecycle/health signals, a 100-worker synthetic relay test and 190 role launch prompts. The original design baseline remains a historical reference; implementations must freeze against the newly merged main. GitHub cannot establish whether that other chat remains active. Before implementation check all new cleanup commits/PRs and refresh the baseline; do not cherry-pick an obsolete script version over the cleaner's result.
 
 Protected from all parallel builders until controlled integration:
 - scripts/studio_comms.py, studio_inbox.py, studio_ci_evidence.py, studio_director_pulse.py, studio.py;
@@ -57,6 +57,6 @@ The machine-readable workgroup DAG is in workgroups.json. Detailed briefs and pr
 ## Ownership and acceptance
 - Producer implements a bounded branch, pushes real commits and exports reproducible tests.
 - Independent QA reviews the exact SHA; the integrating worker cannot self-approve.
-- The Lead Director approves spending, identity provisioning, architectural changes and merges.
+- The Lead Director approves spending, identity provisioning, architecture and merge policy; authenticated department heads may execute fully gated merges as authorized in Studio 1.0.0.
 - Every substantive worker response ends with immutable V4 department event ledger; the bus archives the operational counterpart.
 - A department lead may authorize routine task sequencing within the approved graph but may not fabricate owner consent.

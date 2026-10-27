@@ -38,6 +38,9 @@ Status: proposed v2 contracts. Existing V1 schemas and GitHub history are frozen
 ~~~
 All example IDs and timestamp are fictional. Implementation MUST use a real schema and test fixtures, including strict unknown-field rejection for authority-carrying events. Never put private case content, personal secrets, credentials or long diffs into summaries.
 
+## V1.0.0 lifecycle compatibility
+Merged Studio 1.0.0 includes STARTED, HEARTBEAT, YIELDED, SUBMITTED and STOPPED; these carry unique attempt_id and assignment_epoch, with ledger_event_id, elapsed_seconds and resume_required for applicable checkpoints and terminal responses. V2 MUST retain their semantics and model claims as observations until separately attested. The existing 100-synthetic-worker routing/ACK/ledger fixture is a baseline regression, NOT 100 live concurrent ChatGPT executions.
+
 ## Distinct state machines
 **Delivery state:** RECEIVED -> ACCEPTED -> PROJECTED -> AVAILABLE -> ACKED. Other terminal outcomes: REJECTED (invalid), EXPIRED (policy-defined TTL), DEAD_LETTER (repeated transport failure), SUPERSEDED (compatible later message). The immutable event remains archived across transitions. ASSIGNED/READY_FOR_NEXT_ACTIVATION is not the same as EXECUTING.
 
@@ -81,7 +84,7 @@ A consumer crash between database commit and queue ACK yields redelivery with no
 - Public-to-Studio observation: Issue comment, build metadata, untrusted worker prose; may be ingested/archive-only.
 - Job-state changes: require validated job ID, assignment epoch, owner-approved policy and actual work evidence.
 - Source write / lease mutation / CI verdict: requires exact repo SHA, current ownership, independent issuer and source-validated evidence.
-- Owner-only: canon, architecture acceptance, spending, protected merges and permanent access restrictions.
+- Owner-controlled: canon, architecture acceptance, spending, merge policy and permanent access restrictions. A separately authenticated accountable department head may execute a fully gated merge when owner authorization and independent QA are verified, as in Studio 1.0.0.
 - Independent Oversight: isolated encrypted intake and minimally signed, scoped enforcement notices; production sees no case description or reporter identity.
 
 ## Schema evolution and revocation
