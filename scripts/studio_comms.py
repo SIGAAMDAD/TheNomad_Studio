@@ -337,8 +337,13 @@ def digest_day(root, day):
 
 
 def audit(root, jobs, registry=None):
-    records = [read_json(p) for p in sorted(
-        (pathlib.Path(root) / "events").glob("*/*/*/evt-*.json"))]
+    # Include the last eight UTC days; older raw history is retained.
+    now_day = dt.datetime.now(dt.timezone.utc).date()
+    paths = []
+    for offset in range(8):
+        bucket = (now_day - dt.timedelta(days=offset)).strftime("%Y/%m/%d")
+        paths.extend((pathlib.Path(root) / "events" / bucket).glob("evt-*.json"))
+    records = [read_json(p) for p in sorted(paths)]
     latest = {}
     for record in sorted(records, key=lambda e: (e["recorded_at_utc"], e["event_id"])):
         latest[record["worker_id"]] = {
@@ -352,8 +357,11 @@ def audit(root, jobs, registry=None):
             observed = latest.get(name)
             if observed:
                 last = dt.datetime.fromisoformat(observed["last_observed_at"].replace("Z", "+00:00"))
-                health = ("RECENT_EVIDENCE" if now - last <= dt.timedelta(
-                    minutes=entry["audit_interval_minutes"]) else "OVERDUE_EVIDENCE")
+                if observed["job_id"] != entry.get("job_id"):
+                    health = "EVIDENCE_FROM_PREVIOUS_ASSIGNMENT"
+                else:
+                    health = ("RECENT_EVIDENCE" if now - last <= dt.timedelta(
+                        minutes=entry["audit_interval_minutes"]) else "OVERDUE_EVIDENCE")
             else:
                 health = "NOT_OBSERVED"
             latest.setdefault(name, {"event_id": None, "event_type": None,
@@ -368,9 +376,30 @@ def audit(root, jobs, registry=None):
             "note": "GitHub-observed messages; no inactive ChatGPT execution inferred."}
 
 
+def snapshot(root, jobs, registry=None):
+    report = audit(root, jobs, registry)
+    moment = dt.datetime.now(dt.timezone.utc)
+    timestamp = moment.strftime("%Y%m%dT%H%M%SZ")
+    report["generated_at_utc"] = moment.isoformat(timespec="seconds").replace("+00:00", "Z")
+    content = json.dumps(report, sort_keys=True, indent=2) + "\n"
+    digest = hashlib.sha256(content.encode("utf-8")).hexdigest()[:16]
+    folder = pathlib.Path(root) / "snapshots" / moment.strftime("%Y/%m/%d")
+    folder.mkdir(parents=True, exist_ok=True)
+    output = folder / f"{timestamp}-{digest}.json"
+    if output.exists():
+        if output.read_text(encoding="utf-8") != content:
+            raise MessageError("SNAPSHOT_IMMUTABILITY_VIOLATION")
+    else:
+        with output.open("x", encoding="utf-8") as handle:
+            handle.write(content)
+    return {"snapshot_path": str(output),
+            "registered_or_observed_workers": len(report["last_observed"]),
+            "source": "GITHUB_OBSERVED_ONLY"}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=("event", "reconcile", "digest", "audit"))
+    parser.add_argument("mode", choices=("event", "reconcile", "digest", "audit", "snapshot"))
     parser.add_argument("--runtime-jobs", required=True)
     parser.add_argument("--comms-root", required=True)
     parser.add_argument("--github-event")
@@ -419,6 +448,9 @@ def main(argv=None):
             return 0
         if args.mode == "audit":
             print(json.dumps(audit(args.comms_root, jobs, registry), sort_keys=True))
+            return 0
+        if args.mode == "snapshot":
+            print(json.dumps(snapshot(args.comms_root, jobs, registry), sort_keys=True))
             return 0
         print(json.dumps({"new": new, "duplicates_or_nonmessages": duplicate,
                           "rejected": dict(rejected)}, sort_keys=True))
