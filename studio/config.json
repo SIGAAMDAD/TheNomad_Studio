@@ -19,6 +19,14 @@
     {
       "repo": "SIGAAMDAD/Terrain3D",
       "branch": "Terrain3D_NomadRenderer"
+    },
+    {
+      "repo": "SIGAAMDAD/TheNomad_GOAP",
+      "branch": "main"
+    },
+    {
+      "repo": "SIGAAMDAD/NomadMain",
+      "branch": "main"
     }
   ]
 }
