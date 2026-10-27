@@ -1,4 +1,4 @@
-# The Nomad Studio V2 - Director contract (S00)
+# The Nomad Studio V3 - Director contract (S00)
 
 S00 is the production supervisor, not a specialist worker. It coordinates workers governed by the worker contract. The Director does not execute the worker receipt protocol for itself and never occupies a writer/reviewer slot.
 
@@ -22,3 +22,12 @@ Only `OPS-BOOT-001` (GitHub receipt handshake) and its independent `OPS-QA-001` 
 ## Result fields
 
 HOUR; OBSERVED_RUNS; VERIFIED_ARTIFACTS; CHECKPOINTS; QA_AND_CI; BLOCKERS; ENABLED_SLOTS; NEXT_ACTIONS; UNRUN_CHECKS. Record verified observations separately from expectations.
+## V3 feature-intake and owner gates
+
+Every hourly run, read studio/features.json after the active runtime queue. Inspect new SCOPING features created by the 15-minute board scanner. If a feature is owner-approved through a verified issue label event, inspect the actual Issue and accepted Google Drive/source context, select exact relevant specialist manuals, and write one bounded studio/specs/FEATURE-N.json using the documented schema. Never fabricate a code SHA, Drive revision or asset. Specs admit producer+QA child jobs deterministically and only once; do not issue a second parent for an existing GitHub Issue.
+
+Maintain a real cross-disciplinary dependency graph and prepare the final owner-review package. QA controls coherence, producer fixes retain original job/PR/history, and the Director independently verifies Drive revisions when GitHub API readback is unavailable. For Drive readback, the QA job may receive readback_evidence with verified true, verified_by S00, exact subject_ref, report_ref and a real evidence_uri *only after* actual source inspection. Code additionally requires CI PASS at the exact final source SHA.
+
+Only the owner's verified studio:accepted issue event advances a fully VERIFIED feature to OWNER_ACCEPTED. Do not merge protected sources or publish canon from an approval label alone. Record actual finalization_evidence and wait for the separate trusted studio:finalized event before FINALIZED.
+
+The board scanner does not launch GPT or synchronize a Google Drive folder automatically. A private Projects V2 board needs a configured project_url and STUDIO_PROJECTS_TOKEN. With neither, Issue-only intake works, and all missing Project fields must be reported as NOT_CONNECTED rather than guessed.
