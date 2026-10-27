@@ -57,6 +57,9 @@ def route_work_order(event, policy, runtime_jobs=None, config=None):
     if pr.get("draft", True):
         result["reason"] = "DRAFT_PR"
         return result
+    if (pr.get("user") or {}).get("login") != "SIGAAMDAD":
+        result.update(status="BLOCKED", reason="WORK_ORDER_MUST_BE_CREATED_BY_OWNER")
+        return result
     trailers = trailer_dict(pr.get("body"))
     if trailers is None:
         result.update(status="BLOCKED", reason="DUPLICATE_WORK_ORDER_TRAILERS")
@@ -84,6 +87,9 @@ def route_work_order(event, policy, runtime_jobs=None, config=None):
         result.update(status="BLOCKED", reason="JOB_NOT_APPROVED_OR_MISSING")
         return result
     job = matches[0]
+    if stage != "qa" and job.get("state") not in ("READY", "RESERVED", "CHECKPOINTED", "REWORK"):
+        result.update(status="BLOCKED", reason="WORK_ORDER_JOB_NOT_EXECUTION_READY")
+        return result
     source = job
     if stage == "qa":
         source = next((j for j in runtime_jobs["jobs"]
