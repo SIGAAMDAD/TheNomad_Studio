@@ -18,8 +18,16 @@ class SourceTargetTests(unittest.TestCase):
         cls.routes = source_targets.read_routes()
 
     def source_job(self, repo="SIGAAMDAD/TheNomad_GOAP", target="main"):
+        workstreams = {
+            "SIGAAMDAD/TheNomad_GOAP": "goap_core",
+            "SIGAAMDAD/NomadFramework": "framework_engine",
+            "SIGAAMDAD/The_Nomad": "core_gameplay",
+            "SIGAAMDAD/Terrain3D": "rendering_engine",
+            "SIGAAMDAD/NomadMain": "mod_gameplay",
+        }
         return {"id": "FEATURE-6-G00", "kind": "code", "role": "rpg-ai-programmer",
                 "repository": repo, "branch": target,
+                "workstream": workstreams.get(repo), "language": "C#" if repo.endswith("/NomadMain") else "C++17",
                 "work_branch": "studio/FEATURE-6-G00", "baseline_sha": "a"*40}
 
     def pr(self, job):
@@ -28,13 +36,14 @@ class SourceTargetTests(unittest.TestCase):
                 "head": {"ref": job["work_branch"], "sha": "b"*40,
                          "repo": {"full_name": repo}}}
 
-    def test_four_real_source_repositories_and_exact_branches(self):
+    def test_five_real_source_repositories_and_exact_branches(self):
         got = source_targets.route_table(self.routes)
         self.assertEqual(got, {
             "SIGAAMDAD/TheNomad_GOAP": "main",
             "SIGAAMDAD/NomadFramework": "develop",
             "SIGAAMDAD/The_Nomad": "Nomad3D",
-            "SIGAAMDAD/Terrain3D": "Terrain3D_NomadRenderer"
+            "SIGAAMDAD/Terrain3D": "Terrain3D_NomadRenderer",
+            "SIGAAMDAD/NomadMain": "main"
         })
         self.assertNotIn("SIGAAMDAD/TheNomad_Studio", got)
 
@@ -43,6 +52,45 @@ class SourceTargetTests(unittest.TestCase):
         self.assertIsNone(source_targets.validate_source_job(j, self.routes))
         self.assertIsNone(source_targets.validate_source_pr(self.pr(j), j, self.routes))
         self.assertEqual(source_targets.expected_work_branch(j["id"]), j["work_branch"])
+
+    def test_owner_workstreams_route_to_distinct_source_repositories(self):
+        cases = [
+            ("rendering_engine", "SIGAAMDAD/Terrain3D", "Terrain3D_NomadRenderer", "C++17"),
+            ("framework_engine", "SIGAAMDAD/NomadFramework", "develop", "C++17"),
+            ("core_gameplay", "SIGAAMDAD/The_Nomad", "Nomad3D", "C#"),
+            ("mod_gameplay", "SIGAAMDAD/NomadMain", "main", "C#"),
+            ("goap_core", "SIGAAMDAD/TheNomad_GOAP", "main", "C++17"),
+        ]
+        for workstream, repo, branch, language in cases:
+            with self.subTest(workstream=workstream):
+                job = self.source_job(repo=repo, target=branch)
+                job.update({"workstream": workstream, "language": language})
+                self.assertIsNone(source_targets.validate_source_job(job, self.routes))
+                self.assertIsNone(source_targets.validate_source_pr(self.pr(job), job, self.routes))
+
+    def test_mod_specific_code_must_be_in_nomadmain_csharp(self):
+        mod = self.source_job(repo="SIGAAMDAD/NomadMain", target="main")
+        self.assertIsNone(source_targets.validate_source_job(mod, self.routes))
+        wrong_lang = dict(mod, language="C++17")
+        self.assertEqual(source_targets.validate_source_job(wrong_lang, self.routes),
+                         "MOD_GAMEPLAY_REQUIRES_CSHARP")
+        wrong_repo = dict(mod, repository="SIGAAMDAD/The_Nomad", branch="Nomad3D")
+        self.assertEqual(source_targets.validate_source_job(wrong_repo, self.routes),
+                         "SOURCE_WORKSTREAM_REPOSITORY_MISMATCH")
+        wrong_stream = dict(mod, workstream="core_gameplay")
+        self.assertEqual(source_targets.validate_source_job(wrong_stream, self.routes),
+                         "SOURCE_WORKSTREAM_REPOSITORY_MISMATCH")
+        missing_stream = dict(mod)
+        missing_stream.pop("workstream")
+        self.assertEqual(source_targets.validate_source_job(missing_stream, self.routes),
+                         "SOURCE_WORKSTREAM_REQUIRED")
+
+    def test_core_gameplay_cannot_be_routed_into_nomadmain(self):
+        core = self.source_job(repo="SIGAAMDAD/The_Nomad", target="Nomad3D")
+        self.assertIsNone(source_targets.validate_source_job(core, self.routes))
+        bad = dict(core, repository="SIGAAMDAD/NomadMain", branch="main", language="C#")
+        self.assertEqual(source_targets.validate_source_job(bad, self.routes),
+                         "SOURCE_WORKSTREAM_REPOSITORY_MISMATCH")
 
     def test_control_repo_cannot_own_real_gameplay_source(self):
         job = self.source_job(repo="SIGAAMDAD/TheNomad_Studio")
