@@ -178,5 +178,55 @@ class StudioTests(unittest.TestCase):
         self.assertEqual(studio.context(jobs, slots, "S09")["status"], "NO_WORK")
 
 
+    def test_review_dispatches_after_submission_not_verification(self):
+        jobs, slots, config = fixture()
+        jobs["jobs"] = [job("DES-201", state="SUBMITTED"),
+                         job("QA-201", kind="review", deps=["DES-201"])]
+        jobs["jobs"][0]["artifact_ref"] = "docs:immutable-revision"
+        jobs["jobs"][1]["subject_job"] = "DES-201"
+        self.assertEqual(studio.validate(jobs, slots, config), [])
+        reservations = studio.dispatch(jobs, slots, config)
+        self.assertEqual(len(reservations), 1)
+        self.assertEqual(reservations[0]["slot"], "S08")
+        self.assertEqual(reservations[0]["job"], "QA-201")
+
+    def test_review_does_not_run_before_submission(self):
+        jobs, slots, config = fixture()
+        jobs["jobs"] = [job("DES-201"), job("QA-201", kind="review", deps=["DES-201"])]
+        jobs["jobs"][1]["subject_job"] = "DES-201"
+        reservations = studio.dispatch(jobs, slots, config)
+        self.assertEqual([x["job"] for x in reservations], ["DES-201"])
+
+    def test_review_requires_exact_parent(self):
+        jobs, slots, config = fixture()
+        jobs["jobs"] = [job("DES-201", state="SUBMITTED"), job("QA-201", kind="review", deps=["DES-201"])]
+        self.assertIn("subject_job", " ".join(studio.validate(jobs, slots, config)))
+
+    def test_verified_code_requires_matching_ci(self):
+        jobs, slots, config = fixture()
+        code = job("ENG-201", kind="code", state="VERIFIED")
+        code.update({"final_commit_sha": "a" * 40, "drive_report_url": "https://docs.google.com/document/d/real/edit",
+                     "qa_evidence": {"verdict": "PASS", "subject_ref": "a" * 40, "reviewer_slot": "S09"}})
+        jobs["jobs"] = [code]
+        self.assertIn("passing CI", " ".join(studio.validate(jobs, slots, config)))
+        code["ci_evidence"] = {"verdict": "PASS", "subject_sha": "b" * 40}
+        self.assertIn("passing CI", " ".join(studio.validate(jobs, slots, config)))
+        code["ci_evidence"]["subject_sha"] = "a" * 40
+        self.assertEqual(studio.validate(jobs, slots, config), [])
+
+    def test_duplicate_scheduled_task_binding_rejected(self):
+        jobs, slots, config = fixture()
+        slots["slots"][1]["scheduled_task_id"] = "task-1"
+        slots["slots"][2]["scheduled_task_id"] = "task-1"
+        self.assertIn("same scheduled", " ".join(studio.validate(jobs, slots, config)))
+
+    def test_disabled_slot_cannot_hold_active_writer(self):
+        jobs, slots, config = fixture()
+        jobs["jobs"].append(job("DES-201"))
+        studio.dispatch(jobs, slots, config)
+        slots["slots"][1]["enabled"] = False
+        self.assertIn("disabled slot", " ".join(studio.validate(jobs, slots, config)))
+
+
 if __name__ == "__main__":
     unittest.main()
