@@ -109,6 +109,48 @@ def approved_jobs(document):
     return jobs
 
 
+def chat_registry(document):
+    if not isinstance(document, dict) or document.get("schema_version") != 1:
+        raise MessageError("INVALID_CHAT_REGISTRY")
+    workers = document.get("workers")
+    if not isinstance(workers, list):
+        raise MessageError("INVALID_CHAT_REGISTRY")
+    result = {}
+    for item in workers:
+        if (not isinstance(item, dict)
+            or not isinstance(item.get("worker_id"), str)
+            or not WORKER.fullmatch(item["worker_id"])
+            or item["worker_id"] in result
+            or item.get("status") not in ("ASSIGNED", "PAUSED", "RETIRED")
+            or type(item.get("assignment_epoch")) is not int
+            or item["assignment_epoch"] < 0
+            or type(item.get("audit_interval_minutes")) is not int
+            or not 15 <= item["audit_interval_minutes"] <= 1440):
+            raise MessageError("INVALID_CHAT_WORKER_ENTRY")
+        result[item["worker_id"]] = item
+    return result
+
+
+def assert_registered_worker(wire, job, registry):
+    """A registry match prevents stale assignments; it is NOT login authentication."""
+    if registry is None:
+        return
+    worker = wire["worker_id"]
+    if worker.startswith("S0"):
+        if job.get("slot") != worker or job.get("assignment_epoch") != wire.get("assignment_epoch"):
+            raise MessageError("SCHEDULED_SLOT_ASSIGNMENT_MISMATCH")
+        return
+    record = registry.get(worker)
+    if record is None or record.get("status") != "ASSIGNED":
+        raise MessageError("CHAT_WORKER_UNREGISTERED_OR_INACTIVE")
+    if (record.get("job_id") != job["id"]
+        or record.get("assignment_epoch") != wire.get("assignment_epoch")
+        or record.get("role_id") != job.get("role")):
+        raise MessageError("CHAT_WORKER_ASSIGNMENT_MISMATCH")
+    if wire.get("role_id") is not None and wire["role_id"] != record.get("role_id"):
+        raise MessageError("CHAT_WORKER_ROLE_MISMATCH")
+
+
 def same_workstream(left, right):
     if left["id"] == right["id"]:
         return True
@@ -127,7 +169,7 @@ def iso_utc(value):
         raise MessageError("INVALID_EVENT_TIMESTAMP") from exc
 
 
-def validate_wire(wire, jobs, issue_number):
+def validate_wire(wire, jobs, issue_number, registry=None):
     jid, worker, kind = wire["job_id"], wire["worker_id"], wire["event_type"]
     if not isinstance(jid, str) or not IDENT.fullmatch(jid):
         raise MessageError("INVALID_JOB_ID")
@@ -140,6 +182,7 @@ def validate_wire(wire, jobs, issue_number):
         raise MessageError("JOB_NOT_APPROVED_OR_ACTIVE")
     if issue_number not in issue_for_job(job):
         raise MessageError("COMMENT_ISSUE_JOB_MISMATCH")
+    assert_registered_worker(wire, job, registry)
     department = wire["recipient_department"]
     if not isinstance(department, str) or department not in DEPARTMENTS:
         raise MessageError("INVALID_RECIPIENT_DEPARTMENT")
@@ -188,7 +231,7 @@ def validate_wire(wire, jobs, issue_number):
     return target_id
 
 
-def normalize_comment(comment, issue_number, jobs, source_repo=HUB):
+def normalize_comment(comment, issue_number, jobs, source_repo=HUB, registry=None):
     if source_repo != HUB or type(issue_number) is not int or issue_number <= 0:
         raise MessageError("WRONG_SOURCE_REPOSITORY")
     wire = parse_wire(comment.get("body"))
@@ -198,7 +241,7 @@ def normalize_comment(comment, issue_number, jobs, source_repo=HUB):
     comment_id = comment.get("id")
     if type(comment_id) is not int or comment_id < 1:
         raise MessageError("INVALID_COMMENT_ID")
-    target = validate_wire(wire, jobs, issue_number)
+    target = validate_wire(wire, jobs, issue_number, registry)
     digest = hashlib.sha256(f"{source_repo}:{comment_id}".encode("ascii")).hexdigest()[:32]
     return {
         "schema_version": 1, "event_id": f"evt-{digest}",
@@ -207,7 +250,7 @@ def normalize_comment(comment, issue_number, jobs, source_repo=HUB):
         "worker_id": wire["worker_id"],
         "assignment_epoch": wire.get("assignment_epoch"),
         "role_id": wire.get("role_id"),
-        "identity_assurance": "UNVERIFIED_SHARED_OWNER",
+        "identity_assurance": "REGISTRY_MATCHED_SHARED_CONNECTOR" if registry is not None else "UNVERIFIED_SHARED_OWNER",
         "delivery_authority": "ARCHIVE_ONLY",
         "recipient": {"department_id": wire["recipient_department"], "job_id": target},
         "transport": {"repo": source_repo, "issue_number": issue_number,
@@ -293,7 +336,7 @@ def digest_day(root, day):
     raise MessageError("DAILY_DIGEST_VERSION_EXHAUSTED")
 
 
-def audit(root, jobs):
+def audit(root, jobs, registry=None):
     records = [read_json(p) for p in sorted(
         (pathlib.Path(root) / "events").glob("*/*/*/evt-*.json"))]
     latest = {}
@@ -303,6 +346,22 @@ def audit(root, jobs):
             "event_id": record["event_id"], "last_observed_at": record["recorded_at_utc"],
             "verified_execution": False, "identity_assurance": record["identity_assurance"],
         }
+    if registry is not None:
+        now = dt.datetime.now(dt.timezone.utc)
+        for name, entry in registry.items():
+            observed = latest.get(name)
+            if observed:
+                last = dt.datetime.fromisoformat(observed["last_observed_at"].replace("Z", "+00:00"))
+                health = ("RECENT_EVIDENCE" if now - last <= dt.timedelta(
+                    minutes=entry["audit_interval_minutes"]) else "OVERDUE_EVIDENCE")
+            else:
+                health = "NOT_OBSERVED"
+            latest.setdefault(name, {"event_id": None, "event_type": None,
+                                     "last_observed_at": None, "verified_execution": False})
+            latest[name].update(registered_status=entry["status"],
+                                assigned_job_id=entry.get("job_id"),
+                                audit_interval_minutes=entry["audit_interval_minutes"],
+                                audit_health=health)
     return {"schema_version": 1, "observed_workers": len(latest),
             "events": len(records), "last_observed": latest,
             "approved_jobs": sum(1 for job in jobs.values() if job.get("approved") is True),
@@ -317,10 +376,12 @@ def main(argv=None):
     parser.add_argument("--github-event")
     parser.add_argument("--github-token")
     parser.add_argument("--day")
+    parser.add_argument("--worker-registry")
     args = parser.parse_args(argv)
     new, duplicate, rejected = 0, 0, collections.Counter()
     try:
         jobs = approved_jobs(read_json(args.runtime_jobs))
+        registry = chat_registry(read_json(args.worker_registry)) if args.worker_registry else None
         if args.mode == "event":
             if not args.github_event:
                 raise MessageError("GITHUB_EVENT_MISSING")
@@ -338,7 +399,7 @@ def main(argv=None):
             inputs = []
         for issue, comment, repo in inputs:
             try:
-                item = normalize_comment(comment, issue, jobs, repo)
+                item = normalize_comment(comment, issue, jobs, repo, registry)
                 if write_event(args.comms_root, item):
                     new += 1
                 else:
@@ -357,7 +418,7 @@ def main(argv=None):
             print(json.dumps({"digest": path, "raw_events": count}))
             return 0
         if args.mode == "audit":
-            print(json.dumps(audit(args.comms_root, jobs), sort_keys=True))
+            print(json.dumps(audit(args.comms_root, jobs, registry), sort_keys=True))
             return 0
         print(json.dumps({"new": new, "duplicates_or_nonmessages": duplicate,
                           "rejected": dict(rejected)}, sort_keys=True))
