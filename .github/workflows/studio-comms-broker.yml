@@ -43,6 +43,9 @@ jobs:
             python scripts/studio_comms.py reconcile --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" --worker-registry "$RUNNER_TEMP/studio-runtime/studio/chat_workers.json" --github-token "$STUDIO_TOKEN" > "$RUNNER_TEMP/comms-result.json"
           fi
           cat "$RUNNER_TEMP/comms-result.json"
+          if [ "$GITHUB_EVENT_NAME" != 'issue_comment' ]; then
+            python scripts/studio_comms.py snapshot --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" --worker-registry "$RUNNER_TEMP/studio-runtime/studio/chat_workers.json" > "$RUNNER_TEMP/comms-snapshot.json"
+          fi
           if [ "$GITHUB_EVENT_NAME" = 'schedule' ] && [ "$EVENT_CRON" = '30 6 * * *' ]; then
             python scripts/studio_comms.py digest --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" --worker-registry "$RUNNER_TEMP/studio-runtime/studio/chat_workers.json" > "$RUNNER_TEMP/comms-digest.json"
           fi
@@ -66,5 +69,6 @@ jobs:
           path: |
             ${{ runner.temp }}/comms-result.json
             ${{ runner.temp }}/comms-digest.json
+            ${{ runner.temp }}/comms-snapshot.json
           retention-days: 14
           if-no-files-found: ignore
