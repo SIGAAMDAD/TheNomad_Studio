@@ -18,6 +18,9 @@ def fixture():
     config = studio.read(ROOT, "config.json")
     config["auto_dispatch_enabled"] = True
     for w in slots["slots"]:
+        # Runtime assignments are not test fixtures: retain only slot capabilities.
+        w["job"] = None
+        w["epoch"] = 0
         w["enabled"] = w["id"] != "S00"
     return jobs, slots, config
 
