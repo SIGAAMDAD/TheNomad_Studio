@@ -135,8 +135,24 @@ def route_event(event, policy, runtime_jobs=None, config=None):
     if not role:
         result.update({"status": "BLOCKED", "reason": "UNKNOWN_SPECIALIST_ROLE"})
         return result
-    if job.get("repository") != repo:
+    if stage["id"] == "qa":
+        subject = next((x for x in runtime_jobs["jobs"] if x.get("id") == job.get("subject_job")), None)
+        if (job.get("kind") != "review" or subject is None or
+                subject.get("repository") != repo or subject.get("state") not in
+                {"SUBMITTED", "REVIEW", "VERIFIED"} or subject.get("final_commit_sha") != sha):
+            result.update({"status": "BLOCKED", "reason": "EXACT_SUBJECT_SHA_NOT_READY_FOR_REVIEW"})
+            return result
+        if subject.get("submitted_by_slot") == job.get("slot") and job.get("slot"):
+            result.update({"status": "BLOCKED", "reason": "AUTHOR_CANNOT_SELF_REVIEW"})
+            return result
+    elif job.get("repository") != repo:
         result.update({"status": "BLOCKED", "reason": "SOURCE_REPOSITORY_MISMATCH"})
+        return result
+    if stage["id"] == "alpha" and job.get("kind") != "code":
+        result.update({"status": "BLOCKED", "reason": "ALPHA_REQUIRES_CODE_JOB"})
+        return result
+    if stage["id"] == "integrate" and job.get("kind") != "integration":
+        result.update({"status": "BLOCKED", "reason": "INTEGRATION_REQUIRES_OWN_JOB"})
         return result
     if stage["id"] in {"alpha", "debug", "integrate", "escalate"}:
         if job.get("kind") not in {"code", "integration"}:
