@@ -1,0 +1,153 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T214237911Z-db-drive-settings-design",
+  "recorded_at_utc": "2026-10-27T21:42:37.911Z",
+  "request_id": "CHAT-20261027-sql-drive-settings-execution-identity",
+  "department_id": "production",
+  "role_id": "rpg-autonomous-workgroup-controller",
+  "mode": "interactive",
+  "event_type": "ARTIFACT_SUBMITTED",
+  "status": "SUBMITTED",
+  "summary": "Inspected live private Studio/Oversight GitHub repository metadata, unprotected branch listing, rulesets API plan-limited 403, connector-inaccessible branch protection and Actions admin settings. Inspected THE_NOMAD_STUDIO Drive root/folder workflow and BL-00/01/05/07/08/10 canonical policies; root is individually owned and live queue/role documents in Drive require explicit one-writer authority migration. Draft PR31 updates existing 15 H00-H14 patch gates/10 workgroups with PostgreSQL operational state, no split-brain with Drive, narrative/quest Docs revision+hash workflow, private-repo hardening and unique response attempt identities distinguished from independent issuer authentication. Four GitHub CI checks PASS. No live DB, Drive docs/folders, repo settings, workforce permission or source writes changed.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T214237911Z-db-drive-settings-design",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "approve-plan",
+      "description": "Owner/independent architect review PR31 and approve proposed SQL/Drive/identity boundaries",
+      "state": "OPEN"
+    },
+    {
+      "id": "owner-baseline-change",
+      "description": "Propose and owner-approve BL-00/05/07/08/10 change to replace Drive LIVE queue/role with read-only views after SQL single-writer cutover",
+      "state": "OPEN"
+    },
+    {
+      "id": "github-admin-protection",
+      "description": "Assess eligible GitHub private-repo plan; configure and negative-test branch rulesets, roles, Actions permissions and least-privilege Apps for Studio and Oversight through owner/admin settings",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "drive-editor-gateway",
+      "description": "Implement scoped Docs gateway and Drive changes cursor, revision-controlled editorial writes, immutable approved canon snapshots and rights metadata",
+      "state": "OPEN"
+    },
+    {
+      "id": "executor-auth",
+      "description": "Implement independently attested per-response execution attempt IDs plus optional chat-thread/run ID; label unverified shared-owner clients as nonprivileged",
+      "state": "OPEN"
+    },
+    {
+      "id": "sql-deployment",
+      "description": "Provision owner-approved PostgreSQL/queue after shadow readback, backup/restore and current cost budget; do not dual-write Drive live queue and SQL",
+      "state": "BLOCKED"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "draft_pr",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/31",
+      "revision": "7d9746e9529d64ffeca1f52ac732cf86fc9b94d9",
+      "verified": true
+    },
+    {
+      "kind": "db_drive_design",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/design/studio-db-drive-repository-policy-v1/studio/architecture/hyperscale/v1/10_DATABASE_DRIVE_AND_AUTHORITY.md",
+      "revision": "7d9746e9529d64ffeca1f52ac732cf86fc9b94d9",
+      "verified": true
+    },
+    {
+      "kind": "github_settings_design",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/design/studio-db-drive-repository-policy-v1/studio/architecture/hyperscale/v1/11_REPOSITORY_SETTINGS_AND_OVERSIGHT.md",
+      "revision": "7d9746e9529d64ffeca1f52ac732cf86fc9b94d9",
+      "verified": true
+    },
+    {
+      "kind": "attempt_id_design",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/design/studio-db-drive-repository-policy-v1/studio/architecture/hyperscale/v1/12_EXECUTION_ATTEMPT_IDENTITY.md",
+      "revision": "7d9746e9529d64ffeca1f52ac732cf86fc9b94d9",
+      "verified": true
+    },
+    {
+      "kind": "drive_root",
+      "uri": "https://drive.google.com/drive/folders/1GgNw3YXgMZqDzKa6SE87blM62e_ulE3I",
+      "revision": "Drive owner-only metadata readback 2026-10-27",
+      "verified": true
+    },
+    {
+      "kind": "drive_canon_policy",
+      "uri": "https://docs.google.com/document/d/1Q8iTaROtfjhmpzdV1FeHOY_Gj9NkLm9OZ6c8PCSWKgw/edit",
+      "revision": "Google revisionId readback 2026-10-27",
+      "verified": true
+    },
+    {
+      "kind": "drive_authority_policy",
+      "uri": "https://docs.google.com/document/d/1HSaqJlFjkB8VAafcxh6ArxgkPueyLgBYrbpLSUPFhe8/edit",
+      "revision": "Google revisionId readback 2026-10-27",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "GitHub Studio/Oversight private repo and branch flag readback",
+      "status": "PASS"
+    },
+    {
+      "name": "GitHub rulesets eligibility: private API returned HTTP 403",
+      "status": "PASS"
+    },
+    {
+      "name": "Manual GitHub Actions/branch enforcement admin settings inspection",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Drive root and existing governance/folder location verified",
+      "status": "PASS"
+    },
+    {
+      "name": "PR31 Studio control validation",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40588850306"
+    },
+    {
+      "name": "PR31 hardening plan CI",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40588850320"
+    },
+    {
+      "name": "PR31 Studio event-worker routing CI",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40588850367"
+    },
+    {
+      "name": "PR31 Hyperscale coordination design validation",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40588850341"
+    },
+    {
+      "name": "Real PostgreSQL cutover and Drive conflict/restore test",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Attested ChatGPT session ID and independent actor auth",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Accept PR31 as review-only architectural requirements for database/Drive/GitHub governance?",
+      "status": "REQUESTED"
+    },
+    {
+      "question": "Choose GitHub plan/admin protection and isolated Oversight identity/keys before privileged mass workers?",
+      "status": "REQUESTED"
+    },
+    {
+      "question": "Authorize formal BL baseline change for post-shadow database operational authority?",
+      "status": "REQUESTED"
+    }
+  ]
+}
