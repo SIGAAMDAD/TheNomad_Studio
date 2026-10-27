@@ -65,7 +65,10 @@
       ]
     },
     "identity_assurance": {
-      "const": "UNVERIFIED_SHARED_OWNER"
+      "enum": [
+        "UNVERIFIED_SHARED_OWNER",
+        "REGISTRY_MATCHED_SHARED_CONNECTOR"
+      ]
     },
     "delivery_authority": {
       "const": "ARCHIVE_ONLY"
