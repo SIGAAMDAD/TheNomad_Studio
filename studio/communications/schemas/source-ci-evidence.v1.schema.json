@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Studio source CI evidence receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "job_id",
+    "source_repo",
+    "source_sha",
+    "work_branch",
+    "source_run_id",
+    "source_run_attempt",
+    "source_run_url",
+    "run_conclusion",
+    "jobs",
+    "artifacts",
+    "source_run_metadata_verified",
+    "artifacts_content_verified",
+    "independent_qa_verdict",
+    "runtime_promotion_authorized"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^ci-[a-f0-9]{32}$"
+    },
+    "job_id": {
+      "type": "string"
+    },
+    "source_repo": {
+      "type": "string"
+    },
+    "source_sha": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{40}$"
+    },
+    "work_branch": {
+      "type": "string"
+    },
+    "source_run_id": {
+      "type": "integer"
+    },
+    "source_run_attempt": {
+      "type": "integer"
+    },
+    "source_run_url": {
+      "type": "string"
+    },
+    "run_conclusion": {
+      "type": "string"
+    },
+    "run_event": {
+      "type": "string"
+    },
+    "run_completed_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_job_final_sha_match": {
+      "type": "boolean"
+    },
+    "source_writes_enabled_at_observation": {
+      "type": "boolean"
+    },
+    "jobs": {
+      "type": "array"
+    },
+    "artifacts": {
+      "type": "array"
+    },
+    "source_run_metadata_verified": {
+      "const": true
+    },
+    "artifacts_content_verified": {
+      "const": false
+    },
+    "independent_qa_verdict": {
+      "const": "NOT_RUN"
+    },
+    "owner_accepted": {
+      "const": false
+    },
+    "runtime_promotion_authorized": {
+      "const": false
+    }
+  }
+}
