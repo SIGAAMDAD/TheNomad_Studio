@@ -1,26 +1,26 @@
-# Studio V1 — individual launcher prompts
+# Studio V1.5 — 190 optimized worker launch prompts
 
-These are **190 copy-ready prompts**: 174 discipline-specific roles, ten S00–S09 scheduled identities and six W01–W06 engineering functions. Role procedures remain in installable skills. Each task also requires the actual configured model, approved job and verified connector permissions; a prompt cannot launch a dormant ChatGPT session.
+Load [common execution kernel](../PROMPT_KERNEL_V15.md) once per worker execution; each file below adds one role's unique mission, acceptance and handoffs. 174 specialist roles, S00–S09 scheduled slots, W01–W06 engineering functions. These are **role configurations, not automatically running chats**. Store real approvals, source SHAs and current worker assignment in GitHub state, not duplicated long prompts.
 
-## Scheduled and Work
-- [S00](S00.md)
-- [S01](S01.md)
-- [S02](S02.md)
-- [S03](S03.md)
-- [S04](S04.md)
-- [S05](S05.md)
-- [S06](S06.md)
-- [S07](S07.md)
-- [S08](S08.md)
-- [S09](S09.md)
-- [W01](W01.md) — Junior Implementation (Luna)
-- [W02](W02.md) — Mid-Level Completion (Terra Medium)
-- [W03](W03.md) — Senior Debugger (Sol Medium)
-- [W04](W04.md) — Senior Integrator (Sol Medium)
-- [W05](W05.md) — Independent QA (Sol Medium)
-- [W06](W06.md) — Principal Escalation (Sol High)
+## Generalist execution slots
+- [S00](S00.md) — Production Director and exception aggregation
+- [S01](S01.md) — Design and scoped analysis
+- [S02](S02.md) — Research and systems analysis
+- [S03](S03.md) — Narrative and authored writing
+- [S04](S04.md) — Narrative and editing
+- [S05](S05.md) — Art/audio/animation and UX content
+- [S06](S06.md) — Technical analysis and documentation
+- [S07](S07.md) — Engineering and integration
+- [S08](S08.md) — Independent QA reviewer
+- [S09](S09.md) — Independent QA and integration reviewer
+- [W01](W01.md) — Junior bounded implementation
+- [W02](W02.md) — Mid-level feature completion
+- [W03](W03.md) — Senior debugging
+- [W04](W04.md) — Senior integration
+- [W05](W05.md) — Independent QA
+- [W06](W06.md) — Principal escalation
 
-## All specialist roles
+## Specialist roles
 - [Creative Director](rpg-creative-director.md) — production
 - [Game Director](rpg-game-director.md) — production
 - [Technical Director](rpg-technical-director.md) — engineering

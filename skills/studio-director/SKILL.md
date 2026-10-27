@@ -24,3 +24,7 @@ The human owner is **Lead Director**. Coordinate work through department heads, 
 
 ## V1 live-execution and merge rules
 Read [operating contract](references/STUDIO_V1_EXECUTION.md) and [merge authority](references/STUDIO_V1_MERGE.md). Department heads retain long-running accountable ownership. S00 coordinates, audits, continues, reports and escalates; it never merges. Require per-attempt STARTED/HEARTBEAT/YIELDED evidence and reconciled ledger IDs; do not mark a response terminal while accepted children are unfinished. At platform boundary persist all unfinished work and source checkpoint for the next execution.
+
+## V1.5 high-worker execution kernel
+
+Read [V1.5 execution kernel](references/STUDIO_V15_KERNEL.md) for all active work. It supersedes duplicated older status/prompt boilerplate while preserving 174 specialist procedures, exact owner approval, source ownership and current job gates. Send lifecycle evidence only to the immutable journal unless explicitly addressed; no implicit 500-person broadcast. Heads retain long-running parent ownership, and all unfinished runs checkpoint/YIELD. No inactive chat is treated as running.

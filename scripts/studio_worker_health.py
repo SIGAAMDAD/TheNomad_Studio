@@ -56,6 +56,13 @@ def audit(runtime_root, comms_root, registry, jobs, when=None):
         if item.get("schema_version")!=4 or item.get("event_id")!=path.stem:
             raise HealthError("CORRUPT_LEDGER_EVENT")
         ledgers.append(item)
+    # Index each source record once, avoiding O(worker_count * event_count).
+    by_worker=collections.defaultdict(list)
+    by_ledger=collections.defaultdict(list)
+    for item in raw:
+        by_worker[item.get("worker_id")].append(item)
+    for item in ledgers:
+        by_ledger[(item.get("worker_slot"),item.get("job_id"))].append(item)
     results=[]
     counts=collections.Counter()
     for wid,worker in sorted(registry.items()):
@@ -65,18 +72,18 @@ def audit(runtime_root, comms_root, registry, jobs, when=None):
             continue
         interval=worker["audit_interval_minutes"]
         epoch=worker["assignment_epoch"]
-        mine=sorted((e for e in raw if e.get("worker_id")==wid and
+        mine=sorted((e for e in by_worker[wid] if
                      e.get("job_id")==jobid and e.get("assignment_epoch")==epoch and
                      e.get("event_type") in ACTIVE),
                     key=lambda e:(e["recorded_at_utc"],e["event_id"]))
-        ledger=[e for e in ledgers if e.get("worker_slot")==wid and e.get("job_id")==jobid]
+        ledger=by_ledger[(wid,jobid)]
         alerts=set()
         if not mine and not ledger:
             alerts.add("WORKER_NOT_OBSERVED")
         elif not any(e["event_type"]=="STARTED" for e in mine):
             alerts.add("START_EVENT_MISSING")
         if any(e.get("worker_id")==wid and e.get("job_id")==jobid and
-               e.get("event_type") in ACTIVE and e.get("assignment_epoch")!=epoch for e in raw):
+               e.get("event_type") in ACTIVE and e.get("assignment_epoch")!=epoch for e in by_worker[wid]):
             alerts.add("ASSIGNMENT_EPOCH_MISMATCH")
         # A checkpoint or blocking response is substantive progress and must
         # carry both a durable ledger reference and its measured execution time.

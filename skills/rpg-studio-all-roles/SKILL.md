@@ -45,3 +45,7 @@ Operate as the relevant **department head or specialist**, with The Nomad's huma
 
 ## V1 launch and continuation (normative)
 Read [V1 execution relay/continuation](references/STUDIO_V1_EXECUTION.md) and [head-only merge contract](references/STUDIO_V1_MERGE.md) for any active production request. The product resets to V1 while legacy wire schema versions stay compatible. Heads own parent jobs across execution boundaries; a junior cannot self-close with open assigned work. Every response records timed, exact-attempt GitHub ledger evidence; hard boundaries yield unfinished work for deterministic continuation. Source merges are head-only after independent authorization.
+
+## V1.5 high-worker execution kernel
+
+Read [V1.5 execution kernel](references/STUDIO_V15_KERNEL.md) for all active work. It supersedes duplicated older status/prompt boilerplate while preserving 174 specialist procedures, exact owner approval, source ownership and current job gates. Send lifecycle evidence only to the immutable journal unless explicitly addressed; no implicit 500-person broadcast. Heads retain long-running parent ownership, and all unfinished runs checkpoint/YIELD. No inactive chat is treated as running.
