@@ -4,7 +4,7 @@
     {
       "id": "OPS-BOOT-001",
       "kind": "docs",
-      "state": "RESERVED",
+      "state": "SUBMITTED",
       "approved": true,
       "role": "studio-ops-pilot",
       "role_manual_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/roles/studio-ops-pilot.md",
@@ -28,14 +28,18 @@
         "SUBMITTED receipt references that immutable report SHA"
       ],
       "qa_owner": "S08",
-      "slot": "S01",
-      "assignment_epoch": 1,
-      "reserved_at": "2026-10-27T03:52:12.597780+00:00"
+      "reserved_at": "2026-10-27T03:52:12.597780+00:00",
+      "artifact_ref": "github:SIGAAMDAD/TheNomad_Studio@d072dd868130ca8f7d298e20ebbe5efbd883c47f:studio/evidence/OPS-BOOT-001.md",
+      "submitted_by_slot": "S01",
+      "last_attempt_id": "S01-20261027T040905Z-OPSBOOT001",
+      "applied_attempts": [
+        "S01-20261027T040905Z-OPSBOOT001"
+      ]
     },
     {
       "id": "OPS-QA-001",
       "kind": "review",
-      "state": "READY",
+      "state": "RESERVED",
       "approved": true,
       "role": "studio-ops-qa",
       "role_manual_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/roles/studio-ops-pilot.md",
@@ -61,7 +65,10 @@
         "Inspect real contents and claims; classify PASS or REWORK with findings",
         "Commit independent QA report and SUBMITTED receipt"
       ],
-      "qa_owner": "S00"
+      "qa_owner": "S00",
+      "slot": "S08",
+      "assignment_epoch": 1,
+      "reserved_at": "2026-10-27T04:25:41.750390+00:00"
     }
   ]
 }
