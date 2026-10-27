@@ -38,13 +38,13 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$GITHUB_EVENT_NAME" = 'issue_comment' ]; then
-            python scripts/studio_comms.py event --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" --github-event "$GITHUB_EVENT_PATH" > "$RUNNER_TEMP/comms-result.json"
+            python scripts/studio_comms.py event --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" --worker-registry "$RUNNER_TEMP/studio-runtime/studio/chat_workers.json" --github-event "$GITHUB_EVENT_PATH" > "$RUNNER_TEMP/comms-result.json"
           else
-            python scripts/studio_comms.py reconcile --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" --github-token "$STUDIO_TOKEN" > "$RUNNER_TEMP/comms-result.json"
+            python scripts/studio_comms.py reconcile --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" --worker-registry "$RUNNER_TEMP/studio-runtime/studio/chat_workers.json" --github-token "$STUDIO_TOKEN" > "$RUNNER_TEMP/comms-result.json"
           fi
           cat "$RUNNER_TEMP/comms-result.json"
           if [ "$GITHUB_EVENT_NAME" = 'schedule' ] && [ "$EVENT_CRON" = '30 6 * * *' ]; then
-            python scripts/studio_comms.py digest --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" >> "$RUNNER_TEMP/comms-result.json"
+            python scripts/studio_comms.py digest --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" --worker-registry "$RUNNER_TEMP/studio-runtime/studio/chat_workers.json" > "$RUNNER_TEMP/comms-digest.json"
           fi
       - name: Publish only append-only event records
         shell: bash
@@ -63,6 +63,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: studio-comms-${{ github.run_id }}
-          path: ${{ runner.temp }}/comms-result.json
+          path: |
+            ${{ runner.temp }}/comms-result.json
+            ${{ runner.temp }}/comms-digest.json
           retention-days: 14
           if-no-files-found: ignore
