@@ -106,10 +106,30 @@ class WorkerRouterTests(unittest.TestCase):
         self.assertEqual(router.route_event(e, self.policy, self.job())["reason"],
                          "AUTO_AI_DISABLED")
 
-    def test_integration_requires_verified_dependencies(self):
+    def test_integration_is_separate_from_debug_and_alpha(self):
         e = self.event(labels=("studio:work:integrate",))
         self.assertEqual(router.route_event(e, self.policy, self.job())["reason"],
+                         "INTEGRATION_REQUIRES_OWN_JOB")
+        j = self.job()
+        j["jobs"][0]["kind"] = "integration"
+        self.assertEqual(router.route_event(e, self.policy, j)["reason"],
                          "INDEPENDENT_UPSTREAM_VERIFICATION_REQUIRED")
+
+    def test_independent_qa_uses_exact_source_subject(self):
+        e = self.event(labels=("studio:work:qa",))
+        e["pull_request"]["body"] = "Studio-Job: QA-FEATURE-100-CODE-01\n"
+        j = self.job()
+        j["jobs"][0].update({"state": "SUBMITTED", "final_commit_sha": HEAD,
+                              "submitted_by_slot": "S07"})
+        j["jobs"].append({"id": "QA-FEATURE-100-CODE-01", "kind": "review",
+                          "role": "rpg-technical-qa-analyst", "approved": True,
+                          "repository": "SIGAAMDAD/TheNomad_Studio",
+                          "slot": "S09", "subject_job": "FEATURE-100-CODE-01"})
+        self.assertEqual(router.route_event(e, self.policy, j)["reason"],
+                         "AUTO_AI_DISABLED")
+        j["jobs"][0]["final_commit_sha"] = BASE
+        self.assertEqual(router.route_event(e, self.policy, j)["reason"],
+                         "EXACT_SUBJECT_SHA_NOT_READY_FOR_REVIEW")
 
     def test_not_authorized_to_dispatch_while_draft(self):
         for role in self.policy["roles"]:
