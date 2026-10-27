@@ -104,7 +104,7 @@ def route_event(event, policy, runtime_jobs=None, config=None):
     # in the actual repository recorded in the authenticated job manifest.
     if (repo == "SIGAAMDAD/TheNomad_Studio" and
             isinstance(head.get("ref"), str) and
-            head["ref"].startswith("studio/workorders/")):
+            (head["ref"].startswith("studio/workorders/") or "Studio-Stage:" in (pr.get("body") or ""))):
         return studio_work_orders.route_work_order(event, policy, runtime_jobs, config)
     result = {"status": "IGNORED", "event": kind, "action": action,
               "repo": repo, "pr_number": pr.get("number") or event.get("number"),
