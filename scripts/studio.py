@@ -10,6 +10,7 @@ import json
 import pathlib
 import re
 import sys
+import source_targets
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 STATES = {"QUEUED", "SCOPED", "READY", "RESERVED", "RUNNING", "CHECKPOINTED",
@@ -107,6 +108,7 @@ def validate(jobs, slots, config):
         if not isinstance(config.get(limit), int) or not 0 < config[limit] <= 9:
             errors.append(f"{limit} must be an integer in 1..9")
     allowed_repos = {(r.get("repo"), r.get("branch")) for r in config.get("repos", [])}
+    reviewed_routes = source_targets.read_routes()
     by_id = {j["id"]: j for j in entries if isinstance(j.get("id"), str)}
     for j in entries:
         jid = str(j.get("id", "<missing>"))
@@ -127,6 +129,10 @@ def validate(jobs, slots, config):
                     errors.append(f"{jid}: source repository/branch not whitelisted")
                 if not isinstance(j.get("baseline_sha"), str) or not SHA_RE.fullmatch(j["baseline_sha"]):
                     errors.append(f"{jid}: missing pinned 40-digit baseline SHA")
+        if kind in {"code", "integration"} and state not in {"BLOCKED", "CANCELLED"}:
+            source_issue = source_targets.validate_source_job(j, reviewed_routes)
+            if source_issue:
+                errors.append(f"{jid}: invalid source repository or work branch: {source_issue}")
         if state in {"SUBMITTED", "REVIEW", "VERIFIED", "ACCEPTED"} and kind in ASSET_KINDS:
             if not valid_asset_manifest(j.get("asset_manifest"), kind):
                 errors.append(f"{jid}: asset deliverable requires verified-format manifest")
@@ -262,7 +268,7 @@ def context(jobs, slots, slot_id):
     if not w.get("enabled") or not job:
         return {"slot": slot_id, "status": "NO_WORK", "epoch": w["epoch"]}
     selected = ("id", "kind", "role", "role_manual_uri", "state", "assignment_epoch",
-                "brief_uri", "brief", "source_refs", "repository", "branch", "baseline_sha",
+                "brief_uri", "brief", "source_refs", "repository", "branch", "work_branch", "baseline_sha",
                 "owned_paths", "protected_paths", "acceptance", "checkpoint_ref", "qa_findings",
                 "artifact_ref", "drive_report_url")
     return {"slot": slot_id, "status": "ASSIGNED", "epoch": w["epoch"],

@@ -25,7 +25,8 @@ class WorkerRouterTests(unittest.TestCase):
         return {"schema": 1, "jobs": [
             {"id": "FEATURE-100-CODE-01", "approved": True,
              "role": role, "kind": "code", "repository": SOURCE_REPO,
-             "branch": "develop", "baseline_sha": BASE, "state": "READY"}
+             "branch": "develop", "work_branch": "studio/FEATURE-100-CODE-01",
+             "baseline_sha": BASE, "state": "READY"}
         ]}
 
     def event(self, labels=("studio:work:alpha",), action="synchronize", sha=HEAD):
@@ -34,8 +35,9 @@ class WorkerRouterTests(unittest.TestCase):
                     "number": 12, "draft": False,
                     "body": "Studio-Job: FEATURE-100-CODE-01\n",
                     "labels": [{"name": x} for x in labels],
-                    "base": {"repo": {"full_name": SOURCE_REPO}},
-                    "head": {"sha": sha}
+                    "base": {"ref": "develop", "repo": {"full_name": SOURCE_REPO}},
+                    "head": {"sha": sha, "ref": "studio/FEATURE-100-CODE-01",
+                             "repo": {"full_name": SOURCE_REPO}}
                 }}
 
     def test_full_roster_and_reporting_graph(self):
@@ -66,7 +68,8 @@ class WorkerRouterTests(unittest.TestCase):
 
     def test_event_cannot_auto_spend_if_other_gates_are_true(self):
         x = router.route_event(self.event(), self.policy, self.job(),
-                               {"auto_ai_enabled": True, "source_writes_enabled": True})
+                               {"auto_ai_enabled": True, "source_writes_enabled": True,
+                                "repos": [{"repo": SOURCE_REPO, "branch": "develop"}]})
         self.assertEqual(x["reason"], "NO_SPEND_AUTHORIZATION")
 
     def test_high_risk_alpha_must_be_only_boilerplate(self):
@@ -154,6 +157,66 @@ class WorkerRouterTests(unittest.TestCase):
         j["jobs"][0]["final_commit_sha"] = BASE
         self.assertEqual(router.route_event(e, self.policy, j)["reason"],
                          "EXACT_SUBJECT_SHA_NOT_READY_FOR_REVIEW")
+
+    def test_goap_repository_is_the_real_source_target(self):
+        j = self.job("rpg-gameplay-data-editor-programmer")
+        source = j["jobs"][0]
+        source.update({"repository": "SIGAAMDAD/TheNomad_GOAP",
+                       "branch": "main", "work_branch": "studio/FEATURE-100-CODE-01"})
+        e = self.event()
+        e["pull_request"]["base"]["repo"]["full_name"] = source["repository"]
+        e["pull_request"]["base"]["ref"] = "main"
+        e["pull_request"]["head"]["repo"]["full_name"] = source["repository"]
+        x = router.route_event(e, self.policy, j)
+        self.assertEqual(x["reason"], "AUTO_AI_DISABLED")
+        self.assertEqual(x["source_repository"], "SIGAAMDAD/TheNomad_GOAP")
+        self.assertEqual(x["target_branch"], "main")
+
+    def test_control_repo_cannot_be_implementation_repository(self):
+        j = self.job()
+        j["jobs"][0]["repository"] = "SIGAAMDAD/TheNomad_Studio"
+        e = self.event()
+        e["pull_request"]["base"]["repo"]["full_name"] = "SIGAAMDAD/TheNomad_Studio"
+        e["pull_request"]["head"]["repo"]["full_name"] = "SIGAAMDAD/TheNomad_Studio"
+        self.assertEqual(router.route_event(e, self.policy, j)["reason"],
+                         "CONTROL_REPOSITORY_FORBIDDEN_FOR_SOURCE")
+
+    def test_wrong_base_and_work_branches_are_rejected(self):
+        e = self.event()
+        e["pull_request"]["base"]["ref"] = "main"
+        self.assertEqual(router.route_event(e, self.policy, self.job())["reason"],
+                         "PR_BASE_BRANCH_MISMATCH")
+        e = self.event()
+        e["pull_request"]["head"]["ref"] = "develop"
+        self.assertEqual(router.route_event(e, self.policy, self.job())["reason"],
+                         "PR_HEAD_WORK_BRANCH_MISMATCH")
+
+    def test_wrong_source_repository_or_fork_is_rejected(self):
+        e = self.event()
+        e["pull_request"]["head"]["repo"]["full_name"] = "someoneelse/fork"
+        self.assertEqual(router.route_event(e, self.policy, self.job())["reason"],
+                         "PR_HEAD_REPOSITORY_MISMATCH")
+        e = self.event()
+        e["pull_request"]["base"]["repo"]["full_name"] = "SIGAAMDAD/TheNomad_Studio"
+        self.assertEqual(router.route_event(e, self.policy, self.job())["reason"],
+                         "PR_BASE_REPOSITORY_MISMATCH")
+
+    def test_never_substitute_default_branch_for_game(self):
+        j = self.job()
+        j["jobs"][0]["repository"] = "SIGAAMDAD/The_Nomad"
+        j["jobs"][0]["branch"] = "main"
+        e = self.event()
+        e["pull_request"]["base"]["repo"]["full_name"] = "SIGAAMDAD/The_Nomad"
+        e["pull_request"]["base"]["ref"] = "main"
+        e["pull_request"]["head"]["repo"]["full_name"] = "SIGAAMDAD/The_Nomad"
+        self.assertEqual(router.route_event(e, self.policy, j)["reason"],
+                         "SOURCE_TARGET_BRANCH_MISMATCH")
+
+    def test_missing_work_branch_is_not_routable(self):
+        j = self.job()
+        del j["jobs"][0]["work_branch"]
+        self.assertEqual(router.route_event(self.event(), self.policy, j)["reason"],
+                         "SOURCE_WORK_BRANCH_MISMATCH")
 
     def test_not_authorized_to_dispatch_while_draft(self):
         for role in self.policy["roles"]:

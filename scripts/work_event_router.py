@@ -9,6 +9,7 @@ import argparse
 import json
 import pathlib
 import re
+import source_targets
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ROLE_ID = re.compile(r"^rpg-[a-z0-9-]+$")
@@ -135,8 +136,10 @@ def route_event(event, policy, runtime_jobs=None, config=None):
     if not role:
         result.update({"status": "BLOCKED", "reason": "UNKNOWN_SPECIALIST_ROLE"})
         return result
+    source_job = job
     if stage["id"] == "qa":
         subject = next((x for x in runtime_jobs["jobs"] if x.get("id") == job.get("subject_job")), None)
+        source_job = subject
         if (job.get("kind") != "review" or subject is None or
                 subject.get("repository") != repo or subject.get("state") not in
                 {"SUBMITTED", "REVIEW", "VERIFIED"} or subject.get("final_commit_sha") != sha):
@@ -145,9 +148,17 @@ def route_event(event, policy, runtime_jobs=None, config=None):
         if subject.get("submitted_by_slot") == job.get("slot") and job.get("slot"):
             result.update({"status": "BLOCKED", "reason": "AUTHOR_CANNOT_SELF_REVIEW"})
             return result
-    elif job.get("repository") != repo:
-        result.update({"status": "BLOCKED", "reason": "SOURCE_REPOSITORY_MISMATCH"})
+    # Every source-producing/technical-QA PR belongs to the actual source
+    # repository, never to this control-plane repository. Same-repo head
+    # and the explicitly selected target branch are mandatory.
+    routes = source_targets.read_routes()
+    mismatch = source_targets.validate_source_pr(pr, source_job, routes)
+    if mismatch:
+        result.update({"status": "BLOCKED", "reason": mismatch})
         return result
+    result["source_repository"] = source_job["repository"]
+    result["target_branch"] = source_job["branch"]
+    result["work_branch"] = source_job["work_branch"]
     if stage["id"] in {"alpha", "implement"} and job.get("kind") != "code":
         result.update({"status": "BLOCKED", "reason": "IMPLEMENTATION_REQUIRES_CODE_JOB"})
         return result
@@ -193,6 +204,9 @@ def route_event(event, policy, runtime_jobs=None, config=None):
         return result
     if not isinstance(config, dict) or config.get("auto_ai_enabled") is not True:
         result.update({"status": "BLOCKED", "reason": "AUTO_AI_DISABLED"})
+        return result
+    if not source_targets.allowed_in_runtime(source_job, config):
+        result.update({"status": "BLOCKED", "reason": "SOURCE_NOT_IN_LIVE_ALLOWLIST"})
         return result
     if job.get("kind") in {"code", "integration"} and config.get("source_writes_enabled") is not True:
         result.update({"status": "BLOCKED", "reason": "SOURCE_WRITES_DISABLED"})
