@@ -1,0 +1,21 @@
+name: Hyperscale hardening plan validation
+on:
+  pull_request:
+    paths:
+      - 'studio/architecture/hyperscale/v1/**'
+      - '.github/workflows/hyperscale-hardening-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python studio/architecture/hyperscale/v1/tools/validate_workgroups.py studio/architecture/hyperscale/v1/workgroups.json
+      - run: python studio/architecture/hyperscale/v1/tools/validate_hardening_plan.py studio/architecture/hyperscale/v1/workgroups.json studio/architecture/hyperscale/v1/hardening_patches.v1.json
+      - run: python studio/architecture/hyperscale/v1/tools/validate_hardening_plan.py --self-test
