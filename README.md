@@ -1,45 +1,30 @@
 # TheNomad_Studio
 
-This private repository now contains an opt-in, deterministic control-plane bootstrap for The Nomad's AI production studio. Read `studio/config.json`, `studio/jobs.json`, and `studio/slots.json` before making changes.
+Private, deterministic control plane for **The Nomad** AI production studio. The design uses the existing ChatGPT scheduled tasks as bounded workers, GitHub Actions for scheduling/reconciliation, and Google Drive for original creative documents.
 
-## First-time setup
-1. Review and merge the bootstrap pull request. Scheduled GitHub Actions run from the default branch.
-2. Open the **Actions** tab and manually run **Studio control validation**, ensuring the schema, dependency graph and dispatch preview pass.
-3. Source code automation remains **disabled** until the canonical October game/framework/terrain SHA and build toolchains are frozen and approved. The default config explicitly blocks code dispatch.
-4. Add owner-approved jobs to `studio/jobs.json`. Jobs require `id`, `kind`, `state`, and optional `dependencies`; for example: `{"id":"DES-001","kind":"design","priority":10,"state":"READY","dependencies":[],"role":"rpg-gameplay-designer"}`. Only mark a job READY after scope, dependencies, ownership and evidence gates are met.
-5. Enable desired specialist slots in `studio/slots.json`. Keep S00 reserved for the production director. Run `python scripts/studio.py dispatch` to **preview**, not execute, a reservation. Local `--write` persists to JSON but should only be used through a serialized, reviewable branch change.
-6. Update existing scheduled ChatGPT worker prompts to read these GitHub slot/job records as authority, and persist exact checkpoint/QA evidence. GitHub Actions does not automatically wake an ordinary ChatGPT scheduled chat.
-7. Implement source analysis/build CI in the three actual game repositories as independent, tested workflows before enabling programming. Do not treat green Studio schema checks as proof that Godot or C++ builds.
+## What is implemented
 
-## Current upstream branches
-- `SIGAAMDAD/The_Nomad:Nomad3D`
-- `SIGAAMDAD/NomadFramework:develop`
-- `SIGAAMDAD/Terrain3D:Terrain3D_NomadRenderer`
+- [Validated ten-slot allocator](scripts/studio.py) with dependency gates, approved job admission, source-write protection, per-slot assignment epochs, maximum writer/reviewer limits, and overlapping writable-path exclusion.
+- [Immutable worker receipt protocol](studio/WORKER_CONTRACT.md) that allows hourly reconciliation to advance a partial job from an exact checkpoint or release a blocked slot.
+- [Hourly GitHub Actions reconciliation](.github/workflows/studio-reconcile.yml) with a **dedicated `studio/runtime` state branch**; it cannot automatically change the default branch, launch ChatGPT, or invoke paid inference.
+- [Deterministic regression tests](tests/test_studio.py) and [validation workflow](.github/workflows/studio-check.yml).
+- [Deployment instructions](docs/SETUP.md), including the required manual binding of actual scheduled ChatGPT tasks and engineering source-freeze gates.
 
-## Automation included
-- `studio-check.yml`: validate policy and print a dispatch preview on PR, push and manual invocation.
-- `studio-reconcile.yml`: hourly UTC-based read-only dispatch preview, publishes evidence as an artifact; does not update queue or perform AI work.
-- `ai-manual.yml`: manual eligibility gate for a future AI executor; intentionally **does not call a paid model**.
-- `scripts/studio.py`: dependency-cycle validation, unique assignment checks, source completion gate checks, capacity-limited READY-job reservation planning, optional local JSON persistence.
+## Immediate deployment
 
-## AI models inside Actions
-It is technically possible to invoke OpenAI/Codex or another model provider from a GitHub Actions job. Model inference requires its own authenticated API/agent entitlement; your ChatGPT scheduled-chat allowance is not automatically OpenAI API credit. The current bootstrap performs **zero inference** and requires **zero model API secrets**. A future explicit opt-in can use an `OPENAI_API_KEY` repository secret, spend limits, scoped permissions and reviewable feature branches. No default-branch auto-merges or unbounded recurring model invocation are configured.
+1. Review and merge this control-plane change to `main`.
+2. Run **Studio control validation**, then **Studio hourly reconciliation** from the repository's Actions tab. The latter initializes `studio/runtime` if needed.
+3. On `studio/runtime`, opt into deterministic dispatch using `auto_dispatch_enabled: true` and enable only real worker slots after binding their ChatGPT task prompts. Leave `auto_ai_enabled` and `source_writes_enabled` false.
+4. Add a real approved non-code job, and test the complete reservation → worker artifact → immutable receipt → independent QA loop.
 
-## Local commands
-```bash
-python scripts/studio.py validate
-python scripts/studio.py status
-python scripts/studio.py dispatch
-```
+Full instructions: **[docs/SETUP.md](docs/SETUP.md)**.
 
-This bootstrap is deliberately inert with respect to source edits, paid AI spend and automated ChatGPT task creation. It does not supersede the approved Drive baselines.
+## Authority
 
-## Optional manual API draft execution
-1. In GitHub repository **Settings → Environments**, create `ai-spend-approved` and require a reviewer. This prevents unattended approval of API calls.
-2. In **Settings → Secrets and variables → Actions**, create repository secret `OPENAI_API_KEY` using a **separately funded OpenAI API key** with a strict project spending limit.
-3. Add a non-code job with `"approved": true`, `"brief": "bounded instructions ..."`, `"kind": "design"`, and `"state": "READY"` to `studio/jobs.json`, then commit that configuration.
-4. Under **Actions → AI draft - manual opt-in only → Run workflow**, supply the exact job ID and an API model supported by that key.
-5. Review the resulting `ai-draft` artifact; this workflow does **not** update game code, Google Drive, or production job status.
-6. Keep recurring AI disabled until actual cost and output quality have been measured.
+- Operations: `SIGAAMDAD/TheNomad_Studio:studio/runtime`
+- Game: `SIGAAMDAD/The_Nomad:Nomad3D`
+- Native framework: `SIGAAMDAD/NomadFramework:develop`
+- Terrain fork: `SIGAAMDAD/Terrain3D:Terrain3D_NomadRenderer`
+- Studio source registry: https://docs.google.com/document/d/1HVUomdnsfZv0xb1sFvN1U-eXWpoMwKLVV3IlBBco1RQ/edit
 
-The manual runner makes one bounded `/v1/responses` request with `max_output_tokens=1800` and `store=false`. The environment gate is an actual configuration requirement; merely naming it in YAML does not establish required reviewers. GitHub Action minutes, API charges, and model availability depend on your plans and account.
+The current engineering source freeze remains pending. No model inference, code generation, source integration, owner approval or API spend is triggered by this repository's deterministic controller. The optional existing `ai-manual.yml` is an eligibility check only.
