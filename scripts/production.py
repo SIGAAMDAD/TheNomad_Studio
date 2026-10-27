@@ -223,13 +223,19 @@ def adjudicate(jobs, gh=None, external_verifier=None):
             continue
         if reviewer.get("last_adjudicated_ref") == expected:
             continue
-        if not verify(reviewer.get("artifact_ref")) or not verify(expected):
+        readback = reviewer.get("readback_evidence", {})
+        external_ok = (isinstance(readback, dict) and readback.get("verified") is True
+                       and readback.get("subject_ref") == expected
+                       and readback.get("report_ref") == reviewer.get("artifact_ref")
+                       and readback.get("verified_by") == "S00"
+                       and bool(readback.get("evidence_uri")))
+        if not external_ok and (not verify(reviewer.get("artifact_ref")) or not verify(expected)):
             subject["state"] = "REVIEW"
             subject["review_blocker"] = "Independent report or exact subject not externally readable"
             continue
         verdict = result.get("verdict")
-        reviewer["last_adjudicated_ref"] = expected
         if verdict == "REWORK":
+            reviewer["last_adjudicated_ref"] = expected
             subject["qa_findings"] = result.get("findings", [])
             subject["previous_artifact_ref"] = expected
             subject.pop("artifact_ref", None)
@@ -241,6 +247,7 @@ def adjudicate(jobs, gh=None, external_verifier=None):
             reviewer.pop("artifact_ref", None)
             changes.append({"job": subject["id"], "outcome": "REWORK"})
         elif verdict == "PASS":
+            subject.pop("qa_findings", None)
             subject["qa_evidence"] = {
                 "verdict": "PASS", "subject_ref": expected,
                 "reviewer_slot": result.get("reviewer_slot"),
@@ -255,6 +262,7 @@ def adjudicate(jobs, gh=None, external_verifier=None):
             else:
                 complete = True
             if complete:
+                reviewer["last_adjudicated_ref"] = expected
                 subject["state"] = "VERIFIED"
                 reviewer["state"] = "VERIFIED"
                 reviewer["qa_evidence"] = {"verdict": "PASS", "subject_ref": reviewer["artifact_ref"],
