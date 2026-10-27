@@ -1,0 +1,130 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T215548585Z-branch-protection-db-audit",
+  "recorded_at_utc": "2026-10-27T21:55:48.585Z",
+  "request_id": "CHAT-20261027-branch-protection-db-provisioning-audit",
+  "department_id": "production",
+  "role_id": "rpg-autonomous-workgroup-controller",
+  "mode": "interactive",
+  "event_type": "ARTIFACT_SUBMITTED",
+  "status": "SUBMITTED",
+  "summary": "Audited every current Studio and Oversight branch with exact GitHub compare-to-main, PR merge/closed status, branch protection readback, CI workflow triggers, personal-account ownership and runtime DB presence. Two Studio branches are ancestor-only and safe to delete: design/hyperscale-coordination-v1 and feature/studio-inbox-evidence-v1; obsolete closed GOAP PR16 and revert-24 branch require confirmation; audit/v1-500-worker-qa and studio/v1-operational-consolidation each have one unmerged audit file and must be archived first. main, studio/runtime, studio/comms, oversight main/cases are active branches. PR31 merged at 8d0b9002 and its design branch was deleted by other actor. Both repos remain private with protected:false and rulesets GET 403 plan restriction. Current scheduled broker/reconcile/director workflows push directly to studio/comms and studio/runtime with github.token, so requiring PRs before dedicated app publishing would break them. Recommended separate human-reviewed and append-only branch rules, least-privilege org/app strategy. No actual PostgreSQL deployment/migration/credentials/queue exist; DB is only a merged architecture plan. No branches deleted or settings changed by this audit.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T215548585Z-branch-protection-db-audit",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "studio-main-protection",
+      "description": "Owner configure main PR/checks/protection with actual CI job names controller-tests and route-candidate; verify negative unauthorized direct push",
+      "state": "OPEN"
+    },
+    {
+      "id": "oversight-main-protection",
+      "description": "Owner adjust Oversight security-tests to run on every PR before making required, then configure protected main with isolated independent review policy",
+      "state": "OPEN"
+    },
+    {
+      "id": "runtime-comms-protection",
+      "description": "Do not require PR for studio/runtime or studio/comms until current GitHub-token direct publishers are replaced/verified with scoped Apps; first block force/deletion",
+      "state": "OPEN"
+    },
+    {
+      "id": "studio-branch-cleanup",
+      "description": "Owner may delete two zero-ahead merged branches; review unique QA_REPORT_V15.md and AUDIT_FINDINGS.md before deleting their branches",
+      "state": "OPEN"
+    },
+    {
+      "id": "postgre-host",
+      "description": "Choose/authorize managed PostgreSQL host and budget; provision private test/prod DB, users, backup/PITR and application secret manager",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "schema-and-gateway",
+      "description": "Implement migration scripts, trusted coordinator gateway, transactional outbox, leases, cursor projections and independent identity before protected execution",
+      "state": "OPEN"
+    },
+    {
+      "id": "shadow-cutover",
+      "description": "Reconcile GitHub runtime and Drive BL-00/08 LIVE queue into read-only SQL shadow, obtain explicit owner baseline change and test real two-worker cutover",
+      "state": "BLOCKED"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "verified_studio_main",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/tree/main",
+      "revision": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
+      "verified": true
+    },
+    {
+      "kind": "verified_oversight_main",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio_Oversight/tree/main",
+      "revision": "4c9368d9e5ec9954ef7efb6c9674d91fb4cbb849",
+      "verified": true
+    },
+    {
+      "kind": "merged_database_design",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/studio/architecture/hyperscale/v1/10_DATABASE_DRIVE_AND_AUTHORITY.md",
+      "revision": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
+      "verified": true
+    },
+    {
+      "kind": "merged_rules_design",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/studio/architecture/hyperscale/v1/11_REPOSITORY_SETTINGS_AND_OVERSIGHT.md",
+      "revision": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
+      "verified": true
+    },
+    {
+      "kind": "merged_pr",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/31",
+      "revision": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "GitHub branch inventory and compare ahead/behind across both repositories",
+      "status": "PASS"
+    },
+    {
+      "name": "GitHub current open and closed PR references checked; PR31 merge and branch deletion readback",
+      "status": "PASS"
+    },
+    {
+      "name": "Private repository rulesets GET 403 on both personal-account repositories",
+      "status": "PASS"
+    },
+    {
+      "name": "Current workflows write directly to studio/runtime and studio/comms with github.token",
+      "status": "PASS"
+    },
+    {
+      "name": "Existing CODEOWNERS missing on both repositories",
+      "status": "PASS"
+    },
+    {
+      "name": "No database/migrations/deployment code found on current Studio main tree",
+      "status": "PASS"
+    },
+    {
+      "name": "Owner UI ruleset enforcement, Actions permission settings and restricted actor negative tests",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Managed PostgreSQL provisioning, schema migrations and disaster recovery",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Configure GitHub Pro private branch protection, or move repo administration to a Team org for per-app identity restrictions?",
+      "status": "REQUESTED"
+    },
+    {
+      "question": "Choose managed PostgreSQL provider/account and authorize pilot costs, access and backup policy?",
+      "status": "REQUESTED"
+    }
+  ]
+}
