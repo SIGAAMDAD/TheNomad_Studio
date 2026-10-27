@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "policy": "studio_control_plane_only",
+  "control_repository": "SIGAAMDAD/TheNomad_Studio",
+  "source_authority": "studio/runtime/studio/config.json + approved source registry + per-job pinned SHA",
+  "source_routes": [
+    {
+      "component": "goap_core",
+      "repository": "SIGAAMDAD/TheNomad_GOAP",
+      "target_branch": "main",
+      "verified_branch_head_at_intake": "5258a0a05d4240cc772c225bdb1868c652b7a052",
+      "status": "REPOSITORY_EXISTS_SOURCE_NOT_INITIALIZED",
+      "ownership": "GOAP DLL, compiler, schema, managed interop and tests",
+      "target_url": "https://github.com/SIGAAMDAD/TheNomad_GOAP"
+    },
+    {
+      "component": "nomad_framework",
+      "repository": "SIGAAMDAD/NomadFramework",
+      "target_branch": "develop",
+      "verified_branch_head_at_intake": "8617caecbaf4571917eac2cd2aeee459485740fc",
+      "status": "SOURCE_FREEZE_REQUIRED",
+      "ownership": "Game framework adapters and GDExtension integration",
+      "target_url": "https://github.com/SIGAAMDAD/NomadFramework/tree/develop"
+    },
+    {
+      "component": "nomad_game",
+      "repository": "SIGAAMDAD/The_Nomad",
+      "target_branch": "Nomad3D",
+      "verified_branch_head_at_intake": "b92cc734a542964c19e01cde792c62ef3538e150",
+      "status": "SOURCE_FREEZE_REQUIRED",
+      "ownership": "Playable game content and gameplay glue",
+      "target_url": "https://github.com/SIGAAMDAD/The_Nomad/tree/Nomad3D"
+    },
+    {
+      "component": "terrain3d",
+      "repository": "SIGAAMDAD/Terrain3D",
+      "target_branch": "Terrain3D_NomadRenderer",
+      "verified_branch_head_at_intake": "1e00735913a3cfa5d0e73bd7817c37d5b0b2c9db",
+      "status": "SOURCE_FREEZE_REQUIRED",
+      "ownership": "Terrain, foliage, HLOD, environment source",
+      "target_url": "https://github.com/SIGAAMDAD/Terrain3D/tree/Terrain3D_NomadRenderer"
+    }
+  ],
+  "branch_contract": {
+    "job_work_branch": "studio/<JOB_ID>",
+    "source_work_branch_is_created_in": "same_source_repository",
+    "pr_head_repository": "same_as_source_repository",
+    "pr_base_repository": "same_as_source_repository",
+    "pr_base_branch": "source_routes[component].target_branch",
+    "write_strategy": "commit_and_push_only_to_job_work_branch",
+    "owner_merge_only": true,
+    "no_fallback_to_default_branch": true,
+    "no_fork_source_writes": true,
+    "no_cross_repository_cherry_pick_without_owner_gate": true
+  },
+  "safeguards": {
+    "source_jobs_must_not_target_control_repo": true,
+    "control_repo_allowed_content": [
+      "studio scripts and workflows",
+      "work manifests, issue intake, receipts, QA reports",
+      "role policies and production documentation"
+    ],
+    "control_repo_forbidden_content": [
+      "GOAP runtime and compiler sources",
+      "NomadFramework game-engine or GDExtension source",
+      "The_Nomad gameplay source",
+      "Terrain3D renderer and plugin source"
+    ],
+    "require_authorized_runtime_allowlist": true,
+    "require_verified_remote_branch_head_at_job_creation": true,
+    "require_job_pinned_baseline_sha": true,
+    "require_source_frozen_before_coding": true,
+    "require_exclusive_work_branch_claim": true,
+    "require_matching_final_commit_and_drive_receipt": true,
+    "retain_source_writes_disabled_by_default": true,
+    "retain_auto_ai_disabled_by_default": true
+  },
+  "integration_order": [
+    "SIGAAMDAD/TheNomad_GOAP:main",
+    "SIGAAMDAD/NomadFramework:develop",
+    "SIGAAMDAD/The_Nomad:Nomad3D"
+  ],
+  "notes": "Observed SHAs are reference evidence only; never use them as an automatic current baseline or replace exact job-pinned source SHAs. The GOAP repository currently has README.md and LICENSE only. No GOAP implementation branch or build baseline is accepted. This file does not enable spending, source writes or native Work tasks."
+}
