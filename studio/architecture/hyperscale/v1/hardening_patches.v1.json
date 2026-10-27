@@ -65,7 +65,9 @@
       "contracts": [
         "PolicySnapshotV2 includes immutable approval ref, verifier, digest, scope, expiry, revocation generation",
         "WorkerPrincipal, ExecutorAttempt, ShiftAuthorization, SourceLease and OwnerDecision typed schemas",
-        "Capability-matrix policy: observation, inbox read, source write, QA, merge, spending, oversight enforcement"
+        "Capability-matrix policy: observation, inbox read, source write, QA, merge, spending, oversight enforcement",
+        "Freeze exact principal/worker/chat_thread/execution_attempt/studio_shift identity hierarchy; UUID alone cannot authenticate a chat sharing an owner connector.",
+        "Owner-approved BASELINE_CHANGE_ID must explicitly resolve Drive BL-00/BL-08 queue authority before PostgreSQL can become the single runtime writer."
       ],
       "preserves": [
         "GitHub Issues/approved runtime are owner-policy authority; database caches only validated revisions",
@@ -76,7 +78,8 @@
       ],
       "verification": [
         "Unknown/stale/revoked policy revision or unverified issuer fails closed",
-        "Synthetic owner-forgery and role-spoof messages cannot become approval"
+        "Synthetic owner-forgery and role-spoof messages cannot become approval",
+        "Spoofed worker_id or role with unverified shared connector cannot perform protected action despite unique attempt_id."
       ],
       "completion_gate": [
         "Independent architecture approval freezes signed policy contract; every privileged adapter has executable negative tests"
@@ -143,7 +146,9 @@
         "Per-job ordered sequence; accepted event insert plus outbox same database commit",
         "PublicationSaga state machine: PREPARED -> COMMITTED_SOURCE -> VERIFIED_SOURCE -> RECONCILED_STUDIO or RETRY/QUARANTINED",
         "External side-effect key = job+attempt+operation+source SHA; GitHub compare-and-swap and read-after-write",
-        "Dead-letter queue and monotonic durable cursor with idempotent replay"
+        "Dead-letter queue and monotonic durable cursor with idempotent replay",
+        "Design PostgreSQL normalized operational store: jobs, dependencies, approved policy cache, shifts, attempts, leases, events, outbox, inbox cursors, Drive document refs, exact-SHA evidence and usage budgets; single writer after approved cutover.",
+        "External Google Doc revision writes use a durable publication saga like source commits; verify document revision and export hash before marking accepted."
       ],
       "preserves": [
         "Source repo owns actual commits; GitHub owner approval remains authoritative",
@@ -155,7 +160,8 @@
       "verification": [
         "Kill process between source commit and ledger recording, and after DB commit before queue publish",
         "Double event replay creates one logical effect and no duplicate source patch",
-        "Orphan commit/receipt and GitHub outage reconcile using exact remote SHA"
+        "Orphan commit/receipt and GitHub outage reconcile using exact remote SHA",
+        "Shadow compare Drive live queue and GitHub job/approval state before signed SQL cutover; DB crash after Drive write and source commit recovers without duplication."
       ],
       "completion_gate": [
         "All acknowledged accepted IDs recover after crash; no duplicate protected side effects or fabricated VERIFIED state"
@@ -184,7 +190,8 @@
         "PITR and replica failure contract; owner-approved RPO/RTO by failure class before release",
         "Immutable segment index, signed external anchor, periodic hash reconciliation and manifest reader",
         "Retention/GC roots pin unresolved jobs, QA, external artifacts, legal hold and Oversight case separation",
-        "Restore procedure for DB, outbox, cursors, archived objects and authority snapshot"
+        "Restore procedure for DB, outbox, cursors, archived objects and authority snapshot",
+        "Back up approved Google Docs immutable export/digest plus revision map and Drive changes cursor; test restore and ownership continuity."
       ],
       "preserves": [
         "Accepted-event immutability; retained evidence remains discoverable by stable ID",
@@ -196,7 +203,8 @@
       "verification": [
         "Restore from corrupted primary and lost object copy; replay overlapping queue delivery idempotently",
         "Prove cutover restore with no missing acknowledged event IDs and no duplicate effects",
-        "Verify retention dry-run does not delete unresolved or held records"
+        "Verify retention dry-run does not delete unresolved or held records",
+        "Restore with lost Doc change notifications still reconstructs accepted document graph by cursor and exact hash."
       ],
       "completion_gate": [
         "A timed, witnessed restore drill passes measured owner-approved RPO/RTO, integrity and privacy checks"
@@ -302,7 +310,9 @@
       "contracts": [
         "ResumeCapsuleV1: job/worker/attempt ancestry, approved scope, repo/base SHA, latest verified checkpoint, ABI/revision refs, TODO/blocker DAG, valid inbox cursor, QA/CI state, expiry",
         "Source-map/index cache keyed by repo SHA+toolchain+role, with source-delta retrieval and checksum verification",
-        "Atomic capsule publication tied to accepted attempt receipt; stale/rescinded authority invalidates cache"
+        "Atomic capsule publication tied to accepted attempt receipt; stale/rescinded authority invalidates cache",
+        "Cache Drive document_id + revisionId + section index + accepted export SHA256 and load only changed sections in worker resume capsule.",
+        "Use Google Docs requiredRevisionId write control and one accountable document owner per job to prevent silent conflicting prose edits."
       ],
       "preserves": [
         "Original Git SHA and ledger records remain the authority, capsule is a replaceable hint",
@@ -313,7 +323,8 @@
       ],
       "verification": [
         "Corrupt/expired capsule rejected; changed source SHA and revoked scope trigger cold reconstruction",
-        "Measured context tokens/tool calls to start a job vs baseline; no skipped safety checks"
+        "Measured context tokens/tool calls to start a job vs baseline; no skipped safety checks",
+        "Concurrent prose editors cause explicit revision conflict; changed Doc invalidates earlier editorial QA and cached capsule."
       ],
       "completion_gate": [
         "Capsule rebuild deterministically from immutable refs, and restart recovers last accepted work without context drift"
@@ -343,7 +354,9 @@
         "ExecutionHost interface reports capabilities: start/cancel/status, run_id, attested start/end, idempotency, supported credentials",
         "Shift controller START/PAUSE/DRAIN/STOP with shift_epoch and auth, capacity by department and role",
         "Admission transaction reserves estimated spend before launch, reconciles actual usage, denies overage and auto-stops on empty+reconciled jobs",
-        "Unknown/ordinary interactive chat is NEVER claimed as automatable; external Work/API invocation only with explicit owner budget"
+        "Unknown/ordinary interactive chat is NEVER claimed as automatable; external Work/API invocation only with explicit owner budget",
+        "A unique execution_attempt_id is created per bounded response; optional chat_thread_id and host-run attestation remain distinct from stable worker_id and parent studio_shift_id.",
+        "Manual chats without attested host identity have UNVERIFIED_SHARED_OWNER status and cannot gain privileged rights from self-declared IDs."
       ],
       "preserves": [
         "Existing S00-S09 scheduled tasks remain separate from CW logical workers",
@@ -354,7 +367,8 @@
       ],
       "verification": [
         "Lost host response, launch retry, delayed cancel, clock skew and STOP races do not create duplicate side effects",
-        "Reboot or host outage produces accurate INDETERMINATE and escalation"
+        "Reboot or host outage produces accurate INDETERMINATE and escalation",
+        "1,000 distinct synthetic attempts are unique and correctly grouped by parent Studio shift without granting source/QA/canon authority."
       ],
       "completion_gate": [
         "Verified supported executor integration with approved cost ceiling and no side effects for disabled auto_ai/source_writes"
@@ -423,7 +437,8 @@
       "contracts": [
         "Download and hash required CI artifacts; verify manifest digest, toolchain/inputs, commit SHA, run attempt, size/expiry and trust identity",
         "Action dependency pinning policy to reviewed immutable commit SHA; least-privilege GitHub App, per-repo/scoped token permissions",
-        "Signed attestations and source diff/AST/SARIF compact review packet keyed by final commit"
+        "Signed attestations and source diff/AST/SARIF compact review packet keyed by final commit",
+        "Verified published quest/dialogue records in NomadMain carry accepted Drive document ID, exact exported content digest, owner canon acceptance ID and source commit SHA."
       ],
       "preserves": [
         "Successful workflow metadata is distinct from passing independent QA or verified artifact bytes",
@@ -434,7 +449,8 @@
       ],
       "verification": [
         "Replace artifact bytes after metadata capture; invalid digest fails despite completed CI run",
-        "Rebuild at changed SHA invalidates preceding QA pass; compromised/revoked CI token cannot publish accepted verification"
+        "Rebuild at changed SHA invalidates preceding QA pass; compromised/revoked CI token cannot publish accepted verification",
+        "A mutated accepted Google Doc hash fails artifact review even if the URL is unchanged."
       ],
       "completion_gate": [
         "One full source->CI artifact hash->independent QA->owner/authorized head acceptance test at fixed SHA passes"
@@ -464,7 +480,8 @@
       "contracts": [
         "Independent encryption/decryption key custody with negative read-access test against production credentials",
         "Verified notice ID, issuer key, approval object digest, owner approval epoch, target assignment and lease generation, expiry, replay table",
-        "External immutable encrypted case archive with restore/retention and minimal operational notice only"
+        "External immutable encrypted case archive with restore/retention and minimal operational notice only",
+        "Protect distinct Oversight repository settings: restricted main/cases writers, private independent signing/encryption custody, external append-only anchors and negative access tests."
       ],
       "preserves": [
         "Production never receives plaintext report contents and allegations never self-trigger punishment",
@@ -475,7 +492,8 @@
       ],
       "verification": [
         "Forge plausible owner GitHub URL, replay valid notice, revoke signer, send mismatched job epoch; all denied",
-        "Unauthorized Studio credential cannot decrypt or list case material, including from logs and backups"
+        "Unauthorized Studio credential cannot decrypt or list case material, including from logs and backups",
+        "Production worker GitHub App and general Studio Drive credentials cannot read Oversight cases or alter owner enforcement settings."
       ],
       "completion_gate": [
         "Independent security review confirms approval readback and case isolation before any real confidential intake"
@@ -506,7 +524,8 @@
         "External heartbeat/canary freshness monitor independent of main Studio GitHub Actions trigger",
         "Structured incident taxonomy: NO_EVENT, HOST_INDETERMINATE, CI_FAILED, AUTH_BLOCKED, QUEUE_LAG, REPORT_STALE, SOURCE_CONFLICT",
         "Deduplicated email/alert receipts with source SHA and last verified time; worker durations must be host-attested or explicitly claimed",
-        "SLO dashboards and per-department throughput/cost, queue saturation, QA backlog and evidence lag"
+        "SLO dashboards and per-department throughput/cost, queue saturation, QA backlog and evidence lag",
+        "Auditor monitors Drive changes cursor freshness, document revision conflicts, SQL outbox lag, branch protection settings readback and GitHub permissions drift, with UNKNOWN if API access blocked."
       ],
       "preserves": [
         "Hourly email remains alert/report; it does not itself relaunch inactive chat",
@@ -517,7 +536,8 @@
       ],
       "verification": [
         "Disable Director workflow and GitHub API to verify independent monitor detects report freshness loss",
-        "Repeated alerts deduplicate per hour, recoveries send notice, leaked case metadata negative test"
+        "Repeated alerts deduplicate per hour, recoveries send notice, leaked case metadata negative test",
+        "Missing GitHub ruleset readback or report freshness yields actionable alert, not invented enforced protection."
       ],
       "completion_gate": [
         "An external canary failure yields owner-visible alert without duplicating work or masking stale sources"
@@ -556,7 +576,8 @@
       "contracts": [
         "Legacy V1/V2 versioned adapters and accepted control-plane authority mapping",
         "Exact-SHA source submission and routed ACK regression fixes with immutable attempt receipts",
-        "Independent reviewed migration plan for current schema 1 and department ledger 4"
+        "Independent reviewed migration plan for current schema 1 and department ledger 4",
+        "Do not change GitHub repository settings through source PR. Produce admin-only Studio vs Oversight protection/runbook and negative actor/branch tests before enabling privileged automation."
       ],
       "preserves": [
         "Existing control-plane source flags, V1 worker-life events and V4 departments",
@@ -567,7 +588,8 @@
       ],
       "verification": [
         "All existing 167 Studio and 23 Oversight snapshot tests plus new positive/negative integration tests pass",
-        "V1->V2 replay produces equivalent intended inboxes under stable authority, with documented corrections"
+        "V1->V2 replay produces equivalent intended inboxes under stable authority, with documented corrections",
+        "Both private repositories are protection-audited by admin readback, with restricted actor unable to push protected paths or read encrypted cases."
       ],
       "completion_gate": [
         "Fresh-source independent QA, no unverified runtime gate changes, full integration CI and regression suite green"
@@ -606,7 +628,9 @@
       "contracts": [
         "One active projector/runner epoch; read-only shadow migration with source watermark and signed checkpoint",
         "Owner-reviewed canary stage 2 -> 25 -> 100 active eligible workers and 1k+ simulated, expanding only on measured rates",
-        "Rollback/drain command with source-state reconciliation and consistent commit/QA/ledger receipts"
+        "Rollback/drain command with source-state reconciliation and consistent commit/QA/ledger receipts",
+        "Authorize owner-approved Drive BL-00/05/07/08/10 policy revision and one-writer cutover from Drive live queue to PostgreSQL; preserved frozen previous revision.",
+        "Protect Studio main/runtime/comms and Oversight main/cases with eligible private-repository settings before scaling privileged workers."
       ],
       "preserves": [
         "Existing Studio runtime source-write and spending restrictions until separately authorized",
@@ -617,11 +641,17 @@
       ],
       "verification": [
         "Crash and rollback during cutover, in-flight CI/QA and source commit ambiguity; no lost accepted event",
-        "Real two-worker source->QA->handoff->email report validated with token and API budget"
+        "Real two-worker source->QA->handoff->email report validated with token and API budget",
+        "Queue dual-writer negative test, Drive revision conflict, protected-branch negative test and host-attested shift receipt all pass during canary."
       ],
       "completion_gate": [
         "Independent QA signs integrated exact SHA, owner approves deployment/credentials/budget, and rollback drill passes"
       ]
     }
+  ],
+  "storage_and_identity_addendum": [
+    "10_DATABASE_DRIVE_AND_AUTHORITY.md",
+    "11_REPOSITORY_SETTINGS_AND_OVERSIGHT.md",
+    "12_EXECUTION_ATTEMPT_IDENTITY.md"
   ]
 }

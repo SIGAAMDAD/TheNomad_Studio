@@ -28,3 +28,11 @@ Design checks: structured group fields, dependency DAG and obvious same-wave all
 - Implement from the **current** Studio main/runtime SHAs; the original `aa684e...` design baseline is not the implementation baseline.
 - **Both uploaded snapshots passed their existing unit suites:** Studio 167 tests, Oversight 23. This is not live traffic capacity or external account security proof.
 - **This branch is plan-only.** It neither fixes the identified controller code bug nor changes Oversight access, scheduled tasks, live queues, model execution or source permissions.
+
+## Operational authority and private-repository settings addendum
+
+- [10_DATABASE_DRIVE_AND_AUTHORITY.md](10_DATABASE_DRIVE_AND_AUTHORITY.md): PostgreSQL runtime state, Google Docs as prose authority, canon gates, Drive change cursors and queue split-brain migration.
+- [11_REPOSITORY_SETTINGS_AND_OVERSIGHT.md](11_REPOSITORY_SETTINGS_AND_OVERSIGHT.md): audited current settings and owner/admin-only Studio/Oversight security checklist.
+- [12_EXECUTION_ATTEMPT_IDENTITY.md](12_EXECUTION_ATTEMPT_IDENTITY.md): studio-shift, logical worker, optional chat-thread, per-response attempt and attested executor run ID distinctions.
+
+All are plan-only. New requirements are cross-linked inside the existing H00-H14 patch manifest and must not be interpreted as deployment authorization.

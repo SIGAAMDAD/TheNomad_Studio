@@ -71,3 +71,7 @@ The source-verified, machine-readable **hardening_patches.v1.json** and detailed
 - Wave 3, WG-I: H13 isolated P0 corrective integration and H14 shadow/canary/rollback, with exact current main/runtime/Oversight compatibility checks.
 
 **No production switch is authorized by approval of this patch plan.** The user must separately approve spending, credentials, branch writes, source-writer capacity, and deployment.
+
+## V2 database/Drive authority migration prerequisite
+
+Before Wave-3 cutover, obtain an explicit owner-approved Drive BL-00/05/07/08/10 baseline-change decision that prevents both the Drive live queue and PostgreSQL from accepting writable job state concurrently. Stage Drive changes cursor/revision projection and compare approvals in SHADOW mode. Do not auto-move source documents or rewrite accepted canon. GitHub repository-protection changes require an authorized admin and actual enforcement readback; source PRs cannot configure private branch rulesets.
