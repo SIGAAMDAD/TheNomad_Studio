@@ -1,8 +1,5 @@
-name: Studio read-only production report
+name: Studio legacy metrics diagnostic (manual only)
 on:
-  schedule:
-    - cron: "30 23 * * *"
-      timezone: "America/Chicago"
   workflow_dispatch:
 permissions:
   contents: read

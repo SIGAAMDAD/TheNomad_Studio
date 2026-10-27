@@ -27,7 +27,8 @@ IDENT = re.compile(r"[A-Za-z][A-Za-z0-9_.-]{2,79}\Z")
 WORKER = re.compile(r"(?:CW-[A-Z0-9-]{3,70}|S0[0-9])\Z")
 EVENTS = frozenset(("STATUS", "CHECKPOINT", "DEPENDENCY_REQUEST",
     "DEPENDENCY_RESOLVED", "HANDOFF_READY", "QA_REQUEST",
-    "QA_RESULT", "CI_RESULT", "BLOCKED", "ACK"))
+    "QA_RESULT", "CI_RESULT", "BLOCKED", "ACK",
+    "STARTED", "HEARTBEAT", "YIELDED", "SUBMITTED", "STOPPED"))
 ACTIONS = frozenset(("NONE", "ACKNOWLEDGE", "REVIEW",
     "PROVIDE_DEPENDENCY", "REWORK", "ESCALATE"))
 DEPARTMENTS = frozenset(("production", "design", "narrative",
@@ -36,7 +37,8 @@ DEPARTMENTS = frozenset(("production", "design", "narrative",
 WIRE_KEYS = frozenset(("schema_version", "job_id", "worker_id",
     "assignment_epoch", "event_type", "recipient_job_id",
     "recipient_department", "summary", "requested_action", "source_ref",
-    "evidence_refs", "causation_id", "requires_ack", "role_id", "recipient_worker_id"))
+    "evidence_refs", "causation_id", "requires_ack", "role_id", "recipient_worker_id",
+    "attempt_id", "ledger_event_id", "elapsed_seconds", "resume_required"))
 MAX_BODY_BYTES = 8192
 MAX_SCAN_PAGES = 10
 
@@ -243,6 +245,22 @@ def validate_wire(wire, jobs, issue_number, registry=None):
         raise MessageError("ACK_REQUIRES_CAUSATION_NO_ACK")
     if type(wire.get("requires_ack", False)) is not bool:
         raise MessageError("INVALID_ACK_FLAG")
+    if kind in ("STARTED", "HEARTBEAT", "YIELDED", "SUBMITTED", "STOPPED"):
+        attempt = wire.get("attempt_id")
+        if not isinstance(attempt, str) or not IDENT.fullmatch(attempt):
+            raise MessageError("LIFECYCLE_ATTEMPT_REQUIRED")
+        if epoch is None:
+            raise MessageError("LIFECYCLE_EPOCH_REQUIRED")
+    if kind in ("YIELDED", "SUBMITTED", "STOPPED"):
+        ledger_id = wire.get("ledger_event_id")
+        if not isinstance(ledger_id, str) or not re.fullmatch(r"[A-Za-z0-9_-]{5,120}", ledger_id):
+            raise MessageError("LIFECYCLE_LEDGER_REQUIRED")
+        if type(wire.get("elapsed_seconds")) is not int or not 0 <= wire["elapsed_seconds"] <= 7*86400:
+            raise MessageError("LIFECYCLE_DURATION_REQUIRED")
+        if type(wire.get("resume_required")) is not bool:
+            raise MessageError("LIFECYCLE_RESUME_FLAG_REQUIRED")
+        if kind == "YIELDED" and wire["resume_required"] is not True:
+            raise MessageError("YIELD_REQUIRES_CONTINUATION")
     return target_id
 
 
@@ -277,6 +295,10 @@ def normalize_comment(comment, issue_number, jobs, source_repo=HUB, registry=Non
         "causation_id": wire.get("causation_id"),
         "source_ref": wire.get("source_ref"),
         "source_verification": "NOT_RUN",
+        "attempt_id": wire.get("attempt_id"),
+        "ledger_event_id": wire.get("ledger_event_id"),
+        "elapsed_seconds": wire.get("elapsed_seconds"),
+        "resume_required": wire.get("resume_required"),
         "evidence_refs": wire.get("evidence_refs", []),
     }
 

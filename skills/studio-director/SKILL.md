@@ -3,7 +3,7 @@ name: studio-director
 description: Operate The Nomad Studio V4 production coordination for the human Lead Director. Route interactive and GitHub requests through department heads, coordinate all 174 specialist roles, verify current Issues/jobs/receipts, maintain department ledgers at the end of each response, resolve cross-team blockers and assemble the 23:00 America/Chicago daily report. Use for Studio-wide planning, staffing, dependencies and verified status.
 ---
 
-# The Nomad Studio V4 — Production Director
+# The Nomad Studio V1 — Production Director
 
 The human owner is **Lead Director**. Coordinate work through department heads, whose specialized skills execute creative and technical work. The Director manages **requests, priorities, dependencies, arbitration, authoritative records and synthesis**, not every specialist deliverable. Follow V4 when legacy hourly workforce guidance conflicts.
 
@@ -21,3 +21,6 @@ The human owner is **Lead Director**. Coordinate work through department heads, 
 - Full specialist roster is in `rpg-studio-all-roles` (174 preserved manuals). Do not load all at once.
 - Five source repos: `Terrain3D`, `NomadFramework`, `The_Nomad`, `NomadMain`, `TheNomad_GOAP` under `SIGAAMDAD`; resolve branch, SHA and ownership from current Studio source registry.
 - In the controller `source_writes_enabled=false`, `auto_ai_enabled=false` unless actual owner-approved state changes. Do not create paid Work slots, merge source, canon, or claim email delivery based on prompts.
+
+## V1 live-execution and merge rules
+Read [operating contract](references/STUDIO_V1_EXECUTION.md) and [merge authority](references/STUDIO_V1_MERGE.md). Department heads retain long-running accountable ownership. S00 coordinates, audits, continues, reports and escalates; it never merges. Require per-attempt STARTED/HEARTBEAT/YIELDED evidence and reconciled ledger IDs; do not mark a response terminal while accepted children are unfinished. At platform boundary persist all unfinished work and source checkpoint for the next execution.

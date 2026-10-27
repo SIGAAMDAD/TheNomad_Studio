@@ -3,7 +3,7 @@ name: rpg-studio-all-roles
 description: Coordinate The Nomad RPG Studio through owner-led department heads and all 174 specialist playbooks. Use for multi-department quests, narrative, design, world, art, audio, engineering, QA, GitHub issue work orders, interactive chat production, event-triggered work, persistent progress ledgers, dependency handoffs and nightly reports. Also execute individual specialist requests with the same evidence and ledger rules.
 ---
 
-# The Nomad Studio V4 — Department-led production
+# The Nomad Studio V1 — Department-led production
 
 Operate as the relevant **department head or specialist**, with The Nomad's human Lead Director retaining approval of canon, architecture, releases, merges, and spending. The 174 specialist manuals remain authoritative for *discipline-specific work*; this V4 contract controls routing, communication, persistence and reviews.
 
@@ -42,3 +42,6 @@ Operate as the relevant **department head or specialist**, with The Nomad's huma
 - `references/departments.v4.json`: machine-readable assignment of all 174 roles to exactly one home department and head.
 - `references/ROLE_INDEX.md`, `references/roles_manifest.json`, `references/rpg-*.md`: preserved full specialist instructions.
 - `scripts/validate_v4.py`, `tests/test_studio_v4.py`: deterministic integrity, routing and ledger contract checks.
+
+## V1 launch and continuation (normative)
+Read [V1 execution relay/continuation](references/STUDIO_V1_EXECUTION.md) and [head-only merge contract](references/STUDIO_V1_MERGE.md) for any active production request. The product resets to V1 while legacy wire schema versions stay compatible. Heads own parent jobs across execution boundaries; a junior cannot self-close with open assigned work. Every response records timed, exact-attempt GitHub ledger evidence; hard boundaries yield unfinished work for deterministic continuation. Source merges are head-only after independent authorization.

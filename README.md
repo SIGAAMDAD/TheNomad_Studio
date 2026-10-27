@@ -1,40 +1,17 @@
-# TheNomad_Studio — AI game-development control plane
+# The Nomad Studio V1 — Operational Control Plane
 
-The Nomad Studio uses an **owner-controlled GitHub Project/Issue board**, deterministic GitHub Actions, ten existing scheduled ChatGPT task identities, and original Google Drive/source repositories to coordinate specialists across design, narrative, art, animation, audio, engineering, integration, and QA.
+[Version and compatibility](studio/VERSION.json) · [Execution protocol](studio/v1/OPERATING_CONTRACT.md) · [Launch checklist](studio/v1/LAUNCH_CHECKLIST.md) · [Worker prompts](studio/v1/prompts/INDEX.md) · [Merge authorization](studio/v1/MERGE_AUTHORITY.md)
 
-## Start here
+**Lead Director → Studio Production Director (S00) → 12 accountable department heads → 174 specialized roles → independent QA → head-authorized merges.** Every substantive worker response commits a department ledger event and mirrors its attempt metadata through the GitHub Issue communication relay. Heads retain parent ownership across executions; junior engineers must checkpoint/yield rather than declaring unfinished work complete.
 
-- [End-to-end production pipeline](docs/PRODUCTION_PIPELINE.md): feature intake → scoped plan → department work → real artifacts → independent QA/rework → owner acceptance → finalization
-- [Owner deployment checklist](docs/OWNER_SETUP.md): actions permissions, trusted approval labels, private Projects V2 token, GPT worker bindings and source/art gates
-- [Director contract](studio/DIRECTOR_CONTRACT.md) for S00
-- [Specialist worker contract](studio/WORKER_CONTRACT.md) for S01–S09
-- [Feature spec example](studio/specs/EXAMPLE.json)
-- [GitHub Issue template](.github/ISSUE_TEMPLATE/feature.yml)
+- `main`: reviewed source and policies. `studio/runtime`: approved jobs, worker registry, ledger, receipts and leases. `studio/comms`: immutable transport events, inbox projections and hourly/23:00 Central reports. The branches are intentionally different histories.
+- GitHub Actions is the deterministic broker, not an AI runner. Active/manual chats fetch the inbox when executing. Each logical CW worker is registered explicitly; a GitHub commit does not awaken an inactive chat.
+- Source execution W01–W05 targets the authorized *source repository*, not this Studio hub. Source merge requires a separately authenticated department head with exact-SHA QA/CI and Lead Director gates.
+- Worker-health auditor cross-checks STARTED/HEARTBEAT/YIELDED/SUBMITTED events against immutable per-response ledger attempts and flags missing checkpoints, overdue progress and unacknowledged handoffs.
+- Bootstrap authorization: source_writes_enabled=false; auto_ai_enabled=false; auto_dispatch_enabled=false. Existing runtime jobs and features are not erased by the V1 product version reset. Current live chat-worker registry is empty.
 
-## Three distinct truths
+**Validation:** `python -m unittest discover -s tests -q`, `python scripts/studio.py validate`, `python scripts/production.py validate` and reviewed GitHub Actions checks. These prove code invariants; cross-chat runtime, Gmail delivery, source CI publisher credentials and head merge permissions need their own witnessed acceptance runs.
 
-| Surface | Authority |
-| --- | --- |
-| GitHub Issues/Projects | Owner feature scope, priority and decision |
-| `studio/runtime` branch | Feature/job states, dispatch epochs, immutable receipts, QA |
-| Original repositories / Drive revisions | Actual code, art, documentation, source and accepted canon |
+## Historic documentation
 
-There is **one** parent `FEATURE-N` for Issue N. The scanner checks repository Issues every 15 minutes; optional Projects V2 metadata requires a separate `STUDIO_PROJECTS_TOKEN` and `studio/runtime/studio/board.json.project_url`. No model inference occurs in GitHub Actions. A scheduled ChatGPT worker wakes on its own schedule to read assigned state; a GitHub event cannot directly wake an ordinary ChatGPT task.
-
-## Default safety
-
-The Studio does **not** merge source branches, grant canon acceptance, use paid API/Work/Codex, or create game-source files while `source_writes_enabled=false`. An approved feature alone does not override the accepted source SHA/build/ABI or active ownership gates. Art/animation/audio/UI requests require actual file/manifest evidence, not a written brief masquerading as an asset.
-
-The initial permanent Director is S00; worker slots S01–S09 are dynamically routed across on-demand professional manuals and limited to safe concurrency. The default bootstrap allows two writers and one independent QA reviewer, with no implied 174 parallel task executions.
-
-## Local validation
-
-```bash
-python -m unittest discover -s tests -q
-python scripts/studio.py validate
-python scripts/studio.py status
-python scripts/production.py validate
-python scripts/metrics.py
-```
-
-Controller CI proves software invariants, **not** game compilation, live image/mesh production, authenticated Projects field access, or completed scheduled tasks. Verify each independently.
+Files with V2/V3/V4 in their names remain as compatibility and prior design records, not authoritative V1 launch instructions. Original 174 specialist manuals are retained. The stale GOAP control-plane draft is addressed in [GOAP cleanup](studio/v1/GOAP_CLEANUP.md); actual GOAP source remains its own repository.

@@ -43,7 +43,12 @@
         "QA_RESULT",
         "CI_RESULT",
         "BLOCKED",
-        "ACK"
+        "ACK",
+        "STARTED",
+        "HEARTBEAT",
+        "YIELDED",
+        "SUBMITTED",
+        "STOPPED"
       ]
     },
     "job_id": {
@@ -151,6 +156,33 @@
       "items": {
         "type": "string"
       }
+    },
+    "attempt_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Za-z][A-Za-z0-9_.-]{2,79}$"
+    },
+    "ledger_event_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Za-z0-9_-]{5,120}$"
+    },
+    "elapsed_seconds": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "resume_required": {
+      "type": [
+        "boolean",
+        "null"
+      ]
     }
   }
 }

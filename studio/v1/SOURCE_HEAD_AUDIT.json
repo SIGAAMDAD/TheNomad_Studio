@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-10-27T20:01:38.711Z",
+  "hub_main_at_audit": "aa684e03dc465f9e049f5ac615e1285890f8d72a",
+  "records": [
+    {
+      "repo": "SIGAAMDAD/Terrain3D",
+      "branch": "Terrain3D_NomadRenderer",
+      "historical_intake_sha": "1e00735913a3cfa5d0e73bd7817c37d5b0b2c9db",
+      "actual_remote_head": "0fcf892d670db228a8b61cae1447bff38a6687a3",
+      "historical_intake_differs": true
+    },
+    {
+      "repo": "SIGAAMDAD/NomadFramework",
+      "branch": "develop",
+      "historical_intake_sha": "8617caecbaf4571917eac2cd2aeee459485740fc",
+      "actual_remote_head": "8617caecbaf4571917eac2cd2aeee459485740fc",
+      "historical_intake_differs": false
+    },
+    {
+      "repo": "SIGAAMDAD/The_Nomad",
+      "branch": "Nomad3D",
+      "historical_intake_sha": "b92cc734a542964c19e01cde792c62ef3538e150",
+      "actual_remote_head": "b92cc734a542964c19e01cde792c62ef3538e150",
+      "historical_intake_differs": false
+    },
+    {
+      "repo": "SIGAAMDAD/NomadMain",
+      "branch": "main",
+      "historical_intake_sha": "efa9840fb204cb0609869165dec6b17972dedacc",
+      "actual_remote_head": "efa9840fb204cb0609869165dec6b17972dedacc",
+      "historical_intake_differs": false
+    },
+    {
+      "repo": "SIGAAMDAD/TheNomad_GOAP",
+      "branch": "main",
+      "historical_intake_sha": "258a2623aa5de9d422be02c59855861570ede4ac",
+      "actual_remote_head": "258a2623aa5de9d422be02c59855861570ede4ac",
+      "historical_intake_differs": false
+    }
+  ],
+  "note": "Read-only GitHub ref audit. Historic intake SHAs are intentionally preserved; every source-writing job revalidates live HEAD and its separately frozen baseline. No source branch was mutated."
+}
