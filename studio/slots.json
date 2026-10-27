@@ -1,15 +1,129 @@
 {
   "schema": 1,
   "slots": [
-    {"id":"S00", "role":"director", "enabled":false, "job":null, "epoch":0, "schedule_minute":0},
-    {"id":"S01", "role":"dynamic", "enabled":false, "job":null, "epoch":0, "schedule_minute":6, "capabilities":["design","docs","analysis"]},
-    {"id":"S02", "role":"dynamic", "enabled":false, "job":null, "epoch":0, "schedule_minute":12, "capabilities":["design","analysis","docs"]},
-    {"id":"S03", "role":"dynamic", "enabled":false, "job":null, "epoch":0, "schedule_minute":18, "capabilities":["writing","docs","design"]},
-    {"id":"S04", "role":"dynamic", "enabled":false, "job":null, "epoch":0, "schedule_minute":24, "capabilities":["writing","docs","design"]},
-    {"id":"S05", "role":"dynamic", "enabled":false, "job":null, "epoch":0, "schedule_minute":30, "capabilities":["art","writing","docs"]},
-    {"id":"S06", "role":"dynamic", "enabled":false, "job":null, "epoch":0, "schedule_minute":36, "capabilities":["analysis","docs","code"]},
-    {"id":"S07", "role":"dynamic", "enabled":false, "job":null, "epoch":0, "schedule_minute":42, "capabilities":["code","integration","analysis"]},
-    {"id":"S08", "role":"dynamic", "enabled":false, "job":null, "epoch":0, "schedule_minute":48, "capabilities":["review","analysis"]},
-    {"id":"S09", "role":"dynamic", "enabled":false, "job":null, "epoch":0, "schedule_minute":54, "capabilities":["review","analysis","integration"]}
+    {
+      "id": "S00",
+      "role": "director",
+      "enabled": false,
+      "job": null,
+      "epoch": 0,
+      "schedule_minute": 0
+    },
+    {
+      "id": "S01",
+      "role": "dynamic",
+      "enabled": false,
+      "job": null,
+      "epoch": 0,
+      "schedule_minute": 6,
+      "capabilities": [
+        "design",
+        "docs",
+        "analysis"
+      ]
+    },
+    {
+      "id": "S02",
+      "role": "dynamic",
+      "enabled": false,
+      "job": null,
+      "epoch": 0,
+      "schedule_minute": 12,
+      "capabilities": [
+        "design",
+        "analysis",
+        "docs"
+      ]
+    },
+    {
+      "id": "S03",
+      "role": "dynamic",
+      "enabled": false,
+      "job": null,
+      "epoch": 0,
+      "schedule_minute": 18,
+      "capabilities": [
+        "writing",
+        "docs",
+        "design"
+      ]
+    },
+    {
+      "id": "S04",
+      "role": "dynamic",
+      "enabled": false,
+      "job": null,
+      "epoch": 0,
+      "schedule_minute": 24,
+      "capabilities": [
+        "writing",
+        "docs",
+        "design"
+      ]
+    },
+    {
+      "id": "S05",
+      "role": "dynamic",
+      "enabled": false,
+      "job": null,
+      "epoch": 0,
+      "schedule_minute": 30,
+      "capabilities": [
+        "art",
+        "writing",
+        "docs"
+      ]
+    },
+    {
+      "id": "S06",
+      "role": "dynamic",
+      "enabled": false,
+      "job": null,
+      "epoch": 0,
+      "schedule_minute": 36,
+      "capabilities": [
+        "analysis",
+        "docs",
+        "code"
+      ]
+    },
+    {
+      "id": "S07",
+      "role": "dynamic",
+      "enabled": false,
+      "job": null,
+      "epoch": 0,
+      "schedule_minute": 42,
+      "capabilities": [
+        "code",
+        "integration",
+        "analysis"
+      ]
+    },
+    {
+      "id": "S08",
+      "role": "dynamic",
+      "enabled": false,
+      "job": null,
+      "epoch": 0,
+      "schedule_minute": 48,
+      "capabilities": [
+        "review",
+        "analysis"
+      ]
+    },
+    {
+      "id": "S09",
+      "role": "dynamic",
+      "enabled": false,
+      "job": null,
+      "epoch": 0,
+      "schedule_minute": 54,
+      "capabilities": [
+        "review",
+        "analysis",
+        "integration"
+      ]
+    }
   ]
 }
