@@ -1,0 +1,111 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T185614609Z-actions-audit",
+  "recorded_at_utc": "2026-10-27T18:56:14.609Z",
+  "request_id": "CHAT-20261027-actions-architecture-review",
+  "department_id": "production",
+  "role_id": "rpg-autonomous-workgroup-controller",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Inspected connected Studio and Oversight GitHub state and user's attached GitHub Actions proposal; documented current broker implementation, missing worker inbox/CI evidence relay, source CI gaps, audit/polling constraints, security and deployment priorities. No source or workflow mutations.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T185614609Z-actions-audit",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "inbox",
+      "description": "Complete per-recipient inbox and acknowledgment/reconciliation projection for studio/comms, with validated actor/assignment provenance",
+      "state": "OPEN"
+    },
+    {
+      "id": "audit",
+      "description": "Review PR 20 and run an end-to-end GitHub issue-comment->broker->comms->inbox->ACK test",
+      "state": "OPEN"
+    },
+    {
+      "id": "register",
+      "description": "Populate chat worker registry only with actual approved job assignments and audit cadences",
+      "state": "OPEN"
+    },
+    {
+      "id": "evidence",
+      "description": "Build CI evidence relay from five owning source repos to Studio and exact-SHA validation",
+      "state": "OPEN"
+    },
+    {
+      "id": "source-ci",
+      "description": "Add NomadMain/The_Nomad baseline CI and include develop-target PRs in NomadFramework CI",
+      "state": "OPEN"
+    },
+    {
+      "id": "security",
+      "description": "Set up independent oversight credentials/key custody, protect archives, and test signed enforcement bridge",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "report-timezone",
+      "description": "Align daily digest and director reporting to America/Chicago 23:00 and verify actual hourly task execution",
+      "state": "OPEN"
+    },
+    {
+      "id": "worker-writes",
+      "description": "Reconcile source write policies and lease capacity before activating concurrent chat workers",
+      "state": "BLOCKED"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "repo_governance",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/commit/f8479773b4946f409d00d816c726a536269aa65e",
+      "revision": "f8479773b4946f409d00d816c726a536269aa65e",
+      "verified": true
+    },
+    {
+      "kind": "open_pr",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/20",
+      "revision": "939b569a3585b0c5f3485a5f60c8e0a03e115752",
+      "verified": true
+    },
+    {
+      "kind": "oversight_code",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio_Oversight/commit/d7f926265fb5ed6d1517bf115b6ebe5df7c79f60",
+      "revision": "d7f926265fb5ed6d1517bf115b6ebe5df7c79f60",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "GitHub connected repository and branch state readback",
+      "status": "PASS"
+    },
+    {
+      "name": "Studio runtime source-write gates checked",
+      "status": "PASS"
+    },
+    {
+      "name": "Studio worker roster checked",
+      "status": "PASS"
+    },
+    {
+      "name": "Source CI workflow presence checked in five repositories",
+      "status": "PASS"
+    },
+    {
+      "name": "Live inter-chat broker delivery",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Oversight private access/credential separation",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Approve piloting two registered chat workers plus the new inbox/evidence relay, while keeping actual source-write gates unchanged until reviewed?",
+      "status": "REQUESTED"
+    }
+  ]
+}
