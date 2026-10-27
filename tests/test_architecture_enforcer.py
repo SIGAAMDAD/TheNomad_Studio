@@ -156,6 +156,23 @@ class ArchitectureEnforcerTests(unittest.TestCase):
                       " ".join(studio.validate(jobs, slots, config)))
         self.assertEqual(studio.dispatch(jobs, slots, config), [])
 
+    def test_changed_protected_contract_paths_require_proposal(self):
+        job = copy.deepcopy(self.job)
+        job["architecture_impact"] = "none"
+        job["architecture_review"]["verdict"] = "NO_CHANGE"
+        job["protected_paths"] = ["include/goap/planner.h", "src/abi"]
+        self.assertEqual(enforcer.audit_changed_paths(
+            job, ["include/goap/planner.h"]),
+            "ARCHITECTURE_PROTECTED_DIFF_REQUIRES_PROPOSAL")
+        self.assertEqual(enforcer.audit_changed_paths(
+            job, ["src/abi/contract.cpp"]),
+            "ARCHITECTURE_PROTECTED_DIFF_REQUIRES_PROPOSAL")
+        self.assertIsNone(enforcer.audit_changed_paths(
+            job, ["src/archetypes/zurgut_hulk.cpp"]))
+        self.assertEqual(enforcer.audit_changed_paths(
+            job, ["../unsafe"]),
+            "ARCHITECTURE_DIFF_FILES_READBACK_REQUIRED")
+
     def test_admission_requires_explicit_architectural_impact(self):
         feature = {"id":"FEATURE-6",
                    "issue_url":"https://github.com/SIGAAMDAD/TheNomad_Studio/issues/6"}
