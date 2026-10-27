@@ -11,6 +11,7 @@ import pathlib
 import re
 import sys
 import source_targets
+import architecture_enforcer
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 STATES = {"QUEUED", "SCOPED", "READY", "RESERVED", "RUNNING", "CHECKPOINTED",
@@ -125,6 +126,9 @@ def validate(jobs, slots, config):
             if kind in WRITERS and not paths(j):
                 errors.append(f"{jid}: writing job requires owned_paths")
             if kind in {"code", "integration"}:
+                architecture_issue = architecture_enforcer.gate(j)
+                if architecture_issue:
+                    errors.append(f"{jid}: source architecture gate: {architecture_issue}")
                 if (j.get("repository"), j.get("branch")) not in allowed_repos:
                     errors.append(f"{jid}: source repository/branch not whitelisted")
                 if not isinstance(j.get("baseline_sha"), str) or not SHA_RE.fullmatch(j["baseline_sha"]):
@@ -241,6 +245,8 @@ def dispatch(jobs, slots, config, now=None):
                 continue
             if kind in {"code", "integration"} and not config.get("source_writes_enabled", False):
                 continue
+            if kind in {"code", "integration"} and architecture_enforcer.gate(j):
+                continue
             if kind in WRITERS and writers >= config["max_concurrent_writers"]:
                 continue
             if kind == "review" and reviewers >= config["max_reviewers"]:
@@ -269,6 +275,7 @@ def context(jobs, slots, slot_id):
         return {"slot": slot_id, "status": "NO_WORK", "epoch": w["epoch"]}
     selected = ("id", "kind", "role", "role_manual_uri", "state", "assignment_epoch",
                 "brief_uri", "brief", "source_refs", "repository", "branch", "work_branch", "workstream", "language", "baseline_sha",
+                "architecture_impact", "architecture_review", "architecture_proposal", "architecture_acceptance",
                 "owned_paths", "protected_paths", "acceptance", "checkpoint_ref", "qa_findings",
                 "artifact_ref", "drive_report_url")
     return {"slot": slot_id, "status": "ASSIGNED", "epoch": w["epoch"],

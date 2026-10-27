@@ -27,7 +27,11 @@ class WorkerRouterTests(unittest.TestCase):
              "role": role, "kind": "code", "repository": SOURCE_REPO,
              "workstream": "framework_engine", "language": "C++17",
              "branch": "develop", "work_branch": "studio/FEATURE-100-CODE-01",
-             "baseline_sha": BASE, "state": "READY"}
+             "baseline_sha": BASE, "state": "READY",
+             "architecture_impact": "none",
+             "architecture_review": {"reviewer_role": "architecture_enforcer",
+                                     "reviewed_baseline_sha": BASE,
+                                     "verdict": "NO_CHANGE"}}
         ]}
 
     def event(self, labels=("studio:work:alpha",), action="synchronize", sha=HEAD):

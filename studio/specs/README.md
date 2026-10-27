@@ -39,3 +39,24 @@ work branch and PR must live in the actual source repository. CI and
 source SHA must come from there; Studio stores receipts only.
 
 See `studio/workforce/SOURCE_REPOSITORIES.md` for the exact source ownership graph, example mod-specific C# source job, and cross-repository dependency requirements.
+
+
+## Architectural changes: required contributor proposal pull request
+
+All new `code` or `integration` spec entries must set
+`"architecture_impact": "none"` or `"change"`. An omitted impact is
+invalid, not silently treated as none.
+
+If the task needs to change approved architecture/ABI/public interfaces,
+classify as change and stop incompatible implementation. The Architecture
+Enforcer (S00 triage, W05 independent review, W06 on-demand principal)
+requires a **real pull request in the owning SOURCE repository** using
+`studio/arch/<JOB_ID>`, targeting the explicit approved integration branch.
+The proposal must state before/after contracts, owner evidence, alternatives,
+affected repositories, migration and rollback. Do not create it in Studio.
+
+The original source job remains BLOCKED until owner approval/merge of that
+source PR at the exact reviewed proposal SHA has been independently read
+back from GitHub; then rescope/re-pin the job from the new source baseline.
+Do not mark code complete from a proposal or allow workers to self-approve.
+See `studio/workforce/ARCHITECTURE_ENFORCER.md`.

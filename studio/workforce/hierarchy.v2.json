@@ -24,7 +24,11 @@
     "goap_target_branch": "main",
     "require_explicit_owner_approved_workstream": true,
     "require_mod_specific_csharp": true,
-    "worker_role_does_not_determine_source_repo": true
+    "worker_role_does_not_determine_source_repo": true,
+    "architecture_changes_require_source_proposal_pr": true,
+    "require_architecture_impact_classification": true,
+    "require_architecture_enforcer_clearance": true,
+    "owner_architecture_merge_gate": true
   },
   "capacity": {
     "business_active_task_limit_reference": 10,
@@ -3280,5 +3284,14 @@
       "branch": "main"
     }
   },
-  "source_ownership_rule": "The approved job workstream selects repository, language and branch; worker role is the specialist capability, not a Git destination."
+  "source_ownership_rule": "The approved job workstream selects repository, language and branch; worker role is the specialist capability, not a Git destination.",
+  "architecture_enforcer": {
+    "policy": "studio/workforce/architecture_policy.v1.json",
+    "contract": "studio/workforce/ARCHITECTURE_ENFORCER.md",
+    "proposal_template": "studio/workforce/ARCHITECTURE_PROPOSAL_TEMPLATE.md",
+    "staffing": "S00 triage, W05 independent Sol QA, W06 principal on demand",
+    "new_persistent_slot": false,
+    "source_pr_required": true,
+    "user_final_authority": true
+  }
 }
