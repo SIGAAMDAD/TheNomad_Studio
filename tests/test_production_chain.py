@@ -171,6 +171,7 @@ class StudioV3Tests(unittest.TestCase):
                           "owned_paths": ["src/enemy.cpp"], "acceptance": ["compiler + tests"],
                           "qa_role": "rpg-technical-qa-analyst",
                           "repository": "SIGAAMDAD/NomadFramework", "branch": "develop",
+                          "work_branch": "studio/FEATURE-3-ENG-01",
                           "baseline_sha": "a" * 40}]}
         out, _ = production.build_jobs(feature, spec, config, jobs)
         self.assertEqual(out[0]["state"], "BLOCKED")
@@ -258,6 +259,7 @@ class StudioV3Tests(unittest.TestCase):
         config["source_writes_enabled"] = True
         coder = job("ENG-401", kind="code")
         coder.update({"repository": "SIGAAMDAD/NomadFramework", "branch": "develop",
+                      "work_branch": "studio/ENG-401",
                       "baseline_sha": "a"*40, "state": "SUBMITTED", "final_commit_sha": "b"*40,
                       "drive_report_url": "https://docs.google.com/document/d/final/edit",
                       "submitted_by_slot": "S07"})
