@@ -24,7 +24,10 @@ jobs:
       - name: Preserve reviewed controller
         run: |
           mkdir -p "$RUNNER_TEMP/nomad_scripts"
-          cp scripts/studio.py scripts/production.py scripts/github_api.py "$RUNNER_TEMP/nomad_scripts/"
+          cp scripts/studio.py scripts/production.py scripts/github_api.py scripts/source_targets.py scripts/architecture_enforcer.py "$RUNNER_TEMP/nomad_scripts/"
+          # Controller imports resolve policy relative to the preserved scripts directory.
+          mkdir -p "$RUNNER_TEMP/studio/workforce"
+          cp studio/workforce/source_targets.v1.json studio/workforce/architecture_policy.v1.json "$RUNNER_TEMP/studio/workforce/"
       - name: Checkout dedicated runtime branch
         shell: bash
         run: |
