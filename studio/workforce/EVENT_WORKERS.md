@@ -9,60 +9,78 @@ Production Director: S00. Human owner retains architecture, canon, spending and 
 
 HUMAN OWNER
   -> S00 Production Director (scheduled GPT-6 Instant)
-     -> Department leads (dynamically loaded from the 174-role library)
-        -> S01/S02: gameplay, combat, systems and AI design (scheduled Instant)
-        -> S03/S04: narrative, lore, dialogue and quests (scheduled Instant)
+     -> 174 discipline-specific roles, loaded for each approved job
+        -> S01: gameplay, combat, systems, GOAP behavior design (scheduled Instant)
+        -> S03/S04: lore, quests, dialogue and narrative content (scheduled Instant)
         -> S08: independent creative/content QA (scheduled Instant)
-        -> W01: Junior Alpha Implementation Engineer (GPT-6 Luna)
-        -> W02: Senior Debugging Engineer (GPT-6 Sol Medium)
-        -> W03: Senior Integration Engineer (GPT-6 Sol Medium)
-        -> W04: Independent Technical QA Engineer (GPT-6 Sol Medium)
-        -> W05: Principal Architecture and Integration (GPT-6.1 Sol High, on demand only)
-        -> GitHub Actions: builds, tests, schemas and receipt validation (no model)
-  -> HUMAN OWNER: final acceptance, merge, canon, license, credits
+        -> W01: Junior Alpha Implementation (GPT-6 Luna)
+        -> W02: Mid-Level Feature Completion (GPT-6.1 Terra Medium)
+        -> W03: Senior Debugging (GPT-6 Sol Medium)
+        -> W04: Senior Integration (GPT-6 Sol Medium)
+        -> W05: Independent Technical QA (GPT-6 Sol Medium)
+        -> W06: Principal Architecture Escalation (GPT-6.1 Sol High, on demand)
+        -> GitHub Actions: builds, CI, schema and receipt validation (zero model tokens)
+  -> HUMAN OWNER: final architecture, budget, release, merge, licensing and canon
 
-The original 174 role manuals remain source-of-truth for profession/discipline.
-The W slots are model/execution lanes, not 174 additional persistent agents.
+The original 174 role manuals remain authoritative; W lanes are execution
+functions, not additional professional disciplines or permanent assistants.
 
 ## Live task capacity proposal, NOT applied
 
-Six active scheduled chat slots: S00, S01, S02, S03, S04, S08.
-Four active Work event tasks: W01, W02, W03, W04.
-W05 requires reallocating an active slot or explicit one-off Work authorization.
-S05/S06/S07/S09 remain recoverable dormant slots. The account task limit must
-be checked in Scheduled before any event subscriptions are created.
+Five active scheduled chat slots: S00, S01, S03, S04 and S08.
+Five active event-driven Work tasks: W01, W02, W03, W04, W05.
+W06 requires reallocating one active Work slot or explicit one-off Work.
+Dormant scheduled slots S02/S05/S06/S07/S09 remain reusable. S01 dynamically
+covers S02's systems-design role when appropriate. The configuration is a
+proposal to fit ten active identities and is not implemented in Scheduled.
+Actual plan capacity, subscription conditions and model picker must be read
+back before enabling paid events.
 
 ## Full engineering production sequence
 
 OWNER_APPROVED -> S00 SOURCE_SCOPING
--> W01 LUNA_ALPHA (bounded draft and reproducible tests)
+-> W01 LUNA_ALPHA (bounded first pass, tests, checkpoint)
 -> GitHub Actions DETERMINISTIC_CI
--> if FAIL: W02 SOL_DEBUG (minimal repair; same job/branch; new SHA)
--> if PASS: S00 checks producer and design QA dependencies
--> W03 SOL_INTEGRATE (cross-system integration; independent source ownership)
+-> if FAIL_ROUTINE or PASS_INCOMPLETE: W02 TERRA_IMPLEMENT_OR_REWORK
+-> if FAIL_COMPLEX: W03 SOL_DEBUG
+-> GitHub Actions DETERMINISTIC_CI after every change
+-> if complete/QA verified: S00 INTEGRATION_READY
+-> W04 SOL_INTEGRATE (approved systems and independent source ownership)
 -> GitHub Actions INTEGRATION_CI
--> if FAIL: W02 SOL_DEBUG -> fresh CI
--> if PASS: W04 SOL_INDEPENDENT_QA (exact final commit, PASS or REWORK)
+-> if FAIL: W03 SOL_DEBUG -> new CI
+-> if PASS: W05 SOL_INDEPENDENT_QA (exact final SHA)
 -> HUMAN_OWNER final review/merge.
 
-Sol DEBUG and Sol INTEGRATE are separate authorities with disjoint responsibilities.
-A debugging engineer only fixes documented failures. An integration engineer only
-stitches separately completed, approved systems and runs integration regressions.
-W04 never edits its reviewed subject.
+W02 may finish a self-contained feature after W01 scaffolds it; W03 diagnoses
+complex reproducible defects and W04 is the separate subsystem integrator.
+W05 never edits reviewed source and does not self-approve. W06 is an
+owner-directed escalation for complex architecture and concurrency conflicts.
 
-## Luna scope policy
+## Luna, Terra and Sol engineering scope
 
-Target 60–75% of eligible routine alpha implementation jobs for Luna.
-This is an allocation goal, NOT an observed quality/performance statistic.
-Of the 50 engineering specialist roles, 27 permit bounded Luna alpha coding
-once a contract is frozen; 23 high-risk roles permit Luna boilerplate and
-test scaffolding only. These numbers are in hierarchy.v2.json.
-Examples: C# interface bindings, fixture generation, editor data schemas,
-build/test scaffolds, bounded gameplay code and repetitive native APIs.
-Algorithmic GOAP search, cross-thread memory, rendering backend, hot-path
-allocator or volatile ABI changes require senior implementation/review.
-No per-frame allocation, source rewrite, architecture change or branch merge
-is ever approved merely because Luna produced compilable code.
+Luna is the junior production layer. Initial target: 60-75% of eligible
+routine alpha jobs, not 60-75% of all engineering and not a measured success
+rate. Of 50 engineering professional roles, 27 allow Luna bounded alpha code
+under frozen contracts; 23 high-risk specialties only allow junior boilerplate
+and test generation.
+
+Terra is the mid-level layer. Terra finishes conventional code paths:
+C# managed bindings, JSON data importers, editor workflows, routine gameplay
+state machines, feature tests and local refactors, plus straightforward CI
+failure fixes. Prefer Terra over Sol whenever scope is self-contained and
+compilation/negative tests provide a reliable check. For one of the 23
+high-risk roles, Terra is restricted to an explicitly reviewed boilerplate
+scope; actual hot-path algorithms go to Sol.
+
+Sol Medium owns difficult root-cause debugging (W03), separately owns
+multi-system integration (W04), and independently reviews technical work
+(W05). GPT-6.1 Sol High is a scarce W06 escalation, never an automatic
+per-commit default.
+
+The monetary model relationship for GPT-6.1 Terra is about half the
+uncached input/output token rate of GPT-6 Sol and 10x the GPT-6 Luna rate,
+subject to current Work/credit rate cards and actual token usage. All
+three can require different token quantities for the same result.
 
 ## Native Work events versus GitHub Actions
 
@@ -82,8 +100,9 @@ SIGAAMDAD/NomadFramework, SIGAAMDAD/The_Nomad, TheNomad_Studio, as permitted
 in each subscription's UI. Events in other repositories are not magically
 forwarded by the Studio workflow.
 
-Routing labels: studio:work:alpha (W01), studio:work:debug (W02),
-studio:work:integrate (W03), studio:work:qa (W04), studio:work:escalate (W05).
+Routing labels: studio:work:alpha (W01), studio:work:implement (W02),
+studio:work:debug (W03), studio:work:integrate (W04), studio:work:qa (W05),
+studio:work:escalate (W06).
 One stage label only. Require a PR body line: Studio-Job: JOB-ID.
 High-risk junior work requires studio:scope:boilerplate.
 CI evidence label: studio:evidence:ci-failed.
@@ -106,43 +125,54 @@ actual source change to the existing job branch with Studio-Job and attempt
 trailers; publish exact SHA, test output and receipt. Preserve framework
 ownership and never merge. Do not paste giant code dumps in the chat.
 
-## Native event Work prompt — W02 Sol Medium Senior Debugger
+## Native event Work prompt — W02 Terra Medium Mid-Level Engineer
 
-Trigger: PR changed/comment/review with a verified CI failure or REWORK.
-Condition: current job, confirmed failure against exact SHA, exclusive lease.
+Trigger: verified and authorized feature implementation PR stage, either
+after a junior checkpoint or directly for a source-ready conventional
+feature. Condition: reviewed scope/contract, owner approval, exact source
+SHA, source-write permission, exclusive lease and approved credit budget.
 Instruction:
-Read only the failing SHA, relevant diff, exact test logs, symbols/AST and
-existing checkpoint. Reproduce, diagnose root cause and apply the smallest
-authorized repair. Add targeted regression fixture and re-run CI. Submit
-a new immutable commit and receipt on the SAME job branch. Never expand
-scope into architecture redesign or unrelated cleanup; escalate if ABI
-or ownership decisions are missing. Do not merge.
+> Inspect only the approved feature brief, previous Luna checkpoint if
+> present, current source SHA, relevant code and the frozen contract.
+> Complete self-contained implementation and routine bug fixes without
+> crossing an ABI or architectural boundary. Add positive/negative
+> tests and run targeted CI. Commit real source to the same job branch,
+> publish immutable receipt and leave independent QA for W05. Escalate
+> complex root-cause bugs to W03 and integration to W04. No merge.
 
-## Native event Work prompt — W03 Sol Medium Senior Integrator
+## Native event Work prompt — W03 Sol Medium Senior Debugger
 
-Trigger: approved integration-stage PR ready/review event.
-Condition: all upstream jobs, independent QA and source SHAs verified.
+Trigger: verified failed CI at exact SHA or independent REWORK report.
+Condition: explicit debug ticket and exclusive source-writer lease.
 Instruction:
-Verify exact upstream commits, reviewed ABI, ownership/lease, QA receipts
-and approved dependency order. Stitch only authorized subsystems. Run full
-target build, cross-module linking and regression tests. Submit the
-integration branch's final commit SHA and matching Drive report. If a
-contained bug appears, dispatch the exact defect back to W02 instead of
-silently reengineering it. Require owner decision for interface changes.
-Do not merge or self-accept.
+> Read exact failing commit, minimized logs, tests and impacted symbols.
+> Reproduce the failure, find root cause and repair only its approved
+> scope. Add regression fixture and re-run CI. Use the same job/branch
+> and publish a new SHA and immutable receipt. Architectural changes
+> are blocked pending owner review. Do not integrate or merge.
 
-## Native event Work prompt — W04 Sol Medium Independent Technical QA
+## Native event Work prompt — W04 Sol Medium Senior Integrator
 
-Trigger: PR ready-for-review/review event, matching QA job.
-Condition: subject final SHA and build evidence exist, different source author.
+Trigger: integration-stage PR with separately verified upstream jobs.
+Condition: source ownership, upstream QA receipts and ABI frozen.
 Instruction:
-Review the exact final SHA, source diff, frozen architecture and CI run
-against that SHA. Run available negative tests, verify resource ownership,
-ABI, error propagation and regressions. Publish PASS/REWORK with evidence,
-all NOT_RUN items and actionable findings. Never edit reviewed source.
-Do not mark owner acceptance or merge.
+> Read verified upstream commits and approved interfaces, integrate
+> into the authorized branch, run links/builds and cross-module
+> regressions, and publish integration SHA and matching Drive handoff.
+> Return localized defects to W03. Do not silently redesign donor
+> or host frameworks and never merge protected branches.
 
-## W05 Sol 6.1 High Principal Escalation
+## Native event Work prompt — W05 Sol Medium Independent Technical QA
+
+Trigger: review-stage PR at exact final SHA. Condition: author and
+reviewer are distinct; subject commit and CI proof read back.
+Instruction:
+> Independently inspect exact final SHA, source diff, build evidence,
+> architecture and negative tests. Produce PASS/REWORK report tied to
+> the immutable SHA with NOT_RUN checks and reproducible findings.
+> Never modify the reviewed code or accept the owner's merge gate.
+
+## W06 GPT-6.1 Sol High Principal Escalation
 
 On-demand, not a permanently active Work task. Analyze only an explicitly
 owner-escalated architecture/ABI/concurrency/memory problem using real
@@ -169,7 +199,7 @@ python -m unittest discover -s tests -v
 Read-only PR event audit workflow:
 .github/workflows/studio-event-route.yml
 
-After owner review, separately configure the four Work subscriptions in
+After owner review, separately configure the five Work subscriptions in
 Work mode and explicitly approve a credit budget. Verify event triggers
 and model selection in Scheduled. Run a non-spending PR routing pilot,
 then a single owner-authorized junior Luna code pilot, followed by CI,
