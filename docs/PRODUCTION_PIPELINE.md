@@ -56,3 +56,7 @@ Existing Sortior work from the Drive queue requires **a verified, non-destructiv
 Before declaring the Studio autonomously operational, require an actual board Issue readback, owner-labeled approval, feature spec admission, saved producer artifact, immutable receipt, distinct reviewer artifact, QA PASS or automatic REWORK, and owner acceptance/finalization. A green controller unit test is *not* proof of Godot compilation, a real asset, or a scheduled GPT worker run.
 
 See `docs/OWNER_SETUP.md` and `studio/WORKER_CONTRACT.md` for activation and per-worker evidence formats.
+
+## Optional Drive-origin request path
+
+integrations/apps-script/DriveIntake.gs provides a separate 15-minute owner-controlled folder scanner. A Drive file named [STUDIO] ... becomes a deduplicated GitHub Issue with its original link, but remains INBOX until the trusted owner approves it. This script is not active without user installation and GitHub credentials; it does not poll all of Drive by default.
