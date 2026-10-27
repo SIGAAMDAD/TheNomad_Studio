@@ -11,6 +11,7 @@ import pathlib
 import re
 import source_targets
 import architecture_enforcer
+import studio_work_orders
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ROLE_ID = re.compile(r"^rpg-[a-z0-9-]+$")
@@ -99,6 +100,12 @@ def route_event(event, policy, runtime_jobs=None, config=None):
     head = pr.get("head") or {}
     sha = head.get("sha")
     repo = (base.get("repo") or {}).get("full_name")
+    # Hub work-order PRs carry only controller metadata; source writes stay
+    # in the actual repository recorded in the authenticated job manifest.
+    if (repo == "SIGAAMDAD/TheNomad_Studio" and
+            isinstance(head.get("ref"), str) and
+            head["ref"].startswith("studio/workorders/")):
+        return studio_work_orders.route_work_order(event, policy, runtime_jobs, config)
     result = {"status": "IGNORED", "event": kind, "action": action,
               "repo": repo, "pr_number": pr.get("number") or event.get("number"),
               "head_sha": sha, "model_invoked": False, "credits_spent": False}
