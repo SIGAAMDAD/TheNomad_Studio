@@ -275,5 +275,50 @@ class StudioV3Tests(unittest.TestCase):
         self.assertEqual(studio.validate(jobs, slots, config), [])
 
 
+    def test_revoked_approval_blocks_ready_work_and_reapproval_recovers(self):
+        config, slots, jobs, features, _ = fixture()
+        jobs["jobs"] = [job("FEATURE-3-DES-01")]
+        features["features"] = [{
+            "id": "FEATURE-3", "approved": False, "state": "BLOCKED",
+            "blocker": "Owner approval absent or revoked", "jobs": ["FEATURE-3-DES-01"]
+        }]
+        changes = production.reconcile_owner_approval(features, jobs, config)
+        self.assertEqual(changes[0]["outcome"], "BLOCKED_APPROVAL")
+        self.assertEqual(jobs["jobs"][0]["state"], "BLOCKED")
+        self.assertEqual(studio.dispatch(jobs, slots, config), [])
+        features["features"][0]["approved"] = True
+        changes = production.reconcile_owner_approval(features, jobs, config)
+        self.assertEqual(changes[0]["outcome"], "READY_REAPPROVED")
+        self.assertEqual(jobs["jobs"][0]["state"], "READY")
+        self.assertEqual(features["features"][0]["state"], "PRODUCTION")
+
+    def test_approval_revocation_does_not_fence_inflight_writer(self):
+        config, slots, jobs, features, _ = fixture()
+        jobs["jobs"] = [job("FEATURE-3-DES-01")]
+        features["features"] = [{
+            "id": "FEATURE-3", "approved": True, "state": "PRODUCTION",
+            "jobs": ["FEATURE-3-DES-01"]
+        }]
+        studio.dispatch(jobs, slots, config)
+        features["features"][0]["approved"] = False
+        production.reconcile_owner_approval(features, jobs, config)
+        self.assertEqual(jobs["jobs"][0]["state"], "RESERVED")
+        self.assertTrue(jobs["jobs"][0]["owner_revocation_pending"])
+        self.assertEqual(studio.validate(jobs, slots, config), [])
+
+    def test_audio_and_animation_require_real_art_worker_capacity(self):
+        config, slots, jobs, _, _ = fixture()
+        for x in slots["slots"]:
+            x["enabled"] = x["id"] in ("S00", "S05", "S08")
+        slots["slots"][5]["capabilities"] = ["art", "animation", "audio", "vfx", "ui", "cinematic"]
+        audio = job("AUD-401", kind="audio")
+        anim = job("ANM-401", kind="animation")
+        jobs["jobs"] = [audio, anim]
+        first = studio.dispatch(jobs, slots, config)
+        self.assertEqual(len(first), 1)
+        self.assertEqual(first[0]["slot"], "S05")
+        self.assertEqual(studio.validate(jobs, slots, config), [])
+
+
 if __name__ == "__main__":
     unittest.main()
