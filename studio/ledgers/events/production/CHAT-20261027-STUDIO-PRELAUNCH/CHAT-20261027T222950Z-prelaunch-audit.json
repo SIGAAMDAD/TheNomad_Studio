@@ -1,0 +1,74 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T222950Z-prelaunch-audit",
+  "recorded_at_utc": "2026-10-27T22:29:50Z",
+  "request_id": "CHAT-20261027-STUDIO-PRELAUNCH",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "AUDIT",
+  "status": "YIELDED",
+  "summary": "Prelaunch audit of two repository main snapshots and seven live GitHub branches, Drive cleanup of three misplaced files, local 190 existing tests and six prototype SQL tests passed; seven branches unprotected, live workflow disabled, database and 175-skill hash parity incomplete.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T222950Z-prelaunch-audit",
+  "todo": [
+    {
+      "id": "protection",
+      "description": "Provision and verify enforced branch protections for all control, oversight and source repositories",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "database",
+      "description": "Deploy persistent PostgreSQL and trusted worker identity/lease/transaction service",
+      "state": "OPEN"
+    },
+    {
+      "id": "skill-parity",
+      "description": "Compare all 174 role manual hashes and director against live skills and Drive; repair drift",
+      "state": "OPEN"
+    },
+    {
+      "id": "e2e",
+      "description": "Run authenticated end-to-end event worker and chaos/load acceptance",
+      "state": "OPEN"
+    },
+    {
+      "id": "drive",
+      "description": "Review and reconcile legacy live Doc queue and directory authority",
+      "state": "DOING"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "local",
+      "uri": "sandbox:/mnt/data/Nomad_Studio_Prelaunch_Audit_2026-10-27.zip",
+      "revision": "2026-10-27",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "main-archive-unittests",
+      "status": "PASS"
+    },
+    {
+      "name": "oversight-archive-unittests",
+      "status": "PASS"
+    },
+    {
+      "name": "db-sql-smoke",
+      "status": "PASS"
+    },
+    {
+      "name": "full-500-worker-e2e",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "branch-protection",
+      "status": "FAIL"
+    }
+  ],
+  "owner_decisions": []
+}
