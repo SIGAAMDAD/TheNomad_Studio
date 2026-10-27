@@ -22,6 +22,9 @@ except ModuleNotFoundError:
 
 MAX_EVENTS = 100000
 MAX_INBOX_MESSAGES = 5000
+MAX_BROADCAST_RECIPIENTS = 64
+# Observation events belong to the Studio audit, not every worker inbox.
+TELEMETRY_ONLY = frozenset(("STARTED", "HEARTBEAT", "YIELDED", "SUBMITTED", "STOPPED"))
 
 
 class InboxError(ValueError):
@@ -67,8 +70,17 @@ def archive_events(root):
     return sorted(found.values(), key=lambda x: (x["recorded_at_utc"], x["event_id"]))
 
 
-def routed_workers(event, registry):
-    """Routes to current assigned job, optionally a single explicit recipient."""
+def assignment_index(registry):
+    """Build once per projection; never scan every worker for every message."""
+    by_job = collections.defaultdict(list)
+    for worker, entry in registry.items():
+        if entry.get("status") == "ASSIGNED":
+            by_job[entry.get("job_id")].append(worker)
+    return {job: tuple(sorted(workers)) for job, workers in by_job.items()}
+
+
+def routed_workers(event, registry, by_job=None):
+    """Explicit routing first; bounded job fanout only for actionable events."""
     job = event["recipient"]["job_id"]
     explicit = event["recipient"].get("worker_id")
     if explicit is not None:
@@ -77,16 +89,22 @@ def routed_workers(event, registry):
             or match.get("job_id") != job or explicit == event["worker_id"]):
             return []
         return [explicit]
-    return sorted(worker for worker, entry in registry.items()
-                  if entry.get("status") == "ASSIGNED" and entry.get("job_id") == job
-                  and worker != event["worker_id"])
+    if event["event_type"] in TELEMETRY_ONLY:
+        return []  # Archived for S00 telemetry; not lost or broadcast.
+    if by_job is None:
+        by_job = assignment_index(registry)
+    candidates = by_job.get(job, ())
+    recipients = [worker for worker in candidates if worker != event["worker_id"]]
+    if len(recipients) > MAX_BROADCAST_RECIPIENTS:
+        raise InboxError("BROADCAST_FANOUT_EXCEEDED_USE_EXPLICIT_RECIPIENT")
+    return recipients
 
 
-def recipient_is_valid_ack(ack, original, registry):
+def recipient_is_valid_ack(ack, original, registry, by_job=None):
     """ACK is valid only from an actual designated consumer of this event."""
     if not original.get("requires_ack") or ack["worker_id"] == original["worker_id"]:
         return False
-    if ack["worker_id"] not in routed_workers(original, registry):
+    if ack["worker_id"] not in routed_workers(original, registry, by_job):
         return False
     if ack.get("job_id") != original["recipient"]["job_id"]:
         return False
@@ -107,20 +125,23 @@ def build(events, registry, jobs):
     acknowledgments = collections.defaultdict(dict)
     invalid_ack_ids = []
     event_by_id = {event["event_id"]: event for event in events}
+    by_job = assignment_index(registry)
 
     for event in events:
         event_id = event["event_id"]
         if event["event_type"] == "ACK":
             cause = event.get("causation_id")
             original = event_by_id.get(cause)
-            if original and recipient_is_valid_ack(event, original, registry):
+            if original and recipient_is_valid_ack(event, original, registry, by_job):
                 acknowledgments[original["event_id"]].setdefault(
                     event["worker_id"], event_id)
             else:
                 invalid_ack_ids.append(event_id)
             continue
 
-        recipients = routed_workers(event, registry)
+        recipients = routed_workers(event, registry, by_job)
+        if event["event_type"] in TELEMETRY_ONLY and not recipients:
+            continue  # Audited journal entry, never an unassigned inbox task.
         if not recipients:
             waiting[event["recipient"]["job_id"]].append({
                 "event_id": event_id,

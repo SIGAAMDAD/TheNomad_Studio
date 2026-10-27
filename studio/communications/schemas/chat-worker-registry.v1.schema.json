@@ -3,22 +3,76 @@
   "title": "Chat worker registry independent of scheduled S00-S09 slots",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "workers"],
+  "required": [
+    "schema_version",
+    "workers"
+  ],
   "properties": {
-    "schema_version": {"const": 1},
+    "schema_version": {
+      "const": 1
+    },
     "workers": {
-      "type": "array", "maxItems": 250,
+      "type": "array",
+      "maxItems": 1024,
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["worker_id","status","department_id","role_id","job_id","assignment_epoch","audit_interval_minutes"],
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "worker_id",
+          "status",
+          "department_id",
+          "role_id",
+          "job_id",
+          "assignment_epoch",
+          "audit_interval_minutes"
+        ],
         "properties": {
-          "worker_id": {"type":"string","pattern":"^CW-[A-Z0-9-]{3,70}$"},
-          "status": {"enum":["ASSIGNED","PAUSED","RETIRED"]},
-          "department_id": {"enum":["production","design","narrative","engineering","visual_art","tech_art","animation","audio","ux","qa","publishing","studio_ops"]},
-          "role_id": {"type":"string","pattern":"^rpg-[a-z0-9-]+$"},
-          "job_id": {"type":["string","null"]},
-          "assignment_epoch": {"type":"integer","minimum":0},
-          "audit_interval_minutes": {"type":"integer","minimum":15,"maximum":1440}
+          "worker_id": {
+            "type": "string",
+            "pattern": "^CW-[A-Z0-9-]{3,70}$"
+          },
+          "status": {
+            "enum": [
+              "ASSIGNED",
+              "PAUSED",
+              "RETIRED"
+            ]
+          },
+          "department_id": {
+            "enum": [
+              "production",
+              "design",
+              "narrative",
+              "engineering",
+              "visual_art",
+              "tech_art",
+              "animation",
+              "audio",
+              "ux",
+              "qa",
+              "publishing",
+              "studio_ops"
+            ]
+          },
+          "role_id": {
+            "type": "string",
+            "pattern": "^rpg-[a-z0-9-]+$"
+          },
+          "job_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "assignment_epoch": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "audit_interval_minutes": {
+            "type": "integer",
+            "minimum": 15,
+            "maximum": 1440
+          }
         }
       }
     }

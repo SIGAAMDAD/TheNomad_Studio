@@ -41,6 +41,8 @@ WIRE_KEYS = frozenset(("schema_version", "job_id", "worker_id",
     "attempt_id", "ledger_event_id", "elapsed_seconds", "resume_required"))
 MAX_BODY_BYTES = 8192
 MAX_SCAN_PAGES = 10
+MAX_REGISTERED_WORKERS = 1024
+TELEMETRY_ONLY = frozenset(("STARTED", "HEARTBEAT", "YIELDED", "SUBMITTED", "STOPPED"))
 
 
 class MessageError(ValueError):
@@ -115,7 +117,7 @@ def chat_registry(document):
     if not isinstance(document, dict) or document.get("schema_version") != 1:
         raise MessageError("INVALID_CHAT_REGISTRY")
     workers = document.get("workers")
-    if not isinstance(workers, list):
+    if not isinstance(workers, list) or len(workers) > MAX_REGISTERED_WORKERS:
         raise MessageError("INVALID_CHAT_REGISTRY")
     result = {}
     for item in workers:
@@ -245,6 +247,9 @@ def validate_wire(wire, jobs, issue_number, registry=None):
         raise MessageError("ACK_REQUIRES_CAUSATION_NO_ACK")
     if type(wire.get("requires_ack", False)) is not bool:
         raise MessageError("INVALID_ACK_FLAG")
+    if (kind in TELEMETRY_ONLY and wire.get("requires_ack", False)
+        and not wire.get("recipient_worker_id")):
+        raise MessageError("TELEMETRY_ACK_REQUIRES_EXPLICIT_RECIPIENT")
     if kind in ("STARTED", "HEARTBEAT", "YIELDED", "SUBMITTED", "STOPPED"):
         attempt = wire.get("attempt_id")
         if not isinstance(attempt, str) or not IDENT.fullmatch(attempt):
