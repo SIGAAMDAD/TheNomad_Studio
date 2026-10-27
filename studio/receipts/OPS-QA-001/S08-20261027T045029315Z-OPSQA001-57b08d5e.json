@@ -1,0 +1,51 @@
+{
+  "job_id": "OPS-QA-001",
+  "slot_id": "S08",
+  "assignment_epoch": 1,
+  "attempt_id": "S08-20261027T045029315Z-OPSQA001-57b08d5e",
+  "outcome": "SUBMITTED",
+  "artifact_ref": "github:SIGAAMDAD/TheNomad_Studio@57b08d5ef97c344d245e6f0363da03a11f01e13d:studio/evidence/OPS-QA-001.md",
+  "artifact_commit_sha": "57b08d5ef97c344d245e6f0363da03a11f01e13d",
+  "artifact_blob_sha": "994fdaaeccf68617108d3d779ff628d8753088f3",
+  "review_result": {
+    "verdict": "PASS",
+    "subject_ref": "github:SIGAAMDAD/TheNomad_Studio@d072dd868130ca8f7d298e20ebbe5efbd883c47f:studio/evidence/OPS-BOOT-001.md",
+    "findings": []
+  },
+  "tests": [
+    {
+      "name": "exact_subject_artifact_readback",
+      "status": "PASS",
+      "details": "Subject commit d072dd868130ca8f7d298e20ebbe5efbd883c47f, blob 91c05a78cd52fb88524b49261243cd858442adeb"
+    },
+    {
+      "name": "producer_commit_owned_paths",
+      "status": "PASS",
+      "details": "One changed path: studio/evidence/OPS-BOOT-001.md; no game-source changes"
+    },
+    {
+      "name": "source_precommit_slots_jobs_config_snapshot",
+      "status": "PASS",
+      "details": "Parent commit 596ea94f4443d6cf5c10340644826333dea5c9b0; original slot epoch, job approval and switches matched"
+    },
+    {
+      "name": "subject_receipt_match",
+      "status": "PASS",
+      "details": "S01-20261027T040905Z-OPSBOOT001.json references the exact submitted subject commit"
+    },
+    {
+      "name": "qa_report_exact_commit_readback",
+      "status": "PASS",
+      "details": "Commit 57b08d5ef97c344d245e6f0363da03a11f01e13d; report blob 994fdaaeccf68617108d3d779ff628d8753088f3; only QA report path changed"
+    },
+    {
+      "name": "game_engine_gpu_build_tests",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "paid_service_audit",
+      "status": "NOT_RUN"
+    }
+  ],
+  "next_action": "S00 controller independently verifies QA report and receipt, then handles producer QA state. No worker self-verification, code merge or canon promotion."
+}
