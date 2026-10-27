@@ -1,0 +1,102 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T204626155Z-shift-session-tracking-audit",
+  "recorded_at_utc": "2026-10-27T20:46:26.155Z",
+  "request_id": "CHAT-20261027-shift-session-tracking-audit",
+  "department_id": "production",
+  "role_id": "rpg-autonomous-workgroup-controller",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Reviewed live Studio 1.0.0 lifecycle, worker registry, GitHub worker-health auditor and Director pulse, and enabled hourly Gmail reporting automation. Existing per-response tracking uses worker_id, job_id, assignment_epoch, attempt_id, STARTED/HEARTBEAT/YIELDED/SUBMITTED/STOPPED and V4 ledger_event_id/elapsed_seconds. No production-level shift_id or independently attested ChatGPT session runtime identity exists; shift authorization remains design-only in draft PR #28. Auditors/email are for owner intervention rather than autonomous restart of ordinary chats. No worker activation or source write changes.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T204626155Z-shift-session-tracking-audit",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "shift-object",
+      "description": "Implement reviewed, owner-authorized shift_id and shift_epoch runtime state after approval of design PR #28; retain existing attempt_id and assignment_epoch compatibility",
+      "state": "OPEN"
+    },
+    {
+      "id": "session-attestation",
+      "description": "Specify supported executor session_id/run receipt integration; distinguish worker claimed attempt duration from host-verified session uptime",
+      "state": "OPEN"
+    },
+    {
+      "id": "audit-report-schedule",
+      "description": "Verify production Studio Director GitHub Actions creates reports under studio/comms/reports/hourly and alert on missing or stale pulse",
+      "state": "OPEN"
+    },
+    {
+      "id": "email-first-delivery",
+      "description": "Verify first hourly scheduled Gmail email delivery and cross-check report freshness and missing-worker notifications",
+      "state": "OPEN"
+    },
+    {
+      "id": "worker-registration",
+      "description": "Enroll actual worker identities only for approved jobs; current live chat registry contains zero workers",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "active_protocol",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/studio/v1/OPERATING_CONTRACT.md",
+      "revision": "main",
+      "verified": true
+    },
+    {
+      "kind": "auditor_source",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/scripts/studio_worker_health.py",
+      "revision": "main",
+      "verified": true
+    },
+    {
+      "kind": "director_pulse_source",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/scripts/studio_director_pulse.py",
+      "revision": "main",
+      "verified": true
+    },
+    {
+      "kind": "proposed_shift_contract",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/28",
+      "revision": "9f43b32fb99979f13deb57fe09cdc84848384ea3",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Current Studio runtime config and empty worker registry readback",
+      "status": "PASS"
+    },
+    {
+      "name": "Live normalized lifecycle attempt field contract verified",
+      "status": "PASS"
+    },
+    {
+      "name": "Live worker-health auditor exception taxonomy readback",
+      "status": "PASS"
+    },
+    {
+      "name": "Existing scheduled hourly email task is enabled",
+      "status": "PASS"
+    },
+    {
+      "name": "Actual ChatGPT run/session attestation and shift_id production aggregation",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Actual 100-worker monitoring and hourly email delivery",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Approve per-shift durable ID and owner-scoped START/PAUSE/DRAIN/STOP design as a separate follow-on from existing lifecycle tracking?",
+      "status": "REQUESTED"
+    }
+  ]
+}
