@@ -511,3 +511,17 @@ Workgroup IDs below match existing `workgroups.json`; **only WG-I modifies exist
 5. **Before 1,000+ active workers:** H04 measured restore and retention, actual queue/API-cost long soak, multi-partition skew and reviewer capacity/cost benchmarks; document remaining single points of failure.
 
 **No absolute reliability promise:** safe degradation, reversible state transitions, visible errors and recoverability are verifiable engineering objectives; outages of external model services or GitHub cannot be eliminated by the Studio design.
+
+## Persistent database, Drive, GitHub settings and unique execution identity
+
+Source-reviewed extension: [10_DATABASE_DRIVE_AND_AUTHORITY.md](10_DATABASE_DRIVE_AND_AUTHORITY.md), [11_REPOSITORY_SETTINGS_AND_OVERSIGHT.md](11_REPOSITORY_SETTINGS_AND_OVERSIGHT.md), [12_EXECUTION_ATTEMPT_IDENTITY.md](12_EXECUTION_ATTEMPT_IDENTITY.md).
+
+These are **binding proposed requirements added to H01/H03/H04/H07/H08/H10/H11/H12/H13/H14** in hardening_patches.v1.json, without adding competing workgroups or bypassing protected ownership. No production settings, Google Docs, Drive folder membership, secrets, live queues or source-write permissions were changed.
+
+PostgreSQL owns post-cutover operational state and transactional event/outbox/leases, while GitHub retains work-order/approval/source evidence and Drive retains authoring and accepted canon. Google BL-00 and BL-08 presently identify active Drive queue/role documents; do not run a SQL mutable queue alongside them until an explicit owner-approved BASELINE_CHANGE_ID, shadow comparison and signed cutover chooses exactly one writer.
+
+Existing Drive THE_NOMAD_STUDIO already has 00_BASELINES, 03_WORKING, 04_SUBMISSIONS, 05_QA and 06_ACCEPTED. Use native Docs for narrative/lore/quests/technical specifications, with per-document revision ID, requiredRevisionId conflict protection, content SHA256 and owner canon acceptance before release into NomadMain executable content. The existing root is individually owned, not verified as a Google Shared Drive. Moving content or changing sharing requires independent approval and readback.
+
+Both private Studio and Oversight repositories report protected:false on listed branches. The rulesets API returned plan-restriction 403 and branch-protection API is inaccessible to this connector. The user/admin must choose an eligible GitHub plan and configure branch/ruleset protections, read-only Actions token defaults, independent publisher credentials, and negative tests; never make repositories public or claim unverified rules are enforced.
+
+Each bounded chat response gets a unique execution_attempt_id under stable worker_id, job_id, assignment_epoch and studio_shift_id. The ID is **not** authentication; privileged source and QA claims require a separately attested executor/identity and current lease generation.

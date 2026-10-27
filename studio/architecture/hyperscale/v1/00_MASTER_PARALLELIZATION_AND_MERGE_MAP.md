@@ -87,3 +87,7 @@ See `hardening_patches.v1.json` and `09_RELIABILITY_AND_EXECUTION_PATCH_PLAN.md`
 | 3 | I | H13, H14 | Authorized P0 fixes, shadow rollout and rollback |
 
 **Dependency updates:** H now depends on C, E on D, J on D and E. These are intentional order constraints that prevent tests/schedulers/monitors from inventing upstream contracts. Do not authorize source writes in a planning workgroup.
+
+## Storage, identity and security contract addenda
+
+WG-A freezes owner/role/worker/shift/attempt identity and one-writer authority policy. WG-C implements transactional SQL and external source/Drive publication sagas, with restore contract. WG-D implements SHA/revision-keyed Drive resume capsules and conflict controls. WG-E binds actual execution-run attestation to shift and attempt IDs. WG-F checks accepted Docs hashes through NomadMain content provenance. WG-G enforces independent Oversight repository/key access. WG-J reports Drive cursor freshness and GitHub settings drift. WG-I performs ONLY reviewed V1 integration, protected branch negative tests and explicit Drive-to-SQL cutover.
