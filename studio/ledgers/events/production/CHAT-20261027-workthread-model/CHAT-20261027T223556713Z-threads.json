@@ -1,0 +1,21 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T223556713Z-threads",
+  "recorded_at_utc": "2026-10-27T22:35:56.713Z",
+  "request_id": "CHAT-20261027-workthread-model",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SUBMITTED",
+  "summary": "Clarified that Studio chats are bounded worker execution slices of persistent job/work-thread identities; GitHub and checkpoints carry continuity across runs.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": null,
+  "worker_slot": null,
+  "todo": [],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [],
+  "owner_decisions": []
+}
