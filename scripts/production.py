@@ -122,6 +122,7 @@ def build_jobs(feature, spec, config, existing_jobs):
             "protected_paths": item.get("protected_paths", []),
             "repository": item.get("repository", feature.get("repo", "docs")),
             "branch": item.get("branch"), "work_branch": item.get("work_branch"),
+            "workstream": item.get("workstream"), "language": item.get("language"),
             "baseline_sha": item.get("baseline_sha"),
             "acceptance": item["acceptance"], "dependencies": dependencies,
             "qa_owner": "S09" if kind in SOURCE else "S08"
