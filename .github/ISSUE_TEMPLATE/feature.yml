@@ -1,0 +1,60 @@
+name: "Studio feature / production request"
+description: "Create one parent outcome for design, narrative, art, animation, audio, engineering, QA, or integrated features."
+title: "[Studio] "
+body:
+  - type: markdown
+    attributes:
+      value: "Creating this Issue records intake only. An authorized owner must apply studio:approved before production jobs are admitted."
+  - type: textarea
+    id: outcome
+    attributes:
+      label: "Required finished outcome"
+      description: "What should exist and work once this feature is accepted?"
+      placeholder: "Implement a Sortior Blader enemy with approved behavior, art, audio, QA and in-game integration."
+    validations:
+      required: true
+  - type: dropdown
+    id: discipline
+    attributes:
+      label: "Affected disciplines"
+      multiple: true
+      options:
+        - Game design
+        - Systems and AI
+        - Narrative and quests
+        - Visual art and materials
+        - Animation and cinematics
+        - Audio and FMOD
+        - Programming and integration
+        - Tools and user experience
+        - Quality assurance
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "Acceptance criteria and negative cases"
+      description: "Concrete behavior, files, visuals, compatibility, tests, or reference revisions."
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: "Authoritative sources / existing designs"
+      description: "Add exact Drive links/revisions, code repository branches and SHAs if known. Do not invent baselines."
+    validations:
+      required: false
+  - type: textarea
+    id: protected
+    attributes:
+      label: "Must preserve / forbidden changes"
+      description: "Canon, architecture, ownership, editor parity, licensing and protected paths."
+    validations:
+      required: false
+  - type: textarea
+    id: owner_decisions
+    attributes:
+      label: "Owner decisions reserved for final approval"
+      description: "Architectural or canon choices to avoid making automatically."
+    validations:
+      required: false
