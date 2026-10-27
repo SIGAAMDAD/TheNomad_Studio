@@ -1,0 +1,126 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T201146Z-V1-CONSOLIDATION",
+  "recorded_at_utc": "2026-10-27T20:11:46.466Z",
+  "request_id": "CHAT-20261027-STUDIO-V1-CONSOLIDATION",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "IN_PROGRESS",
+  "summary": "Studio V1 controller merged at 49c3a5b after successful tests; 174 specialist skill ZIP and 190 worker prompts built; GOAP legacy draft closed; remaining real deployment/attestation gates pending.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T201146Z-V1-CONSOLIDATION",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "V1-CONTROLLER",
+      "description": "Consolidate department controller and relay into V1 and verify PR CI",
+      "state": "DONE"
+    },
+    {
+      "id": "V1-ROLE-PACK",
+      "description": "Package 174 individual role skills and 190 tailored launch prompts",
+      "state": "DONE"
+    },
+    {
+      "id": "V1-GOAP-HISTORY",
+      "description": "Close stale GOAP baseline draft while preserving verified source history",
+      "state": "DONE"
+    },
+    {
+      "id": "V1-AUDIT-DOC",
+      "description": "Review and merge final audit follow-up PR 26",
+      "state": "OPEN"
+    },
+    {
+      "id": "V1-WORKER-PILOT",
+      "description": "Register real worker identities and execute live broker, inbox, ACK and ledger test",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "V1-HEAD-AUTH",
+      "description": "Configure independently authenticated department-head-only source merge rulesets",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "V1-DIRECTOR-TASK",
+      "description": "Verify and update actual S00 scheduled Director task from an authorized task context",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "V1-ENG-SOURCE-PILOT",
+      "description": "Verify source CI publisher, exact-SHA QA and source-write approvals before live implementation",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "V1-DAILY-EMAIL",
+      "description": "Verify 23:00 CT Director execution and authorized Gmail delivery",
+      "state": "BLOCKED"
+    }
+  ],
+  "dependencies": [
+    {
+      "department_id": "studio_ops",
+      "state": "BLOCKED",
+      "reason": "S00 scheduled task identity inaccessible from this task connection"
+    },
+    {
+      "department_id": "engineering",
+      "state": "BLOCKED",
+      "reason": "Authenticated head-only GitHub merge rules and source CI publisher not verified"
+    },
+    {
+      "department_id": "production",
+      "state": "BLOCKED",
+      "reason": "No live CW workers registered; source and automatic dispatch config disabled"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "github_merge",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/24",
+      "revision": "49c3a5bba445f1dd927b930283ffdeb3bbbb8b52",
+      "verified": true
+    },
+    {
+      "kind": "github_pull_request",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/pull/26",
+      "revision": "531f4b4dfc76f5ba70645e4b17932529e55b4d75",
+      "verified": true
+    },
+    {
+      "kind": "skill_zip",
+      "uri": "sandbox:/mnt/data/Nomad_Studio_V1_All_174_Roles_and_Prompts.zip",
+      "revision": "sha256:0afd2150290d47d7c5d05606bfad8b34504151f73c9844b29384e9691bc06779",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Studio control validation V1 PR exact SHA",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40575072547"
+    },
+    {
+      "name": "Studio communications protocol V1 PR exact SHA",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40575072671"
+    },
+    {
+      "name": "Studio Director pulse V1 PR exact SHA",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40575072588"
+    },
+    {
+      "name": "Live authenticated head-only merge enforcement",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Actual cross-chat 100-worker concurrent execution",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
