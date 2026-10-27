@@ -128,22 +128,26 @@ GitHub Actions can independently process Issues, PRs, CI and GitHub labels.
 The reviewed Studio PR router is non-spending. It emits routing evidence
 for Studio-repository PR events but does not launch AI.
 
-The Work subscriptions must monitor pull-request activity in the ACTUAL
-source repository for their assigned job, not the Studio controller:
-SIGAAMDAD/TheNomad_GOAP:main (standalone GOAP);
-SIGAAMDAD/NomadFramework:develop (framework engine);
-SIGAAMDAD/The_Nomad:Nomad3D (core/non-mod-dependent gameplay);
-SIGAAMDAD/NomadMain:main (mod-specific C# gameplay); and
-SIGAAMDAD/Terrain3D:Terrain3D_NomadRenderer (rendering engine).
-Each source job uses its own studio/<JOB_ID> work branch IN THAT REPO.
-TheNomad_Studio is a control-plane hub for manifests and receipts only.
-Never commit real game/GOAP/GDExtension/Terrain/NomadMain code to the Studio hub.
-Do not assume the native Work UI can subscribe to multiple repositories
-in one task; reconfigure or separately authorize when changing systems.
-See studio/workforce/SOURCE_REPOSITORIES.md and source_targets.v1.json.
-The Studio PR routing GitHub Action by itself cannot observe source PR
-events in other repositories; native Work must watch the source repo or
-an owner-authorized cross-repo bridge must be installed.
+For five reusable generalist Work subscriptions, monitor **non-draft,
+owner-issued Studio HUB work-order PRs** on SIGAAMDAD/TheNomad_Studio/main
+(marked Ready for review), not implementation source PR events. Each W01–W05
+task filters its own studio:work:<stage> label. The work-order PR contains
+ONLY controller metadata, and links one admitted studio/runtime source job.
+The job selects the specialist role, language, exact real SOURCE repo,
+pinned baseline and studio/<JOB_ID> source work branch in that source repo.
+This permits W01–W05 to change programming disciplines between assignments
+without creating a separate Work subscription for every source repository.
+
+IMPORTANT: this generalist hub event is an orchestration trigger, NOT an
+authorization to push implementation source into TheNomad_Studio. All
+game/GOAP/GDExtension/Terrain/NomadMain source commits and implementation PRs
+belong in their actual source repositories. The Studio router validates the
+hub PR and separately checks the approved source job against the repo graph.
+A Work task must still read back real owner approval, source freeze,
+writer leases, GitHub credentials and a credit budget before acting.
+Work-order PR publication is not yet automated; see
+studio/workforce/GENERALIST_WORK_SETUP.md for the exact event task setup and
+bootstrap PR procedure.
 
 Routing labels: studio:work:alpha (W01), studio:work:implement (W02),
 studio:work:debug (W03), studio:work:integrate (W04), studio:work:qa (W05),
@@ -246,10 +250,11 @@ python -m unittest discover -s tests -v
 Read-only PR event audit workflow:
 .github/workflows/studio-event-route.yml
 
-After owner review, separately configure the five Work subscriptions
-in Work mode against the current ACTUAL source repository and explicitly
-approve a credit budget. For GOAP use SIGAAMDAD/TheNomad_GOAP, never
-SIGAAMDAD/TheNomad_Studio as the code worker PR trigger. Verify event triggers
+After owner review, separately configure the five reusable Work
+subscriptions in Work mode against Studio HUB non-source work-order PRs,
+then approve a credit budget for each. For all engineering tasks, the
+source repository is dynamically selected from the authenticated job,
+not from the trigger PR. Verify event triggers
 and model selection in Scheduled. Run a non-spending PR routing pilot,
 then a single owner-authorized junior Luna code pilot, followed by CI,
 senior integration and independent QA. Record actual credit cost, rework

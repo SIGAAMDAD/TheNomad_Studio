@@ -154,7 +154,12 @@ PR revision through a verified GitHub owner review and merge. See
   remain in effect. Work spending/credentials are separately gated.
 - S00 must acquire source baselines and actual build evidence before
   admitting source jobs. The canonical source registry is not frozen.
-- Native Work event triggers must subscribe to PR activity in the
-  actual source repository, not in TheNomad_Studio. The Studio PR
-  routing GitHub Action is only a read-only control-plane audit.
+- The reusable W01-W05 native Work tasks may subscribe to *Studio hub
+  work-order PR* activity as a control-plane signal. These PRs contain
+  metadata only; their exact source repository, baseline SHA and source
+  branch are validated against the approved job. All source code commits,
+  source CI and implementation PRs remain exclusively in the actual source
+  repositories. See GENERALIST_WORK_SETUP.md.
+- The reviewed Studio PR routing GitHub Action is only a non-spending
+  audit; it does not itself start native Work executions.
 - The source-repo-specific commit/QA/owner-merge gates remain binding.

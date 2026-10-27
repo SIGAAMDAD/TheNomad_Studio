@@ -3293,5 +3293,27 @@
     "new_persistent_slot": false,
     "source_pr_required": true,
     "user_final_authority": true
+  },
+  "event_trigger_strategy": {
+    "mode": "generalist_hub_work_orders",
+    "trigger_repo": "SIGAAMDAD/TheNomad_Studio",
+    "trigger_target_branch": "main",
+    "trigger_event": "pull_request_ready_for_review",
+    "trigger_branch_pattern": "studio/workorders/<JOB_ID>/<stage>",
+    "trigger_is_source_write_destination": false,
+    "source_repo_from": "studio/runtime/studio/jobs.json",
+    "actual_source_target_routes": "studio/workforce/source_targets.v1.json",
+    "source_write_branch": "studio/<JOB_ID> in actual source repo",
+    "setup_doc": "studio/workforce/GENERALIST_WORK_SETUP.md",
+    "stage_labels": {
+      "W01": "studio:work:alpha",
+      "W02": "studio:work:implement",
+      "W03": "studio:work:debug",
+      "W04": "studio:work:integrate",
+      "W05": "studio:work:qa"
+    },
+    "native_work_subscriptions_installed": false,
+    "work_order_publisher_installed": false,
+    "note": "Native Work setup and Work task model selection require user UI action; this policy only validates events."
   }
 }
