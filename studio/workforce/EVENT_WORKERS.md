@@ -2,7 +2,7 @@
 
 STATUS: REVIEW DRAFT. Work subscriptions are not installed, no paid calls are made.
 Machine-readable policy: studio/workforce/hierarchy.v2.json (174 specialist roles).
-Authoritative code repo: SIGAAMDAD/TheNomad_Studio.
+Controller repository only: SIGAAMDAD/TheNomad_Studio. Game/framework/mod/rendering source lives in their own repositories.
 Production Director: S00. Human owner retains architecture, canon, spending and merge authority.
 
 ## Reporting structure
@@ -25,8 +25,14 @@ HUMAN OWNER
 The original 174 role manuals remain authoritative; W lanes are execution
 functions, not additional professional disciplines or permanent assistants.
 
-All engineering jobs must pin repository, target branch, work branch and a
-verified baseline SHA in the actual source repository. Every W01–W05
+All engineering jobs must pin explicit workstream, repository, target branch,
+work branch, implementation language and verified baseline SHA in the actual
+source repository. The owner-approved workstream selects the target:
+rendering_engine -> Terrain3D/Terrain3D_NomadRenderer;
+framework_engine -> NomadFramework/develop (logical main development branch);
+core_gameplay -> The_Nomad/Nomad3D;
+mod_gameplay -> NomadMain/main (C#);
+goap_core -> TheNomad_GOAP/main. Every W01–W05
 worker must clone/pull/push against that exact source repo, not the Studio
 hub. The Studio receives only job status and immutable commit/QA receipts.
 A source-work order PR is created in the source repo before a native PR
@@ -104,12 +110,14 @@ for Studio-repository PR events but does not launch AI.
 
 The Work subscriptions must monitor pull-request activity in the ACTUAL
 source repository for their assigned job, not the Studio controller:
-SIGAAMDAD/TheNomad_GOAP:main (GOAP), SIGAAMDAD/NomadFramework:develop
-(framework), SIGAAMDAD/The_Nomad:Nomad3D (game), and
-SIGAAMDAD/Terrain3D:Terrain3D_NomadRenderer (terrain).
+SIGAAMDAD/TheNomad_GOAP:main (standalone GOAP);
+SIGAAMDAD/NomadFramework:develop (framework engine);
+SIGAAMDAD/The_Nomad:Nomad3D (core/non-mod-dependent gameplay);
+SIGAAMDAD/NomadMain:main (mod-specific C# gameplay); and
+SIGAAMDAD/Terrain3D:Terrain3D_NomadRenderer (rendering engine).
 Each source job uses its own studio/<JOB_ID> work branch IN THAT REPO.
 TheNomad_Studio is a control-plane hub for manifests and receipts only.
-Never commit real game/GOAP/GDExtension/Terrain code to the Studio hub.
+Never commit real game/GOAP/GDExtension/Terrain/NomadMain code to the Studio hub.
 Do not assume the native Work UI can subscribe to multiple repositories
 in one task; reconfigure or separately authorize when changing systems.
 See studio/workforce/SOURCE_REPOSITORIES.md and source_targets.v1.json.
@@ -132,8 +140,8 @@ event, job state, source SHA and lease every time.
 Trigger: suitable GitHub PR opened/updated/ready-for-review.
 Condition: authorized alpha stage, matching admitted job and source SHA.
 Instruction:
-Read only the exact approved job, current PR diff, professional role manual,
-frozen contracts, owned paths and prior checkpoint. Verify trusted owner
+Read only the exact approved job, current source PR diff, professional role manual,
+frozen contracts, explicit workstream, implementation language, owned paths and prior checkpoint. Verify trusted owner
 approval, source SHA, exclusive lease, source-writes gate and spend approval
 from the authoritative Studio runtime. On any failed gate, record NO_WORK;
 do not write source. Implement one bounded alpha increment, including
