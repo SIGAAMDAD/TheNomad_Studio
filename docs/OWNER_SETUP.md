@@ -72,3 +72,15 @@ After all child jobs pass QA and required CI, the feature becomes READY_FOR_OWNE
 - Ordinary scheduled ChatGPT tasks still run on their own schedule. A GitHub event does not immediately spawn an ordinary ChatGPT chat.
 - No paid model API, Codex or Work fallback is configured. Stronger review models must be selected through supported account/task controls and may consume a separate allowance.
 - Existing Google Drive legacy tickets require careful ID/revision migration. This deployment intentionally avoids overwriting their original documents.
+
+## Optional Google Drive request intake
+
+To also initiate feature requests by placing documents in Drive:
+
+1. Create an owner-controlled Google Drive folder specifically for Studio requests.
+2. Open Google Apps Script, copy integrations/apps-script/DriveIntake.gs into the script, and set Script Properties STUDIO_DRIVE_INTAKE_FOLDER_ID (exact folder ID), STUDIO_GITHUB_ISSUES_TOKEN (a fine-grained token with Issues write on TheNomad_Studio), and STUDIO_GITHUB_REPO.
+3. Run studioInstallDriveIntakeTrigger once and authorize the script. The script will scan every 15 minutes.
+4. Place a Google Doc with a name beginning [STUDIO] inside that folder. The script creates one deduplicated Studio GitHub Issue linking the original document.
+5. Approve its scope in GitHub using the trusted owner label; Drive file creation alone never authorizes production.
+
+This integration is shipped as Apps Script source, not installed into your Google account. It requires your script/token authorization. It never edits the source document or bypasses independent QA.
