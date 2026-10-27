@@ -33,3 +33,13 @@ python scripts/studio.py dispatch
 ```
 
 This bootstrap is deliberately inert with respect to source edits, paid AI spend and automated ChatGPT task creation. It does not supersede the approved Drive baselines.
+
+## Optional manual API draft execution
+1. In GitHub repository **Settings → Environments**, create `ai-spend-approved` and require a reviewer. This prevents unattended approval of API calls.
+2. In **Settings → Secrets and variables → Actions**, create repository secret `OPENAI_API_KEY` using a **separately funded OpenAI API key** with a strict project spending limit.
+3. Add a non-code job with `"approved": true`, `"brief": "bounded instructions ..."`, `"kind": "design"`, and `"state": "READY"` to `studio/jobs.json`, then commit that configuration.
+4. Under **Actions → AI draft - manual opt-in only → Run workflow**, supply the exact job ID and an API model supported by that key.
+5. Review the resulting `ai-draft` artifact; this workflow does **not** update game code, Google Drive, or production job status.
+6. Keep recurring AI disabled until actual cost and output quality have been measured.
+
+The manual runner makes one bounded `/v1/responses` request with `max_output_tokens=1800` and `store=false`. The environment gate is an actual configuration requirement; merely naming it in YAML does not establish required reviewers. GitHub Action minutes, API charges, and model availability depend on your plans and account.
