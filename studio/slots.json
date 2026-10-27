@@ -117,7 +117,7 @@
       "id": "S08",
       "role": "dynamic",
       "enabled": true,
-      "job": "OPS-QA-001",
+      "job": null,
       "epoch": 1,
       "schedule_minute": 48,
       "capabilities": [

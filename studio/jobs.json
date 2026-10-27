@@ -4,7 +4,7 @@
     {
       "id": "OPS-BOOT-001",
       "kind": "docs",
-      "state": "SUBMITTED",
+      "state": "VERIFIED",
       "approved": true,
       "role": "studio-ops-pilot",
       "role_manual_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/roles/studio-ops-pilot.md",
@@ -34,12 +34,18 @@
       "last_attempt_id": "S01-20261027T040905Z-OPSBOOT001",
       "applied_attempts": [
         "S01-20261027T040905Z-OPSBOOT001"
-      ]
+      ],
+      "qa_evidence": {
+        "verdict": "PASS",
+        "subject_ref": "github:SIGAAMDAD/TheNomad_Studio@d072dd868130ca8f7d298e20ebbe5efbd883c47f:studio/evidence/OPS-BOOT-001.md",
+        "reviewer_slot": "S08",
+        "report_ref": "github:SIGAAMDAD/TheNomad_Studio@57b08d5ef97c344d245e6f0363da03a11f01e13d:studio/evidence/OPS-QA-001.md"
+      }
     },
     {
       "id": "OPS-QA-001",
       "kind": "review",
-      "state": "RESERVED",
+      "state": "VERIFIED",
       "approved": true,
       "role": "studio-ops-qa",
       "role_manual_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/roles/studio-ops-pilot.md",
@@ -66,9 +72,111 @@
         "Commit independent QA report and SUBMITTED receipt"
       ],
       "qa_owner": "S00",
-      "slot": "S08",
-      "assignment_epoch": 1,
-      "reserved_at": "2026-10-27T04:25:41.750390+00:00"
+      "reserved_at": "2026-10-27T04:25:41.750390+00:00",
+      "artifact_ref": "github:SIGAAMDAD/TheNomad_Studio@57b08d5ef97c344d245e6f0363da03a11f01e13d:studio/evidence/OPS-QA-001.md",
+      "review_result": {
+        "verdict": "PASS",
+        "subject_ref": "github:SIGAAMDAD/TheNomad_Studio@d072dd868130ca8f7d298e20ebbe5efbd883c47f:studio/evidence/OPS-BOOT-001.md",
+        "findings": [],
+        "reviewer_slot": "S08"
+      },
+      "submitted_by_slot": "S08",
+      "last_attempt_id": "S08-20261027T045029315Z-OPSQA001-57b08d5e",
+      "applied_attempts": [
+        "S08-20261027T045029315Z-OPSQA001-57b08d5e"
+      ],
+      "last_adjudicated_ref": "github:SIGAAMDAD/TheNomad_Studio@d072dd868130ca8f7d298e20ebbe5efbd883c47f:studio/evidence/OPS-BOOT-001.md",
+      "qa_evidence": {
+        "verdict": "PASS",
+        "subject_ref": "github:SIGAAMDAD/TheNomad_Studio@57b08d5ef97c344d245e6f0363da03a11f01e13d:studio/evidence/OPS-QA-001.md",
+        "reviewer_slot": "S00"
+      }
+    },
+    {
+      "id": "FEATURE-6-G00-01",
+      "parent_feature": "FEATURE-6",
+      "kind": "code",
+      "state": "BLOCKED",
+      "approved": true,
+      "role": "rpg-ai-programmer",
+      "role_manual_uri": "skills://rpg-ai-programmer",
+      "priority": 0,
+      "brief": "Studio first controlled source-work pilot on owner-approved G00 FEAR behavior reference fixtures only. Inspect the pinned FEAR 1.08 gitlink without copying donor source, write machine-readable GOAP planning scenarios and source symbol map in authorized paths. Do not implement G02+ runtime or alter any ABI, memory, EASTL pin, CMake or framework integration.",
+      "source_refs": [
+        "https://github.com/SIGAAMDAD/TheNomad_GOAP/commit/258a2623aa5de9d422be02c59855861570ede4ac",
+        "https://github.com/SIGAAMDAD/TheNomad_GOAP/actions/runs/40474509032",
+        "https://github.com/SIGAAMDAD/TheNomad_Studio/issues/6"
+      ],
+      "owned_paths": [
+        "tests/reference",
+        "docs/source-map.md"
+      ],
+      "protected_paths": [
+        "CMakeLists.txt",
+        "cmake",
+        "deps",
+        "third_party/fear_sdk",
+        "tests/bootstrap_core.cpp",
+        "tests/bootstrap_shared.cpp",
+        "tests/dynamic_smoke.cpp",
+        "include",
+        "src"
+      ],
+      "repository": "SIGAAMDAD/TheNomad_GOAP",
+      "branch": "main",
+      "work_branch": "studio/FEATURE-6-G00-01",
+      "workstream": "goap_core",
+      "language": "C++17",
+      "baseline_sha": "258a2623aa5de9d422be02c59855861570ede4ac",
+      "architecture_impact": "none",
+      "architecture_review": null,
+      "architecture_proposal": null,
+      "architecture_acceptance": null,
+      "acceptance": [
+        "Record exact baseline, FEAR reference gitlink SHA and provenance; do not copy donor source into the standalone implementation.",
+        "Produce machine-readable G00 reference cases covering one-step, chained, conflicting preconditions, impossible goals, repeated actions, bindings and plan replay, including explicit assumptions and expected validity.",
+        "Add source symbol mapping and structural validation tests; report NOT_RUN for behavioral assertions requiring the unimplemented solver.",
+        "Commit only owned test/reference and documentation paths to source branch studio/FEATURE-6-G00-01, with exact SHA, source PR, CI evidence and Drive receipt.",
+        "Preserve the owner-frozen architecture and request a source-repo architecture proposal rather than inventing new GOAP interfaces."
+      ],
+      "dependencies": [],
+      "qa_owner": "S09",
+      "blocker": "Engineering source freeze and build/ABI gates require owner approval"
+    },
+    {
+      "id": "QA-FEATURE-6-G00-01",
+      "parent_feature": "FEATURE-6",
+      "kind": "review",
+      "state": "READY",
+      "approved": true,
+      "priority": 1,
+      "role": "rpg-technical-qa-analyst",
+      "role_manual_uri": "skills://rpg-technical-qa-analyst",
+      "subject_job": "FEATURE-6-G00-01",
+      "dependencies": [
+        "FEATURE-6-G00-01"
+      ],
+      "repository": "SIGAAMDAD/TheNomad_Studio",
+      "owned_paths": [
+        "studio/reviews/QA-FEATURE-6-G00-01.md"
+      ],
+      "protected_paths": [
+        "CMakeLists.txt",
+        "cmake",
+        "deps",
+        "third_party/fear_sdk",
+        "tests/bootstrap_core.cpp",
+        "tests/bootstrap_shared.cpp",
+        "tests/dynamic_smoke.cpp",
+        "include",
+        "src"
+      ],
+      "brief": "Independently review exact submitted artifact of FEATURE-6-G00-01. Use the subject's accepted baseline, negative cases, and cross-discipline references. Publish an immutable review report plus structured verdict and findings.",
+      "acceptance": [
+        "Review exact submitted revision",
+        "Record objective PASS/REWORK",
+        "Publish immutable QA report and evidence receipt"
+      ]
     }
   ]
 }
