@@ -228,5 +228,38 @@ class StudioTests(unittest.TestCase):
         self.assertIn("disabled slot", " ".join(studio.validate(jobs, slots, config)))
 
 
+    def test_end_to_end_creative_submission_unlocks_independent_qa(self):
+        jobs, slots, config = fixture()
+        jobs["jobs"] = [job("DES-301"), job("QA-301", kind="review", deps=["DES-301"])]
+        jobs["jobs"][1]["subject_job"] = "DES-301"
+        first = studio.dispatch(jobs, slots, config)
+        self.assertEqual([x["job"] for x in first], ["DES-301"])
+        studio.record(jobs, slots, {"job_id": "DES-301", "slot_id": "S01",
+                   "assignment_epoch": 1, "attempt_id": "RUN-301", "outcome": "SUBMITTED",
+                   "artifact_ref": "doc:revision301"})
+        self.assertEqual(jobs["jobs"][0]["submitted_by_slot"], "S01")
+        next_jobs = studio.dispatch(jobs, slots, config)
+        self.assertEqual(next_jobs, [{"slot": "S08", "job": "QA-301", "epoch": 1}])
+        studio.record(jobs, slots, {"job_id": "QA-301", "slot_id": "S08",
+                   "assignment_epoch": 1, "attempt_id": "RUN-302", "outcome": "SUBMITTED",
+                   "artifact_ref": "doc:qa-report302"})
+        self.assertEqual(studio.validate(jobs, slots, config), [])
+        self.assertEqual([j["state"] for j in jobs["jobs"]], ["SUBMITTED", "SUBMITTED"])
+
+    def test_verified_creative_rejects_self_review_and_wrong_revision(self):
+        jobs, slots, config = fixture()
+        candidate = job("DES-301", state="VERIFIED")
+        candidate.update({"artifact_ref": "doc:revisionA", "submitted_by_slot": "S01",
+                          "qa_evidence": {"verdict": "PASS", "subject_ref": "doc:revisionB",
+                                          "reviewer_slot": "S08"}})
+        jobs["jobs"] = [candidate]
+        self.assertIn("submitted artifact", " ".join(studio.validate(jobs, slots, config)))
+        candidate["qa_evidence"]["subject_ref"] = "doc:revisionA"
+        candidate["qa_evidence"]["reviewer_slot"] = "S01"
+        self.assertIn("self-review", " ".join(studio.validate(jobs, slots, config)))
+        candidate["qa_evidence"]["reviewer_slot"] = "S08"
+        self.assertEqual(studio.validate(jobs, slots, config), [])
+
+
 if __name__ == "__main__":
     unittest.main()
