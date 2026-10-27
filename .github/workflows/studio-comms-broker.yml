@@ -43,6 +43,9 @@ jobs:
             python scripts/studio_comms.py reconcile --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" --worker-registry "$RUNNER_TEMP/studio-runtime/studio/chat_workers.json" --github-token "$STUDIO_TOKEN" > "$RUNNER_TEMP/comms-result.json"
           fi
           cat "$RUNNER_TEMP/comms-result.json"
+          if [ "$GITHUB_EVENT_NAME" != 'issue_comment' ]; then
+            python scripts/studio_comms.py snapshot --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" --worker-registry "$RUNNER_TEMP/studio-runtime/studio/chat_workers.json" > "$RUNNER_TEMP/comms-snapshot.json"
+          fi
           if [ "$GITHUB_EVENT_NAME" = 'schedule' ] && [ "$EVENT_CRON" = '30 6 * * *' ]; then
             python scripts/studio_comms.py digest --runtime-jobs "$RUNNER_TEMP/studio-runtime/studio/jobs.json" --comms-root "$RUNNER_TEMP/studio-comms" --worker-registry "$RUNNER_TEMP/studio-runtime/studio/chat_workers.json" > "$RUNNER_TEMP/comms-digest.json"
           fi
@@ -56,7 +59,19 @@ jobs:
           git add events daily snapshots
           if ! git diff --cached --quiet; then
             git commit -m 'studio(comms): archive normalized worker events'
-            git push origin HEAD:refs/heads/studio/comms
+            for attempt in 1 2 3; do
+              if git push origin HEAD:refs/heads/studio/comms; then
+                exit 0
+              fi
+              git fetch origin refs/heads/studio/comms:refs/remotes/origin/studio/comms
+              if ! git rebase refs/remotes/origin/studio/comms; then
+                git rebase --abort || true
+                echo 'COMMS_REBASE_CONFLICT; reconciliation will retry safely' >&2
+                exit 1
+              fi
+            done
+            echo 'COMMS_PUSH_FAILED; reconciliation will retry safely' >&2
+            exit 1
           fi
       - name: Upload non-secret broker receipt
         if: always()
@@ -66,5 +81,6 @@ jobs:
           path: |
             ${{ runner.temp }}/comms-result.json
             ${{ runner.temp }}/comms-digest.json
+            ${{ runner.temp }}/comms-snapshot.json
           retention-days: 14
           if-no-files-found: ignore

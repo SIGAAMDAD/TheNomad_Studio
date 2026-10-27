@@ -159,6 +159,23 @@ class CommsTests(unittest.TestCase):
         self.assertNotEqual(record["identity_assurance"], "INDIVIDUALLY_AUTHENTICATED")
 
 
+    def test_snapshot_includes_registry_and_is_append_only(self):
+        workers = c.chat_registry({"schema_version": 1, "workers": [
+            {"worker_id": "CW-ENG-001", "job_id": "FEATURE-6-G00",
+             "role_id": "rpg-ai-programmer", "status": "ASSIGNED",
+             "assignment_epoch": 2, "audit_interval_minutes": 60},
+            {"worker_id": "CW-ENG-002", "job_id": "FEATURE-6-G01",
+             "role_id": "rpg-ai-programmer", "status": "PAUSED",
+             "assignment_epoch": 2, "audit_interval_minutes": 60},
+        ]})
+        with tempfile.TemporaryDirectory() as folder:
+            result = c.snapshot(folder, self.jobs, workers)
+            self.assertEqual(result["registered_or_observed_workers"], 2)
+            payload = json.loads(pathlib.Path(result["snapshot_path"]).read_text())
+            self.assertEqual(payload["last_observed"]["CW-ENG-002"]["audit_health"], "NOT_OBSERVED")
+            self.assertFalse(payload["last_observed"]["CW-ENG-001"]["verified_execution"])
+
+
 
 if __name__ == "__main__":
     unittest.main()
