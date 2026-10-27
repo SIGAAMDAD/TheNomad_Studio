@@ -143,6 +143,34 @@ def build_jobs(feature, spec, config, existing_jobs):
     return output, candidate
 
 
+def reconcile_owner_approval(features, jobs, config):
+    """Stop new work if the authenticated owner withdraws approval."""
+    byid = {j["id"]: j for j in jobs["jobs"]}
+    changes = []
+    for feature in features["features"]:
+        children = [byid[x] for x in feature.get("jobs", []) if x in byid]
+        if not feature.get("approved"):
+            for child in children:
+                if child.get("state") in {"READY", "QUEUED"}:
+                    child["state"] = "BLOCKED"
+                    child["blocker"] = "OWNER_APPROVAL_REVOKED"
+                    changes.append({"job": child["id"], "outcome": "BLOCKED_APPROVAL"})
+                elif child.get("state") in {"RESERVED", "RUNNING", "CHECKPOINTED"}:
+                    child["owner_revocation_pending"] = True
+        else:
+            for child in children:
+                if child.get("state") == "BLOCKED" and child.get("blocker") == "OWNER_APPROVAL_REVOKED":
+                    if child.get("kind") not in SOURCE or config.get("source_writes_enabled"):
+                        child["state"] = "READY"
+                        child.pop("blocker", None)
+                        changes.append({"job": child["id"], "outcome": "READY_REAPPROVED"})
+                child.pop("owner_revocation_pending", None)
+            if children and feature.get("state") == "BLOCKED" and feature.get("blocker", "").startswith("Owner approval"):
+                feature["state"] = "PRODUCTION"
+                feature.pop("blocker", None)
+    return changes
+
+
 def admit(root, features, jobs, slots, config):
     added, errors = [], []
     for feature in features["features"]:
@@ -344,6 +372,8 @@ def main(argv=None):
     slots = load(args.root, "slots.json")
     config = load(args.root, "config.json")
     output = {}
+    if args.command in ("admit", "status"):
+        output["approval_gates"] = reconcile_owner_approval(features, jobs, config)
     if args.command == "admit":
         jobs, output = admit(args.root, features, jobs, slots, config)
     elif args.command == "adjudicate":
