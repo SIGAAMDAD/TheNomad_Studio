@@ -78,6 +78,23 @@ def audit(runtime_root, comms_root, registry, jobs, when=None):
         if any(e.get("worker_id")==wid and e.get("job_id")==jobid and
                e.get("event_type") in ACTIVE and e.get("assignment_epoch")!=epoch for e in raw):
             alerts.add("ASSIGNMENT_EPOCH_MISMATCH")
+        # A checkpoint or blocking response is substantive progress and must
+        # carry both a durable ledger reference and its measured execution time.
+        # Allow a short grace period for GitHub's independently scheduled broker.
+        for event in mine:
+            if event["event_type"] not in ("CHECKPOINT", "BLOCKED"):
+                continue
+            if now-stamp(event["recorded_at_utc"]) <= GRACE:
+                continue
+            ledger_ref=event.get("ledger_event_id")
+            attempt=event.get("attempt_id")
+            if not isinstance(ledger_ref,str) or not ledger_ref:
+                alerts.add("PROGRESS_LEDGER_REFERENCE_MISSING")
+            elif not any(item.get("event_id")==ledger_ref and
+                         item.get("attempt_id")==attempt for item in ledger):
+                alerts.add("PROGRESS_LEDGER_MISSING")
+            if type(event.get("elapsed_seconds")) is not int:
+                alerts.add("PROGRESS_DURATION_MISSING")
         latest=mine[-1] if mine else None
         if latest:
             age=now-stamp(latest["recorded_at_utc"])

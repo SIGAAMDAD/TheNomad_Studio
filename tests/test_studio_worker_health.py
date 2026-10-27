@@ -51,6 +51,27 @@ class WorkerHealthTests(unittest.TestCase):
                 led([{"id":"x","state":"OPEN"}]))
             out=health.audit(d,d,REG,JOBS,NOW+dt.timedelta(minutes=20))
             self.assertIn("TERMINAL_WITH_OPEN_TODOS",out["alerts"])
+    def test_checkpoint_without_ledger_and_time_is_reported(self):
+        with tempfile.TemporaryDirectory() as d:
+            for kind,m in (("STARTED",1),("CHECKPOINT",2)):
+                item=msg(kind,m)
+                if kind=="CHECKPOINT":
+                    item.pop("ledger_event_id",None)
+                put(d,"events/2026/10/27/evt-"+f"{m:032x}"+".json",item)
+            out=health.audit(d,d,REG,JOBS,NOW+dt.timedelta(minutes=20))
+            self.assertIn("PROGRESS_LEDGER_REFERENCE_MISSING",out["alerts"])
+            self.assertIn("PROGRESS_DURATION_MISSING",out["alerts"])
+    def test_checkpoint_with_matching_ledger_and_time(self):
+        with tempfile.TemporaryDirectory() as d:
+            for kind,m in (("STARTED",1),("CHECKPOINT",2)):
+                item=msg(kind,m)
+                if kind=="CHECKPOINT":
+                    item["elapsed_seconds"]=95
+                put(d,"events/2026/10/27/evt-"+f"{m:032x}"+".json",item)
+            put(d,"studio/ledgers/events/engineering/"+JOB+"/LEDGER-001.json",led())
+            out=health.audit(d,d,REG,JOBS,NOW+dt.timedelta(minutes=20))
+            self.assertNotIn("PROGRESS_LEDGER_MISSING",out["alerts"])
+            self.assertNotIn("PROGRESS_DURATION_MISSING",out["alerts"])
     def test_inbox_ack_overdue(self):
         with tempfile.TemporaryDirectory() as d:
             put(d,"inboxes/current/"+ID+".json",
