@@ -21,15 +21,16 @@
       "source": "github_issue",
       "issue_number": 6,
       "repo": "SIGAAMDAD/TheNomad_Studio",
-      "state": "INBOX",
+      "state": "SCOPING",
       "jobs": [],
-      "approved": false,
+      "approved": true,
       "issue_url": "https://github.com/SIGAAMDAD/TheNomad_Studio/issues/6",
       "title": "[Studio][P0][GOAP] Bootstrap native GOAP infrastructure, archetype cooker and C# behavior bridge",
       "issue_digest": "7b537dd5d242182131c903ceda9b15ac6e8404116eed8c5280edc40de9581e87",
-      "issue_updated_at": "2026-10-27T03:52:02Z",
+      "issue_updated_at": "2026-10-27T03:55:07Z",
       "owner_accept_requested": false,
-      "owner_finalize_requested": false
+      "owner_finalize_requested": false,
+      "intake_note": "Director must create scoped, source-grounded feature spec"
     },
     {
       "id": "FEATURE-7",
