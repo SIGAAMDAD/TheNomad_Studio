@@ -137,6 +137,27 @@ def gate(job):
     return None
 
 
+def audit_changed_paths(job, changed_paths):
+    """Independent review helper for changes to predeclared protected files.
+
+    This cannot detect every semantic API/ABI change. W05 must review the
+    actual diff and contract regardless of this deterministic result.
+    """
+    if not isinstance(changed_paths, list) or any(
+            not isinstance(p, str) or not p or p.startswith("/") or
+            ".." in p.split("/") for p in changed_paths):
+        return "ARCHITECTURE_DIFF_FILES_READBACK_REQUIRED"
+    protected = job.get("protected_paths", [])
+    if not isinstance(protected, list):
+        return "ARCHITECTURE_PROTECTED_PATHS_INVALID"
+    for path in changed_paths:
+        for owned in protected:
+            if isinstance(owned, str) and (path == owned or path.startswith(owned.rstrip("/") + "/")):
+                if job.get("architecture_impact") != "change":
+                    return "ARCHITECTURE_PROTECTED_DIFF_REQUIRES_PROPOSAL"
+    return None
+
+
 def classification_template(job, impact):
     """A safe, deterministic source job amendment; never mutates input."""
     if impact not in IMPACTS:
