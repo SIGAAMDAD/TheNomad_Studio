@@ -1,0 +1,103 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T194411813Z-capacity100",
+  "recorded_at_utc": "2026-10-27T19:44:11.813Z",
+  "request_id": "CHAT-20261027-studio-100-worker-capacity",
+  "department_id": "production",
+  "role_id": "rpg-autonomous-workgroup-controller",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Audited live Studio 100-worker scalability: registry schema 250, actual roster zero, source_writes_enabled=false, max_concurrent_writers=2, max_reviewers=1, singleton studio-comms-writer concurrency group, default single pending cancellation, 100k event projection limit, 5k per-inbox message ceiling, 10*100 issue-comment scan limit. No 100-worker load benchmark run; recommend durable batched intake, incremental per-shard projections, narrow branch leases, API budgets, identity checks and 100-worker burst+soak simulation.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T194411813Z-capacity100",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "comms-burst-safety",
+      "description": "Design/test reliable 100-worker burst ingestion and bounded queue; preserve canceled events via reconciliation cursor and coalescing",
+      "state": "OPEN"
+    },
+    {
+      "id": "comms-incremental",
+      "description": "Replace full-history O(N) inbox re-projection; archive cold raw events and retain append-only audit hashes",
+      "state": "OPEN"
+    },
+    {
+      "id": "message-size-rate",
+      "description": "Measure 100-worker throughput at 1-4 messages/worker/hour and burst 100 messages/minute",
+      "state": "OPEN"
+    },
+    {
+      "id": "leases-sharding",
+      "description": "Expand signed source work-path leases and independent reviewer pool only after owner approval",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "github-app",
+      "description": "Provision separate GitHub App installation tokens and rate-limit observations across source repositories",
+      "state": "BLOCKED"
+    },
+    {
+      "id": "worker-identity",
+      "description": "Resolve shared-owner-token role spoofing before untrusted worker messages become operational authority",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "source_configuration",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/config.json",
+      "revision": "studio/runtime",
+      "verified": true
+    },
+    {
+      "kind": "worker_registry",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/studio/runtime/studio/chat_workers.json",
+      "revision": "studio/runtime",
+      "verified": true
+    },
+    {
+      "kind": "source_broker",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/.github/workflows/studio-comms-broker.yml",
+      "revision": "main",
+      "verified": true
+    },
+    {
+      "kind": "source_projection",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/scripts/studio_inbox.py",
+      "revision": "main",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Studio runtime concurrency gates readback",
+      "status": "PASS"
+    },
+    {
+      "name": "Chat registry schema and current population readback",
+      "status": "PASS"
+    },
+    {
+      "name": "Communications broker action concurrency and reconciliation code inspected",
+      "status": "PASS"
+    },
+    {
+      "name": "100-worker concurrent burst and multi-day soak validation",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Two-chat live issue-to-inbox ACK handoff",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "question": "Authorize subsequent non-spending capacity hardening and synthetic 100-worker load tests before enrolling 100 real chats?",
+      "status": "REQUESTED"
+    }
+  ]
+}
