@@ -97,14 +97,22 @@ def validate(jobs, slots, config):
             if not (isinstance(j.get("final_commit_sha"), str) and
                     SHA_RE.fullmatch(j["final_commit_sha"]) and j.get("drive_report_url")):
                 errors.append(f"{jid}: code handoff requires final SHA and Drive report URL")
+        if state in {"READY", "RESERVED", "RUNNING", "CHECKPOINTED"} and kind == "review":
+            subject = j.get("subject_job")
+            if not subject or subject not in deps or subject not in known:
+                errors.append(f"{jid}: review requires known subject_job dependency")
         if state in {"VERIFIED", "ACCEPTED"}:
             evidence = j.get("qa_evidence")
             if not isinstance(evidence, dict) or evidence.get("verdict") != "PASS" or not evidence.get("subject_ref"):
                 errors.append(f"{jid}: verified job requires exact-subject independent QA PASS")
             elif evidence.get("reviewer_slot") == j.get("slot") and j.get("slot"):
                 errors.append(f"{jid}: author cannot self-review")
-            if kind in {"code", "integration"} and isinstance(evidence, dict) and evidence.get("subject_ref") != j.get("final_commit_sha"):
-                errors.append(f"{jid}: QA must target final commit SHA")
+            if kind in {"code", "integration"}:
+                if isinstance(evidence, dict) and evidence.get("subject_ref") != j.get("final_commit_sha"):
+                    errors.append(f"{jid}: QA must target final commit SHA")
+                ci = j.get("ci_evidence")
+                if not isinstance(ci, dict) or ci.get("verdict") != "PASS" or ci.get("subject_sha") != j.get("final_commit_sha"):
+                    errors.append(f"{jid}: verified code requires passing CI at final commit")
     graph = {j["id"]: j.get("dependencies", []) for j in entries if isinstance(j.get("id"), str)}
     visited = set()
     visiting = set()
@@ -126,6 +134,9 @@ def validate(jobs, slots, config):
         walk(jid)
     assigned = []
     in_flight = []
+    task_ids = [w.get("scheduled_task_id") for w in workers if w.get("scheduled_task_id")]
+    if len(task_ids) != len(set(task_ids)):
+        errors.append("Two worker slots cannot reference the same scheduled ChatGPT task")
     for worker in workers:
         sid = worker.get("id")
         jobid = worker.get("job")
@@ -134,6 +145,8 @@ def validate(jobs, slots, config):
         if sid == "S00" and jobid:
             errors.append("S00 is reserved for coordination")
         if jobid:
+            if not worker.get("enabled"):
+                errors.append(f"{sid}: disabled slot retains live assignment; fence or resolve first")
             assigned.append(jobid)
             job = by_id.get(jobid)
             if not job or job.get("state") not in IN_FLIGHT:
@@ -162,12 +175,15 @@ def dispatch(jobs, slots, config, now=None):
     now = now or dt.datetime.now(dt.timezone.utc).isoformat()
     by_id = {j["id"]: j for j in jobs["jobs"]}
     done = {j["id"] for j in jobs["jobs"] if j.get("state") in DONE}
+    reviewable = {j["id"] for j in jobs["jobs"]
+                  if j.get("state") in {"SUBMITTED", "REVIEW", "VERIFIED", "ACCEPTED"}}
     occupied = [by_id[w["job"]] for w in slots["slots"] if w.get("job")]
     writers = sum(j.get("kind") in WRITERS for j in occupied)
     reviewers = sum(j.get("kind") == "review" for j in occupied)
     ready = sorted((j for j in jobs["jobs"] if j.get("state") == "READY" and
                     j.get("approved") is True and
-                    all(dep in done for dep in j.get("dependencies", []))),
+                    all(dep in (reviewable if j.get("kind") == "review" else done)
+                        for dep in j.get("dependencies", []))),
                    key=lambda j: (int(j.get("priority", 50)), j["id"]))
     planned = []
     for w in slots["slots"]:
