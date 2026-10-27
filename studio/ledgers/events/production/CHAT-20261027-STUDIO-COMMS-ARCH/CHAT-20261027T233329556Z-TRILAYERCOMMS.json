@@ -1,0 +1,54 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261027T233329556Z-TRILAYERCOMMS",
+  "recorded_at_utc": "2026-10-27T23:33:29.556Z",
+  "request_id": "CHAT-20261027-STUDIO-COMMS-ARCH",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Evaluated studio communications split: PostgreSQL authoritative transactional state and department inboxes, GitHub minimal verified status and durable evidence, Google Drive canonical long-form human-readable briefings and reports. Recommended document-level single-writer gateway leases for department heads/authorized seniors, multiple readers, versioned URI/hash/revision references and cache-aware reads; no source, Drive, branch or configuration mutations.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261027T233329556Z-TRILAYERCOMMS",
+  "todo": [
+    {
+      "id": "COMMS-DOC-OWNERSHIP",
+      "description": "Add document-level writer lease and canonical revision metadata to WG-A and WG-C contracts",
+      "state": "OPEN"
+    },
+    {
+      "id": "COMMS-DRIVE-PUBLISH",
+      "description": "Implement head/senior publication and document readback through WG-G gateway adapter",
+      "state": "OPEN"
+    },
+    {
+      "id": "COMMS-DOC-READS",
+      "description": "Use pinned relevant sections, summaries and revision-aware caching in worker brief load",
+      "state": "OPEN"
+    },
+    {
+      "id": "COMMS-DOC-QA",
+      "description": "Add stale-revision, concurrent edit and unauthorized writer regression tests in WG-H",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "BL-05 Drive document baseline read",
+      "status": "PASS"
+    },
+    {
+      "name": "Existing Studio operating model read",
+      "status": "PASS"
+    },
+    {
+      "name": "Trilayer communications implementation",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
