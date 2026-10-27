@@ -5,6 +5,8 @@ This module does NOT invoke an AI model, approve canon, merge code, or fabricate
 external artifact proof. Its stable data lives exclusively on studio/runtime.
 """
 import argparse
+import base64
+import hashlib
 import copy
 import json
 import pathlib
@@ -230,6 +232,31 @@ def github_ref_verified(ref, gh):
         return False
 
 
+def asset_manifest_verified(subject, gh):
+    """Verify small GitHub-hosted asset bytes against their immutable SHA256 manifest."""
+    if not gh or not studio.valid_asset_manifest(subject.get("asset_manifest"), subject.get("kind")):
+        return False
+    for asset in subject["asset_manifest"]["files"]:
+        parsed = parse_ref(asset["ref"])
+        if not parsed or not parsed[2]:
+            return False
+        repo, commit, path = parsed
+        try:
+            response = gh.request("GET", f"/repos/{repo}/contents/"
+                                  f"{urllib.parse.quote(path, safe='/')}?ref={commit}")
+        except GitHubError:
+            return False
+        if response.get("encoding") != "base64" or not response.get("content"):
+            return False  # Large/Git-LFS/Drive assets require human-confirmed tool readback
+        try:
+            raw = base64.b64decode(response["content"], validate=False)
+        except (ValueError, TypeError):
+            return False
+        if len(raw) != asset["bytes"] or hashlib.sha256(raw).hexdigest().lower() != asset["sha256"].lower():
+            return False
+    return True
+
+
 def source_sha_verified(subject, gh):
     """Verify a raw source SHA on the exact allowed source repository."""
     if not gh or subject.get("kind") not in SOURCE:
@@ -277,6 +304,13 @@ def adjudicate(jobs, gh=None, external_verifier=None):
         if not external_ok and (not verify(reviewer.get("artifact_ref")) or not subject_ok):
             subject["state"] = "REVIEW"
             subject["review_blocker"] = "Independent report or exact subject not externally readable"
+            continue
+        asset_ok = (subject.get("kind") not in studio.ASSET_KINDS
+                    or asset_manifest_verified(subject, gh)
+                    or (external_ok and readback.get("asset_manifest_verified") is True))
+        if not asset_ok:
+            subject["state"] = "REVIEW"
+            subject["review_blocker"] = "Binary/scene asset SHA256 not independently verified"
             continue
         verdict = result.get("verdict")
         if verdict == "REWORK":
