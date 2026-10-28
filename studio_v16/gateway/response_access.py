@@ -6,7 +6,7 @@ from .gateway import AdmissionError
 
 
 class ResponseAccess:
-    def __init__(self, coordination, principal, *, eligible_command, source_verifier=None):
+    def __init__(self, coordination, principal, *, eligible_command=None, source_verifier=None):
         self._coordination = coordination
         self._principal = principal
         self._eligible_command = eligible_command
@@ -22,7 +22,8 @@ class ResponseAccess:
         return self._coordination.observe_control(response_id, self._context())
 
     def next_claim(self, response_id):
-        command = self._eligible_command(response_id, self._principal)
+        eligible = self._eligible_command or self._coordination.next_eligible_claim
+        command = eligible(response_id, self._principal)
         if command is None:
             return None
         if self._source_verifier is None:

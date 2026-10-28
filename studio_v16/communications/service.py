@@ -271,6 +271,10 @@ class CoordinationService:
                              (response_id, control['control_epoch'], context.principal_id, now))
             return control
 
+    def next_eligible_claim(self, response_id, principal):
+        from .selection import SQLiteClaimSelector
+        return SQLiteClaimSelector(self).next(response_id, principal)
+
     def claim_for_response(self, response_id, command, context):
         # Store checks the control and records the attempt in the SAME claim TX.
         if command.get('command_kind') != 'CLAIM':
