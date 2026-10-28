@@ -72,3 +72,14 @@ jobs:
       - name: Require complete acceptance mappings
         run: |
           python scripts/sqlite_acceptance.py --run-mapped --json "$RUNNER_TEMP/acceptance-map.json" || { cat "$RUNNER_TEMP/acceptance-map.json"; exit 1; }
+      - name: Preserve exact-SHA C8 evidence even if strict acceptance fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sqlite-c8-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/sqlite-c8-receipt.json
+            ${{ runner.temp }}/sqlite-perf-bench.json
+            ${{ runner.temp }}/acceptance-map.json
+          if-no-files-found: warn
+          retention-days: 30
