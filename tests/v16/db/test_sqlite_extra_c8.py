@@ -40,6 +40,24 @@ class SQLiteProcessAndMigrationC8(unittest.TestCase):
         self.addCleanup(self.owner.close)
         migrate(self.owner)
 
+    def test_duplicate_active_assignment_is_rejected_atomically(self):
+        with self.owner.write() as (db, _):
+            db.execute("INSERT INTO jobs(job_id,parent_issue_ref,owner_head_id,state,approved_scope_hash,authority_revision,source_repo,source_base_sha,resource_key) VALUES('job','issue','head','READY',?,'rev','repo',?,'key')", ('a'*64, 'b'*40))
+            db.execute("INSERT INTO worker_assignments(job_id,worker_id,assignment_epoch,status) VALUES('job','worker-1',1,'ACTIVE')")
+        with self.assertRaises(sqlite3.IntegrityError):
+            with self.owner.write() as (db, _):
+                db.execute("INSERT INTO worker_assignments(job_id,worker_id,assignment_epoch,status) VALUES('job','worker-2',2,'ACTIVE')")
+        with self.owner.connection(readonly=True) as db:
+            self.assertEqual(db.execute("SELECT worker_id FROM worker_assignments WHERE status='ACTIVE'").fetchall(), [('worker-1',)])
+            self.assertEqual(db.execute('PRAGMA foreign_key_check').fetchall(), [])
+
+    def test_corrupt_database_is_not_opened_for_writes(self):
+        path = self.root / 'corrupt.db'
+        path.write_bytes(b'not a sqlite database')
+        with self.assertRaises((Unavailable, sqlite3.DatabaseError)):
+            ConnectionOwner(path)
+        self.assertEqual(path.read_bytes(), b'not a sqlite database')
+
     def test_modified_migration_file_is_rejected_without_changes(self):
         migrations = self.root / 'migrations'
         shutil.copytree(MIGRATIONS, migrations)
