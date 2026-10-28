@@ -1,0 +1,34 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261028T024919Z-prod-protocols",
+  "recorded_at_utc": "2026-10-28T02:49:19Z",
+  "request_id": "CHAT-20261027-game-production-protocol-review",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Reviewed Studio V1.6 department and review contracts, consolidated source and SQLite/RC/CM/HR plan; identified additional game-content production lifecycle, dependency registry, asset pipeline, playable integration, playtesting and release protocol recommendations. Recommendations only; no new work authorized.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": null,
+  "worker_slot": null,
+  "todo": [],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "Inspected supplied consolidated Studio production documentation and SQLite migration plan",
+      "status": "PASS"
+    },
+    {
+      "name": "Reviewed applicable asset validation, FMOD bank and Steamworks build/release documentation",
+      "status": "PASS"
+    },
+    {
+      "name": "Implementation of proposed production protocols",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
