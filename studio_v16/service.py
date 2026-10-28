@@ -47,7 +47,7 @@ class FileAudit:
 class SQLiteService:
     def __init__(self, config: dict, *, evidence_loader=None):
         expected = {'database', 'audit_path', 'tls_cert', 'tls_key', 'tls_ca', 'client_fingerprints',
-                    'repository_remotes', 'source_routes', 'host', 'port'}
+                    'repository_remotes', 'source_routes', 'host', 'port', 'monitor_principal'}
         if set(config) != expected:
             raise ValueError('strict service configuration required')
         if config['host'] != '127.0.0.1' or type(config['port']) is not int or not 1 <= config['port'] <= 65535:
@@ -56,6 +56,9 @@ class SQLiteService:
         if any(not isinstance(f, str) or not Path(f).is_absolute() for f in self._tls_files):
             raise ValueError('absolute mTLS file paths required')
         self.host, self.port = config['host'], config['port']
+        self.monitor_principal = config['monitor_principal']
+        if not isinstance(self.monitor_principal, str) or not self.monitor_principal or self.monitor_principal not in config['client_fingerprints'].values():
+            raise ValueError('monitor requires an independently allowed mTLS principal')
         self._evidence_configured = evidence_loader is not None
         self.identities = MTLSIdentity(config['client_fingerprints'])
         self.audit = None
@@ -70,6 +73,10 @@ class SQLiteService:
                 raise ValueError('source routes require isolated Git provider')
             self.store = create_store(StorageConfig(database=Path(config['database'])),
                                       source_verifier=self.source_verifier)
+            with self.store.owner.connection(readonly=True) as conn:
+                mode = conn.execute('SELECT mode FROM authority_mode WHERE singleton=1').fetchone()[0]
+            if mode != 'SHADOW':
+                raise ValueError('SHADOW service refuses ACTIVE authority without cutover authorization')
             self.authority = DurableAuthority(self.store, authoritative_evidence=evidence_loader)
             self.gateway = Gateway(authority=self.authority, git=self.git, audit=self.audit)
         except BaseException:
@@ -77,17 +84,26 @@ class SQLiteService:
             raise
 
     def health(self):
+        from datetime import datetime, timezone
         with self.store.owner.connection(readonly=True) as conn:
             integrity = conn.execute('PRAGMA integrity_check').fetchone()[0]
             migrations = conn.execute('SELECT count(*) FROM schema_migrations').fetchone()[0]
-        return {'schema': 'NOMAD-SERVICE-HEALTH/1', 'mode': 'SHADOW',
+            mode = conn.execute('SELECT mode FROM authority_mode WHERE singleton=1').fetchone()[0]
+            journal_mode = conn.execute('PRAGMA journal_mode').fetchone()[0]
+            synchronous = conn.execute('PRAGMA synchronous').fetchone()[0]
+        if mode != 'SHADOW':
+            raise ValueError('AUTHORITY_MODE_MISMATCH')
+        return {'schema': 'NOMAD-SERVICE-HEALTH/2', 'mode': mode,
+                'observed_at': datetime.now(timezone.utc).isoformat().replace('+00:00','Z'),
+                'journal_mode': journal_mode, 'synchronous': synchronous,
                 'database_integrity': integrity, 'schema_migration_count': migrations,
                 'external_effects_enabled': False, 'independent_evidence_loader_configured': self._evidence_configured}
 
     def run(self):
         tls = server_context(certfile=self._tls_files[0], keyfile=self._tls_files[1],
                              cafile=self._tls_files[2])
-        serve(self.gateway, self.identities, tls, host=self.host, port=self.port)
+        serve(self.gateway, self.identities, tls, host=self.host, port=self.port,
+              health=self.health, monitor_principals=(self.monitor_principal,))
 
     def close(self):
         if self.store is not None:

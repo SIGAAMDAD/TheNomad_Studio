@@ -19,13 +19,14 @@ class ServiceSmokeTests(unittest.TestCase):
             'tls_ca': str(self.root / 'ca.crt'),
             'client_fingerprints': {'a' * 64: 'worker_one'},
             'repository_remotes': {}, 'source_routes': [],
-            'host': '127.0.0.1', 'port': 18555
+            'host': '127.0.0.1', 'port': 18555, 'monitor_principal': 'worker_one'
         }
 
     def test_sqlite_shadow_health_and_fail_closed(self):
         with SQLiteService(self.config) as svc:
             h = svc.health()
             self.assertEqual(h['mode'], 'SHADOW')
+            self.assertEqual(h['schema'], 'NOMAD-SERVICE-HEALTH/2')
             self.assertEqual(h['database_integrity'], 'ok')
             self.assertFalse(h['external_effects_enabled'])
             self.assertGreaterEqual(h['schema_migration_count'], 1)

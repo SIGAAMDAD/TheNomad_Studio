@@ -60,7 +60,7 @@ def server_context(*, certfile: str, keyfile: str, cafile: str) -> ssl.SSLContex
     return ctx
 
 
-def make_handler(gateway: Gateway, identity: MTLSIdentity, *, recovery=None):
+def make_handler(gateway: Gateway, identity: MTLSIdentity, *, recovery=None, health=None, monitor_principals=()):
     class Handler(BaseHTTPRequestHandler):
         server_version = "NomadGateway/1"
         sys_version = ""
@@ -70,7 +70,28 @@ def make_handler(gateway: Gateway, identity: MTLSIdentity, *, recovery=None):
             pass
 
         def do_GET(self):
-            self.send_error(405, "POST required")
+            if self.path != '/v2/health' or health is None:
+                self.send_error(405, "POST required")
+                return
+            principal = identity.authenticate(self.connection)
+            if principal is None or principal.principal_id not in monitor_principals:
+                self.send_error(403)
+                return
+            try:
+                result = health()
+                raw = json.dumps(result, separators=(',', ':')).encode()
+                if len(raw) > 16384:
+                    self.send_error(503)
+                    return
+            except Exception:
+                self.send_error(503)
+                return
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(raw)))
+            self.send_header('Cache-Control', 'no-store')
+            self.end_headers()
+            self.wfile.write(raw)
 
         def do_POST(self):
             recovery_route = self.path == '/internal/v2/publish/reconcile' and recovery is not None
@@ -126,9 +147,11 @@ def make_handler(gateway: Gateway, identity: MTLSIdentity, *, recovery=None):
 
 
 def serve(gateway: Gateway, identities: MTLSIdentity, tls: ssl.SSLContext,
-          host: str = "127.0.0.1", port: int = 8443, *, recovery=None) -> None:
+          host: str = "127.0.0.1", port: int = 8443, *, recovery=None,
+          health=None, monitor_principals=()) -> None:
     if tls.verify_mode != ssl.CERT_REQUIRED:
         raise ValueError("Mutual TLS required")
-    server = ThreadingHTTPServer((host, port), make_handler(gateway, identities, recovery=recovery))
+    server = ThreadingHTTPServer((host, port), make_handler(gateway, identities, recovery=recovery, health=health,
+                                                                   monitor_principals=monitor_principals))
     server.socket = tls.wrap_socket(server.socket, server_side=True)
     server.serve_forever()
