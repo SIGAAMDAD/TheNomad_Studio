@@ -1,0 +1,40 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261028T001303100Z-STOP-SIZING",
+  "recorded_at_utc": "2026-10-28T00:13:03.100Z",
+  "request_id": "CHAT-20261027-STOP-FIX-SIZING",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Estimated response-control semantic gap as medium sized patch (not architecture rewrite): prompt/kernel multi-job loop, controller next-job and STOP/DRAIN gate, lightweight attempt-level state/report card updates, independent QA; strict external STOP guarantee unavailable in ordinary ChatGPT due execution platform boundaries. Recommend one implementation workgroup and independent QA after current integration; no source or runtime configuration changed.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261028T001303100Z-STOP-SIZING",
+  "todo": [
+    {
+      "id": "STOP-CONTRACT",
+      "description": "Integrate explicit response-level STOP/DRAIN decision and multi-job execution behavior after existing worker integration",
+      "state": "OPEN"
+    },
+    {
+      "id": "STOP-QA",
+      "description": "Verify multiple jobs per attempt, timely control checks, stale STOP rejection, empty queue behavior and forced YIELDED checkpoint",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "Existing shift and worker kernel contract review",
+      "status": "PASS"
+    },
+    {
+      "name": "New STOP-gated execution implemented",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
