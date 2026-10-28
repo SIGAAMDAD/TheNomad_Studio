@@ -49,7 +49,7 @@
           "path": "tests/v16/db/test_sqlite_c8.py"
         },
         {
-          "test": "tests.v16.db.test_sqlite_acceptance_fault_matrix_c8.SQLiteSchemaC8.test_25_core_tables_constraints_and_ordered_migrations_replay_noop",
+          "test": "SQLiteSchemaC8.test_25_core_tables_constraints_and_ordered_migrations_replay_noop",
           "path": "tests/v16/db/test_sqlite_acceptance_fault_matrix_c8.py",
           "scope_and_gap": "Real local SQLite fixture; exact-SHA independent QA is separate."
         }
@@ -1281,12 +1281,12 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "tests.v16.performance.test_sqlite_perf_c8.SQLitePerformanceC8.test_full_history_baseline_is_real_scan_and_matches_indexed_result",
+          "test": "SQLitePerformanceC8.test_full_history_baseline_is_real_scan_and_matches_indexed_result",
           "path": "tests/v16/performance/test_sqlite_perf_c8.py",
           "scope_and_gap": "Real local SQLite fixture; exact-SHA independent QA is separate."
         },
         {
-          "test": "tests.v16.performance.test_sqlite_perf_c8.SQLitePerformanceC8.test_performance_receipt_contains_real_plan_samples_and_fixed_input",
+          "test": "SQLitePerformanceC8.test_performance_receipt_contains_real_plan_samples_and_fixed_input",
           "path": "tests/v16/performance/test_sqlite_perf_c8.py",
           "scope_and_gap": "Real local SQLite fixture; exact-SHA independent QA is separate."
         }
