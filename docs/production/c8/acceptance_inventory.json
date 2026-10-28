@@ -657,17 +657,39 @@
       "required_evidence": "CONFLICT and outbox BLOCKED atomically, future same-identity effect denied",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A03",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
           "test": "SQLitePublicationC8.test_wrong_tree_readback_rejected",
           "scope_and_gap": "Tests denial of mismatched tree; atomic CONFLICT and blocked outbox are not asserted.",
           "path": "tests/v16/db/test_sqlite_publication_c8.py"
+        },
+        {
+          "test": "SQLitePublicationConflictC8.test_conflict_blocks_publication_and_outbox_atomically",
+          "path": "tests/v16/db/test_sqlite_publication_conflict_c8.py",
+          "scope_and_gap": "Provider conflict persists CONFLICT to source publication and intent, BLOCKED to outbox with dead letter, and prevents repeat dispatch or VERIFIED reconciliation under the same publication ID and idempotency key. Provider result is a contract-valid fixture, not a live external provider."
+        },
+        {
+          "test": "SQLitePublicationConflictC8.test_outbox_update_failure_rolls_back_all_terminal_conflict_writes",
+          "path": "tests/v16/db/test_sqlite_publication_conflict_c8.py",
+          "scope_and_gap": "Injected outbox transition failure rolls back all conflict state updates, leaves publication PREPARED and outbox IN_FLIGHT, then a retry commits every terminal state atomically with zero extra dispatches and valid DB integrity. Provider result is a contract-valid fixture, not a live external provider."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Complete local transactional terminal conflict evidence; actual GitHub/Drive provider readback and independent exact-SHA QA require separate verification.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_publication_conflict_c8.SQLitePublicationConflictC8.test_conflict_blocks_publication_and_outbox_atomically",
+          "tests.v16.db.test_sqlite_publication_conflict_c8.SQLitePublicationConflictC8.test_outbox_update_failure_rolls_back_all_terminal_conflict_writes"
+        ],
+        "assertions": [
+          "Provider conflict persists CONFLICT to source publication and intent, BLOCKED to outbox with dead letter, and prevents repeat dispatch or VERIFIED reconciliation under the same publication ID and idempotency key.",
+          "Injected outbox transition failure rolls back all conflict state updates, leaves publication PREPARED and outbox IN_FLIGHT, then a retry commits every terminal state atomically with zero extra dispatches and valid DB integrity."
+        ]
+      }
     },
     {
       "case_id": "PUB-08",
