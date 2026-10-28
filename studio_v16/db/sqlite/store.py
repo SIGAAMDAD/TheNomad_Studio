@@ -109,6 +109,16 @@ class SQLiteStore(SQLiteRecovery, SQLitePublication):
         cmd = command
         try:
             COMMAND_VALIDATOR.validate(cmd)
+            def bounded_integers(value):
+                if type(value) is int:
+                    integer(value)
+                elif isinstance(value, dict):
+                    for child in value.values():
+                        bounded_integers(child)
+                elif isinstance(value, list):
+                    for child in value:
+                        bounded_integers(child)
+            bounded_integers(cmd)
             payload_hash = digest(cmd)
         except Exception:
             return self._result('invalid', 'DENIED', 'MALFORMED_REQUEST')
@@ -116,6 +126,12 @@ class SQLiteStore(SQLiteRecovery, SQLitePublication):
             self._deny_if_untrusted(context)
             with self.owner.write() as (conn, now):
                 self._principal(conn, context)
+                if cmd['command_kind'] == 'CLAIM' and response_id is None:
+                    active_response = conn.execute('''SELECT response_id FROM response_attempts
+                        WHERE principal_id=? AND worker_id=? ORDER BY started_at DESC,response_id DESC LIMIT 1''',
+                        (context.principal_id, cmd['worker_id'])).fetchone()
+                    if active_response:
+                        response_id = active_response[0]
                 saved = self._saved_result(conn, cmd, payload_hash)
                 if saved:
                     if response_id is not None and cmd['command_kind'] == 'CLAIM' and not conn.execute(
@@ -161,7 +177,7 @@ class SQLiteStore(SQLiteRecovery, SQLitePublication):
             return result
         except Denied as exc:
             return self._result(cmd['command_id'], 'DENIED', exc.reason)
-        except (Unavailable, sqlite3.DatabaseError, OverflowError):
+        except (Unavailable, sqlite3.DatabaseError, OverflowError, ValueError):
             # COMMIT may have succeeded before the connection failed. Read the
             # exact durable identity before returning an unavailable result.
             try:

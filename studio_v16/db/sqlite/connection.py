@@ -84,12 +84,14 @@ class ConnectionOwner:
         conn = sqlite3.connect(uri, uri=True, isolation_level=None, timeout=self.busy_ms / 1000)
         try:
             conn.execute('PRAGMA foreign_keys=ON')
+            conn.execute('PRAGMA recursive_triggers=ON')
             conn.execute('PRAGMA trusted_schema=OFF')
             conn.execute('PRAGMA synchronous=FULL')
             conn.execute(f'PRAGMA busy_timeout={self.busy_ms}')
             if readonly:
                 conn.execute('PRAGMA query_only=ON')
             if (conn.execute('PRAGMA foreign_keys').fetchone()[0] != 1 or
+                    conn.execute('PRAGMA recursive_triggers').fetchone()[0] != 1 or
                     conn.execute('PRAGMA synchronous').fetchone()[0] != 2 or
                     conn.execute('PRAGMA trusted_schema').fetchone()[0] != 0 or
                     conn.execute("SELECT json_valid('{}')").fetchone()[0] != 1):
@@ -134,9 +136,16 @@ class ConnectionOwner:
             self._queue.release()
 
     def close(self):
-        if not self._closed:
-            self._closed = True
-            os.close(self._lease)
+        if self._closed:
+            return
+        if not self._writer.acquire(timeout=self.busy_ms / 1000):
+            raise Unavailable('SQLITE_WRITER_BUSY')
+        try:
+            if not self._closed:
+                self._closed = True
+                os.close(self._lease)
+        finally:
+            self._writer.release()
 
     def __enter__(self):
         return self

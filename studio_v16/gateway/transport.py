@@ -19,6 +19,19 @@ from .interfaces import Principal
 MAX_BODY = 18 * 1024 * 1024  # bounded artifact base64 + JSON
 
 
+def _unique_fields(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError('duplicate JSON field')
+        result[key] = value
+    return result
+
+
+def _invalid_constant(value):
+    raise ValueError('non-finite JSON value')
+
+
 class MTLSIdentity:
     def __init__(self, fingerprints: Mapping[str, str]):
         if not fingerprints or any(len(k) != 64 or not v for k, v in fingerprints.items()):
@@ -73,7 +86,8 @@ def make_handler(gateway: Gateway, identity: MTLSIdentity, *, recovery=None):
                 if length < 1 or length > MAX_BODY or self.headers.get("Transfer-Encoding"):
                     self.send_error(413)
                     return
-                payload = json.loads(self.rfile.read(length))
+                payload = json.loads(self.rfile.read(length), object_pairs_hook=_unique_fields,
+                                     parse_constant=_invalid_constant)
                 if not isinstance(payload, dict):
                     self.send_error(400)
                     return

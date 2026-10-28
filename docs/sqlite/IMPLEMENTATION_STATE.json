@@ -5,16 +5,14 @@
   "branch": "studio/v16-sqlite-unified",
   "source_base_sha": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
   "source_head_at_run_start": "fa14928ea36ba68fe607448d690cc00bb64488c1",
-  "current_checkpoint": "C8",
+  "current_checkpoint": "C9",
   "completed_checkpoints": [],
   "checkpoint_contract_revision": "DB-STORAGE/2-SQLITE DRAFT",
   "files_changed_in_latest_checkpoint": [
-    "infra/sqlite/backup.py",
-    "infra/sqlite/transfer.py",
-    "infra/sqlite/telemetry.py",
-    "docs/sqlite/MIGRATION_RUNBOOK.md",
-    "docs/sqlite/ROLLBACK.md",
-    "studio_v16/db/sqlite/migrations/0007_transfer_provenance.sql"
+    "studio_v16/db/sqlite/connection.py",
+    "studio_v16/db/sqlite/store.py",
+    "studio_v16/gateway/transport.py",
+    "studio_v16/db/sqlite/migrations/0008_response_claim_fence.sql"
   ],
   "tests": [
     {
@@ -49,8 +47,8 @@
     "independent_watchdog_host": "NOT_CONFIGURED",
     "alert_delivery": "NOT_RUN"
   },
-  "next_specific_edit": "C8 tests deferred by user; C9 static integration review and unvalidated-source handoff",
-  "last_checkpoint_parent_sha": "4dddfbf2b661130697f03735af78e60262ff6d58",
+  "next_specific_edit": "C9: publish final handoff and exact source receipt; next engineering phase is deferred C8",
+  "last_checkpoint_parent_sha": "5430b8c9f59118213711c24c8b4775bcce7fd4d9",
   "note": "Do not embed the SHA of this file's own commit in the file; report actual HEAD after commit.",
   "implemented_checkpoints": [
     "C0",
@@ -81,7 +79,8 @@
     "C4": "IMPLEMENTED_UNTESTED; indexed query plans, inbox/control/leader/document race gates deferred",
     "C5": "IMPLEMENTED_UNTESTED; document/role/kernel/control suites deferred",
     "C6": "IMPLEMENTED_UNTESTED; query-plan/load/provider/watchdog/fault suites deferred; real independent scheduling and delivery require deployment",
-    "C7": "IMPLEMENTED_UNTESTED; real snapshots/restores/PG transfer/drills not executed"
+    "C7": "IMPLEMENTED_UNTESTED; real snapshots/restores/PG transfer/drills not executed",
+    "C8": "DEFERRED_BY_USER: no tests, fault injection, load measurements, migration execution or restore drills run"
   },
   "runtime_requirements": {
     "sqlite_minimum": "3.45.0",
@@ -94,10 +93,14 @@
     "0004_cm_hr",
     "0005_response_evidence",
     "0006_controller_watchdog",
-    "0007_transfer_provenance"
+    "0007_transfer_provenance",
+    "0008_response_claim_fence"
   ],
   "next_verification_commands": [
     "python -m compileall -q studio_v16",
     "git diff --check"
-  ]
+  ],
+  "source_status": "IMPLEMENTED_SHADOW_UNVALIDATED",
+  "backend": "sqlite_v2",
+  "mode": "SHADOW_DEFAULT_ONLY; no database created or deployed"
 }
