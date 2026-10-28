@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import shutil
 import select
+import json
 import sqlite3
 import subprocess
 import sys
@@ -10,6 +11,7 @@ import unittest
 
 from studio_v16.db.sqlite.connection import ConnectionOwner, Unavailable
 from studio_v16.db.sqlite.migrate import MIGRATIONS, migrate
+from studio_v16.db.sqlite.store import SQLiteStore
 from tests.v16.db import test_sqlite_commands_c8 as fixtures
 
 
@@ -27,6 +29,33 @@ class SQLiteSameCommandC8(unittest.TestCase):
             self.assertEqual(db.execute('SELECT COUNT(*) FROM attempts').fetchone()[0], 1)
             self.assertEqual(db.execute('SELECT COUNT(*) FROM resource_leases').fetchone()[0], 1)
             self.assertEqual(db.execute('SELECT COUNT(*) FROM command_results').fetchone()[0], 1)
+
+    def test_claim_committed_before_process_exit_replays_as_duplicate(self):
+        command = self.claim()
+        path = self.owner.path
+        self.owner.close()
+        code = """
+import json, os, sys
+from studio_v16.db.sqlite.connection import ConnectionOwner
+from studio_v16.db.sqlite.store import SQLiteStore
+from tests.v16.db.test_sqlite_commands_c8 import CTX
+owner = ConnectionOwner(sys.argv[1])
+result = SQLiteStore(owner).execute(json.loads(sys.argv[2]), CTX)
+os._exit(0 if result['result'] == 'COMMITTED' else 7)
+"""
+        child = subprocess.run([sys.executable, '-c', code, str(path), json.dumps(command)],
+                               capture_output=True, text=True, timeout=20)
+        self.assertEqual(child.returncode, 0, child.stderr)
+        recovered = ConnectionOwner(path)
+        self.addCleanup(recovered.close)
+        store = SQLiteStore(recovered)
+        self.assertEqual(store.execute(command, fixtures.CTX)['result'], 'DUPLICATE')
+        with recovered.connection(readonly=True) as db:
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM attempts').fetchone()[0], 1)
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM resource_leases').fetchone()[0], 1)
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM command_results').fetchone()[0], 1)
+            self.assertEqual(db.execute('PRAGMA integrity_check').fetchone(), ('ok',))
+            self.assertEqual(db.execute('PRAGMA foreign_key_check').fetchall(), [])
 
 
 @unittest.skipUnless(sqlite3.sqlite_version_info >= (3, 45), 'SQLite >=3.45 required')

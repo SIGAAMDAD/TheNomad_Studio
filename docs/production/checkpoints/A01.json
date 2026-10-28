@@ -1,32 +1,39 @@
 {
   "task": "A01",
   "status": "OPEN",
-  "base_sha": "ee39907d0d638fa87ba51f418fce8627943b5c65",
+  "base_sha": "9e8406589d26c9b17ae6c820e14f52e5e9da8953",
   "completed": [
-    "Fail-closed map checker reports duplicates, missing IDs, stale inventory subjects, unexplained passes and unresolved cases",
-    "Unit tests cover malformed rows, filtering and negative paths"
+    "Fail-closed map checker validates case set, assertion mapping, and inventory subject consistency",
+    "Runner executes fully mapped case tests on clean Git checkout, blocks skips, captures local evidence summary and exact subject SHA",
+    "CI invokes acceptance test suite and fails when mapped tests fail or cases remain unmapped",
+    "TX-07 mapped to real SQLite child-process commit/replay fixture"
   ],
   "remaining": [
-    "Implement per-case execution and exact tested source SHA, provenance, environment and evidence receipts",
-    "Distinguish skipped/failed tests and block false passes",
-    "Integrate suitable CI entrypoint; map all assertions without silently passing gaps",
-    "Finish A00 before claiming A01 complete"
+    "Map and verify the other 75 C8 cases; distinguish external gates from local tests",
+    "Independently review exact candidate SHA; keep external and owner acceptance separate"
   ],
   "validation": [
     {
-      "command": "python -m unittest discover -s tests/v16/acceptance -p test_*.py -v",
+      "command": "python -m unittest discover -s tests/v16/acceptance -p test_*.py -q",
       "exit_code": 0,
-      "tests": 8
-    },
-    {
-      "command": "python scripts/sqlite_acceptance.py --check-map --json /tmp/c8-map.json",
-      "exit_code": 1,
-      "reason": "76 requirements unverified; expected fail-closed result"
+      "tests": 16
     },
     {
       "command": "python scripts/sqlite_c8_validate.py",
       "exit_code": 0,
-      "tests": 220
+      "tests": 223
+    },
+    {
+      "command": "clean temporary Git fixture: python scripts/sqlite_acceptance.py --run-case TX-07",
+      "exit_code": 0,
+      "tests": 1,
+      "provenance": "synthetic temporary git commit with same worktree source; not remote SHA"
+    },
+    {
+      "command": "clean temporary Git fixture: python scripts/sqlite_acceptance.py --run-mapped",
+      "exit_code": 1,
+      "reason": "75 cases are unmapped"
     }
-  ]
+  ],
+  "ci_impact": "SQLite C8 workflow intentionally fails until all required cases are mapped and pass."
 }

@@ -6,6 +6,9 @@ on:
       - "infra/sqlite/**"
       - "tests/v16/db/test_sqlite*_c8.py"
       - "scripts/sqlite_c8_validate.py"
+      - "scripts/sqlite_acceptance.py"
+      - "tests/v16/acceptance/**"
+      - "docs/production/c8/**"
       - ".github/workflows/studio-sqlite-c8.yml"
   push:
     branches:
@@ -15,6 +18,9 @@ on:
       - "infra/sqlite/**"
       - "tests/v16/db/test_sqlite*_c8.py"
       - "scripts/sqlite_c8_validate.py"
+      - "scripts/sqlite_acceptance.py"
+      - "tests/v16/acceptance/**"
+      - "docs/production/c8/**"
       - ".github/workflows/studio-sqlite-c8.yml"
   workflow_dispatch:
 permissions:
@@ -38,6 +44,11 @@ jobs:
           python -c "import sqlite3; assert sqlite3.sqlite_version_info >= (3,45,0), sqlite3.sqlite_version; print(sqlite3.sqlite_version)"
       - name: Run baseline and C8 temporary-file suites
         run: python scripts/sqlite_c8_validate.py --json "$RUNNER_TEMP/sqlite-c8-receipt.json"
+      - name: Validate acceptance mapping tests
+        run: python -m unittest discover -s tests/v16/acceptance -p "test_*.py" -v
+      - name: Require complete acceptance mappings
+        run: |
+          python scripts/sqlite_acceptance.py --run-mapped --json "$RUNNER_TEMP/acceptance-map.json" || { cat "$RUNNER_TEMP/acceptance-map.json"; exit 1; }
       - name: Validate source syntax and registry
         run: |
           python -m compileall -q studio_v16 infra/sqlite tests/v16/db

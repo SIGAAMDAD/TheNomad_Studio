@@ -253,11 +253,21 @@
       "required_evidence": "stable command readback returns DUPLICATE/saved result, no duplicated effect",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: stable command readback returns DUPLICATE/saved result, no duplicated effect",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fixture mapping; independent QA and live transport remain separate gates.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_extra_c8.SQLiteSameCommandC8.test_claim_committed_before_process_exit_replays_as_duplicate"
+        ],
+        "assertions": [
+          "After claim commits and producer process exits before replying, exact replay returns DUPLICATE and leaves one attempt, lease and command result; database integrity and foreign keys remain valid."
+        ]
+      }
     },
     {
       "case_id": "TX-08",

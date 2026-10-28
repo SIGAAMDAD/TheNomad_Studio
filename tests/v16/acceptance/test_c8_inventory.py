@@ -2,6 +2,7 @@
 import ast
 import json
 from pathlib import Path
+from scripts.sqlite_acceptance import valid_execution
 import unittest
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -23,11 +24,14 @@ class C8InventoryTests(unittest.TestCase):
     def test_no_unsubstantiated_pass_and_links_exist(self):
         for case in self.inventory['cases']:
             with self.subTest(case=case['case_id']):
-                self.assertIn(case['status'], ('PARTIAL', 'NOT_RUN'))
+                self.assertIn(case['status'], ('PARTIAL', 'NOT_RUN', 'MAPPED'))
                 self.assertEqual(case['subject_sha'], self.inventory['subject_sha'])
                 self.assertTrue(case['gap'])
                 self.assertEqual(case['reviewer_verdict'], 'NOT_REVIEWED')
-                self.assertEqual(case['status'] == 'PARTIAL', bool(case['existing_assertions']))
+                if case['status'] == 'PARTIAL':
+                    self.assertTrue(case['existing_assertions'])
+                if case['status'] == 'MAPPED':
+                    self.assertTrue(valid_execution(case.get('execution')))
                 for evidence in case['existing_assertions']:
                     class_name, method = evidence['test'].split('.')
                     source = ROOT / evidence['path']
