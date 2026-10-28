@@ -263,11 +263,34 @@
       "required_evidence": "Correct ordering and bounded backpressure, no lost source/authority state",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Correct ordering and bounded backpressure, no lost source/authority state",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "existing_assertions": [
+        {
+          "test": "SQLiteBackpressureC8.test_full_writer_queue_denies_without_partial_event_or_journal_loss",
+          "path": "tests/v16/db/test_sqlite_backpressure_c8.py",
+          "scope_and_gap": "With one occupied SQLite writer slot, a second write and inbox read fail explicitly with SQLITE_QUEUE_FULL; no department event or delivery is partially committed and the original durable source journal remains intact. A retried event has one durable delivery and is idempotent."
+        },
+        {
+          "test": "SQLiteBackpressureC8.test_order_and_cursors_survive_backpressure_retry_and_reconnect",
+          "path": "tests/v16/db/test_sqlite_backpressure_c8.py",
+          "scope_and_gap": "After bounded queue failure, two events deliver in sequence; out-of-order ACK is rejected; replay ACK remains idempotent; after owner process connection is reopened, the remaining event, ordered cursor, all journal rows and integrity survive."
+        }
+      ],
+      "gap": "Complete local queued writer and ordered addressed inbox acceptance; independently review on exact source SHA; live transport remains separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_backpressure_c8.SQLiteBackpressureC8.test_full_writer_queue_denies_without_partial_event_or_journal_loss",
+          "tests.v16.db.test_sqlite_backpressure_c8.SQLiteBackpressureC8.test_order_and_cursors_survive_backpressure_retry_and_reconnect"
+        ],
+        "assertions": [
+          "With one occupied SQLite writer slot, a second write and inbox read fail explicitly with SQLITE_QUEUE_FULL; no department event or delivery is partially committed and the original durable source journal remains intact. A retried event has one durable delivery and is idempotent.",
+          "After bounded queue failure, two events deliver in sequence; out-of-order ACK is rejected; replay ACK remains idempotent; after owner process connection is reopened, the remaining event, ordered cursor, all journal rows and integrity survive."
+        ]
+      }
     },
     {
       "case_id": "TX-03",
