@@ -1,0 +1,47 @@
+{
+  "schema": "nomad-single-implementer-state/1",
+  "model_target": "GPT-6.1 Sol Medium",
+  "repository": "SIGAAMDAD/TheNomad_Studio",
+  "branch": "studio/v16-sqlite-unified",
+  "source_base_sha": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
+  "source_head_at_run_start": "fa14928ea36ba68fe607448d690cc00bb64488c1",
+  "current_checkpoint": "C1",
+  "completed_checkpoints": [],
+  "checkpoint_contract_revision": "DB-STORAGE/2-SQLITE DRAFT",
+  "files_changed_in_latest_checkpoint": [],
+  "tests": [
+    {
+      "command": "SHA-256 frozen manifest verification",
+      "exit_code": 0
+    },
+    {
+      "command": "all test suites",
+      "status": "DEFERRED_BY_USER"
+    }
+  ],
+  "open_code_defects": [],
+  "external_gates": {
+    "owner_contract_approval": "PENDING",
+    "postgres_transfer_if_applicable": "UNKNOWN: no deployed database evidence supplied",
+    "independent_exact_sha_qa": "PENDING",
+    "live_github_drive_credentials": "PENDING",
+    "active_cutover": "NOT_AUTHORIZED"
+  },
+  "next_specific_edit": "C1: SQLite schema and migration service",
+  "last_checkpoint_parent_sha": null,
+  "note": "Do not embed the SHA of this file's own commit in the file; report actual HEAD after commit.",
+  "implemented_checkpoints": [
+    "C0"
+  ],
+  "frozen_files": {
+    "count": 19,
+    "hashes": "MATCH"
+  },
+  "source_drift": "NONE: uploaded and reconstructed A-I trees match 8143f39fb7b2f315f9b4c55de33486f260fca22f",
+  "postgres_authority": "UNKNOWN",
+  "feature_presence": {
+    "RC": "MISSING durable multi-job response controls",
+    "CM": "MISSING addressed SQLite inbox/document metadata",
+    "HR": "MISSING durable leader epochs and independent watchdog"
+  }
+}
