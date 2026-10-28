@@ -5,23 +5,25 @@
   "branch": "studio/v16-sqlite-unified",
   "source_base_sha": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
   "source_head_at_run_start": "fa14928ea36ba68fe607448d690cc00bb64488c1",
-  "current_checkpoint": "C8_DEFERRED_BY_USER",
+  "current_checkpoint": "C8_LOCAL_TESTS_PASS_EXTERNAL_GATES_PENDING",
   "completed_checkpoints": [],
   "checkpoint_contract_revision": "DB-STORAGE/2-SQLITE DRAFT",
   "files_changed_in_latest_checkpoint": [
-    "docs/sqlite/FINAL_IMPLEMENTATION_HANDOFF.md",
-    "docs/sqlite/STATIC_RECEIPT.json",
+    "tests/v16/db/test_sqlite_c8.py",
+    "tests/v16/db/test_sqlite_commands_c8.py",
+    "tests/v16/db/test_sqlite_publication_c8.py",
+    "tests/v16/db/test_sqlite_watchdog_c8.py",
+    "tests/v16/db/test_sqlite_controls_c8.py",
+    "scripts/sqlite_c8_validate.py",
+    ".github/workflows/studio-sqlite-c8.yml",
+    "docs/sqlite/IMPLEMENTATION_STATE.json",
     "docs/sqlite/ACCEPTANCE_STATUS.json",
-    "docs/sqlite/IMPLEMENTATION_STATE.json"
+    "docs/sqlite/C8_TEST_REPORT.md"
   ],
   "tests": [
     {
       "command": "SHA-256 frozen manifest verification",
       "exit_code": 0
-    },
-    {
-      "command": "all test suites",
-      "status": "DEFERRED_BY_USER"
     },
     {
       "command": "python -m compileall -q studio_v16/db/sqlite",
@@ -35,10 +37,38 @@
       "command": "AST literal SQL placeholder/argument count review (136 sites)",
       "exit_code": 0,
       "kind": "STATIC_ONLY"
+    },
+    {
+      "command": "PYTHONPATH=. python scripts/sqlite_c8_validate.py --json /tmp/c8_verified_receipt.json",
+      "exit_code": 0,
+      "tests_run": 209,
+      "failures": 0,
+      "skipped": 0,
+      "sqlite_version": "3.46.1",
+      "baseline_tests": 172,
+      "c8_tests": 37
+    },
+    {
+      "command": "python scripts/studio.py validate",
+      "exit_code": 0
+    },
+    {
+      "command": "python scripts/production.py validate",
+      "exit_code": 0
+    },
+    {
+      "command": "python skills/rpg-studio-all-roles/scripts/validate_v4.py",
+      "exit_code": 0
+    },
+    {
+      "command": "GitHub Actions SQLite C8 isolated acceptance tests",
+      "status": "SUCCESS",
+      "run_id": 40626362530,
+      "subject_sha": "28438b3d7ca30c749c9bb5a7501bde5b2702066f"
     }
   ],
   "open_code_defects": [
-    "No known static-check failure; runtime/schema/security/concurrency correctness has not been tested."
+    "No failure was observed in 37 C8 SQLite real-file tests or 172 existing regression tests. Unexecuted external and independent QA gates remain open."
   ],
   "external_gates": {
     "owner_contract_approval": "PENDING",
@@ -51,7 +81,7 @@
     "off_host_restore": "NOT_RUN",
     "rpo_rto": "UNMEASURED"
   },
-  "next_specific_edit": "When tests are requested: add C8 real-file schema/command/publication/control/backup/fault tests, then run existing suites and resolve failures before independent QA",
+  "next_specific_edit": "Run independent exact-SHA QA, full HR fault-injection matrix, load/performance thresholds, real GitHub/Drive provider authorization/readbacks, off-host restore, and optional PostgreSQL transfer with actual authorized service credentials.",
   "last_checkpoint_parent_sha": "5dbec6504191ca3be9c82899dbc1c392439ecde2",
   "note": "Do not embed the SHA of this file's own commit in the file; report actual HEAD after commit.",
   "implemented_checkpoints": [
@@ -63,7 +93,8 @@
     "C5",
     "C6",
     "C7",
-    "C9_SOURCE_HANDOFF"
+    "C9_SOURCE_HANDOFF",
+    "C8_LOCAL_TEST_HARNESS"
   ],
   "frozen_files": {
     "count": 19,
@@ -72,9 +103,9 @@
   "source_drift": "NONE: uploaded and reconstructed A-I trees match 8143f39fb7b2f315f9b4c55de33486f260fca22f",
   "postgres_authority": "UNKNOWN",
   "feature_presence": {
-    "RC": "IMPLEMENTED_UNTESTED durable response/job/control APIs; C5 runner pending",
-    "CM": "IMPLEMENTED_UNTESTED addressed inbox/document lease APIs; C5 gateway pending",
-    "HR": "IMPLEMENTED_UNTESTED owner-approved leader epochs; C6 watchdog pending"
+    "RC": "PARTIALLY_TESTED: real-file response, STOP/PAUSE, fencing and checkpoint tests; manual multi-job canary pending",
+    "CM": "PARTIALLY_TESTED: real-file inbox ACK/idempotency and document generation fences; live Drive provider pending",
+    "HR": "PARTIALLY_TESTED: watchdog degraded/audit/alert readback and leader generation fences; complete 26-case fault matrix and independent host pending"
   },
   "acceptance_gates": {
     "C0": "STATIC_HASH_CHECK_ONLY; tests deferred",
@@ -85,7 +116,7 @@
     "C5": "IMPLEMENTED_UNTESTED; document/role/kernel/control suites deferred",
     "C6": "IMPLEMENTED_UNTESTED; query-plan/load/provider/watchdog/fault suites deferred; real independent scheduling and delivery require deployment",
     "C7": "IMPLEMENTED_UNTESTED; real snapshots/restores/PG transfer/drills not executed",
-    "C8": "DEFERRED_BY_USER: no tests, fault injection, load measurements, migration execution or restore drills run",
+    "C8": "PARTIAL_LOCAL_TEST_PASS: 37 C8 real-file cases plus 172 existing tests; isolated remote CI succeeded. Remaining full fault/load/migration/canary/external gates NOT_RUN.",
     "C9": "SOURCE_COMMITTED_AND_REMOTE_VERIFIED; acceptance and production readiness NOT_CLAIMED"
   },
   "runtime_requirements": {
@@ -106,8 +137,10 @@
     "python -m compileall -q studio_v16",
     "git diff --check"
   ],
-  "source_status": "IMPLEMENTED_SHADOW_UNVALIDATED",
+  "source_status": "IMPLEMENTED_SHADOW_LOCAL_TESTED_INDEPENDENT_QA_PENDING",
   "backend": "sqlite_v2",
   "mode": "SHADOW_DEFAULT_ONLY; no database created or deployed",
-  "code_candidate_sha": "5dbec6504191ca3be9c82899dbc1c392439ecde2"
+  "code_candidate_sha": "5dbec6504191ca3be9c82899dbc1c392439ecde2",
+  "c8_tested_source_sha": "28438b3d7ca30c749c9bb5a7501bde5b2702066f",
+  "c8_ci_run_url": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40626362530"
 }

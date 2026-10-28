@@ -1,7 +1,7 @@
 {
   "schema": "SQLITE-ACCEPTANCE-STATUS/1",
   "code_candidate_sha": "5dbec6504191ca3be9c82899dbc1c392439ecde2",
-  "status": "DEFERRED_BY_USER",
+  "status": "PARTIAL_LOCAL_C8_PASS_NOT_PRODUCTION_ACCEPTED",
   "cases": {
     "SQLITE-00": "NOT_RUN",
     "SQLITE-01": "NOT_RUN",
@@ -81,6 +81,22 @@
     "RECOVER-02": "NOT_RUN"
   },
   "CANARY": "NOT_RUN; two actual manual invocations and owner authorization required",
-  "test_implementation": "DEFERRED with test execution by user speed instruction; existing suites retained",
-  "no_production_go": true
+  "test_implementation": "37 C8 real-file SQLite tests + 172 baseline regression tests passed (209 total, zero failures/skips); remote SQLite C8 CI succeeded. The numbered full acceptance cases remain NOT_RUN until matched, separately executed and independently reviewed.",
+  "no_production_go": true,
+  "c8_local_evidence": {
+    "tested_source_commit": "28438b3d7ca30c749c9bb5a7501bde5b2702066f",
+    "github_ci_run_id": 40626362530,
+    "github_ci_conclusion": "success",
+    "sqlite_version": "3.46.1",
+    "local_tests_run": 209,
+    "local_c8_tests": 37,
+    "baseline_tests": 172,
+    "failures": 0,
+    "skips": 0,
+    "external_provider_tests": "NOT_RUN",
+    "independent_qa": "NOT_RUN",
+    "off_host_restore": "NOT_RUN",
+    "full_hr_fault_matrix": "NOT_RUN",
+    "performance_thresholds": "NOT_RUN"
+  }
 }
