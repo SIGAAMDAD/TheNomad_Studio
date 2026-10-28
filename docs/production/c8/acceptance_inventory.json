@@ -826,11 +826,34 @@
       "required_evidence": "no active grant or external effect authorized by imported rows",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A03",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: no active grant or external effect authorized by imported rows",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "existing_assertions": [
+        {
+          "test": "SQLiteShadowPublicationIsolationC8.test_historical_publication_creates_no_grants_or_outbound_effect",
+          "path": "tests/v16/db/test_sqlite_shadow_import_isolation_c8.py",
+          "scope_and_gap": "Historical GITHUB/VERIFIED publication data is stored only in immutable shadow_imports with SHA-bound idempotence while authority stays SHADOW; grants, decisions, publication intents, source/document publications, dispatches and outbox remain empty. Local isolation proof; external deployment and independent exact-SHA QA require separate attestation."
+        },
+        {
+          "test": "SQLiteShadowPublicationIsolationC8.test_historical_publication_cannot_activate_or_grant_on_import_replay",
+          "path": "tests/v16/db/test_sqlite_shadow_import_isolation_c8.py",
+          "scope_and_gap": "A forged historical grant/approval embedded in a LEDGER snapshot cannot grant a CLAIM after independent test-only ACTIVE cutover; conflicting replay is denied and all durable publication and authority tables stay empty. Local isolation proof; external deployment and independent exact-SHA QA require separate attestation."
+        }
+      ],
+      "gap": "Historical publication import cannot confer active grant, approval or outbound write. Local real-file evidence mapped. Independent exact-SHA QA and release controls remain unreviewed.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_shadow_import_isolation_c8.SQLiteShadowPublicationIsolationC8.test_historical_publication_creates_no_grants_or_outbound_effect",
+          "tests.v16.db.test_sqlite_shadow_import_isolation_c8.SQLiteShadowPublicationIsolationC8.test_historical_publication_cannot_activate_or_grant_on_import_replay"
+        ],
+        "assertions": [
+          "Historical GITHUB/VERIFIED publication data is stored only in immutable shadow_imports with SHA-bound idempotence while authority stays SHADOW; grants, decisions, publication intents, source/document publications, dispatches and outbox remain empty.",
+          "A forged historical grant/approval embedded in a LEDGER snapshot cannot grant a CLAIM after independent test-only ACTIVE cutover; conflicting replay is denied and all durable publication and authority tables stay empty."
+        ]
+      }
     },
     {
       "case_id": "RC-01",
@@ -1717,17 +1740,46 @@
       "required_evidence": "Atomic rollback/replay, no split authority",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A10",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
           "test": "SQLiteC8Tests.test_one_writer_and_atomic_rollback",
           "scope_and_gap": "Checks exception rollback; process crash during transfer/retry is not exercised.",
           "path": "tests/v16/db/test_sqlite_c8.py"
+        },
+        {
+          "test": "SQLiteTransferCrashC8.test_transfer_process_death_rolls_back_then_retry_commits_exactly_once",
+          "path": "tests/v16/db/test_sqlite_transfer_crash_c8.py",
+          "scope_and_gap": "A real process exits inside an open SQLite leader-handoff transaction before COMMIT, preserving epoch 1 and zero handoff rows; authorized retry commits exactly once at epoch 2 and competing stale transfer fails. Local isolation proof; external deployment and independent exact-SHA QA require separate attestation."
+        },
+        {
+          "test": "SQLiteTransferCrashC8.test_committed_transfer_survives_process_exit_without_second_epoch",
+          "path": "tests/v16/db/test_sqlite_transfer_crash_c8.py",
+          "scope_and_gap": "A child process exits immediately after durable leader-handoff commit; restart reads exact winner/epoch and replay of the old epoch is denied without split authority or duplicate audit rows. Local isolation proof; external deployment and independent exact-SHA QA require separate attestation."
+        },
+        {
+          "test": "SQLiteImportCrashC8.test_process_death_before_transfer_commit_rolls_back_entire_manifest_then_reimports_once",
+          "path": "tests/v16/db/test_sqlite_pg_import_crash_c8.py",
+          "scope_and_gap": "The 25-table PostgreSQL-format SHADOW transfer artifact is checksum-verified; child process termination within the import transaction leaves no transfer_run, historical migration or principal; retry imports exactly once with a second run DUPLICATE, mode remains SHADOW, no grants or dispatches, integrity/FK checks clean. Local isolation proof; external deployment and independent exact-SHA QA require separate attestation."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Atomic crash rollback and idempotent replay of real SQLite leadership and shadow-import transfers. Local real-file evidence mapped. Independent exact-SHA QA and release controls remain unreviewed.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_transfer_crash_c8.SQLiteTransferCrashC8.test_transfer_process_death_rolls_back_then_retry_commits_exactly_once",
+          "tests.v16.db.test_sqlite_transfer_crash_c8.SQLiteTransferCrashC8.test_committed_transfer_survives_process_exit_without_second_epoch",
+          "tests.v16.db.test_sqlite_pg_import_crash_c8.SQLiteImportCrashC8.test_process_death_before_transfer_commit_rolls_back_entire_manifest_then_reimports_once"
+        ],
+        "assertions": [
+          "A real process exits inside an open SQLite leader-handoff transaction before COMMIT, preserving epoch 1 and zero handoff rows; authorized retry commits exactly once at epoch 2 and competing stale transfer fails.",
+          "A child process exits immediately after durable leader-handoff commit; restart reads exact winner/epoch and replay of the old epoch is denied without split authority or duplicate audit rows.",
+          "The 25-table PostgreSQL-format SHADOW transfer artifact is checksum-verified; child process termination within the import transaction leaves no transfer_run, historical migration or principal; retry imports exactly once with a second run DUPLICATE, mode remains SHADOW, no grants or dispatches, integrity/FK checks clean."
+        ]
+      }
     },
     {
       "case_id": "RECOVER-02",
