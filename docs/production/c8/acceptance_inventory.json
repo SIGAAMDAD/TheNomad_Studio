@@ -598,7 +598,7 @@
       "required_evidence": "durable DISPATCH_STARTED before write; readback before reattempt; uncertain remains pending",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A03",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
@@ -610,10 +610,32 @@
           "test": "SyntheticSagaTests.test_crash_after_provider_write_restore",
           "path": "tests/v16/system/test_pipeline.py",
           "scope_and_gap": "Synthetic journal/provider simulated crash and readback; no real SQLite process termination."
+        },
+        {
+          "test": "SQLiteDispatchRestartC8.test_durable_dispatch_is_recovered_before_any_retry_after_restart",
+          "path": "tests/v16/db/test_sqlite_dispatch_restart_c8.py",
+          "scope_and_gap": "DISPATCH_STARTED is persisted before any provider write; reopening an owner sees the same dispatch and IN_FLIGHT outbox, denies repeat dispatch, and treats an unknown external effect as RECONCILE_REQUIRED until readback. Provider readback is a synthetic contract fixture; independent provider QA remains external."
+        },
+        {
+          "test": "SQLiteDispatchRestartC8.test_retry_requires_exact_absence_proof_then_new_transactional_dispatch",
+          "path": "tests/v16/db/test_sqlite_dispatch_restart_c8.py",
+          "scope_and_gap": "A false absence proof is rejected atomically; a separately authenticated simulated recovery agent recording exact source-head absence permits only a new bounded dispatch generation, with preserved prior dispatch and outbox attempt count. Provider readback is a synthetic contract fixture; independent provider QA remains external."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Complete local SQLite transactional acceptance evidence; independent live provider and exact-SHA QA remain outside local tests.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_dispatch_restart_c8.SQLiteDispatchRestartC8.test_durable_dispatch_is_recovered_before_any_retry_after_restart",
+          "tests.v16.db.test_sqlite_dispatch_restart_c8.SQLiteDispatchRestartC8.test_retry_requires_exact_absence_proof_then_new_transactional_dispatch"
+        ],
+        "assertions": [
+          "DISPATCH_STARTED is persisted before any provider write; reopening an owner sees the same dispatch and IN_FLIGHT outbox, denies repeat dispatch, and treats an unknown external effect as RECONCILE_REQUIRED until readback.",
+          "A false absence proof is rejected atomically; a separately authenticated simulated recovery agent recording exact source-head absence permits only a new bounded dispatch generation, with preserved prior dispatch and outbox attempt count."
+        ]
+      }
     },
     {
       "case_id": "PUB-05",
@@ -621,17 +643,46 @@
       "required_evidence": "new external writes denied; separately authenticated recovery principal can VERIFY matching prior effect",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A03",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
           "test": "SQLitePublicationC8.test_trusted_recovery_after_revocation_and_shadow",
           "scope_and_gap": "Tests authenticated local fixture reconciliation after dispatch; does not exercise a real provider or fresh-write denial.",
           "path": "tests/v16/db/test_sqlite_publication_c8.py"
+        },
+        {
+          "test": "SQLiteRevokedRecoveryC8.test_new_write_denied_but_independent_trusted_recovery_verifies_exact_prior_dispatch",
+          "path": "tests/v16/db/test_sqlite_revoked_recovery_c8.py",
+          "scope_and_gap": "A revoked grant and SHADOW authority deny new publication and repeat dispatch while a separately permitted RECOVERY_READBACK principal can verify only the pre-existing exact dispatch without creating another provider effect. Provider readback is a synthetic contract fixture; independent provider QA remains external."
+        },
+        {
+          "test": "SQLiteRevokedRecoveryC8.test_recovery_cannot_be_self_authenticated_or_reconcile_different_dispatch",
+          "path": "tests/v16/db/test_sqlite_revoked_recovery_c8.py",
+          "scope_and_gap": "Forged publisher identity, unverified recovery identity, missing provider readback proof and invented dispatch IDs are denied before an old effect can become VERIFIED. Provider readback is a synthetic contract fixture; independent provider QA remains external."
+        },
+        {
+          "test": "SQLiteRevokedRecoveryC8.test_shadow_mode_alone_denies_new_dispatch_and_preserves_prior_effect",
+          "path": "tests/v16/db/test_sqlite_revoked_recovery_c8.py",
+          "scope_and_gap": "SHADOW-only mode denies additional dispatch while independently authorized readback of a pre-existing dispatch can mark that one effect VERIFIED, with SHADOW mode unchanged. Provider readback is a synthetic contract fixture; independent provider QA remains external."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Complete local SQLite transactional acceptance evidence; independent live provider and exact-SHA QA remain outside local tests.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_revoked_recovery_c8.SQLiteRevokedRecoveryC8.test_new_write_denied_but_independent_trusted_recovery_verifies_exact_prior_dispatch",
+          "tests.v16.db.test_sqlite_revoked_recovery_c8.SQLiteRevokedRecoveryC8.test_recovery_cannot_be_self_authenticated_or_reconcile_different_dispatch",
+          "tests.v16.db.test_sqlite_revoked_recovery_c8.SQLiteRevokedRecoveryC8.test_shadow_mode_alone_denies_new_dispatch_and_preserves_prior_effect"
+        ],
+        "assertions": [
+          "A revoked grant and SHADOW authority deny new publication and repeat dispatch while a separately permitted RECOVERY_READBACK principal can verify only the pre-existing exact dispatch without creating another provider effect.",
+          "Forged publisher identity, unverified recovery identity, missing provider readback proof and invented dispatch IDs are denied before an old effect can become VERIFIED.",
+          "SHADOW-only mode denies additional dispatch while independently authorized readback of a pre-existing dispatch can mark that one effect VERIFIED, with SHADOW mode unchanged."
+        ]
+      }
     },
     {
       "case_id": "PUB-06",
@@ -646,9 +697,14 @@
           "test": "SQLitePublicationC8.test_untrusted_recovery_cannot_complete",
           "scope_and_gap": "Tests untrusted local recovery denial; missing dispatch and security audit requirements remain.",
           "path": "tests/v16/db/test_sqlite_publication_c8.py"
+        },
+        {
+          "test": "SQLiteRevokedRecoveryC8.test_recovery_cannot_be_self_authenticated_or_reconcile_different_dispatch",
+          "path": "tests/v16/db/test_sqlite_revoked_recovery_c8.py",
+          "scope_and_gap": "Forged recovery identity and unknown dispatch cannot mark VERIFIED; immutable security denial record/real mTLS are still missing."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
+      "gap": "Forged recovery identity and unknown dispatch cannot mark VERIFIED; immutable security denial record/real mTLS are still missing.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -704,9 +760,14 @@
           "test": "GitProviderTests.test_conflict_does_not_move_branch",
           "path": "tests/v16/providers/test_git_drive.py",
           "scope_and_gap": "Local bare Git provider returns REBASE_REQUIRED on branch drift; 429/5xx and fresh authority remain untested."
+        },
+        {
+          "test": "SQLiteDispatchRestartC8.test_retry_requires_exact_absence_proof_then_new_transactional_dispatch",
+          "path": "tests/v16/db/test_sqlite_dispatch_restart_c8.py",
+          "scope_and_gap": "Exact absence proof required before second local dispatch; 429/5xx bounded provider retry and source-drift REBASE_REQUIRED not tested."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
+      "gap": "Exact absence proof required before second local dispatch; 429/5xx bounded provider retry and source-drift REBASE_REQUIRED not tested.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
