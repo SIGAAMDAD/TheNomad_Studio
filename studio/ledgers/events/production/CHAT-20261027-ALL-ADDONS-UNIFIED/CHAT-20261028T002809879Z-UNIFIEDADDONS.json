@@ -1,0 +1,61 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261028T002809879Z-UNIFIEDADDONS",
+  "recorded_at_utc": "2026-10-28T00:28:09.879Z",
+  "request_id": "CHAT-20261027-ALL-ADDONS-UNIFIED",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "ARTIFACT_SUBMITTED",
+  "status": "SUBMITTED",
+  "summary": "Consolidated all prior V1.6 add-on packages (RC00-RC06, active-chat RC+CM R2, POST00-POST08 Python/API+Drive+departmental communications, HR00-HR07 STOP-gated response and hierarchical recovery) into one self-contained 98-file post-integration ZIP. Unified authoritative workgroups J-Q across 4 waves, one merged plan, launch prompts, test matrix and preserved source plans; compatibility/ownership validator PASS 8 groups 4 waves 0 warnings, 98-file ZIP CRC and SHA256 manifest verified. No production source, configuration or running chat changed.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261028T002809879Z-UNIFIEDADDONS",
+  "todo": [
+    {
+      "id": "J",
+      "description": "After original A-I+RC acceptance launch J against actual accepted integrated SHA",
+      "state": "OPEN"
+    },
+    {
+      "id": "W1",
+      "description": "Launch K/L/M/N only after J contract freeze",
+      "state": "OPEN"
+    },
+    {
+      "id": "W2",
+      "description": "Launch O/P only after K/L/M/N acceptance",
+      "state": "OPEN"
+    },
+    {
+      "id": "Q",
+      "description": "Single integration, independent QA canary, owner GO/NO-GO",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "handoff_zip",
+      "uri": "sandbox:/mnt/data/Nomad_Studio_V16_ALL_Addons_Unified_2026-10-27.zip",
+      "revision": "sha256:d950406de6eb2b72d5023a17505b66736b5c7f0d5cbb9e1f7338427a506239c7",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "8 workgroups 4 waves schema+DAG+ownership validator",
+      "status": "PASS"
+    },
+    {
+      "name": "98 file ZIP CRC+SHA256 manifest",
+      "status": "PASS"
+    },
+    {
+      "name": "Integrated source implementation and canary",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
