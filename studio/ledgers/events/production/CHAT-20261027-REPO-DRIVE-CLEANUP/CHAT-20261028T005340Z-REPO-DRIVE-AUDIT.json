@@ -1,0 +1,148 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261028T005340Z-REPO-DRIVE-AUDIT",
+  "recorded_at_utc": "2026-10-28T00:53:40Z",
+  "request_id": "CHAT-20261027-REPO-DRIVE-CLEANUP",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "IN_PROGRESS",
+  "summary": "Read-only, live source-grounded Studio+Oversight GitHub and Studio Drive cleanup audit: deleted Issues 3/6/7 remain in runtime, scheduled broker exits on deleted issue 404, latent code-submission config NameError, Drive live records stale against R05 and submitted art, 2 of 45 ledger event enums invalid, legacy audit branches carry only documentation, and V16 packages remain not integrated to current main. Clean V1 and V16 deployment are separate workstreams. No source, existing docs, runtime queues, or automation settings changed.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261028T005340Z-REPO-DRIVE-AUDIT",
+  "worker_slot": null,
+  "todo": [
+    {
+      "id": "G-01",
+      "description": "Reconcile runtime features and dependent jobs against deleted Studio Issues 3, 6, 7 without fabricating owner approvals",
+      "state": "OPEN"
+    },
+    {
+      "id": "G-02",
+      "description": "Repair broker scan of deleted and inaccessible issues; add tombstones and resumed cursor replay with tests",
+      "state": "OPEN"
+    },
+    {
+      "id": "G-03",
+      "description": "Fix undefined config in studio.py code receipt handling and add positive code-submission test",
+      "state": "OPEN"
+    },
+    {
+      "id": "G-04",
+      "description": "Reconcile Drive role assignments, engineering guide, wave board and queue with verified runtime and R05 QA",
+      "state": "OPEN"
+    },
+    {
+      "id": "G-05",
+      "description": "Update source registry from current approved 5-repo source routing and verified source commits",
+      "state": "OPEN"
+    },
+    {
+      "id": "G-06",
+      "description": "Reconcile Sortior concept image asset manifest, independent art QA and acceptance status",
+      "state": "OPEN"
+    },
+    {
+      "id": "G-07",
+      "description": "Add append-only compatible repair for two observed V4 ledger enum violations",
+      "state": "OPEN"
+    },
+    {
+      "id": "G-08",
+      "description": "Compare and retire two historical Studio working branches after preserving unique audit notes",
+      "state": "OPEN"
+    },
+    {
+      "id": "G-09",
+      "description": "Build exact-file ID lookup for 174 role manuals; compare checksums before registry revision",
+      "state": "OPEN"
+    },
+    {
+      "id": "G-10",
+      "description": "Integrate approved V16 A-Q implementation against new baseline with independent source tests and canary",
+      "state": "OPEN"
+    },
+    {
+      "id": "G-11",
+      "description": "Prove real broker, registered worker, inbox, ACK, QA, hourly and email evidence end-to-end",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [
+    {
+      "department_id": "engineering",
+      "state": "BLOCKED",
+      "reason": "V16 coordination gateway and PostgreSQL implementation package not integrated into live main; no source QA/canary evidence"
+    },
+    {
+      "department_id": "production",
+      "state": "BLOCKED",
+      "reason": "Deleted GitHub Issues 3, 6, 7 require owner-intent reconciliation before related feature dispatch"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "github_source",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/tree/8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
+      "revision": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
+      "verified": true
+    },
+    {
+      "kind": "github_runtime",
+      "uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/tree/14677ac2d6127f08bb31d365f0346eaf5a425f21",
+      "revision": "14677ac2d6127f08bb31d365f0346eaf5a425f21",
+      "verified": true
+    },
+    {
+      "kind": "google_drive",
+      "uri": "https://drive.google.com/drive/folders/1GgNw3YXgMZqDzKa6SE87blM62e_ulE3I",
+      "revision": "2026-10-27-live-inventory",
+      "verified": true
+    },
+    {
+      "kind": "editorial_qa",
+      "uri": "https://docs.google.com/document/d/1JZE_5A9ZqH9BIIKM_5tLHa4HNnElfs2LnEftuEyHVqc/edit",
+      "revision": "R05-2026-10-26T23:32:30.525Z",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Live GitHub branch and repo inventory",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio"
+    },
+    {
+      "name": "Live Drive Studio folder and role registry inventory",
+      "status": "PASS",
+      "evidence_uri": "https://drive.google.com/drive/folders/1GgNw3YXgMZqDzKa6SE87blM62e_ulE3I"
+    },
+    {
+      "name": "Latest hourly GitHub reconciliation",
+      "status": "PASS",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40608688604"
+    },
+    {
+      "name": "Latest sampled scheduled broker run",
+      "status": "FAIL",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/actions/runs/40594046296"
+    },
+    {
+      "name": "GitHub Issue 3 6 7 readback",
+      "status": "FAIL",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/issues/6"
+    },
+    {
+      "name": "V4 ledger enum audit 45 records",
+      "status": "FAIL",
+      "evidence_uri": "https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/studio/workforce/v4/ledger_event.schema.json"
+    },
+    {
+      "name": "V16 live source implementation, end-to-end scaling and canary",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
