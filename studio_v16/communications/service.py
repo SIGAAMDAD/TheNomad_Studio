@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import hashlib
 
-from studio_v16.db.store import Denied, GatewayContext, _fresh
+from studio_v16.db.authority_contract import Denied, GatewayContext, _fresh
 from studio_v16.db.sqlite.publication import row
 from studio_v16.db.sqlite.types import canonical, parse_json, integer
 

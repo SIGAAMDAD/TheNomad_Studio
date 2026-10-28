@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-from studio_v16.db.store import GatewayContext
+from studio_v16.db.authority_contract import GatewayContext
 from studio_v16.db.storage_protocol import DurableStore
 
 

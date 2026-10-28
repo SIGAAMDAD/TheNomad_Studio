@@ -3,7 +3,7 @@
 Run the auditor hourly and the watchdog under a distinct credential/process. This
 module cannot detect a host outage by itself; use an external heartbeat monitor.
 """
-from studio_v16.db.store import Denied, _fresh
+from studio_v16.db.authority_contract import Denied, _fresh
 from studio_v16.db.sqlite.publication import row
 from studio_v16.db.sqlite.types import canonical, parse_json, integer
 from studio_v16.communications.service import sha

@@ -1,5 +1,5 @@
 """Owner-scoped leader/control operations; authentication is transport-owned."""
-from studio_v16.db.store import Denied
+from studio_v16.db.authority_contract import Denied
 from .document_access import DocumentAccess
 from .gateway import AdmissionError
 

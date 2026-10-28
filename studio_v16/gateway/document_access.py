@@ -1,7 +1,7 @@
 """Pinned document reader and fenced writer lease gateway."""
 import hashlib
 
-from studio_v16.db.store import GatewayContext, Denied
+from studio_v16.db.authority_contract import GatewayContext, Denied
 from .gateway import AdmissionError
 
 

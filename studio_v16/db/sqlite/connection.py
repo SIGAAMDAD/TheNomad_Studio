@@ -9,7 +9,7 @@ import stat
 import time
 from urllib.parse import quote
 
-from ..store import StorageError
+from ..authority_contract import StorageError
 from .types import utc_us
 
 

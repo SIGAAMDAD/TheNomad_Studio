@@ -4,8 +4,8 @@ from __future__ import annotations
 import hashlib
 import sqlite3
 
-from ..store import (COMMAND_VALIDATOR, EVENT_VALIDATOR, RESUME_VALIDATOR,
-                     Denied, GatewayContext, PostgresStore, _fresh, _utc)
+from ..authority_contract import (COMMAND_VALIDATOR, EVENT_VALIDATOR, RESUME_VALIDATOR,
+                                  Denied, GatewayContext, make_result, deny_if_untrusted, _fresh, _utc)
 from .connection import ConnectionOwner, Unavailable
 from .migrate import migrate
 from .types import canonical, epoch_us, integer, parse_json
@@ -18,8 +18,8 @@ def digest(value):
 
 
 class SQLiteStore(SQLiteRecovery, SQLitePublication):
-    _result = staticmethod(PostgresStore._result)
-    _deny_if_untrusted = staticmethod(PostgresStore._deny_if_untrusted)
+    _result = staticmethod(make_result)
+    _deny_if_untrusted = staticmethod(deny_if_untrusted)
 
     def __init__(self, owner: ConnectionOwner, *, apply_migrations=True, recovery_principals=()):
         self.owner = owner

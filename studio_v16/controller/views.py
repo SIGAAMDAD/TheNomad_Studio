@@ -1,5 +1,5 @@
 """Bounded department/head projections with truthful missing-observation states."""
-from studio_v16.db.store import Denied
+from studio_v16.db.authority_contract import Denied
 from studio_v16.db.sqlite.publication import row
 from studio_v16.db.sqlite.types import integer, canonical
 from studio_v16.communications.service import sha

@@ -7,7 +7,7 @@ import sqlite3
 from studio_v16.db.publication import PublicationDenied
 from studio_v16.gateway.contracts import canonical_hash, validate, ContractError
 from studio_v16.gateway.interfaces import State
-from ..store import _fresh
+from ..authority_contract import _fresh
 from .connection import Unavailable
 from .types import canonical, parse_json, epoch_us
 

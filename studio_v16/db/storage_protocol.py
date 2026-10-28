@@ -1,6 +1,6 @@
 """Trusted backend-neutral storage boundary; never a public authentication DTO."""
 from typing import Protocol
-from .store import GatewayContext
+from .authority_contract import GatewayContext
 
 
 class DurableStore(Protocol):
