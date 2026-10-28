@@ -690,7 +690,7 @@
       "required_evidence": "cannot reconcile/readback to VERIFIED; logged security denial",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A03",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
@@ -702,10 +702,32 @@
           "test": "SQLiteRevokedRecoveryC8.test_recovery_cannot_be_self_authenticated_or_reconcile_different_dispatch",
           "path": "tests/v16/db/test_sqlite_revoked_recovery_c8.py",
           "scope_and_gap": "Forged recovery identity and unknown dispatch cannot mark VERIFIED; immutable security denial record/real mTLS are still missing."
+        },
+        {
+          "test": "SQLiteRecoverySecurityLogC8.test_forged_recovery_identity_is_logged_and_cannot_reconcile",
+          "path": "tests/v16/db/test_sqlite_recovery_security_log_c8.py",
+          "scope_and_gap": "A forged worker identity, missing trusted gateway proof and missing provider-readback proof are individually denied and emit the sanitized SQLITE_RECOVERY_SECURITY_DENIAL log event with code IDENTITY_UNVERIFIED, leaving existing outbox IN_FLIGHT and no VERIFIED receipt. Logging sink and real mTLS must be independently verified."
+        },
+        {
+          "test": "SQLiteRecoverySecurityLogC8.test_missing_dispatch_and_forged_readback_emit_denial_without_effect",
+          "path": "tests/v16/db/test_sqlite_recovery_security_log_c8.py",
+          "scope_and_gap": "A fabricated dispatch ID emits sanitized ACCESS_REQUIRED log denial, while an unauthorized recorded readback is denied and logged; no change to publication, dispatch or outbox state occurs. Logging sink and real mTLS must be independently verified."
         }
       ],
-      "gap": "Forged recovery identity and unknown dispatch cannot mark VERIFIED; immutable security denial record/real mTLS are still missing.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fail-closed SQL + structured process security log evidence complete; deployment log retention/mTLS provider attestation and independent exact-SHA QA remain separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_recovery_security_log_c8.SQLiteRecoverySecurityLogC8.test_forged_recovery_identity_is_logged_and_cannot_reconcile",
+          "tests.v16.db.test_sqlite_recovery_security_log_c8.SQLiteRecoverySecurityLogC8.test_missing_dispatch_and_forged_readback_emit_denial_without_effect"
+        ],
+        "assertions": [
+          "A forged worker identity, missing trusted gateway proof and missing provider-readback proof are individually denied and emit the sanitized SQLITE_RECOVERY_SECURITY_DENIAL log event with code IDENTITY_UNVERIFIED, leaving existing outbox IN_FLIGHT and no VERIFIED receipt.",
+          "A fabricated dispatch ID emits sanitized ACCESS_REQUIRED log denial, while an unauthorized recorded readback is denied and logged; no change to publication, dispatch or outbox state occurs."
+        ]
+      }
     },
     {
       "case_id": "PUB-07",
