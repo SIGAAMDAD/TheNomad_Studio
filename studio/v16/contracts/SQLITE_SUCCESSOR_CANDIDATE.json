@@ -1,0 +1,71 @@
+{
+  "schema_id": "NOMAD-STUDIO/SUCCESSOR-CONTRACT-CANDIDATE/1",
+  "status": "PROPOSED_UNRATIFIED",
+  "authority_decision": "OWNER_RATIFICATION_REQUIRED",
+  "legacy_frozen_contracts": "UNCHANGED",
+  "target": {
+    "durable_authority": "SQLITE_SINGLE_WRITER",
+    "execution": "HUMAN_OPENED_MANUAL_CHAT",
+    "protocol": "CURRENT_EXACT_VERSION_ONLY",
+    "publication": "AUTHENTICATED_GATEWAY_ONLY",
+    "legacy_runtime_mode": "ARCHIVE_ONLY",
+    "recovery": "SQLITE_SNAPSHOT_FORWARD_RECOVERY",
+    "owner_authority": "EXTERNAL_INDEPENDENTLY_AUTHENTICATED",
+    "qa_authority": "INDEPENDENT_EXACT_SUBJECT_REVIEWER",
+    "no_autonomous_paid_model_launch": true,
+    "registry": {
+      "roles": 174,
+      "departments": 12,
+      "canonical_source": "TO_BE_RATIFIED"
+    },
+    "release_stages": [
+      {
+        "id": "PR_STAGING_MERGE",
+        "evidence": [
+          "EXACT_SHA_EXECUTABLE_TESTS",
+          "INDEPENDENT_SOURCE_QA",
+          "SOURCE_MERGE_AUTHORIZATION"
+        ],
+        "production_approval_required": false
+      },
+      {
+        "id": "AUTHORITY_CUTOVER",
+        "evidence": [
+          "OWNER_SIGNED_CUTOVER",
+          "ARCHIVE_SEALED",
+          "ONE_ACTIVE_WRITER",
+          "EXTERNAL_READBACK",
+          "OFFHOST_RESTORE"
+        ]
+      },
+      {
+        "id": "PRODUCTION_CANARY",
+        "evidence": [
+          "OWNER_SIGNED_RELEASE",
+          "EXTERNAL_QA",
+          "PERFORMANCE_MEASUREMENTS",
+          "ALERT_AND_RECOVERY_EVIDENCE"
+        ]
+      }
+    ],
+    "deny_on": [
+      "SOURCE_REF_DRIFT",
+      "UNKNOWN_ISSUER",
+      "REVOKED_LEASE",
+      "MISSING_OWNER_APPROVAL",
+      "SELF_APPROVED_QA",
+      "PROVIDER_READBACK_UNKNOWN",
+      "LEGACY_WIRE_INPUT"
+    ]
+  },
+  "pending_decisions": [
+    "SQLITE_SUCCESSOR_SIGNED_BY_OWNER_AND_ARCHITECT",
+    "SOURCE_AND_PROTOCOL_DIGEST_RATIFIED",
+    "CANONICAL_REGISTRY_SELECTED",
+    "DEPLOYMENT_PG_EXISTENCE_VERIFIED",
+    "CURRENT_EXTERNAL_WRITERS_VERIFIED",
+    "ARCHIVAL_DESTINATION_AND_CUSTODIAN_APPROVED"
+  ],
+  "historical_archive": "OUT_OF_BAND_IMMUTABLE_READ_ONLY",
+  "approved_for_production": false
+}
