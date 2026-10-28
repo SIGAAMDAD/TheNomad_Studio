@@ -121,8 +121,7 @@ class SQLitePublication:
                     or document['writer_generation'] != state.document_writer_generation
                     or document['writer_token'] != state.document_writer_token or not state.document_writer_token
                     or document['writer_expires_at'] is None or document['writer_expires_at'] <= now
-                    or document['leader_epoch'] != state.leader_epoch or leader['leader_epoch'] != state.leader_epoch
-                    or leader['delegation_paused']):
+                    or document['leader_epoch'] != state.leader_epoch or leader['leader_epoch'] != state.leader_epoch):
                 deny('DOCUMENT_CONFLICT')
         qa = state.qa
         if (qa is None or qa.verdict != 'PASS' or not state.evidence_sha256

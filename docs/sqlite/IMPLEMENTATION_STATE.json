@@ -5,16 +5,14 @@
   "branch": "studio/v16-sqlite-unified",
   "source_base_sha": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
   "source_head_at_run_start": "fa14928ea36ba68fe607448d690cc00bb64488c1",
-  "current_checkpoint": "C6",
+  "current_checkpoint": "C7",
   "completed_checkpoints": [],
   "checkpoint_contract_revision": "DB-STORAGE/2-SQLITE DRAFT",
   "files_changed_in_latest_checkpoint": [
-    "studio_v16/gateway/document_access.py",
-    "studio_v16/gateway/leadership_access.py",
-    "studio_v16/gateway/response_access.py",
-    "studio_v16/adapters/response.py",
-    "studio/v16/worker/manual_kernel.py",
-    "studio_v16/db/sqlite/migrations/0005_response_evidence.sql"
+    "studio_v16/controller/views.py",
+    "studio_v16/watchdog/service.py",
+    "studio_v16/db/sqlite/migrations/0006_controller_watchdog.sql",
+    "studio_v16/providers/git_provider.py"
   ],
   "tests": [
     {
@@ -40,10 +38,12 @@
     "postgres_transfer_if_applicable": "UNKNOWN: no deployed database evidence supplied",
     "independent_exact_sha_qa": "PENDING",
     "live_github_drive_credentials": "PENDING",
-    "active_cutover": "NOT_AUTHORIZED"
+    "active_cutover": "NOT_AUTHORIZED",
+    "independent_watchdog_host": "NOT_CONFIGURED",
+    "alert_delivery": "NOT_RUN"
   },
-  "next_specific_edit": "C6: indexed controller/head views, compact provider batches and independent watchdog",
-  "last_checkpoint_parent_sha": "92cde8402a7d685dcf6697c68066a49480a8071f",
+  "next_specific_edit": "C7: online backup/restore, conditional PostgreSQL transfer and runbooks",
+  "last_checkpoint_parent_sha": "0757594e2ce7b5ab636c27f5299ea4e997d79202",
   "note": "Do not embed the SHA of this file's own commit in the file; report actual HEAD after commit.",
   "implemented_checkpoints": [
     "C0",
@@ -51,7 +51,8 @@
     "C2",
     "C3",
     "C4",
-    "C5"
+    "C5",
+    "C6"
   ],
   "frozen_files": {
     "count": 19,
@@ -70,7 +71,8 @@
     "C2": "IMPLEMENTED_UNTESTED; publication surfaces follow in C3; runtime suites deferred",
     "C3": "IMPLEMENTED_UNTESTED; provider fault/revocation/concurrency acceptance suites deferred",
     "C4": "IMPLEMENTED_UNTESTED; indexed query plans, inbox/control/leader/document race gates deferred",
-    "C5": "IMPLEMENTED_UNTESTED; document/role/kernel/control suites deferred"
+    "C5": "IMPLEMENTED_UNTESTED; document/role/kernel/control suites deferred",
+    "C6": "IMPLEMENTED_UNTESTED; query-plan/load/provider/watchdog/fault suites deferred; real independent scheduling and delivery require deployment"
   },
   "runtime_requirements": {
     "sqlite_minimum": "3.45.0",
@@ -81,7 +83,8 @@
     "0002_publication_sqlite",
     "0003_dispatch_retry",
     "0004_cm_hr",
-    "0005_response_evidence"
+    "0005_response_evidence",
+    "0006_controller_watchdog"
   ],
   "next_verification_commands": [
     "python -m compileall -q studio_v16",

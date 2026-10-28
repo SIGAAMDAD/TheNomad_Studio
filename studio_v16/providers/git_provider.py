@@ -64,6 +64,27 @@ class IsolatedGitProvider:
         self._authorized=authorized
         self._enabled=enable_external_effects
 
+    def status_batch(self, targets):
+        """One compact ls-remote request per repository; no full-history scans."""
+        if not isinstance(targets, (list, tuple)) or not 1 <= len(targets) <= 100:
+            raise ValueError('bounded repository/branch targets required')
+        groups = {}
+        for repo, branch in targets:
+            if not BRANCH.fullmatch(branch):
+                raise ProviderBlocked('INVALID_SCOPE')
+            groups.setdefault(repo, set()).add(branch)
+        result, requests = {}, 0
+        for repo, branches in sorted(groups.items()):
+            with tempfile.TemporaryDirectory(prefix='nomad-status-') as tmp:
+                output = git(tmp, 'ls-remote', '--heads', self._remote(repo),
+                             *('refs/heads/' + branch for branch in sorted(branches)))
+            requests += 1
+            heads = dict((parts[1].removeprefix('refs/heads/'), parts[0])
+                         for line in output.decode().splitlines() if len(parts := line.split()) == 2)
+            for branch in branches:
+                result[(repo, branch)] = heads.get(branch)
+        return dict(heads=result, provider_requests=requests, archive_branches_enabled=False)
+
     def _remote(self, repo_id):
         if repo_id not in self._remotes:
             raise ProviderBlocked('INVALID_SCOPE')
