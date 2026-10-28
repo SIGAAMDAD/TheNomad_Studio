@@ -722,9 +722,19 @@
           "test": "SchemaBoundaryTests.test_source_qa_change_or_self_review_blocks_publication",
           "path": "tests/v16/security/test_boundary.py",
           "scope_and_gap": "Reference policy fixture rejects missing QA and self review; not live gateway effect verification."
+        },
+        {
+          "test": "SQLiteRevisionQAFenceC8.test_self_review_cannot_reserve_or_begin_an_external_effect",
+          "path": "tests/v16/db/test_sqlite_revision_qa_c8.py",
+          "scope_and_gap": "A synthetic self-review is rejected before any publication, outbox or dispatch exists; actual live external provider untouched."
+        },
+        {
+          "test": "SQLiteRevisionQAFenceC8.test_revoked_owner_decision_and_stale_revision_deny_before_dispatch",
+          "path": "tests/v16/db/test_sqlite_revision_qa_c8.py",
+          "scope_and_gap": "Stale state revision and revoked owner approval both fail closed before any SQLite effect; remote gateway credential test remains outstanding."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
+      "gap": "Stale state revision and revoked owner approval both fail closed before any SQLite effect; remote gateway credential test remains outstanding.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -998,9 +1008,14 @@
           "test": "SQLiteC8Tests.test_leader_epoch_and_document_generation_fences",
           "scope_and_gap": "Checks SQLite monotonic epoch and generation; stale external publication not exercised.",
           "path": "tests/v16/db/test_sqlite_c8.py"
+        },
+        {
+          "test": "SQLiteLeadershipRaceC8.test_competing_handoffs_have_one_epoch_winner_and_fence_old_head",
+          "path": "tests/v16/db/test_sqlite_leadership_race_c8.py",
+          "scope_and_gap": "Leadership handoff has one epoch winner and old controls denied; external double-publication protection remains a separate gate."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
+      "gap": "Leadership handoff has one epoch winner and old controls denied; external double-publication protection remains a separate gate.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1116,10 +1131,16 @@
       "required_evidence": "Old epoch rejected at admission and pre-publication; no split-brain edits",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A05",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Old epoch rejected at admission and pre-publication; no split-brain edits",
+      "existing_assertions": [
+        {
+          "test": "SQLiteLeadershipRaceC8.test_competing_handoffs_have_one_epoch_winner_and_fence_old_head",
+          "path": "tests/v16/db/test_sqlite_leadership_race_c8.py",
+          "scope_and_gap": "Old head's control command is denied following leader epoch replacement; independent pre-publication provider fence remains untested."
+        }
+      ],
+      "gap": "Old head's control command is denied following leader epoch replacement; independent pre-publication provider fence remains untested.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1272,11 +1293,34 @@
       "required_evidence": "New independent review required on new exact SHA; old verdict not inherited",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A07",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: New independent review required on new exact SHA; old verdict not inherited",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "existing_assertions": [
+        {
+          "test": "SQLiteRevisionQAFenceC8.test_old_qa_subject_does_not_authorize_changed_tree_or_outbox",
+          "path": "tests/v16/db/test_sqlite_revision_qa_c8.py",
+          "scope_and_gap": "An approved review for an earlier tree SHA cannot authorize a changed exact tree, and no publication intent, source effect or outbox entry is created. Requires independent exact-SHA evaluation before release."
+        },
+        {
+          "test": "SQLiteRevisionQAFenceC8.test_new_exact_tree_requires_distinct_new_review_while_old_verdict_remains",
+          "path": "tests/v16/db/test_sqlite_revision_qa_c8.py",
+          "scope_and_gap": "After revoking the original reviewer principal, a fresh independent reviewer principal and new immutable review of the changed exact tree are required for publication admission; the prior review remains stored but is not inherited. Requires independent exact-SHA evaluation before release."
+        }
+      ],
+      "gap": "Complete local executable policy evidence; independent real-world reviewer and provider gates are separately unverified.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_revision_qa_c8.SQLiteRevisionQAFenceC8.test_old_qa_subject_does_not_authorize_changed_tree_or_outbox",
+          "tests.v16.db.test_sqlite_revision_qa_c8.SQLiteRevisionQAFenceC8.test_new_exact_tree_requires_distinct_new_review_while_old_verdict_remains"
+        ],
+        "assertions": [
+          "An approved review for an earlier tree SHA cannot authorize a changed exact tree, and no publication intent, source effect or outbox entry is created.",
+          "After revoking the original reviewer principal, a fresh independent reviewer principal and new immutable review of the changed exact tree are required for publication admission; the prior review remains stored but is not inherited."
+        ]
+      }
     },
     {
       "case_id": "HR-FAULT-16",
@@ -1362,17 +1406,39 @@
       "required_evidence": "One leadership epoch wins; old command fenced, immutable trail intact",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A08",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
           "test": "SyntheticSagaTests.test_new_lease_invalidates_old_authorization",
           "path": "tests/v16/system/test_pipeline.py",
           "scope_and_gap": "FakeJournal fences old assignment; concurrent controller transfer race and immutable trail unproven."
+        },
+        {
+          "test": "SQLiteLeadershipRaceC8.test_competing_handoffs_have_one_epoch_winner_and_fence_old_head",
+          "path": "tests/v16/db/test_sqlite_leadership_race_c8.py",
+          "scope_and_gap": "Two concurrently submitted independently approved leadership handoffs from epoch 1 produce one winner at epoch 2 and one denial; the old and unsuccessful heads cannot issue STOP while the new head can. Requires independent exact-SHA evaluation before release."
+        },
+        {
+          "test": "SQLiteLeadershipRaceC8.test_succession_audit_cannot_be_mutated_or_deleted",
+          "path": "tests/v16/db/test_sqlite_leadership_race_c8.py",
+          "scope_and_gap": "The winner's old/new epoch handoff audit trail rejects UPDATE and DELETE with IMMUTABLE_EVIDENCE and remains linked to the owner-approved decision. Requires independent exact-SHA evaluation before release."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Complete local executable policy evidence; independent real-world reviewer and provider gates are separately unverified.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_leadership_race_c8.SQLiteLeadershipRaceC8.test_competing_handoffs_have_one_epoch_winner_and_fence_old_head",
+          "tests.v16.db.test_sqlite_leadership_race_c8.SQLiteLeadershipRaceC8.test_succession_audit_cannot_be_mutated_or_deleted"
+        ],
+        "assertions": [
+          "Two concurrently submitted independently approved leadership handoffs from epoch 1 produce one winner at epoch 2 and one denial; the old and unsuccessful heads cannot issue STOP while the new head can.",
+          "The winner's old/new epoch handoff audit trail rejects UPDATE and DELETE with IMMUTABLE_EVIDENCE and remains linked to the owner-approved decision."
+        ]
+      }
     },
     {
       "case_id": "HR-FAULT-22",
