@@ -1,0 +1,25 @@
+{
+  "task": "A02",
+  "status": "OPEN",
+  "base_sha": "c73ecfc2ce7bdaa39e68324271e8071f39459008",
+  "changes": "Seven real-file test functions cover 100 identical claims, changed migration bytes, process ownership, pre-commit kill, post-commit abrupt exit, busy lock recovery and WAL reader snapshot isolation.",
+  "verification": [
+    {
+      "command": "python -m unittest tests.v16.db.test_sqlite_extra_c8 -v",
+      "exit_code": 0,
+      "tests": 7
+    },
+    {
+      "command": "python scripts/sqlite_c8_validate.py",
+      "exit_code": 0,
+      "tests": 216
+    },
+    {
+      "command": "python -m unittest discover -s tests/v16/acceptance -p test_*.py -v",
+      "exit_code": 0,
+      "tests": 2
+    }
+  ],
+  "case_scope": "Partial local evidence for TX-01, TX-06, TX-07, TX-08, TX-11 and SQLITE-07; no full-case PASS claimed.",
+  "remaining": "Complete A00/A01 and the remaining SQLITE/TX acceptance scenarios, including command readback across actual crash, checksum crash/replay, busy snapshot, disk-full, fsync, WAL retention and external cases."
+}

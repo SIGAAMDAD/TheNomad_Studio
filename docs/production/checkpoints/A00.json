@@ -6,7 +6,8 @@
   "completed": [
     "76 case IDs inventoried, 34 linked to partial local fixture assertions, including baseline tests",
     "inventory integrity test added",
-    "C8 CI workflow inspected"
+    "C8 CI workflow inspected",
+    "Catalogued the original 172 baseline and 37 C8 discovered test names; unmapped cases identify required evidence explicitly"
   ],
   "remaining": [
     "Review remaining baseline assertions against all 76 cases and refine gaps",

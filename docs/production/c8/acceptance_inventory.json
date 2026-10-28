@@ -61,7 +61,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: ISO UTC to epoch-us, 64-bit generation, JSON canonical hash, `text[]` path scopes, Decimal scaled currency exact; no lossy values",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -109,7 +109,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Signed row-count+digest manifest, source snapshot/watermark, restored FK and statuses, second import no-op",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -121,7 +121,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Verified empty source DB and shadow-import snapshots; no fictitious PG import claim",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -179,7 +179,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Correct ordering and bounded backpressure, no lost source/authority state",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -191,7 +191,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Old epoch/lease denied at same transaction boundary; no partial journal/outbox",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -244,7 +244,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: SQLite rollback, no published acknowledgement/effect",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -256,7 +256,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: stable command readback returns DUPLICATE/saved result, no duplicated effect",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -268,7 +268,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: explicit retry/unavailable result and intact data/manifest; never pretend COMPLETE",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -280,7 +280,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: observable growing WAL alert; bounded reader lifetime and successful later checkpoint",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -292,7 +292,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: fail safe startup and stop writes, restore only from verified snapshot",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -489,7 +489,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: no active grant or external effect authorized by imported rows",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -501,7 +501,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: No false COMPLETE; new authorized job acquired or verified STOP/forced YIELD",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -513,7 +513,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Explicit missing receipt; job remains active, auditor recovery packet",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -525,7 +525,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Exact SHA+test evidence required; rejects fabricated proof",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -578,7 +578,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Continue next eligible job in same attempt; no early final",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -590,7 +590,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: YIELDED/UNKNOWN; durable checkpoint; manual resume",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -620,7 +620,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Addressed DB notification, approved Drive pinned revision and readback",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -673,7 +673,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Scope-specific owner notification and recoverable state, not presumed death",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -685,7 +685,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Gateway denies inline; audit evidence preserved; independent escalation",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -697,7 +697,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Preserve all departments; restrict new global approvals; owner alert",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -709,7 +709,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Verdict rejected and affected jobs held for independent re-review",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -757,7 +757,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Worker attempts job 2 in same active response; no false normal finalization",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -769,7 +769,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: No job 3 claim; checkpoint, report card, STOP receipt, unfinished work preserved",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -799,7 +799,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Head fences old writer lease, grants replacement after CAS, old write denied",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -811,7 +811,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Scope-limited delegation pause; existing valid bounded workers preserved; owner/S00 escalation",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -823,7 +823,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Old epoch rejected at admission and pre-publication; no split-brain edits",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -871,7 +871,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Global new-delegation freeze; existing safe leases respected; owner recovery packet generated",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -883,7 +883,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Child DAG and exact receipts override claim, no parent closure",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -895,7 +895,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Inline denial and owner exception alert, no actor self-promotion",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -925,7 +925,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Watchdog rejects missing digest/age, records degraded supervision",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -937,7 +937,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Independent monitoring path detects degraded service or explicitly marks undetected until configured; no invented guarantee",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -949,7 +949,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: New independent review required on new exact SHA; old verdict not inherited",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -961,7 +961,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Transaction/outbox reconciliation creates one effect, not duplicate leadership grants",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1009,7 +1009,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Human owner recovery escalation; no worker auto-elevation",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1021,7 +1021,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Reject unauthenticated command, maintain current shift epoch",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1051,7 +1051,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Existing approved safe work may continue; new privileged decision blocked",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1063,7 +1063,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Quarantine only affected subtree; exact affected jobs identified; safe work continues",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1075,7 +1075,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Reported vs derived status separated; anomaly surfaced; no false completion",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1105,7 +1105,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Trusted gateway policy rejects canonical write; worker never holds broad write credential",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1117,7 +1117,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Benchmark numbers with reproducible input and real SQL plan",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1129,7 +1129,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Batch counts, API usage and provider rate-limit instrumentation",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1159,7 +1159,7 @@
       "status": "NOT_RUN",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "gap": "No reviewed assertion in this inventory establishes the required scenario: Safe terminal YIELD, buffered evidence, blocked outbound until recovered",
       "reviewer_verdict": "NOT_REVIEWED"
     }
   ],
@@ -1168,5 +1168,222 @@
     "live provider verification",
     "off-host restore",
     "owner-authorized canary and release"
-  ]
+  ],
+  "test_catalog": {
+    "legacy_discovery": [
+      "test_architecture_enforcer.ArchitectureEnforcerTests.test_admission_requires_explicit_architectural_impact",
+      "test_architecture_enforcer.ArchitectureEnforcerTests.test_approval_certificate_is_revision_bound",
+      "test_architecture_enforcer.ArchitectureEnforcerTests.test_change_requires_proposal_and_acceptance",
+      "test_architecture_enforcer.ArchitectureEnforcerTests.test_changed_protected_contract_paths_require_proposal",
+      "test_architecture_enforcer.ArchitectureEnforcerTests.test_no_change_still_requires_enforcer_clearance",
+      "test_architecture_enforcer.ArchitectureEnforcerTests.test_no_worker_can_approve_own_architecture_proposal",
+      "test_architecture_enforcer.ArchitectureEnforcerTests.test_pr_must_be_in_owning_source_repo",
+      "test_architecture_enforcer.ArchitectureEnforcerTests.test_ready_job_cannot_dispatch_without_review",
+      "test_architecture_enforcer.ArchitectureEnforcerTests.test_real_github_pr_owner_approval_and_merge_required",
+      "test_architecture_enforcer.ArchitectureEnforcerTests.test_routing_blocks_change_before_source_writes_gate",
+      "test_engineering_packet.PacketTests.test_real_exact_sha_packet_and_missing_checks",
+      "test_engineering_packet.PacketTests.test_sarif_delta_and_failure",
+      "test_production_chain.StudioV3Tests.test_approval_revocation_does_not_fence_inflight_writer",
+      "test_production_chain.StudioV3Tests.test_asset_brief_is_not_an_art_asset",
+      "test_production_chain.StudioV3Tests.test_asset_production_requires_real_manifest_and_readback",
+      "test_production_chain.StudioV3Tests.test_audio_and_animation_require_real_art_worker_capacity",
+      "test_production_chain.StudioV3Tests.test_board_sync_idempotent_and_not_an_approval_authority",
+      "test_production_chain.StudioV3Tests.test_malformed_spec_or_unapproved_feature_not_admitted",
+      "test_production_chain.StudioV3Tests.test_multidiscipline_admission_creates_qa_and_verified_dependencies",
+      "test_production_chain.StudioV3Tests.test_no_unattested_code_pass",
+      "test_production_chain.StudioV3Tests.test_only_own_repository_issue_is_imported_from_board",
+      "test_production_chain.StudioV3Tests.test_owner_label_checks_current_label_and_event_actor",
+      "test_production_chain.StudioV3Tests.test_pending_github_readback_cannot_claim_verified",
+      "test_production_chain.StudioV3Tests.test_project_draft_is_not_executable",
+      "test_production_chain.StudioV3Tests.test_project_url_validation",
+      "test_production_chain.StudioV3Tests.test_qa_pass_promotes_exact_subject",
+      "test_production_chain.StudioV3Tests.test_review_receipt_requires_independence_and_exact_revision",
+      "test_production_chain.StudioV3Tests.test_revoked_approval_blocks_ready_work_and_reapproval_recovers",
+      "test_production_chain.StudioV3Tests.test_rework_then_resubmission_same_job",
+      "test_production_chain.StudioV3Tests.test_safe_code_admission_stays_blocked",
+      "test_source_targets.SourceTargetTests.test_control_repo_cannot_own_real_gameplay_source",
+      "test_source_targets.SourceTargetTests.test_core_gameplay_cannot_be_routed_into_nomadmain",
+      "test_source_targets.SourceTargetTests.test_five_real_source_repositories_and_exact_branches",
+      "test_source_targets.SourceTargetTests.test_fork_and_branch_mismatch_rejected",
+      "test_source_targets.SourceTargetTests.test_goap_job_is_source_repo_not_studio_repo",
+      "test_source_targets.SourceTargetTests.test_mod_specific_code_must_be_in_nomadmain_csharp",
+      "test_source_targets.SourceTargetTests.test_owner_workstreams_route_to_distinct_source_repositories",
+      "test_source_targets.SourceTargetTests.test_production_admission_preserves_mod_language_and_owner_repo",
+      "test_source_targets.SourceTargetTests.test_production_spec_rejects_control_repo_and_wrong_branch",
+      "test_source_targets.SourceTargetTests.test_source_gate_validates_real_work_branch",
+      "test_source_targets.SourceTargetTests.test_unlisted_live_repo_never_receives_automatic_source_dispatch",
+      "test_source_targets.SourceTargetTests.test_wrong_target_branch_or_work_branch_rejected",
+      "test_studio.StudioTests.test_active_pg_blocks_legacy_dispatch",
+      "test_studio.StudioTests.test_checkpoint_keeps_ownership",
+      "test_studio.StudioTests.test_clean_bootstrap_validates",
+      "test_studio.StudioTests.test_code_blocked_without_source_permission",
+      "test_studio.StudioTests.test_code_submission_requires_external_readback",
+      "test_studio.StudioTests.test_context_contains_only_relevant_job",
+      "test_studio.StudioTests.test_cycle_and_missing_reference_rejected",
+      "test_studio.StudioTests.test_dependency_gate",
+      "test_studio.StudioTests.test_disabled_flag_is_read_only",
+      "test_studio.StudioTests.test_disabled_slot_cannot_hold_active_writer",
+      "test_studio.StudioTests.test_duplicate_scheduled_task_binding_rejected",
+      "test_studio.StudioTests.test_end_to_end_creative_submission_unlocks_independent_qa",
+      "test_studio.StudioTests.test_fixture_discards_real_runtime_assignment",
+      "test_studio.StudioTests.test_no_conflict_for_unrelated_repositories",
+      "test_studio.StudioTests.test_ownership_conflict_blocks_overlapping_path",
+      "test_studio.StudioTests.test_process_pending_worker_receipt_is_idempotent",
+      "test_studio.StudioTests.test_process_rejects_wrong_receipt_file_path",
+      "test_studio.StudioTests.test_review_dispatches_after_submission_not_verification",
+      "test_studio.StudioTests.test_review_does_not_run_before_submission",
+      "test_studio.StudioTests.test_review_requires_exact_parent",
+      "test_studio.StudioTests.test_safe_dispatch_respects_capability_and_wip",
+      "test_studio.StudioTests.test_stale_receipt_rejected",
+      "test_studio.StudioTests.test_submission_releases_slot_for_creative_review",
+      "test_studio.StudioTests.test_verified_code_requires_matching_ci",
+      "test_studio.StudioTests.test_verified_creative_rejects_self_review_and_wrong_revision",
+      "test_studio.StudioTests.test_verified_requires_exact_qa_evidence",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_duplicate_dispatch_json_field_denied",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_failed_ci_remains_failed_and_archiveable",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_forged_dispatch_fields",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_missing_source_credential_denied",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_no_silent_truncated_artifacts",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_no_silent_truncated_ci_jobs",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_nonapproved_job",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_source_sha_mismatch_blocks",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_unfinished_workflow",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_unknown_repository",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_verified_exact_sha_and_no_automatic_qa",
+      "test_studio_ci_evidence.SourceCIEvidenceTests.test_wrong_branch_blocks",
+      "test_studio_comms.CommsTests.test_ack_requires_causation_and_no_ack_loop",
+      "test_studio_comms.CommsTests.test_archive_idempotent_and_digest",
+      "test_studio_comms.CommsTests.test_cross_feature",
+      "test_studio_comms.CommsTests.test_duplicate_json_keys",
+      "test_studio_comms.CommsTests.test_injected_extra_authority_rejected",
+      "test_studio_comms.CommsTests.test_invalid_evidence",
+      "test_studio_comms.CommsTests.test_issue_discovery",
+      "test_studio_comms.CommsTests.test_non_messages_and_limits",
+      "test_studio_comms.CommsTests.test_registered_chat_worker_binding",
+      "test_studio_comms.CommsTests.test_registered_worker_not_chat_authentication",
+      "test_studio_comms.CommsTests.test_sender_not_authorized",
+      "test_studio_comms.CommsTests.test_snapshot_includes_registry_and_is_append_only",
+      "test_studio_comms.CommsTests.test_stable_source_identity",
+      "test_studio_comms.CommsTests.test_unapproved_job",
+      "test_studio_comms.CommsTests.test_unregistered_worker_denied",
+      "test_studio_comms.CommsTests.test_unverified_source_never_passes",
+      "test_studio_comms.CommsTests.test_wrong_issue",
+      "test_studio_comms.CommsTests.test_wrong_source_repo",
+      "test_studio_director_pulse.DirectorPulseTests.test_ci_cannot_approve_qa",
+      "test_studio_director_pulse.DirectorPulseTests.test_invalid_ci_receipt_is_rejected",
+      "test_studio_director_pulse.DirectorPulseTests.test_missing_data_is_explicit_and_report_is_immutable",
+      "test_studio_director_pulse.DirectorPulseTests.test_timezone_cst_and_cdt",
+      "test_studio_inbox.InboxTests.test_cannot_ack_orphan",
+      "test_studio_inbox.InboxTests.test_explicit_recipient_not_allowed_to_target_other_job",
+      "test_studio_inbox.InboxTests.test_handoff_to_ack_replay_idempotent",
+      "test_studio_inbox.InboxTests.test_reassignment_erases_stale_derived_views",
+      "test_studio_inbox.InboxTests.test_tampered_archive_refused",
+      "test_studio_inbox.InboxTests.test_unassigned_message_kept_for_later",
+      "test_studio_inbox.InboxTests.test_wrong_worker_cannot_ack",
+      "test_studio_prompt_v15.ManualPromptIntegrity.test_190_unique_prompts_and_role_specificity",
+      "test_studio_prompt_v15.ManualPromptIntegrity.test_manual_kernel_has_observability_resume_and_access_boundary",
+      "test_studio_prompt_v15.ManualPromptIntegrity.test_no_active_event_launch_guidance_in_primary_docs",
+      "test_studio_prompt_v15.ManualPromptIntegrity.test_w_profiles_no_active_work_event_triggers",
+      "test_studio_reconcile_bundle.ReconcileBundleTests.test_all_local_imports_are_preserved",
+      "test_studio_reconcile_bundle.ReconcileBundleTests.test_uses_explicit_runtime_root_and_fails_on_invalid_state",
+      "test_studio_scale_v15.ScaleTest.test_500_registration_and_guard",
+      "test_studio_scale_v15.ScaleTest.test_actionable_broadcast_must_be_bounded",
+      "test_studio_scale_v15.ScaleTest.test_broker_rejects_unaddressed_telemetry_ack",
+      "test_studio_scale_v15.ScaleTest.test_explicit_directed_handoff_and_ack",
+      "test_studio_scale_v15.ScaleTest.test_telemetry_does_not_flood_peer_inboxes",
+      "test_studio_v1_end_to_end.V1EndToEndTests.test_hundred_worker_registry_immutable_relay_ack_and_ledger",
+      "test_studio_v1_lifecycle.LifecycleTests.test_started_requires_attempt_and_epoch",
+      "test_studio_v1_lifecycle.LifecycleTests.test_submitted_tracks_elapsed_seconds",
+      "test_studio_v1_lifecycle.LifecycleTests.test_yield_requires_durable_checkpoint",
+      "test_studio_v1_lifecycle.LifecycleTests.test_yield_without_continuation_rejected",
+      "test_studio_work_orders.WorkOrderRoutingTests.test_architecture_impact_blocked_even_for_hub_order",
+      "test_studio_work_orders.WorkOrderRoutingTests.test_authorized_source_binding_rejects_fake_repo_and_head_sha",
+      "test_studio_work_orders.WorkOrderRoutingTests.test_bad_hub_pr_never_reaches_source_worker",
+      "test_studio_work_orders.WorkOrderRoutingTests.test_hub_event_can_route_all_five_source_workstreams",
+      "test_studio_work_orders.WorkOrderRoutingTests.test_only_one_stage_allowed",
+      "test_studio_work_orders.WorkOrderRoutingTests.test_qa_requires_separate_review_job_and_exact_source_sha",
+      "test_studio_work_orders.WorkOrderRoutingTests.test_source_budgets_never_silently_opened",
+      "test_studio_work_orders.WorkOrderRoutingTests.test_source_job_cannot_be_control_repository",
+      "test_studio_work_orders.WorkOrderRoutingTests.test_stage_sensitive_kind_and_evidence",
+      "test_studio_work_orders.WorkOrderRoutingTests.test_terra_switches_from_csharp_to_renderer_without_new_task",
+      "test_studio_worker_health.WorkerHealthTests.test_checkpoint_with_matching_ledger_and_time",
+      "test_studio_worker_health.WorkerHealthTests.test_checkpoint_without_ledger_and_time_is_reported",
+      "test_studio_worker_health.WorkerHealthTests.test_inbox_ack_overdue",
+      "test_studio_worker_health.WorkerHealthTests.test_submitted_with_open_todo_is_reported",
+      "test_studio_worker_health.WorkerHealthTests.test_unobserved_assignment",
+      "test_studio_worker_health.WorkerHealthTests.test_valid_ledger_closes_attempt",
+      "test_studio_worker_health.WorkerHealthTests.test_yield_without_ledger_is_reported",
+      "test_work_event_router.WorkerRouterTests.test_control_repo_cannot_be_implementation_repository",
+      "test_work_event_router.WorkerRouterTests.test_cycles_are_not_allowed",
+      "test_work_event_router.WorkerRouterTests.test_debug_requires_verified_failure",
+      "test_work_event_router.WorkerRouterTests.test_event_cannot_auto_spend_if_other_gates_are_true",
+      "test_work_event_router.WorkerRouterTests.test_full_roster_and_reporting_graph",
+      "test_work_event_router.WorkerRouterTests.test_goap_repository_is_the_real_source_target",
+      "test_work_event_router.WorkerRouterTests.test_high_risk_alpha_must_be_only_boilerplate",
+      "test_work_event_router.WorkerRouterTests.test_independent_qa_uses_exact_source_subject",
+      "test_work_event_router.WorkerRouterTests.test_integration_is_separate_from_debug_and_alpha",
+      "test_work_event_router.WorkerRouterTests.test_missing_approved_runtime_job_blocks",
+      "test_work_event_router.WorkerRouterTests.test_missing_or_ambiguous_pr_stage_does_not_route",
+      "test_work_event_router.WorkerRouterTests.test_missing_work_branch_is_not_routable",
+      "test_work_event_router.WorkerRouterTests.test_mod_csharp_event_routes_to_nomadmain_not_legacy_game",
+      "test_work_event_router.WorkerRouterTests.test_never_substitute_default_branch_for_game",
+      "test_work_event_router.WorkerRouterTests.test_no_default_astra_or_extra_task",
+      "test_work_event_router.WorkerRouterTests.test_not_authorized_to_dispatch_while_draft",
+      "test_work_event_router.WorkerRouterTests.test_safe_alpha_is_blocked_by_disabled_autonomy",
+      "test_work_event_router.WorkerRouterTests.test_terra_can_implement_regular_code_but_not_critical_hot_paths",
+      "test_work_event_router.WorkerRouterTests.test_terra_is_distinct_midlevel_engineer",
+      "test_work_event_router.WorkerRouterTests.test_unverified_pr_sha_does_not_route",
+      "test_work_event_router.WorkerRouterTests.test_wrong_base_and_work_branches_are_rejected",
+      "test_work_event_router.WorkerRouterTests.test_wrong_source_repository_or_fork_is_rejected",
+      "test_worker_prompts.ManualWorkerTests.test_all_role_prompts_keep_unique_mission_acceptance_and_manual_contract",
+      "test_worker_prompts.ManualWorkerTests.test_cli_dispatch_is_text_only_and_fails_closed",
+      "test_worker_prompts.ManualWorkerTests.test_exact_174_registry_12_heads_hash_stable",
+      "test_worker_prompts.ManualWorkerTests.test_offline_launcher_is_scoped_and_does_not_claim_verified_remote",
+      "test_worker_prompts.ManualWorkerTests.test_registry_detects_prompt_mutation_without_rebuilding",
+      "test_worker_prompts.ManualWorkerTests.test_reject_invalid_scope_path_and_roles",
+      "test_worker_prompts.ManualWorkerTests.test_specialties_no_active_model_dispatch",
+      "test_worker_prompts.ManualWorkerTests.test_v16_contracts_and_retired_labels_static"
+    ],
+    "c8_discovery": [
+      "test_sqlite_c8.SQLiteC8Tests.test_backup_restore_roundtrip_and_shadow_mode",
+      "test_sqlite_c8.SQLiteC8Tests.test_bad_command_fails_closed_and_does_not_journal",
+      "test_sqlite_c8.SQLiteC8Tests.test_corrupted_snapshot_refused",
+      "test_sqlite_c8.SQLiteC8Tests.test_department_inbox_requires_delivery_and_ordered_ack",
+      "test_sqlite_c8.SQLiteC8Tests.test_department_routing_idempotency_and_conflict",
+      "test_sqlite_c8.SQLiteC8Tests.test_failed_migration_rolls_back_all_changes",
+      "test_sqlite_c8.SQLiteC8Tests.test_immutable_department_evidence_and_foreign_key",
+      "test_sqlite_c8.SQLiteC8Tests.test_leader_epoch_and_document_generation_fences",
+      "test_sqlite_c8.SQLiteC8Tests.test_migration_checksum_tamper_rejected",
+      "test_sqlite_c8.SQLiteC8Tests.test_migration_idempotent_and_complete",
+      "test_sqlite_c8.SQLiteC8Tests.test_one_writer_and_atomic_rollback",
+      "test_sqlite_c8.SQLiteC8Tests.test_only_one_process_owner",
+      "test_sqlite_c8.SQLiteC8Tests.test_owner_after_close_fails_closed",
+      "test_sqlite_c8.SQLiteC8Tests.test_response_is_terminal_and_immutable",
+      "test_sqlite_commands_c8.SQLiteCommandsC8.test_atomic_claim_idempotency_and_mutation",
+      "test_sqlite_commands_c8.SQLiteCommandsC8.test_claim_checkpoint_yield_and_resume",
+      "test_sqlite_commands_c8.SQLiteCommandsC8.test_concurrent_claim_one_winner",
+      "test_sqlite_commands_c8.SQLiteCommandsC8.test_legacy_publication_commands_fail_closed",
+      "test_sqlite_commands_c8.SQLiteCommandsC8.test_reassign_fences_old_worker",
+      "test_sqlite_commands_c8.SQLiteCommandsC8.test_stale_revision_denied",
+      "test_sqlite_controls_c8.SQLiteControlsC8.test_nonleader_cannot_issue_controls",
+      "test_sqlite_controls_c8.SQLiteControlsC8.test_pause_prevents_unauthorized_continue",
+      "test_sqlite_controls_c8.SQLiteControlsC8.test_stale_leader_epoch_denied",
+      "test_sqlite_controls_c8.SQLiteControlsC8.test_stop_generation_is_fenced_and_immutable",
+      "test_sqlite_controls_c8.SQLiteControlsC8.test_worker_observes_stop_and_cannot_observe_another_response",
+      "test_sqlite_publication_c8.SQLitePublicationC8.test_concurrent_reservations_one_result",
+      "test_sqlite_publication_c8.SQLitePublicationC8.test_no_duplicate_dispatch_without_verified_absence",
+      "test_sqlite_publication_c8.SQLitePublicationC8.test_reserve_exact_idempotency_and_separate_hashes",
+      "test_sqlite_publication_c8.SQLitePublicationC8.test_shadow_denies_publication",
+      "test_sqlite_publication_c8.SQLitePublicationC8.test_trusted_recovery_after_revocation_and_shadow",
+      "test_sqlite_publication_c8.SQLitePublicationC8.test_untrusted_recovery_cannot_complete",
+      "test_sqlite_publication_c8.SQLitePublicationC8.test_wrong_tree_readback_rejected",
+      "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_distinct_watchdog_identity_required",
+      "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_missing_audit_is_degraded_not_silent_success",
+      "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_observed_audit_clears_missing_audit_signal",
+      "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_unobserved_response_not_misreported_as_crash",
+      "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_unverified_alert_remains_pending_until_readback"
+    ],
+    "source_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+    "discovery_note": "Catalog from the unmodified baseline runner; distinct from full acceptance proof."
+  }
 }
