@@ -446,10 +446,31 @@
       "required_evidence": "fail safe startup and stop writes, restore only from verified snapshot",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A10",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: fail safe startup and stop writes, restore only from verified snapshot",
+      "existing_assertions": [
+        {
+          "test": "CorruptStartupAndRestoreC8.test_corrupt_authority_file_fails_startup_without_replacing_it",
+          "path": "tests/v16/recovery/test_corrupt_startup_c8.py",
+          "scope_and_gap": "Corrupt authority DB rejects startup without mutating corrupted bytes. WAL corruption and owner live cutover remain outside local scope."
+        },
+        {
+          "test": "CorruptStartupAndRestoreC8.test_missing_snapshot_or_manifest_refuses_restore_without_target",
+          "path": "tests/v16/recovery/test_corrupt_startup_c8.py",
+          "scope_and_gap": "Missing snapshot or manifest refuses restore, creates no target. WAL corruption and owner live cutover remain outside local scope."
+        },
+        {
+          "test": "CorruptStartupAndRestoreC8.test_snapshot_digest_mismatch_refuses_restore_and_preserves_source",
+          "path": "tests/v16/recovery/test_corrupt_startup_c8.py",
+          "scope_and_gap": "Tampered snapshot manifest digest refuses restore; source is unchanged. WAL corruption and owner live cutover remain outside local scope."
+        },
+        {
+          "test": "CorruptStartupAndRestoreC8.test_verified_snapshot_recovers_shadow_without_second_active_authority",
+          "path": "tests/v16/recovery/test_corrupt_startup_c8.py",
+          "scope_and_gap": "Verified backup restores to SHADOW without authorized activation and preserves referential integrity. WAL corruption and owner live cutover remain outside local scope."
+        }
+      ],
+      "gap": "Corrupt database startup, absent snapshot/manifest, mismatched snapshot digest and owner-gated SHADOW restore have passing real-file fixtures; independently proving WAL-torn-page recovery/fail-closed shutdown remains outstanding.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
