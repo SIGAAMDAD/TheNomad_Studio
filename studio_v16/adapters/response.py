@@ -17,7 +17,8 @@ class ResponsePort(Protocol):
 
 def run_response(port: ResponsePort, response_id, worker_id, department, execute_job,
                  capture_resume, *, max_jobs=20, max_seconds=600):
-    if type(max_jobs) is not int or not 1 <= max_jobs <= 100 or not 1 <= max_seconds <= 3600:
+    if (type(max_jobs) is not int or not 1 <= max_jobs <= 100
+            or type(max_seconds) not in (int, float) or not 1 <= max_seconds <= 3600):
         raise ValueError('bounded response budget required')
     if port.start(response_id, worker_id, department) != 'RUNNING':
         raise RuntimeError('a resumed invocation requires a fresh response ID')
