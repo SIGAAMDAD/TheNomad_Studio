@@ -6,7 +6,7 @@ from .gateway import AdmissionError
 
 
 class ResponseAccess:
-    def __init__(self, coordination, principal, *, eligible_command, source_verifier):
+    def __init__(self, coordination, principal, *, eligible_command, source_verifier=None):
         self._coordination = coordination
         self._principal = principal
         self._eligible_command = eligible_command
@@ -26,7 +26,7 @@ class ResponseAccess:
         if command is None:
             return None
         if self._source_verifier is None:
-            raise AdmissionError('GATEWAY_UNAVAILABLE')
+            raise AdmissionError('REBASE_REQUIRED')
         context = self._context()
         proof = self._source_verifier.verify(command, context.principal_id)
         context = replace(context, verified_source_base=True, source_proof=proof)
