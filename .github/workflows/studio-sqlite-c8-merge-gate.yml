@@ -6,21 +6,43 @@ on:
       - "infra/sqlite/**"
       - "tests/v16/**"
       - "scripts/sqlite_c8_*.py"
+      - "scripts/sqlite_attestations.py"
       - "scripts/sqlite_acceptance.py"
       - "docs/production/c8/**"
       - "docs/sqlite/ACCEPTANCE_STATUS.json"
       - ".github/workflows/studio-sqlite-c8*.yml"
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Exact pull request to verify
+        required: true
+        type: number
+      subject_sha:
+        description: Exact PR head SHA
+        required: true
+        type: string
 permissions:
   contents: read
+  pull-requests: read
 jobs:
   merge-acceptance:
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
+      - name: Confirm manual subject is current PR HEAD
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SUBJECT: ${{ inputs.subject_sha }}
+          PR: ${{ inputs.pr_number }}
+        run: |
+          python -c 'import os,re; assert re.fullmatch(r"[0-9a-f]{40}", os.environ["SUBJECT"]); assert os.environ["PR"].isdigit()'
+          observed=$(gh api "repos/${{ github.repository }}/pulls/$PR" --jq '.head.sha')
+          test "$observed" = "$SUBJECT"
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.subject_sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
@@ -30,9 +52,23 @@ jobs:
         run: python -c "import sqlite3; assert sqlite3.sqlite_version_info >= (3,45,0), sqlite3.sqlite_version"
       - name: Require 76 executable acceptance cases on exact checkout
         run: python scripts/sqlite_acceptance.py --run-mapped --json "$RUNNER_TEMP/strict-acceptance.json"
-      - name: Require independent exact-head QA, providers, restore, canary, owner approval
+      - name: Require signed independent exact-commit staging QA and owner merge approval
         if: always()
-        run: python scripts/sqlite_c8_merge_gate.py --coverage "$RUNNER_TEMP/strict-acceptance.json" --json "$RUNNER_TEMP/release-gates.json"
+        env:
+          NOMAD_INDEPENDENT_QA_PUBLIC_KEY_PEM: ${{ secrets.NOMAD_INDEPENDENT_QA_PUBLIC_KEY_PEM }}
+          NOMAD_INDEPENDENT_QA_ISSUER_ID: ${{ vars.NOMAD_INDEPENDENT_QA_ISSUER_ID }}
+          NOMAD_OWNER_STAGING_MERGE_PUBLIC_KEY_PEM: ${{ secrets.NOMAD_OWNER_STAGING_MERGE_PUBLIC_KEY_PEM }}
+          NOMAD_OWNER_STAGING_MERGE_ISSUER_ID: ${{ vars.NOMAD_OWNER_STAGING_MERGE_ISSUER_ID }}
+          NOMAD_IMPLEMENTER_ID: ${{ vars.NOMAD_IMPLEMENTER_ID }}
+          NOMAD_REVOKED_ATTESTATION_NONCES_JSON: ${{ secrets.NOMAD_REVOKED_ATTESTATION_NONCES_JSON }}
+          TRUSTED_STAGING: ${{ secrets.NOMAD_STAGING_ATTESTATIONS_JSON }}
+          SUBJECT: ${{ inputs.subject_sha }}
+        run: |
+          if [ -n "$TRUSTED_STAGING" ]; then
+            printf '%s' "$TRUSTED_STAGING" > "$RUNNER_TEMP/trusted-staging-attestations.json"
+            export NOMAD_STAGING_ATTESTATIONS_PATH="$RUNNER_TEMP/trusted-staging-attestations.json"
+          fi
+          python scripts/sqlite_c8_merge_gate.py --coverage "$RUNNER_TEMP/strict-acceptance.json" --subject-sha "$SUBJECT" --json "$RUNNER_TEMP/release-gates.json"
       - name: Preserve full release-blocker evidence
         if: always()
         uses: actions/upload-artifact@v4

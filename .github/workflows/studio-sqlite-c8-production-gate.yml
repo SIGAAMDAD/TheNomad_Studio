@@ -1,0 +1,67 @@
+name: SQLite C8 Production Authorization
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        required: true
+        description: Exact pull request
+        type: number
+      subject_sha:
+        required: true
+        description: Exact PR head SHA
+        type: string
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  signed-production-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Verify subject against live PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pr_number }}
+          SUBJECT: ${{ inputs.subject_sha }}
+        run: |
+          python -c 'import os,re; assert re.fullmatch(r"[0-9a-f]{40}", os.environ["SUBJECT"]); assert os.environ["PR"].isdigit()'
+          observed=$(gh api "repos/${{ github.repository }}/pulls/$PR" --jq '.head.sha')
+          test "$observed" = "$SUBJECT"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ inputs.subject_sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install verifier dependencies
+        run: python -m pip install -r infra/gateway/requirements.txt
+      - name: Run exact-source acceptance
+        run: python scripts/sqlite_acceptance.py --run-mapped --json "$RUNNER_TEMP/acceptance.json"
+      - name: Verify owner and independent external production evidence
+        if: always()
+        env:
+          SUBJECT: ${{ inputs.subject_sha }}
+          NOMAD_IMPLEMENTER_ID: ${{ vars.NOMAD_IMPLEMENTER_ID }}
+          NOMAD_REVOKED_ATTESTATION_NONCES_JSON: ${{ secrets.NOMAD_REVOKED_ATTESTATION_NONCES_JSON }}
+          NOMAD_INDEPENDENT_QA_PUBLIC_KEY_PEM: ${{ secrets.NOMAD_INDEPENDENT_QA_PUBLIC_KEY_PEM }}
+          NOMAD_INDEPENDENT_QA_ISSUER_ID: ${{ vars.NOMAD_INDEPENDENT_QA_ISSUER_ID }}
+          NOMAD_OWNER_STAGING_MERGE_PUBLIC_KEY_PEM: ${{ secrets.NOMAD_OWNER_STAGING_MERGE_PUBLIC_KEY_PEM }}
+          NOMAD_OWNER_STAGING_MERGE_ISSUER_ID: ${{ vars.NOMAD_OWNER_STAGING_MERGE_ISSUER_ID }}
+          NOMAD_EXTERNAL_PROVIDER_PUBLIC_KEY_PEM: ${{ secrets.NOMAD_EXTERNAL_PROVIDER_PUBLIC_KEY_PEM }}
+          NOMAD_EXTERNAL_PROVIDER_ISSUER_ID: ${{ vars.NOMAD_EXTERNAL_PROVIDER_ISSUER_ID }}
+          NOMAD_OFFHOST_RESTORE_PUBLIC_KEY_PEM: ${{ secrets.NOMAD_OFFHOST_RESTORE_PUBLIC_KEY_PEM }}
+          NOMAD_OFFHOST_RESTORE_ISSUER_ID: ${{ vars.NOMAD_OFFHOST_RESTORE_ISSUER_ID }}
+          NOMAD_HR_FAULT_MATRIX_PUBLIC_KEY_PEM: ${{ secrets.NOMAD_HR_FAULT_MATRIX_PUBLIC_KEY_PEM }}
+          NOMAD_HR_FAULT_MATRIX_ISSUER_ID: ${{ vars.NOMAD_HR_FAULT_MATRIX_ISSUER_ID }}
+          NOMAD_PERFORMANCE_PUBLIC_KEY_PEM: ${{ secrets.NOMAD_PERFORMANCE_PUBLIC_KEY_PEM }}
+          NOMAD_PERFORMANCE_ISSUER_ID: ${{ vars.NOMAD_PERFORMANCE_ISSUER_ID }}
+          NOMAD_OWNER_AUTHORITY_CUTOVER_PUBLIC_KEY_PEM: ${{ secrets.NOMAD_OWNER_AUTHORITY_CUTOVER_PUBLIC_KEY_PEM }}
+          NOMAD_OWNER_AUTHORITY_CUTOVER_ISSUER_ID: ${{ vars.NOMAD_OWNER_AUTHORITY_CUTOVER_ISSUER_ID }}
+          NOMAD_OWNER_PRODUCTION_RELEASE_PUBLIC_KEY_PEM: ${{ secrets.NOMAD_OWNER_PRODUCTION_RELEASE_PUBLIC_KEY_PEM }}
+          NOMAD_OWNER_PRODUCTION_RELEASE_ISSUER_ID: ${{ vars.NOMAD_OWNER_PRODUCTION_RELEASE_ISSUER_ID }}
+          TRUSTED_EVIDENCE: ${{ secrets.NOMAD_PRODUCTION_ATTESTATIONS_JSON }}
+        run: |
+          if [ -z "$TRUSTED_EVIDENCE" ]; then echo 'Protected release evidence absent' >&2; exit 1; fi
+          printf '%s' "$TRUSTED_EVIDENCE" > "$RUNNER_TEMP/release-attestations.json"
+          python scripts/sqlite_c8_production_gate.py --coverage "$RUNNER_TEMP/acceptance.json" --inventory docs/production/c8/acceptance_inventory.json --attestations "$RUNNER_TEMP/release-attestations.json" --checkout-sha "$(git rev-parse HEAD)" --pr-head-sha "$SUBJECT"
