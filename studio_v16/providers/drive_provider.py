@@ -25,7 +25,12 @@ class DriveRevisionProvider:
         # require a separately supplied pinned-revision client; never fall back
         # to unpinned connector content.
         pinned = getattr(self._client, 'read_revision', None)
-        data = pinned(file_id, revision) if pinned is not None else self._client.readback(file_id)
+        if not callable(pinned):
+            raise ProviderBlocked('DOCUMENT_CONFLICT')
+        try:
+            data = pinned(file_id, revision)
+        except (ConnectionError, TimeoutError, LookupError, ValueError):
+            raise ProviderBlocked('DOCUMENT_CONFLICT') from None
         if (not isinstance(data, dict) or data.get('revision') != revision
                 or not isinstance(data.get('content'), bytes)
                 or hashlib.sha256(data['content']).hexdigest() != exported_sha256):
