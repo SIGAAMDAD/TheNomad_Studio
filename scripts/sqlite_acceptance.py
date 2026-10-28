@@ -113,6 +113,7 @@ def execute_case(inventory, case_id, source_sha, runner):
     if not isinstance(observed, dict):
         raise ValueError('malformed test runner result')
     result.update({'tests': tests, 'kind': spec['kind'], 'observed_assertions': assertions,
+                   'commands': [[sys.executable, '-m', 'unittest', name] for name in tests],
                    'execution': observed})
     # Every named method must actually execute exactly once; skips and collection
     # errors are never treated as passes, including when unittest exits zero.
@@ -121,7 +122,7 @@ def execute_case(inventory, case_id, source_sha, runner):
               and observed.get('exit_code') == 0)
     result['status'] = 'EXECUTED_PASS' if passed else 'EXECUTED_FAIL'
     result['evidence_uri'] = 'sha256:' + hashlib.sha256(
-        json.dumps(observed, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+        json.dumps(result, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
     return result
 
 
@@ -168,6 +169,8 @@ def main(argv=None):
     parser.add_argument('--family', action='append', default=[])
     parser.add_argument('--json', type=Path, help='write local report to this path')
     args = parser.parse_args(argv)
+    if args.family and not args.check_map and not args.run_case:
+        args.run_mapped = True
     if not args.check_map and not args.family and not args.run_case and not args.run_mapped:
         parser.error('select --check-map or at least one --family')
     try:

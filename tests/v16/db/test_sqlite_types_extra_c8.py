@@ -24,6 +24,9 @@ class SQLiteTypesExtraC8(unittest.TestCase):
         stamp = '2026-10-27T23:59:59.123456Z'
         value = {'z': [3, {'title': '한글'}], 'a': 1}
         text = canonical(value)
+        reordered = {'a': 1, 'z': [3, {'title': '한글'}]}
+        self.assertEqual(text, canonical(reordered))
+        self.assertEqual(epoch_us('2026-10-28T00:59:59.123456+01:00'), epoch_us(stamp))
         scopes = path_scope(['tests/v16/', 'studio_v16/db/', 'tests/v16/'])
         amount = money_units(Decimal('123456.7891'))
         with self.owner.write() as (db, _):

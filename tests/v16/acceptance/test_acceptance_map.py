@@ -104,6 +104,13 @@ class CaseExecutionTests(unittest.TestCase):
         self.assertEqual(receipt['independent_qa'], 'NOT_RUN')
         self.assertTrue(receipt['evidence_uri'].startswith('sha256:'))
 
+    def test_evidence_digest_binds_source_and_case(self):
+        observed = {'tests_run': 1, 'failures': 0, 'errors': 0, 'skipped': 0, 'exit_code': 0}
+        one = execute_case(self.inventory, 'TX-01', self.sha, lambda _: observed)
+        two = execute_case(self.inventory, 'TX-01', 'b' * 40, lambda _: observed)
+        self.assertNotEqual(one['evidence_uri'], two['evidence_uri'])
+        self.assertEqual(one['commands'][0][-1], self.case['execution']['tests'][0])
+
     def test_skip_or_failure_cannot_pass(self):
         for observed in ({'tests_run': 1, 'failures': 0, 'errors': 0, 'skipped': 1, 'exit_code': 0},
                          {'tests_run': 0, 'failures': 0, 'errors': 1, 'skipped': 0, 'exit_code': 1},

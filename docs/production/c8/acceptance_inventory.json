@@ -58,11 +58,25 @@
       "required_evidence": "ISO UTC to epoch-us, 64-bit generation, JSON canonical hash, `text[]` path scopes, Decimal scaled currency exact; no lossy values",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: ISO UTC to epoch-us, 64-bit generation, JSON canonical hash, `text[]` path scopes, Decimal scaled currency exact; no lossy values",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fixture mapping; independent QA remains separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_types_extra_c8.SQLiteTypesExtraC8.test_types_roundtrip_without_loss",
+          "tests.v16.db.test_sqlite_types_extra_c8.SQLiteTypesExtraC8.test_invalid_money_is_not_silently_rounded",
+          "tests.v16.db.test_sqlite_types_extra_c8.SQLiteTypesExtraC8.test_invalid_timestamps_integer_and_json_are_rejected",
+          "tests.v16.db.test_sqlite_types_extra_c8.SQLiteTypesExtraC8.test_noncanonical_scopes_rejected"
+        ],
+        "assertions": [
+          "Roundtrip UTC microseconds including offset, 64-bit integer limit, canonical UTF-8 JSON, canonical scoped paths and exact scaled decimal currency through strict SQLite table.",
+          "Reject invalid timestamps, out-of-range integers, duplicate/nonfinite JSON, invalid paths, floats and fractional precision loss."
+        ]
+      }
     },
     {
       "case_id": "SQLITE-03",
@@ -241,11 +255,21 @@
       "required_evidence": "SQLite rollback, no published acknowledgement/effect",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: SQLite rollback, no published acknowledgement/effect",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fixture mapping; independent QA remains a separate gate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_extra_c8.SQLiteSameCommandC8.test_claim_process_exit_before_commit_rolls_back_every_effect"
+        ],
+        "assertions": [
+          "A process exits after the claim inserts transactional records but before commit; restart finds no attempts, leases, command results, journal events or outbox messages, database checks pass and a retry commits."
+        ]
+      }
     },
     {
       "case_id": "TX-07",
@@ -365,7 +389,7 @@
       "required_evidence": "exact duplicate idempotent; changed payload with same identity denied",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A03",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
@@ -374,8 +398,20 @@
           "path": "tests/v16/db/test_sqlite_publication_c8.py"
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fixture mapping; independent QA remains separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_publication_c8.SQLitePublicationC8.test_concurrent_reservations_one_result",
+          "tests.v16.db.test_sqlite_publication_extra_c8.PublicationIdentityExtraC8.test_changed_payload_with_same_publication_identity_is_rejected"
+        ],
+        "assertions": [
+          "Twelve concurrent identical publication reservations produce one committed result and eleven duplicates.",
+          "Changing the intent under the same publication identity is rejected and preserves one intent and outbox item."
+        ]
+      }
     },
     {
       "case_id": "PUB-04",

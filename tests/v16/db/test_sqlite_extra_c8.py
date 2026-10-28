@@ -4,6 +4,7 @@ from pathlib import Path
 import shutil
 import select
 import json
+import hashlib
 import sqlite3
 import subprocess
 import sys
@@ -29,6 +30,40 @@ class SQLiteSameCommandC8(unittest.TestCase):
             self.assertEqual(db.execute('SELECT COUNT(*) FROM attempts').fetchone()[0], 1)
             self.assertEqual(db.execute('SELECT COUNT(*) FROM resource_leases').fetchone()[0], 1)
             self.assertEqual(db.execute('SELECT COUNT(*) FROM command_results').fetchone()[0], 1)
+
+    def test_claim_process_exit_before_commit_rolls_back_every_effect(self):
+        command = self.claim()
+        path = self.owner.path
+        self.owner.close()
+        code = """
+from contextlib import contextmanager
+import json, os, sys
+from studio_v16.db.sqlite.connection import ConnectionOwner
+from studio_v16.db.sqlite.store import SQLiteStore
+from tests.v16.db.test_sqlite_commands_c8 import CTX
+owner = ConnectionOwner(sys.argv[1])
+original_write = owner.write
+@contextmanager
+def crash_before_commit():
+    with original_write() as transaction:
+        yield transaction
+        os._exit(0)
+owner.write = crash_before_commit
+SQLiteStore(owner, apply_migrations=False).execute(json.loads(sys.argv[2]), CTX)
+os._exit(8)
+"""
+        child = subprocess.run([sys.executable, '-c', code, str(path), json.dumps(command)],
+                               capture_output=True, text=True, timeout=20)
+        self.assertEqual(child.returncode, 0, child.stderr)
+        recovered = ConnectionOwner(path)
+        self.addCleanup(recovered.close)
+        store = SQLiteStore(recovered)
+        with recovered.connection(readonly=True) as db:
+            for table in ('attempts', 'resource_leases', 'command_results', 'event_journal', 'outbox'):
+                self.assertEqual(db.execute('SELECT COUNT(*) FROM ' + table).fetchone()[0], 0, table)
+            self.assertEqual(db.execute('PRAGMA integrity_check').fetchone(), ('ok',))
+            self.assertEqual(db.execute('PRAGMA foreign_key_check').fetchall(), [])
+        self.assertEqual(store.execute(command, fixtures.CTX)['result'], 'COMMITTED')
 
     def test_claim_committed_before_process_exit_replays_as_duplicate(self):
         command = self.claim()
@@ -68,6 +103,28 @@ class SQLiteProcessAndMigrationC8(unittest.TestCase):
         self.owner = ConnectionOwner(self.root / 'authority.db')
         self.addCleanup(self.owner.close)
         migrate(self.owner)
+
+    def test_all_baseline_relations_and_migration_digests_survive_replay(self):
+        baseline = {'schema_migrations', 'principals', 'jobs', 'job_dependencies', 'decisions',
+                    'grants', 'worker_assignments', 'attempts', 'resource_leases', 'event_journal',
+                    'delivery_effects', 'inbox_cursors', 'outbox', 'publication_keys',
+                    'source_publications', 'document_publications', 'reviews', 'audit_anchors',
+                    'budget_reservations', 'recovery_checkpoints', 'command_results', 'resume_capsules',
+                    'shadow_imports', 'authority_mode', 'publication_intents'}
+        self.assertEqual(len(baseline), 25)
+        expected_digests = {path.stem: hashlib.sha256(path.read_bytes()).hexdigest()
+                            for path in MIGRATIONS.glob('[0-9][0-9][0-9][0-9]_*.sql')}
+        with self.owner.connection(readonly=True) as db:
+            before = dict(db.execute('SELECT version,checksum FROM schema_migrations'))
+            relations = {row[1]: row for row in db.execute('PRAGMA table_list') if row[2] == 'table'}
+            self.assertTrue(baseline <= relations.keys(), baseline - relations.keys())
+            for table in baseline:
+                self.assertEqual(relations[table][-1], 1, table)
+            self.assertEqual(before, expected_digests)
+            self.assertEqual(db.execute('PRAGMA foreign_key_check').fetchall(), [])
+        self.assertEqual(migrate(self.owner), [])
+        with self.owner.connection(readonly=True) as db:
+            self.assertEqual(dict(db.execute('SELECT version,checksum FROM schema_migrations')), before)
 
     def test_duplicate_active_assignment_is_rejected_atomically(self):
         with self.owner.write() as (db, _):
