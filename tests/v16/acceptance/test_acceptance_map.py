@@ -65,7 +65,8 @@ class CheckoutTests(unittest.TestCase):
             git('config', 'user.name', 'test')
             git('config', 'user.email', 'test@example.invalid')
             (root / 'source.py').write_text('x = 1\n')
-            git('add', 'source.py')
+            (root / '.gitignore').write_text('ignored.py\n')
+            git('add', 'source.py', '.gitignore')
             git('commit', '-qm', 'fixture')
             expected = git('rev-parse', 'HEAD').stdout.strip()
             cache = root / 'tests' / '__pycache__'
@@ -76,6 +77,10 @@ class CheckoutTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'clean source SHA'):
                 clean_head(root)
             (root / 'other.py').unlink()
+            (root / 'ignored.py').write_text('x = 2\n')
+            with self.assertRaisesRegex(ValueError, 'clean source SHA'):
+                clean_head(root)
+            (root / 'ignored.py').unlink()
             (root / 'source.py').write_text('x = 3\n')
             with self.assertRaisesRegex(ValueError, 'clean source SHA'):
                 clean_head(root)

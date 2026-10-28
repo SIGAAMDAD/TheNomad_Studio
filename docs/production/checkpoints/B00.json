@@ -1,0 +1,24 @@
+{
+  "task": "B00",
+  "status": "BLOCKED_EXTERNAL",
+  "base_sha": "e625e3140697ca57bc49e01cf3daede8d73c5f62",
+  "proposal": [
+    "docs/production/contracts/B00_CONTENT_CONTRACT_PROPOSAL.md",
+    "docs/production/contracts/CONTENT_MANIFEST_1_PROPOSED.xsd",
+    "docs/production/contracts/CONTENT_MANIFEST_1_EXAMPLE.xml"
+  ],
+  "validation": [
+    {
+      "command": "PLAN/validate_plan.py --source SOURCE/TheNomad_Studio",
+      "exit_code": 0,
+      "result": "19 frozen source hashes match"
+    },
+    {
+      "command": "lxml XMLSchema validation of valid fixture and invalid ID rejection",
+      "exit_code": 0,
+      "lxml_version": "6.1.1"
+    }
+  ],
+  "blocked_reason": "Owner acceptance of proposed identity, override and rollout policy plus independent architecture review are required before B01 freeze.",
+  "next_action": "Obtain owner and architecture review of the exact proposal and XSD; record accepted version before B01."
+}

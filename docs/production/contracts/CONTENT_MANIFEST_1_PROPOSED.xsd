@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:simpleType name="moduleId"><xs:restriction base="xs:string"><xs:pattern value="[a-z][a-z0-9_]{0,31}"/></xs:restriction></xs:simpleType>
+  <xs:simpleType name="contentId"><xs:restriction base="xs:string"><xs:pattern value="[a-z][a-z0-9_]{0,31}:[a-z][a-z0-9_.-]{0,127}"/></xs:restriction></xs:simpleType>
+  <xs:simpleType name="gitSha"><xs:restriction base="xs:string"><xs:pattern value="[0-9a-f]{40}"/></xs:restriction></xs:simpleType>
+  <xs:simpleType name="digest"><xs:restriction base="xs:string"><xs:pattern value="[0-9a-f]{64}"/></xs:restriction></xs:simpleType>
+  <xs:simpleType name="kind"><xs:restriction base="xs:string">
+    <xs:enumeration value="location"/><xs:enumeration value="quest"/><xs:enumeration value="character"/>
+    <xs:enumeration value="dialogue"/><xs:enumeration value="asset"/><xs:enumeration value="audio"/>
+    <xs:enumeration value="feature"/><xs:enumeration value="other"/>
+  </xs:restriction></xs:simpleType>
+  <xs:complexType name="entity"><xs:sequence><xs:element name="entity" type="entity" minOccurs="0" maxOccurs="unbounded"/></xs:sequence>
+    <xs:attribute name="id" type="contentId" use="required"/><xs:attribute name="kind" type="kind" use="required"/>
+    <xs:attribute name="digest" type="digest" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="edge"><xs:attribute name="from" type="contentId" use="required"/><xs:attribute name="to" type="contentId" use="required"/>
+    <xs:attribute name="type" use="required"><xs:simpleType><xs:restriction base="xs:string">
+      <xs:enumeration value="REQUIRES"/><xs:enumeration value="USES"/><xs:enumeration value="PRODUCES"/><xs:enumeration value="INVALIDATES"/>
+    </xs:restriction></xs:simpleType></xs:attribute>
+  </xs:complexType>
+  <xs:element name="package"><xs:complexType><xs:sequence>
+    <xs:element name="entities"><xs:complexType><xs:sequence><xs:element name="entity" type="entity" minOccurs="1" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+    <xs:element name="edges"><xs:complexType><xs:sequence><xs:element name="edge" type="edge" minOccurs="0" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+  </xs:sequence><xs:attribute name="schema" use="required" fixed="CONTENT-MANIFEST/1"/>
+    <xs:attribute name="module" type="moduleId" use="required"/><xs:attribute name="source_sha" type="gitSha" use="required"/>
+  </xs:complexType></xs:element>
+</xs:schema>

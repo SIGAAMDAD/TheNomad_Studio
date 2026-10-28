@@ -268,7 +268,7 @@
       "required_evidence": "exactly one delivery effect and nondecreasing **sequence** cursor; no leap over unseen mandatory messages",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
@@ -282,8 +282,18 @@
           "scope_and_gap": "FakeJournal replay and stale ACK; no real SQLite reconnect or cursor ordering."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fixture mapping; deployed transport and independent QA remain separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_communications_extra_c8.SQLiteInboxReplayC8.test_duplicate_delivery_ordered_ack_and_reconnect"
+        ],
+        "assertions": [
+          "Duplicate routing does not create extra events or deliveries; ACK replay after reconnect is idempotent, cannot leap ahead, and the sequence cursor never decreases."
+        ]
+      }
     },
     {
       "case_id": "TX-06",
@@ -703,7 +713,7 @@
       "required_evidence": "One inbox effect and idempotent cursor advance",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A04",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
@@ -712,8 +722,18 @@
           "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fixture mapping; deployed transport and independent QA remain separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_communications_extra_c8.SQLiteInboxReplayC8.test_duplicate_delivery_ordered_ack_and_reconnect"
+        ],
+        "assertions": [
+          "Duplicate routing does not create extra events or deliveries; ACK replay after reconnect is idempotent, cannot leap ahead, and the sequence cursor never decreases."
+        ]
+      }
     },
     {
       "case_id": "CM-02",

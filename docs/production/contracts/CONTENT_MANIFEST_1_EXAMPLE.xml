@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package schema="CONTENT-MANIFEST/1" module="base_game" source_sha="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">
+  <entities>
+    <entity id="base_game:location.galakas" kind="location" digest="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb">
+      <entity id="base_game:quest.market" kind="quest" digest="cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"/>
+    </entity>
+  </entities>
+  <edges>
+    <edge from="base_game:quest.market" to="base_game:location.galakas" type="REQUIRES"/>
+  </edges>
+</package>

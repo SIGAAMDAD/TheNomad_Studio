@@ -1,16 +1,17 @@
 {
   "task": "A01",
   "status": "OPEN",
-  "base_sha": "dad13f999da4d18bec56d3a5e42b974a449e761a",
+  "base_sha": "e625e3140697ca57bc49e01cf3daede8d73c5f62",
   "completed": [
     "Fail-closed map checker validates case set, assertion mapping, and inventory subject consistency",
     "Runner executes fully mapped case tests on clean Git checkout, blocks skips, captures local evidence summary and exact subject SHA",
     "CI invokes acceptance test suite and fails when mapped tests fail or cases remain unmapped",
     "TX-07 mapped to real SQLite child-process commit/replay fixture",
-    "Runner binds its evidence digest to source, case and test result; family selection executes mapped tests"
+    "Runner binds its evidence digest to source, case and test result; family selection executes mapped tests",
+    "Evidence command records actual unittest harness; isolated bytecode cache and ignored-source checks protect source binding"
   ],
   "remaining": [
-    "Map and verify remaining 67 cases; external gates and independent QA remain separate"
+    "Map and verify remaining 65 cases; external gates and independent QA remain separate"
   ],
   "validation": [
     {
@@ -43,6 +44,16 @@
       "command": "temporary clean Git fixture: python scripts/sqlite_acceptance.py --run-mapped",
       "exit_code": 1,
       "reason": "9 local case mappings pass, 67 cases unverified; synthetic fixture SHA"
+    },
+    {
+      "command": "temporary clean Git fixture: python scripts/sqlite_acceptance.py --run-mapped",
+      "exit_code": 1,
+      "reason": "11 local case mappings pass; 65 cases unverified; synthetic fixture SHA"
+    },
+    {
+      "command": "python -m unittest discover -s tests/v16/acceptance -p test_*.py -q",
+      "exit_code": 0,
+      "tests": 17
     }
   ],
   "ci_impact": "SQLite C8 workflow intentionally fails until all required cases are mapped and pass."
