@@ -926,10 +926,16 @@
       "required_evidence": "Exact SHA+test evidence required; rejects fabricated proof",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A04",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Exact SHA+test evidence required; rejects fabricated proof",
+      "existing_assertions": [
+        {
+          "test": "IndependentMergeGateTests.test_revoked_self_review_tamper_and_replay_rejected",
+          "path": "tests/v16/acceptance/test_sqlite_ci_separation.py",
+          "scope_and_gap": "Local signed exact-checkout verifier rejects revoked nonce, self-review, payload tampering and stale subject; independent issuance and real QA receipts are still missing."
+        }
+      ],
+      "gap": "Partial local evidence only; independent or external acceptance remains unverified.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1080,10 +1086,16 @@
       "required_evidence": "Addressed DB notification, approved Drive pinned revision and readback",
       "external_class": "VERIFY_EXTERNAL_RELEVANCE",
       "primary_task": "A04",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Addressed DB notification, approved Drive pinned revision and readback",
+      "existing_assertions": [
+        {
+          "test": "PinTests.test_exact_pinned_revision_readback",
+          "path": "tests/v16/providers/test_drive_pinned_readback.py",
+          "scope_and_gap": "Pinned Drive revision readback and mismatch are locally tested; addressed cross-department DB notification and a live independently read Drive document remain unverified."
+        }
+      ],
+      "gap": "Partial local evidence only; independent or external acceptance remains unverified.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1477,10 +1489,16 @@
       "required_evidence": "Independent monitoring path detects degraded service or explicitly marks undetected until configured; no invented guarantee",
       "external_class": "VERIFY_EXTERNAL_RELEVANCE",
       "primary_task": "A06",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Independent monitoring path detects degraded service or explicitly marks undetected until configured; no invented guarantee",
+      "existing_assertions": [
+        {
+          "test": "MonitorTests.test_stale_or_future_sample_denied",
+          "path": "tests/v16/gateway/test_external_monitor.py",
+          "scope_and_gap": "Local external monitor policy rejects a stale health capture; independent monitor deployment, simultaneous external outage and observed alert delivery are unverified."
+        }
+      ],
+      "gap": "Partial local evidence only; independent or external acceptance remains unverified.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1853,10 +1871,16 @@
       "required_evidence": "Safe terminal YIELD, buffered evidence, blocked outbound until recovered",
       "external_class": "VERIFY_EXTERNAL_RELEVANCE",
       "primary_task": "A10",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Safe terminal YIELD, buffered evidence, blocked outbound until recovered",
+      "existing_assertions": [
+        {
+          "test": "SQLiteResponseExtraC8.test_response_yields_with_claim_failure_and_no_false_completion",
+          "path": "tests/v16/db/test_sqlite_response_extra_c8.py",
+          "scope_and_gap": "SQLite response YIELD without false completion passes; buffered external evidence and full Git/Drive outage/recovery need live validation."
+        }
+      ],
+      "gap": "Partial local evidence only; independent or external acceptance remains unverified.",
       "reviewer_verdict": "NOT_REVIEWED"
     }
   ],
