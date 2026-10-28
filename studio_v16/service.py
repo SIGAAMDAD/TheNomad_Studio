@@ -47,7 +47,7 @@ class FileAudit:
 class SQLiteService:
     def __init__(self, config: dict, *, evidence_loader=None):
         expected = {'database', 'audit_path', 'tls_cert', 'tls_key', 'tls_ca', 'client_fingerprints',
-                    'repository_remotes', 'source_routes', 'host', 'port', 'monitor_principal'}
+                    'repository_remotes', 'source_routes', 'host', 'port', 'monitor_principal', 'worker_principals'}
         if set(config) != expected:
             raise ValueError('strict service configuration required')
         if config['host'] != '127.0.0.1' or type(config['port']) is not int or not 1 <= config['port'] <= 65535:
@@ -57,8 +57,15 @@ class SQLiteService:
             raise ValueError('absolute mTLS file paths required')
         self.host, self.port = config['host'], config['port']
         self.monitor_principal = config['monitor_principal']
-        if not isinstance(self.monitor_principal, str) or not self.monitor_principal or self.monitor_principal not in config['client_fingerprints'].values():
-            raise ValueError('monitor requires an independently allowed mTLS principal')
+        workers = config['worker_principals']
+        if (not isinstance(workers, list) or not workers or not all(isinstance(w, str) and w for w in workers)
+                or len(workers) != len(set(workers))
+                or any(w not in config['client_fingerprints'].values() for w in workers)):
+            raise ValueError('explicit worker mTLS identities required')
+        if (not isinstance(self.monitor_principal, str) or not self.monitor_principal
+                or self.monitor_principal not in config['client_fingerprints'].values()
+                or self.monitor_principal in workers):
+            raise ValueError('independent dedicated monitoring identity required')
         self._evidence_configured = evidence_loader is not None
         self.identities = MTLSIdentity(config['client_fingerprints'])
         self.audit = None

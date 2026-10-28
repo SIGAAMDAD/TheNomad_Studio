@@ -17,9 +17,9 @@ class ServiceSmokeTests(unittest.TestCase):
             'audit_path': str(self.root / 'audit.jsonl'),
             'tls_cert': str(self.root / 'tls.crt'), 'tls_key': str(self.root / 'tls.key'),
             'tls_ca': str(self.root / 'ca.crt'),
-            'client_fingerprints': {'a' * 64: 'worker_one'},
+            'client_fingerprints': {'a' * 64: 'worker_one', 'b' * 64: 'monitor_one'},
             'repository_remotes': {}, 'source_routes': [],
-            'host': '127.0.0.1', 'port': 18555, 'monitor_principal': 'worker_one'
+            'host': '127.0.0.1', 'port': 18555, 'monitor_principal': 'monitor_one', 'worker_principals': ['worker_one']
         }
 
     def test_sqlite_shadow_health_and_fail_closed(self):
@@ -42,6 +42,11 @@ class ServiceSmokeTests(unittest.TestCase):
     def test_foreign_config_keys_rejected(self):
         self.config['owner_override'] = True
         with self.assertRaisesRegex(ValueError, 'strict service configuration'):
+            SQLiteService(self.config)
+
+    def test_worker_certificate_cannot_double_as_monitor(self):
+        self.config['monitor_principal'] = 'worker_one'
+        with self.assertRaisesRegex(ValueError, 'independent dedicated monitoring identity'):
             SQLiteService(self.config)
 
     def test_public_listener_is_rejected(self):

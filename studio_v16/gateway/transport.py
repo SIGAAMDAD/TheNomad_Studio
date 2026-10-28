@@ -99,7 +99,7 @@ def make_handler(gateway: Gateway, identity: MTLSIdentity, *, recovery=None, hea
                 self.send_error(404)
                 return
             principal = identity.authenticate(self.connection)
-            if principal is None:
+            if principal is None or principal.principal_id in monitor_principals:
                 self.send_error(403)
                 return
             try:
