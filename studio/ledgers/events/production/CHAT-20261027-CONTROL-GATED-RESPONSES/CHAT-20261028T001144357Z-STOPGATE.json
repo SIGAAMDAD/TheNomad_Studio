@@ -1,0 +1,49 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261028T001144357Z-STOPGATE",
+  "recorded_at_utc": "2026-10-28T00:11:44.357Z",
+  "request_id": "CHAT-20261027-CONTROL-GATED-RESPONSES",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Verified mismatch: existing V1.5 worker kernel allows each response to terminate after assigned work; hyperscale shift plan treats authenticated STOP principally as shift/runner control and AUTO_STOP_ON_EMPTY, not a strict per-response stop gate. Owner clarified intended START = manual worker prompt; active worker performs multiple authorized jobs and inbox reads within a response; normal final response only after verified STOP/DRAIN, except forced platform/tool/budget/safety boundary with durable YIELDED. Recommend contract addendum for control-gated multi-job response loops, periodic control reads and audit card, no pseudo push signal or indefinite execution guarantee. No source/config changes.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261028T001144357Z-STOPGATE",
+  "todo": [
+    {
+      "id": "SHIFT-STOP-SEMANTICS",
+      "description": "Freeze worker response completion predicate normal_stop_requires_verified_STOP_DRAIN, distinguish forced YIELD reasons and disallow auto-stop-on-empty in owner-controlled mode",
+      "state": "OPEN"
+    },
+    {
+      "id": "MULTIJOB-LOOP",
+      "description": "Amend worker kernel/launcher prompts: after completing one job claim next authorized ready job within same active attempt, check inbox and stop epoch at real tool checkpoints",
+      "state": "OPEN"
+    },
+    {
+      "id": "STOP-QA",
+      "description": "Test multiple jobs in one response, STOP during work, DRAIN behavior, stale STOP replay, idle/no ready work, budget/platform boundary, card and receipt integrity",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "Existing shift execution contract reviewed",
+      "status": "PASS"
+    },
+    {
+      "name": "Existing V1.5 prompt kernel reviewed",
+      "status": "PASS"
+    },
+    {
+      "name": "Control-gated multi-job execution implemented",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
