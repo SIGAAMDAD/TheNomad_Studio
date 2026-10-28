@@ -35,7 +35,7 @@ class DriveRevisionProvider:
                     exported_sha256=target['exported_sha256'])
 
     def publish(self,intent,payload):
-        if not self._enabled or self._authorized is None or self._authorized(intent) is not True:
+        if not self._enabled or self._authorized is None:
             raise ProviderBlocked('CUTOVER_NOT_APPROVED')
         target=intent['target']
         if hashlib.sha256(payload).hexdigest()!=target['exported_sha256'] or len(payload)>16*1024*1024:
@@ -44,6 +44,8 @@ class DriveRevisionProvider:
         if found is not None:return found
         if self.revision(target['file_id'])!=target['expected_revision']:
             raise ProviderBlocked('DOCUMENT_CONFLICT')
+        if self._authorized(intent) is not True:
+            raise ProviderBlocked('CUTOVER_NOT_APPROVED')
         try:
             self._client.update_if_revision(target['file_id'],target['expected_revision'],payload,
                                             intent['idempotency_key'])
@@ -56,3 +58,19 @@ class DriveRevisionProvider:
         found=self.readback(intent)
         if found is None: raise ProviderBlocked('RECONCILE_REQUIRED')
         return found
+
+    def recovery_readback(self, intent):
+        """Trusted current state, including proved absence and terminal mismatch."""
+        target = intent['target']
+        data = self._client.readback(target['file_id'])
+        if not isinstance(data, dict) or not isinstance(data.get('revision'), str) or not data['revision']:
+            return {'state': 'UNKNOWN'}
+        if data['revision'] == target['expected_revision']:
+            return {'state': 'ABSENT', 'evidence': dict(file_id=target['file_id'], revision=data['revision'])}
+        if not isinstance(data.get('content'), bytes):
+            return {'state': 'UNKNOWN'}
+        observed = dict(file_id=target['file_id'], revision=data['revision'],
+                        exported_sha256=hashlib.sha256(data['content']).hexdigest())
+        if data.get('idempotency_key') != intent['idempotency_key'] or observed['exported_sha256'] != target['exported_sha256']:
+            return {'state': 'CONFLICT'}
+        return {'state': 'PRESENT', 'observed': observed}

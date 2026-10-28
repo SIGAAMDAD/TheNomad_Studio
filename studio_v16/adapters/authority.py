@@ -10,7 +10,7 @@ from studio_v16.gateway.gateway import AdmissionError
 from studio_v16.db.publication import PublicationDenied
 
 
-class PostgresAuthority:
+class DurableAuthority:
     def __init__(self, store, *, authoritative_evidence=None):
         self._store = store
         self._evidence = authoritative_evidence
@@ -73,3 +73,7 @@ class PostgresAuthority:
                                                      state,state_revision,receipt)
         except (AdmissionError, LookupError, KeyError):
             return False
+
+
+# Existing imports remain compatible; no backend decision is made by workers.
+PostgresAuthority = DurableAuthority

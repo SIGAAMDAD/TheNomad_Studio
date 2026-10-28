@@ -5,15 +5,18 @@
   "branch": "studio/v16-sqlite-unified",
   "source_base_sha": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
   "source_head_at_run_start": "fa14928ea36ba68fe607448d690cc00bb64488c1",
-  "current_checkpoint": "C3",
+  "current_checkpoint": "C4",
   "completed_checkpoints": [],
   "checkpoint_contract_revision": "DB-STORAGE/2-SQLITE DRAFT",
   "files_changed_in_latest_checkpoint": [
-    "studio_v16/db/sqlite/store.py",
-    "studio_v16/db/storage_protocol.py",
-    "studio_v16/db/factory.py",
-    "studio_v16/db/__init__.py",
-    "studio_v16/adapters/runtime.py"
+    "studio_v16/db/sqlite/publication.py",
+    "studio_v16/db/sqlite/recovery.py",
+    "studio_v16/db/sqlite/migrations/0003_dispatch_retry.sql",
+    "studio_v16/gateway/recovery.py",
+    "studio_v16/gateway/transport.py",
+    "studio_v16/providers/git_provider.py",
+    "studio_v16/providers/drive_provider.py",
+    "studio_v16/adapters/authority.py"
   ],
   "tests": [
     {
@@ -41,13 +44,14 @@
     "live_github_drive_credentials": "PENDING",
     "active_cutover": "NOT_AUTHORIZED"
   },
-  "next_specific_edit": "C3: implement SQLite publication state validation, immutable dispatch and recovery-only gateway",
-  "last_checkpoint_parent_sha": "d62230ee77f950e8e142fb8224b2e97924639f5d",
+  "next_specific_edit": "C4: additive 0004_cm_hr.sql addressed inbox, document fences, leadership and multi-job controls",
+  "last_checkpoint_parent_sha": "03d2afea9d203a985ecb2817b0ac7a2bb7b0df4d",
   "note": "Do not embed the SHA of this file's own commit in the file; report actual HEAD after commit.",
   "implemented_checkpoints": [
     "C0",
     "C1",
-    "C2"
+    "C2",
+    "C3"
   ],
   "frozen_files": {
     "count": 19,
@@ -63,10 +67,20 @@
   "acceptance_gates": {
     "C0": "STATIC_HASH_CHECK_ONLY; tests deferred",
     "C1": "IMPLEMENTED_UNTESTED; schema execution and fault/concurrency gates deferred",
-    "C2": "IMPLEMENTED_UNTESTED; publication surfaces follow in C3; runtime suites deferred"
+    "C2": "IMPLEMENTED_UNTESTED; publication surfaces follow in C3; runtime suites deferred",
+    "C3": "IMPLEMENTED_UNTESTED; provider fault/revocation/concurrency acceptance suites deferred"
   },
   "runtime_requirements": {
     "sqlite_minimum": "3.45.0",
     "platform": "POSIX local service filesystem"
-  }
+  },
+  "migration_order": [
+    "0001_core_sqlite",
+    "0002_publication_sqlite",
+    "0003_dispatch_retry"
+  ],
+  "next_verification_commands": [
+    "python -m compileall -q studio_v16",
+    "git diff --check"
+  ]
 }

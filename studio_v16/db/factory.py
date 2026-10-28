@@ -12,6 +12,7 @@ class StorageConfig:
     topology: str = 'local'
     busy_ms: int = 1000
     queue_limit: int = 64
+    recovery_principals: tuple[str, ...] = ()
 
 
 def create_store(config: StorageConfig, *, postgres_connect=None) -> DurableStore:
@@ -25,7 +26,7 @@ def create_store(config: StorageConfig, *, postgres_connect=None) -> DurableStor
         owner = ConnectionOwner(config.database, topology=config.topology,
                                 busy_ms=config.busy_ms, queue_limit=config.queue_limit)
         try:
-            return SQLiteStore(owner)
+            return SQLiteStore(owner, recovery_principals=config.recovery_principals)
         except BaseException:
             owner.close()
             raise

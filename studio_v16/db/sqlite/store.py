@@ -9,18 +9,21 @@ from ..store import (COMMAND_VALIDATOR, EVENT_VALIDATOR, RESUME_VALIDATOR,
 from .connection import ConnectionOwner, Unavailable
 from .migrate import migrate
 from .types import canonical, epoch_us, integer, parse_json
+from .publication import SQLitePublication
+from .recovery import SQLiteRecovery
 
 
 def digest(value):
     return hashlib.sha256(canonical(value).encode('utf-8')).hexdigest()
 
 
-class SQLiteStore:
+class SQLiteStore(SQLiteRecovery, SQLitePublication):
     _result = staticmethod(PostgresStore._result)
     _deny_if_untrusted = staticmethod(PostgresStore._deny_if_untrusted)
 
-    def __init__(self, owner: ConnectionOwner, *, apply_migrations=True):
+    def __init__(self, owner: ConnectionOwner, *, apply_migrations=True, recovery_principals=()):
         self.owner = owner
+        self.recovery_principals = frozenset(recovery_principals)
         if apply_migrations:
             migrate(owner)
 
@@ -29,9 +32,9 @@ class SQLiteStore:
 
     def _principal(self, conn, context):
         self._deny_if_untrusted(context)
-        row = conn.execute('SELECT status FROM principals WHERE principal_id=?',
+        row = conn.execute('SELECT status,kind FROM principals WHERE principal_id=?',
                            (context.principal_id,)).fetchone()
-        if not row or row[0] != 'ACTIVE':
+        if not row or row[0] != 'ACTIVE' or row[1] == 'RECOVERY_READBACK' or context.principal_id in self.recovery_principals:
             raise Denied('IDENTITY_UNVERIFIED')
 
     def _authority(self, conn, cmd, ctx, operation, now, *, require_attempt=True):
