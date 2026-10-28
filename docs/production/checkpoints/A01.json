@@ -1,0 +1,32 @@
+{
+  "task": "A01",
+  "status": "OPEN",
+  "base_sha": "ee39907d0d638fa87ba51f418fce8627943b5c65",
+  "completed": [
+    "Fail-closed map checker reports duplicates, missing IDs, stale inventory subjects, unexplained passes and unresolved cases",
+    "Unit tests cover malformed rows, filtering and negative paths"
+  ],
+  "remaining": [
+    "Implement per-case execution and exact tested source SHA, provenance, environment and evidence receipts",
+    "Distinguish skipped/failed tests and block false passes",
+    "Integrate suitable CI entrypoint; map all assertions without silently passing gaps",
+    "Finish A00 before claiming A01 complete"
+  ],
+  "validation": [
+    {
+      "command": "python -m unittest discover -s tests/v16/acceptance -p test_*.py -v",
+      "exit_code": 0,
+      "tests": 8
+    },
+    {
+      "command": "python scripts/sqlite_acceptance.py --check-map --json /tmp/c8-map.json",
+      "exit_code": 1,
+      "reason": "76 requirements unverified; expected fail-closed result"
+    },
+    {
+      "command": "python scripts/sqlite_c8_validate.py",
+      "exit_code": 0,
+      "tests": 220
+    }
+  ]
+}
