@@ -1565,11 +1565,34 @@
       "required_evidence": "Quarantine only affected subtree; exact affected jobs identified; safe work continues",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A08",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Quarantine only affected subtree; exact affected jobs identified; safe work continues",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "existing_assertions": [
+        {
+          "test": "SQLiteQuarantineScopeC8.test_approved_diamond_quarantine_blocks_only_affected_subtree",
+          "path": "tests/v16/db/test_sqlite_quarantine_scope_c8.py",
+          "scope_and_gap": "Real-file exact dependency closure, unaffected work and unauthorized cross-department atomic rollback."
+        },
+        {
+          "test": "SQLiteQuarantineScopeC8.test_missing_other_department_owner_scope_rolls_back_every_job",
+          "path": "tests/v16/db/test_sqlite_quarantine_scope_c8.py",
+          "scope_and_gap": "Real-file exact dependency closure, unaffected work and unauthorized cross-department atomic rollback."
+        }
+      ],
+      "gap": "Complete local recursive subtree quarantine and owner-scope rollback; independently deployed owner authorization and downstream alert verification remain separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_quarantine_scope_c8.SQLiteQuarantineScopeC8.test_approved_diamond_quarantine_blocks_only_affected_subtree",
+          "tests.v16.db.test_sqlite_quarantine_scope_c8.SQLiteQuarantineScopeC8.test_missing_other_department_owner_scope_rolls_back_every_job"
+        ],
+        "assertions": [
+          "In an approved diamond dependency graph, recursive quarantine identifies each of root, two children and shared descendant exactly once; all four enter BLOCKED while the unrelated READY job stays runnable, foreign keys remain sound.",
+          "When an affected descendant belongs to another department not within the requesting owner's scope, the entire quarantine transaction is rejected and every job remains READY with no partial mutation; dependency scheduling stays consistent."
+        ]
+      }
     },
     {
       "case_id": "HR-FAULT-24",
