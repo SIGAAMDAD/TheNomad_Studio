@@ -1,0 +1,54 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261028T000834103Z-BOOTSEQUENCE",
+  "recorded_at_utc": "2026-10-28T00:08:34.103Z",
+  "request_id": "CHAT-20261027-BOOTSTRAP-SEQUENCE",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Reviewed live Studio main config and studio/runtime registry against manual-High bootstrap plan. Advised initializing sources, PostgreSQL/gateway and documents; director/head access and read-only preflight before worker chats; canary first; owner start prompt to create approved DAG/jobs; workers only claim verified jobs and act during invoked chat responses, no background polling/automatic Work event triggered chat. Observed main source_writes=false, auto_ai=false, auto_dispatch=false, main writer cap=2 reviewer cap=1; runtime chat_workers=[] and four recorded jobs. No authorization toggled.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261028T000834103Z-BOOTSEQUENCE",
+  "todo": [
+    {
+      "id": "BOOT",
+      "description": "Integrate and verify V1.6, RC and post-integration patches before operational launch",
+      "state": "OPEN"
+    },
+    {
+      "id": "GATE",
+      "description": "Owner approve authenticated source writer and task authorizations, after independent canary",
+      "state": "OPEN"
+    },
+    {
+      "id": "PILOT",
+      "description": "Run manual canary with observed report-card receipt and two-chat continuation",
+      "state": "OPEN"
+    },
+    {
+      "id": "RAMP",
+      "description": "Increase operational concurrency only after measured acceptance gates",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [],
+  "checks": [
+    {
+      "name": "Current main studio/config.json observed",
+      "status": "PASS"
+    },
+    {
+      "name": "Current studio/runtime worker registry observed",
+      "status": "PASS"
+    },
+    {
+      "name": "Operational pilot initialized and canary passed",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
