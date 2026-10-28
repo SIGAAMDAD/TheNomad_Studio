@@ -1,0 +1,45 @@
+{
+  "schema_id": "MANUAL-WORKER-PROFILES/1",
+  "launch_mode": "USER_OPENED_MANUAL_CHAT",
+  "reasoning": "HIGH",
+  "executable_dispatch_routes": [],
+  "specialties": {
+    "JUNIOR_IMPLEMENTATION": {
+      "scope": "Narrow owned paths; fixtures, scaffolding, simple local tests",
+      "source_access": "LOCAL_PATCH_ONLY"
+    },
+    "MID_LEVEL_ENGINEERING": {
+      "scope": "Complete bounded features and routine repairs; locally verify behavior",
+      "source_access": "LOCAL_PATCH_ONLY"
+    },
+    "SENIOR_DEBUGGING": {
+      "scope": "Reproduce exact failure, root cause and focused regression test",
+      "source_access": "LOCAL_PATCH_ONLY"
+    },
+    "SENIOR_INTEGRATION": {
+      "scope": "Stage independently QA-verified inputs in a local integration worktree; never canonical merge",
+      "source_access": "STAGING_ONLY"
+    },
+    "INDEPENDENT_QA": {
+      "scope": "Read-only source audit at exact subject hash; PASS or REWORK with evidence",
+      "source_access": "READ_ONLY"
+    },
+    "PRINCIPAL_ESCALATION": {
+      "scope": "Architecture/ABI/concurrency findings for human owner decision, no architecture approval",
+      "source_access": "READ_ONLY"
+    },
+    "DEPARTMENT_HEAD": {
+      "scope": "Select specialists, maintain dependency DAG and verify handoffs; no automatic merge",
+      "source_access": "LOCAL_PATCH_ONLY"
+    },
+    "STUDIO_DIRECTOR": {
+      "scope": "Multi-department intake, dependency supervision, hourly/daily human-reviewed summaries",
+      "source_access": "READ_ONLY"
+    },
+    "SPECIALIST": {
+      "scope": "Discipline-specific creative or technical deliverable under exact role manual",
+      "source_access": "LOCAL_PATCH_ONLY"
+    }
+  },
+  "historical_w_stage_profiles": "../contracts/legacy-retirement.v1.json"
+}

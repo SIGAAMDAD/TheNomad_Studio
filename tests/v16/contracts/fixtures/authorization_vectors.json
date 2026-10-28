@@ -1,0 +1,383 @@
+{
+  "cases": [
+    {
+      "case": "structurally_valid_but_no_write_authority",
+      "expected": "CUTOVER_NOT_APPROVED",
+      "request_overrides": {},
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "gateway_down",
+      "expected": "GATEWAY_UNAVAILABLE",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "gateway_online": false
+      }
+    },
+    {
+      "case": "shared_owner_connector",
+      "expected": "UNTRUSTED_CONNECTOR",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "auth_channel": "SHARED_OWNER_CONNECTOR"
+      }
+    },
+    {
+      "case": "self_claimed_head",
+      "expected": "IDENTITY_UNVERIFIED",
+      "request_overrides": {
+        "claimed_principal_id": "principal-director-999"
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "unverified_credential",
+      "expected": "IDENTITY_UNVERIFIED",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "credential_verified": false
+      }
+    },
+    {
+      "case": "missing_grant",
+      "expected": "ACCESS_REQUIRED",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "owner_grant_exists": false
+      }
+    },
+    {
+      "case": "wrong_grant_id",
+      "expected": "ACCESS_REQUIRED",
+      "request_overrides": {
+        "grant_id": "forged-grant-2"
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "unapproved_decision",
+      "expected": "OWNER_APPROVAL_REQUIRED",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "owner_decision_approved": false
+      }
+    },
+    {
+      "case": "wrong_repo",
+      "expected": "INVALID_SCOPE",
+      "request_overrides": {
+        "repo_id": "SIGAAMDAD/TheNomad_GOAP"
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "wrong_worker",
+      "expected": "INVALID_SCOPE",
+      "request_overrides": {
+        "worker_id": "CW-ENG-002"
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "scope_digest_mismatch",
+      "expected": "INVALID_SCOPE",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "grant_scope_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      }
+    },
+    {
+      "case": "policy_revision_drift",
+      "expected": "POLICY_REVISION_MISMATCH",
+      "request_overrides": {
+        "policy_revision": "policy:stale"
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "authority_revision_drift",
+      "expected": "AUTHORITY_REVISION_MISMATCH",
+      "request_overrides": {
+        "authority_revision": "authority:stale"
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "revoked",
+      "expected": "REVOKED_GRANT",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "revoked": true
+      }
+    },
+    {
+      "case": "expired_exact_boundary",
+      "expected": "EXPIRED_GRANT",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "server_now": "2026-10-27T21:00:00Z"
+      }
+    },
+    {
+      "case": "before_issue",
+      "expected": "EXPIRED_GRANT",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "server_now": "2026-10-27T18:59:59Z"
+      }
+    },
+    {
+      "case": "stale_assignment",
+      "expected": "STALE_ASSIGNMENT",
+      "request_overrides": {
+        "assignment_epoch": 1
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "stale_lease",
+      "expected": "STALE_LEASE",
+      "request_overrides": {
+        "lease_generation": 3
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "stale_attempt",
+      "expected": "STALE_LEASE",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "lease_attempt_id": "ATTEMPT-OTHER"
+      }
+    },
+    {
+      "case": "source_sha_changed",
+      "expected": "REBASE_REQUIRED",
+      "request_overrides": {
+        "source_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "wrong_branch",
+      "expected": "INVALID_SCOPE",
+      "request_overrides": {
+        "target_branch": "main"
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "dot_segment",
+      "expected": "INVALID_PATH",
+      "request_overrides": {
+        "target_paths": [
+          "studio/v16/../scripts/studio.py"
+        ]
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "double_slash",
+      "expected": "INVALID_PATH",
+      "request_overrides": {
+        "target_paths": [
+          "studio/v16//contracts/X.md"
+        ]
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "percent_encoding",
+      "expected": "INVALID_PATH",
+      "request_overrides": {
+        "target_paths": [
+          "studio/v16/%2e%2e/scripts/X.py"
+        ]
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "unicode_confusable",
+      "expected": "INVALID_PATH",
+      "request_overrides": {
+        "target_paths": [
+          "studio/v16/contracts/\u0410UTH.md"
+        ]
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "backslash",
+      "expected": "INVALID_PATH",
+      "request_overrides": {
+        "target_paths": [
+          "studio/v16\\..\\scripts\\x.py"
+        ]
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "symlink",
+      "expected": "INVALID_PATH",
+      "request_overrides": {
+        "target_paths": [
+          "studio/v16/contracts/link.md"
+        ]
+      },
+      "trusted_context_overrides": {
+        "git_tree_links": [
+          "studio/v16/contracts/link.md"
+        ]
+      }
+    },
+    {
+      "case": "submodule",
+      "expected": "INVALID_PATH",
+      "request_overrides": {
+        "target_paths": [
+          "studio/v16/contracts/sub"
+        ]
+      },
+      "trusted_context_overrides": {
+        "git_tree_submodules": [
+          "studio/v16/contracts/sub"
+        ]
+      }
+    },
+    {
+      "case": "case_alias",
+      "expected": "INVALID_PATH",
+      "request_overrides": {
+        "target_paths": [
+          "studio/v16/contracts/auth-v16.md"
+        ]
+      },
+      "trusted_context_overrides": {
+        "git_tree_paths": [
+          "studio/v16/contracts/AUTH-V16.md"
+        ]
+      }
+    },
+    {
+      "case": "path_boundary_attack",
+      "expected": "INVALID_SCOPE",
+      "request_overrides": {
+        "target_paths": [
+          "studio/v160/contracts/AUTH-V16.md"
+        ]
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "protected_workflow",
+      "expected": "PROTECTED_PATH",
+      "request_overrides": {
+        "target_paths": [
+          ".github/workflows/studio-check.yml"
+        ]
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "merge_attempt",
+      "expected": "INVALID_SCOPE",
+      "request_overrides": {
+        "operation": "SOURCE_MERGE"
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "cutover_disabled",
+      "expected": "CUTOVER_NOT_APPROVED",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "source_writes_enabled": false
+      }
+    },
+    {
+      "case": "qa_pending",
+      "expected": "QA_PENDING",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "qa_verified": false
+      }
+    },
+    {
+      "case": "self_review",
+      "expected": "SELF_REVIEW",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "qa_reviewer_principal_id": "principal-worker-001"
+      }
+    },
+    {
+      "case": "spending_not_authorized",
+      "expected": "BUDGET_DENIED",
+      "request_overrides": {},
+      "trusted_context_overrides": {
+        "budget_authorized": false
+      }
+    }
+  ],
+  "schema": "AUTH-V16/EVALUATE/1",
+  "synthetic_trusted_gateway_state": {
+    "allowed_operations": [
+      "SOURCE_BRANCH_UPDATE"
+    ],
+    "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "assignment_epoch": 2,
+    "auth_channel": "EXTERNAL_ISOLATED_GATEWAY",
+    "authenticated_principal_id": "principal-worker-001",
+    "authority_revision": "authority:approved-v16-a",
+    "budget_authorized": true,
+    "credential_verified": true,
+    "expires_at": "2026-10-27T21:00:00Z",
+    "gateway_online": true,
+    "git_tree_links": [],
+    "git_tree_paths": [],
+    "git_tree_submodules": [],
+    "grant_id": "GRANT-20261027-A",
+    "grant_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "issued_at": "2026-10-27T19:00:00Z",
+    "job_id": "JOB-V16-A",
+    "lease_attempt_id": "ATTEMPT-20261027-A",
+    "lease_generation": 4,
+    "owned_path_prefixes": [
+      "studio/v16/"
+    ],
+    "owner_decision_approved": true,
+    "owner_grant_exists": true,
+    "policy_revision": "policy:approved-v16-a",
+    "qa_reviewer_principal_id": "principal-qa-002",
+    "qa_verified": true,
+    "repo_id": "SIGAAMDAD/TheNomad_Studio",
+    "revoked": false,
+    "server_now": "2026-10-27T20:00:00Z",
+    "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_writes_enabled": false,
+    "work_branch": "studio/workorders/JOB-V16-A/contract",
+    "worker_id": "CW-ENG-001"
+  },
+  "untrusted_request": {
+    "assignment_epoch": 2,
+    "attempt_id": "ATTEMPT-20261027-A",
+    "authority_revision": "authority:approved-v16-a",
+    "claimed_principal_id": "principal-worker-001",
+    "external_credential_ref": "gateway-session-opaque-001",
+    "grant_id": "GRANT-20261027-A",
+    "job_id": "JOB-V16-A",
+    "lease_generation": 4,
+    "operation": "SOURCE_BRANCH_UPDATE",
+    "policy_revision": "policy:approved-v16-a",
+    "repo_id": "SIGAAMDAD/TheNomad_Studio",
+    "request_id": "REQ-001",
+    "requested_at": "2026-10-27T20:00:00Z",
+    "schema_id": "AUTH-V16/EVALUATE/1",
+    "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "target_branch": "studio/workorders/JOB-V16-A/contract",
+    "target_paths": [
+      "studio/v16/contracts/AUTH-V16.md"
+    ],
+    "worker_id": "CW-ENG-001"
+  }
+}

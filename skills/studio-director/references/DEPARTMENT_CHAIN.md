@@ -4,7 +4,7 @@
 
 `Human Lead Director -> Studio Production Director (coordination) -> Department Head (accountable outcome) -> Workstream Lead / Specialist (single author) -> independent reviewer -> head synthesis -> owner approval (when required)`.
 
-An individual's skill is not a distinct autonomous employee. A department head invokes a role procedure in the same conversation or issues real work to an existing ChatGPT Work/scheduled worker through supported connectors. Do not pretend simultaneous execution occurred merely because parallel tasks were listed. When a direct role is named by the owner, honor that entrypoint and involve heads only where cross-team coordination is needed.
+An individual's skill is not a distinct autonomous employee. A department head invokes a role procedure in the same conversation or prepares a bounded work order for a human to open in a new GPT-6 High chat. Do not pretend simultaneous execution occurred merely because parallel tasks were listed. When a direct role is named by the owner, honor that entrypoint and involve heads only where cross-team coordination is needed.
 
 ## Canonical departments (one home for every role)
 

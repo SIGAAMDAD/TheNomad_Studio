@@ -1,0 +1,204 @@
+{
+  "$id": "urn:nomad:studio:v16:publish-readback:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "properties": {
+        "denial_code": {
+          "const": null
+        },
+        "observed": {
+          "additionalProperties": false,
+          "properties": {
+            "artifact_sha256": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+            },
+            "commit_sha": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/git_sha"
+            },
+            "repo_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/repo"
+            },
+            "tree_sha256": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+            },
+            "work_branch": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/branch"
+            }
+          },
+          "required": [
+            "repo_id",
+            "work_branch",
+            "commit_sha",
+            "tree_sha256",
+            "artifact_sha256"
+          ],
+          "type": "object"
+        },
+        "provider": {
+          "const": "GITHUB"
+        },
+        "status": {
+          "const": "VERIFIED"
+        },
+        "verified_at": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/utc"
+        }
+      }
+    },
+    {
+      "properties": {
+        "denial_code": {
+          "const": null
+        },
+        "observed": {
+          "additionalProperties": false,
+          "properties": {
+            "exported_sha256": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+            },
+            "file_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "revision": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            }
+          },
+          "required": [
+            "file_id",
+            "revision",
+            "exported_sha256"
+          ],
+          "type": "object"
+        },
+        "provider": {
+          "const": "GOOGLE_DRIVE"
+        },
+        "status": {
+          "const": "VERIFIED"
+        },
+        "verified_at": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/utc"
+        }
+      }
+    },
+    {
+      "properties": {
+        "denial_code": {
+          "const": null
+        },
+        "observed": {
+          "const": null
+        },
+        "status": {
+          "enum": [
+            "PREPARED",
+            "EXTERNAL_OBSERVED"
+          ]
+        },
+        "verified_at": {
+          "const": null
+        }
+      }
+    },
+    {
+      "properties": {
+        "denial_code": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/denial_code"
+        },
+        "observed": {
+          "const": null
+        },
+        "status": {
+          "enum": [
+            "CONFLICT",
+            "BLOCKED"
+          ]
+        },
+        "verified_at": {
+          "const": null
+        }
+      }
+    }
+  ],
+  "properties": {
+    "audit_event_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/event_id"
+    },
+    "denial_code": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/denial_code"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "idempotency_key": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+    },
+    "observed": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "provider": {
+      "enum": [
+        "GITHUB",
+        "GOOGLE_DRIVE"
+      ]
+    },
+    "provider_request_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "publication_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "schema_id": {
+      "const": "PUBLISH-V16/READBACK/1"
+    },
+    "status": {
+      "enum": [
+        "PREPARED",
+        "EXTERNAL_OBSERVED",
+        "VERIFIED",
+        "CONFLICT",
+        "BLOCKED"
+      ]
+    },
+    "verified_at": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/utc"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_id",
+    "publication_id",
+    "idempotency_key",
+    "provider",
+    "status",
+    "denial_code",
+    "observed",
+    "provider_request_id",
+    "verified_at",
+    "audit_event_id"
+  ],
+  "title": "Provider readback must be verified before recording effect",
+  "type": "object"
+}

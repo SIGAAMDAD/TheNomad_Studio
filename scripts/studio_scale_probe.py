@@ -4,7 +4,13 @@ import argparse
 import collections
 import json
 import time
-from scripts import studio_comms as comms, studio_inbox as inbox
+if __package__:
+    from scripts import studio_comms as comms, studio_inbox as inbox
+else:
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from scripts import studio_comms as comms, studio_inbox as inbox
 
 def run(workers,events):
     active=comms.chat_registry({"schema_version":1,"workers":[
@@ -39,10 +45,32 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--workers",type=int,default=500)
     ap.add_argument("--events",type=int,default=10000)
+    ap.add_argument("--v16",action="store_true",help="WG-H deterministic V1.6 fake pipeline")
+    ap.add_argument("--all-profiles",action="store_true",help="V1.6 1/5/25/100/500 progression")
+    ap.add_argument("--seed",type=int,default=1729)
+    ap.add_argument("--no-faults",action="store_true")
+    ap.add_argument("--out",help="write JSON report for offline evidence")
     a=ap.parse_args()
+    if a.v16:
+        import sys
+        from pathlib import Path
+        loader = Path(__file__).resolve().parents[1] / "tests/v16/load"
+        sys.path.insert(0, str(loader))
+        from workload import run_profile, run_profiles
+        if not a.all_profiles and a.workers not in (1, 5, 25, 100, 500):
+            ap.error("V1.6 actors must be 1, 5, 25, 100 or 500")
+        report = (run_profiles(seed=a.seed, faults=not a.no_faults)
+                  if a.all_profiles else run_profile(a.workers, seed=a.seed, faults=not a.no_faults))
+        serialized=json.dumps(report,sort_keys=True,indent=2)+"\n"
+        if a.out:
+            dest=Path(a.out)
+            dest.parent.mkdir(parents=True,exist_ok=True)
+            dest.write_text(serialized)
+        print(serialized,end="")
+        return 1 if any(r["abort"] for r in report.get("results",[report])) else 0
     if not 1<=a.workers<=1024 or not 1<=a.events<=100000:
         ap.error("worker/event limits exceeded")
     print(json.dumps(run(a.workers,a.events),sort_keys=True))
 
 if __name__=="__main__":
-    main()
+    raise SystemExit(main())

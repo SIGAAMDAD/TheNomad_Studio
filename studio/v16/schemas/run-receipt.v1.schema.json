@@ -1,0 +1,155 @@
+{
+  "$id": "urn:nomad:studio:v16:run-receipt:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assignment_epoch": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/epoch"
+    },
+    "attempt_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/attempt_id"
+    },
+    "chat_thread_id": {
+      "anyOf": [
+        {
+          "maxLength": 180,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "checkpoint_sha256": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "completed_at": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/utc"
+    },
+    "elapsed_observed_seconds": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "evidence_sha256": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+    },
+    "host_attestation_ref": {
+      "anyOf": [
+        {
+          "maxLength": 180,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "identity_assurance": {
+      "enum": [
+        "UNVERIFIED_SHARED_OWNER",
+        "EXTERNALLY_ATTESTED"
+      ]
+    },
+    "job_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/job_id"
+    },
+    "launch_mode": {
+      "const": "USER_OPENED_MANUAL_CHAT"
+    },
+    "lease_generation": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/generation"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "resume_required": {
+      "type": "boolean"
+    },
+    "schema_id": {
+      "const": "RUN-V16/RECEIPT/1"
+    },
+    "source_base_sha": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/git_sha"
+    },
+    "source_repo": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/repo"
+    },
+    "status": {
+      "enum": [
+        "STARTED",
+        "HEARTBEAT",
+        "CHECKPOINTED",
+        "YIELDED",
+        "SUBMITTED",
+        "STOPPED",
+        "BLOCKED"
+      ]
+    },
+    "tests": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "command": {
+            "maxLength": 180,
+            "minLength": 1,
+            "type": "string"
+          },
+          "evidence_ref": {
+            "$ref": "urn:nomad:studio:v16:common:1#/$defs/uri"
+          },
+          "exit_code": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "command",
+          "exit_code",
+          "evidence_ref"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": false
+    },
+    "worker_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/worker_id"
+    }
+  },
+  "required": [
+    "schema_id",
+    "launch_mode",
+    "attempt_id",
+    "job_id",
+    "worker_id",
+    "assignment_epoch",
+    "lease_generation",
+    "status",
+    "identity_assurance",
+    "chat_thread_id",
+    "host_attestation_ref",
+    "source_repo",
+    "source_base_sha",
+    "checkpoint_sha256",
+    "evidence_sha256",
+    "tests",
+    "elapsed_observed_seconds",
+    "resume_required",
+    "completed_at"
+  ],
+  "title": "Bounded manual execution observation; untrusted until separately verified",
+  "type": "object"
+}

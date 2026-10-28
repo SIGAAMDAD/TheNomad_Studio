@@ -1,0 +1,24 @@
+{
+  "schema_id": "WG-H/ADAPTER-CASES/1",
+  "description": "Adapter-runner scenarios. Real adapters MUST execute on isolated test resources, not return canned fixture values.",
+  "cases": [
+    {"id":"AUTH-UNVERIFIED", "owner":"D", "operation":"authorization", "fault":"unverified_external_credential", "expected":"IDENTITY_UNVERIFIED", "max_external_effects":0},
+    {"id":"AUTH-FORGED-OWNER", "owner":"D", "operation":"authorization", "fault":"forged_owner_approval", "expected":"OWNER_APPROVAL_REQUIRED", "max_external_effects":0},
+    {"id":"AUTH-POLICY-DOWNGRADE", "owner":"D", "operation":"authorization", "fault":"stale_policy_revision", "expected":"POLICY_REVISION_MISMATCH", "max_external_effects":0},
+    {"id":"AUTH-REVOKED", "owner":"D", "operation":"authorization", "fault":"revoked_live_grant", "expected":"REVOKED_GRANT", "max_external_effects":0},
+    {"id":"AUTH-STALE-LEASE", "owner":"D", "operation":"authorization", "fault":"stale_generation", "expected":"STALE_LEASE", "max_external_effects":0},
+    {"id":"AUTH-PATH-TRAVERSAL", "owner":"D", "operation":"authorization", "fault":"traversal_or_symlink_or_submodule", "expected":"INVALID_SCOPE_OR_PATH", "max_external_effects":0},
+    {"id":"AUTH-QA-SELF-REVIEW", "owner":"D", "operation":"authorization", "fault":"same_verified_principal_as_author", "expected":"SELF_REVIEW", "max_external_effects":0},
+    {"id":"DB-CLAIM-RACE", "owner":"C", "operation":"concurrent_claim", "fault":"100_simultaneous_claims_same_job", "expected":"ONE_LEASE_HOLDER", "max_external_effects":0},
+    {"id":"DB-DUP-EVENT", "owner":"C", "operation":"event_replay", "fault":"duplicate_and_out_of_order", "expected":"ONE_LOGICAL_EFFECT", "max_external_effects":0},
+    {"id":"DB-RESTORE", "owner":"C", "operation":"db_restore", "fault":"crash_restore_with_pending_outbox", "expected":"RECOVERED_EXACT", "max_external_effects":0},
+    {"id":"DB-MIGRATION", "owner":"C", "operation":"db_migration", "fault":"down_up_with_fenced_attempt", "expected":"RECOVERED_EXACT", "max_external_effects":0},
+    {"id":"RUNTIME-STALE-ACK", "owner":"F", "operation":"inbox_ack", "fault":"stale_assignment_epoch", "expected":"STALE_ASSIGNMENT", "max_external_effects":0},
+    {"id":"RUNTIME-LEGACY-EVENT", "owner":"F", "operation":"legacy_event", "fault":"attempted_ai_chat_launch", "expected":"INVALID_SCOPE_OR_DISABLED", "max_external_effects":0},
+    {"id":"PUBLISH-TIMEOUT-AFTER-EFFECT", "owner":"G", "operation":"publish", "fault":"timeout_after_committed_source_push", "expected":"VERIFIED_ONE_EFFECT", "max_external_effects":1},
+    {"id":"PUBLISH-DRIVE-PARTIAL", "owner":"G", "operation":"publish", "fault":"partial_drive_write_then_retry", "expected":"VERIFIED_ONE_EFFECT", "max_external_effects":1},
+    {"id":"PUBLISH-DRIVE-CONFLICT", "owner":"G", "operation":"publish", "fault":"drive_revision_changed", "expected":"DOCUMENT_CONFLICT", "max_external_effects":0},
+    {"id":"PUBLISH-MERGE-CONFLICT", "owner":"G", "operation":"publish", "fault":"source_work_branch_head_drift", "expected":"REBASE_REQUIRED", "max_external_effects":0},
+    {"id":"PUBLISH-ARTIFACT-REPLAY", "owner":"G", "operation":"publish", "fault":"same_idempotency_key_changed_artifact", "expected":"IDEMPOTENCY_CONFLICT", "max_external_effects":1}
+  ]
+}

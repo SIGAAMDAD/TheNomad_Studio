@@ -1,0 +1,207 @@
+{
+  "$id": "urn:nomad:studio:v16:publish-intent:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "properties": {
+        "target": {
+          "additionalProperties": false,
+          "properties": {
+            "changed_paths": {
+              "items": {
+                "$ref": "urn:nomad:studio:v16:common:1#/$defs/path"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "operation": {
+              "const": "SOURCE_BRANCH_UPDATE"
+            },
+            "patch_sha256": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+            },
+            "proposed_tree_sha256": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+            },
+            "provider": {
+              "const": "GITHUB"
+            },
+            "repo_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/repo"
+            },
+            "source_base_sha": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/git_sha"
+            },
+            "work_branch": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/branch"
+            }
+          },
+          "required": [
+            "provider",
+            "operation",
+            "repo_id",
+            "work_branch",
+            "source_base_sha",
+            "patch_sha256",
+            "proposed_tree_sha256",
+            "changed_paths"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    {
+      "properties": {
+        "target": {
+          "additionalProperties": false,
+          "properties": {
+            "document_owner_ref": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "expected_revision": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "exported_sha256": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+            },
+            "file_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "operation": {
+              "const": "DRIVE_REVISION_UPDATE"
+            },
+            "provider": {
+              "const": "GOOGLE_DRIVE"
+            }
+          },
+          "required": [
+            "provider",
+            "operation",
+            "file_id",
+            "expected_revision",
+            "exported_sha256",
+            "document_owner_ref"
+          ],
+          "type": "object"
+        }
+      }
+    }
+  ],
+  "properties": {
+    "approved_scope_sha256": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+    },
+    "artifact_sha256": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+    },
+    "assignment_epoch": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/epoch"
+    },
+    "attempt_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/attempt_id"
+    },
+    "authority_revision": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/revision"
+    },
+    "evidence_sha256": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+    },
+    "gateway_mode": {
+      "const": "ISOLATED_GATEWAY"
+    },
+    "grant_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "idempotency_key": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+    },
+    "independent_qa": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_ref": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/uri"
+        },
+        "review_id": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+        },
+        "reviewer_principal_id": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/principal_id"
+        },
+        "source_sha": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/git_sha"
+        },
+        "subject_sha256": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+        },
+        "verdict": {
+          "const": "PASS"
+        }
+      },
+      "required": [
+        "review_id",
+        "reviewer_principal_id",
+        "subject_sha256",
+        "source_sha",
+        "verdict",
+        "evidence_ref"
+      ],
+      "type": "object"
+    },
+    "job_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/job_id"
+    },
+    "lease_generation": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/generation"
+    },
+    "owner_decision_ref": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "policy_revision": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/revision"
+    },
+    "principal_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/principal_id"
+    },
+    "publication_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "requested_at": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/utc"
+    },
+    "schema_id": {
+      "const": "PUBLISH-V16/INTENT/1"
+    },
+    "target": {
+      "type": "object"
+    },
+    "worker_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/worker_id"
+    }
+  },
+  "required": [
+    "schema_id",
+    "publication_id",
+    "idempotency_key",
+    "gateway_mode",
+    "principal_id",
+    "grant_id",
+    "owner_decision_ref",
+    "job_id",
+    "attempt_id",
+    "worker_id",
+    "assignment_epoch",
+    "lease_generation",
+    "authority_revision",
+    "policy_revision",
+    "approved_scope_sha256",
+    "artifact_sha256",
+    "evidence_sha256",
+    "independent_qa",
+    "target",
+    "requested_at"
+  ],
+  "title": "Scoped verified gateway publication request only",
+  "type": "object"
+}

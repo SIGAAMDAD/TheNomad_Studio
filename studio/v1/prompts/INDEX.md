@@ -1,8 +1,8 @@
-# Studio V1.5 — 190 optimized worker launch prompts
+# Studio V1.6 — 174 manual High specialist prompts and 16 historical slot profiles
 
-Load [common execution kernel](../PROMPT_KERNEL_V15.md) once per worker execution; each file below adds one role's unique mission, acceptance and handoffs. 174 specialist roles, S00–S09 scheduled slots, W01–W06 engineering functions. These are **role configurations, not automatically running chats**. Store real approvals, source SHAs and current worker assignment in GitHub state, not duplicated long prompts.
+Load [manual High execution kernel](../../v16/worker/README.md) once per manually opened worker response; each file below adds one role's unique mission, acceptance and handoffs. 174 specialist roles, S00–S09 and W01–W06 historical/manual specialty aliases. These are **role configurations, not automatically running chats**. Store real approvals, source SHAs and current worker assignment in GitHub state, not duplicated long prompts.
 
-## Generalist execution slots
+## Historical slot profiles (ARCHIVE_ONLY; no scheduled/event AI execution)
 - [S00](S00.md) — Production Director and exception aggregation
 - [S01](S01.md) — Design and scoped analysis
 - [S02](S02.md) — Research and systems analysis

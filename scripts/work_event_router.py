@@ -226,10 +226,8 @@ def route_event(event, policy, runtime_jobs=None, config=None):
     if policy["controls"].get("auto_spend_enabled") is not True:
         result.update({"status": "BLOCKED", "reason": "NO_SPEND_AUTHORIZATION"})
         return result
-    # Even a fully enabled policy is not authentication for a Work subscription:
-    # the native Work trigger and authoritative GitHub approvals must be checked.
-    result.update({"status": "CANDIDATE_FOR_NATIVE_WORK_SUBSCRIPTION",
-                   "reason": "RECHECK_EVENT_ACTOR_CI_LEASE_APPROVAL_AND_TASK_MODEL_BEFORE_EXECUTION"})
+    # Legacy flags cannot restore a removed event-triggered AI route.
+    result.update({"status": "BLOCKED", "reason": "MANUAL_CHAT_ONLY"})
     return result
 
 

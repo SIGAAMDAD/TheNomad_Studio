@@ -4,13 +4,13 @@
 
 **Interactive intake:** The owner addresses a director/head/role or asks the Studio to produce an outcome. Identify the lead head from `departments.v4.json`; lookup the specialist in master `ROLE_INDEX.md` or the standalone `departments.v4.json` role registry. Verify existing Issue or record a stable temporary `CHAT-<date>-<slug>` ID if no Issue was authorized. Work through all feasible creative stages directly in the chat; don't stop after providing a delegation plan when the user asked for finished creative content. For work requiring another chat/agent, use only the actual available task/Work/GitHub connectors; otherwise supply complete child work orders as deliverables and retain `WAITING_DISPATCH`.
 
-**GitHub intake:** Inspect the actual Issue and verified owner-approval event in `TheNomad_Studio`. The existing controller creates the unique `FEATURE-N` and child jobs. Existing `studio/runtime` records, rather than the Issue title or a role's preference, govern job assignment and approved scope. Do not create an additional `FEATURE-N` or requeue the same acceptance work. Use verified W01–W05 event PR stages and stage-specific labels for engineering as defined in `studio/workforce/GENERALIST_WORK_SETUP.md`.
+**GitHub intake:** Inspect the actual Issue and verified owner-approval event in `TheNomad_Studio`. The existing controller creates the unique `FEATURE-N` and child jobs. Existing `studio/runtime` records, rather than the Issue title or a role's preference, govern job assignment and approved scope. Do not create an additional `FEATURE-N` or requeue the same acceptance work. W01–W05 event PR labels are archive-only; manually open each approved High worker chat under `studio/v16/worker/README.md`.
 
 ## Allocate reasoning and responsibilities
 
 1. **Discover:** Read only the relevant source/Drive documents, issue context, prior decisions and role manuals. No unrelated role dump or full-repository import.
 2. **Construct dependency DAG:** Define outputs, receiving department, versioned input, immutable artifact, acceptance gates and writer lease. Use one primary author per child and one named reviewer. Mark tasks as parallel only if they have disjoint writable artifacts and frozen shared assumptions.
-3. **Invoke specialists:** For each ready child, read `references/rpg-<role>.md` then execute its discipline-specific procedure. A head may act as the specialist in one conversation, but record the exact role. When the child needs separate Work/scheduled execution, write an approved job and actual handoff; never assert an unseen run occurred.
+3. **Invoke specialists:** For each ready child, read `references/rpg-<role>.md` then execute its discipline-specific procedure. A head may act as the specialist in one conversation, but record the exact role. When a child requires separate execution, write the approved job and a manual High chat handoff; never assert that an unopened chat ran.
 4. **Handoff:** Transfer only compact, source-grounded context: `{parent_issue, job_id, primary_role, department, baseline, contract, inputs, owned_paths, protected_paths, acceptance, artifacts, tests, open_questions, next}`. Preserve any original detailed supporting artifacts at immutable refs, not pasted into every worker context.
 5. **Integrate:** Read partner outputs and actual revisions, reconcile contradictions and return incomplete design to its original author/job. Keep review provenance. Major design decisions return to accountable head; canon/architecture changes return to owner.
 6. **Conclude:** Produce actual requested artifact(s), list links and source versions, note remaining external dependencies, register issues/events and record ledger before each substantive response.
@@ -19,8 +19,8 @@
 
 - **Skill chain (same chat):** Read role manuals in the required order and perform their procedures. This supports sequential multi-role reasoning and revisions without separate agents.
 - **Department chain (multiple roles):** The head owns a dependency graph and distinct authored deliverables; may be one chat or multiple actually launched workers.
-- **GitHub work chain:** Current Studio Issue/Project -> approved feature/job -> work-order PR -> separate source repo branch/PR -> exact-SHA CI -> independent QA -> owner acceptance. A work-order PR never contains game source.
-- **Scheduled chain:** Existing scheduled worker identities load their exact role/job from runtime. A Skill cannot schedule itself, change model/effort, or send email. Invoke actual connectors and verify task readback.
+- **GitHub work chain:** Current Studio Issue/Project -> approved feature/job -> manually opened High chat -> independently published source patch/PR -> exact-SHA CI -> independent QA -> owner acceptance. A work-order PR never contains game source.
+- **Scheduled chain:** Historical scheduled identities are archive-only; ordinary deterministic scheduling may run audits/reports, never AI model execution. A skill cannot launch a chat, change model/effort or send email without authorized connected actions.
 
 ## Job sizing, escalation and context economy
 

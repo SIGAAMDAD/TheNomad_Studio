@@ -1,3 +1,5 @@
+> **Archive-only V1 protocol.** New AI work starts only in manually user-opened GPT-6 High chats following `studio/v16/worker/README.md` and RUN-V16/1; no scheduled/event AI runner is authorized.
+
 # The Nomad Studio V1 — authoritative execution contract
 
 Version: **Studio 1.0.0**. Historical V2/V3/V4 labels refer to pre-launch design iterations; existing wire formats (department ledger schema 4, comms schema 1, runtime schema 1) retain their version numbers for backward compatibility until deliberately migrated.
@@ -8,7 +10,7 @@ Version: **Studio 1.0.0**. Historical V2/V3/V4 labels refer to pre-launch design
 - Studio Production Director (S00): orchestrates heads, cross-department dependencies, ledger reconciliation, hourly audit and 23:00 Central report; **does not merge** source.
 - Department head: long-lived accountable owner of each parent outcome, merges only its own department's fully gated PRs using separately authenticated head identity. Head retains the assignment across ChatGPT run boundaries and reports in-progress child tasks.
 - Specialists: load their role skill, execute the bounded authorized work and preserve source/baseline/evidence; do not self-approve, self-merge or self-unassign an unfinished job.
-- W01–W06: reusable engineering executor/reviewer functions; actual model/effort and native Work event configuration are UI settings, not encoded in GitHub comments.
+- W01–W06: archived engineering specialty aliases; all new AI execution starts only when the human opens a GPT-6 High chat.
 
 ## Mandatory BEGIN / work / END protocol
 

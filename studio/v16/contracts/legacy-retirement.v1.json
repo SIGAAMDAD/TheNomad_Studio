@@ -1,0 +1,36 @@
+{
+  "active_ai_chat_dispatch": false,
+  "allowed_launch_method": "USER_OPENED_MANUAL_CHAT",
+  "contract_version": 1,
+  "dispatch_capability": "NONE",
+  "historical_delivery_authority": "ARCHIVE_ONLY",
+  "historical_message_policy": "PRESERVE_ORIGINAL_RECEIPTS_WITHOUT_REINTERPRETATION",
+  "historical_routes": [
+    {
+      "historical_label": "studio:work:alpha",
+      "legacy_profile": "W01",
+      "manual_specialty": "JUNIOR_IMPLEMENTATION"
+    },
+    {
+      "historical_label": "studio:work:implement",
+      "legacy_profile": "W02",
+      "manual_specialty": "MID_LEVEL_ENGINEERING"
+    },
+    {
+      "historical_label": "studio:work:debug",
+      "legacy_profile": "W03",
+      "manual_specialty": "SENIOR_DEBUGGING"
+    },
+    {
+      "historical_label": "studio:work:integrate",
+      "legacy_profile": "W04",
+      "manual_specialty": "SENIOR_INTEGRATION"
+    },
+    {
+      "historical_label": "studio:work:qa",
+      "legacy_profile": "W05",
+      "manual_specialty": "INDEPENDENT_QA"
+    }
+  ],
+  "schema_id": "RUN-V16/LEGACY_RETIREMENT/1"
+}

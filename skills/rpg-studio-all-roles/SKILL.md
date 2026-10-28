@@ -1,6 +1,6 @@
 ---
 name: rpg-studio-all-roles
-description: Coordinate The Nomad RPG Studio through owner-led department heads and all 174 specialist playbooks. Use for multi-department quests, narrative, design, world, art, audio, engineering, QA, GitHub issue work orders, interactive chat production, event-triggered work, persistent progress ledgers, dependency handoffs and nightly reports. Also execute individual specialist requests with the same evidence and ledger rules.
+description: Coordinate The Nomad RPG Studio through owner-led department heads and all 174 specialist playbooks. Use for multi-department quests, narrative, design, world, art, audio, engineering, QA, GitHub issue work orders, interactive chat production, manual High chat work, persistent progress ledgers, dependency handoffs and nightly reports. Also execute individual specialist requests with the same evidence and ledger rules.
 ---
 
 # The Nomad Studio V1 — Department-led production
@@ -28,7 +28,7 @@ Operate as the relevant **department head or specialist**, with The Nomad's huma
 
 - Current control plane: `SIGAAMDAD/TheNomad_Studio` (`main` governance, `studio/runtime` mutable manifests and receipts).
 - Source workstreams are selected from verified `studio/workforce/source_targets.v1.json`, not guessed from role name: `SIGAAMDAD/Terrain3D`, `NomadFramework`, `The_Nomad`, `NomadMain`, `TheNomad_GOAP`.
-- Respect `studio/config.json`: source and automated paid actions remain disabled until separately authorized. Apply the existing GitHub work-order W01–W05 stage labels and exact-SHA QA when activated.
+- Respect `studio/config.json`: source and automated paid actions remain disabled until separately authorized. Historical W01–W05 labels are archive-only and cannot start a worker; exact-SHA independent QA still applies.
 - Code is `SUBMITTED` only with a real final source commit plus matching report. `VERIFIED` additionally requires passing exact-SHA CI and independent QA; the human owner controls final acceptance. Creative and asset outputs have their own evidence rules in [Review gates](references/REVIEW_GATES.md).
 - Studio skills and instructions cannot themselves launch chats, push commits, schedule tasks or send mail. Invoke actual available connected actions; report `NOT_EXECUTED` when unavailable.
 
@@ -48,4 +48,4 @@ Read [V1 execution relay/continuation](references/STUDIO_V1_EXECUTION.md) and [h
 
 ## V1.5 high-worker execution kernel
 
-Read [V1.5 execution kernel](references/STUDIO_V15_KERNEL.md) for all active work. It supersedes duplicated older status/prompt boilerplate while preserving 174 specialist procedures, exact owner approval, source ownership and current job gates. Send lifecycle evidence only to the immutable journal unless explicitly addressed; no implicit 500-person broadcast. Heads retain long-running parent ownership, and all unfinished runs checkpoint/YIELD. No inactive chat is treated as running.
+Read `studio/v16/worker/README.md` for each manually opened High response. It supersedes duplicated older status/prompt boilerplate while preserving 174 specialist procedures, exact owner approval, source ownership and current job gates. Send lifecycle evidence only to the immutable journal unless explicitly addressed; no implicit 500-person broadcast. Heads retain long-running parent ownership, and all unfinished runs checkpoint/YIELD. No inactive chat is treated as running.

@@ -1,3 +1,5 @@
+> **Historical only:** V1.6 replaces automated AI worker and Work-subscription guidance with `studio/v16/worker/README.md` (manual user-opened High chats). Findings and prior observations remain unchanged as dated historical records.
+
 # The Nomad Studio V1.5 — independent QA and capacity audit
 Audit date: 2026-10-27. Implementation merged in PR #27 at `2c92313ad83369f3c777489f5448c5fd5b25a1fc` (2026-10-27 20:49:17 UTC). Source: `SIGAAMDAD/TheNomad_Studio` `main` baseline `755740cb46b1ea281876c9eeb7ba17385c4e2908`, patch branch `audit/v1-500-worker-qa`.
 

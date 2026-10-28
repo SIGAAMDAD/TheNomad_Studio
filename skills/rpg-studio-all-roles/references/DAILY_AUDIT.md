@@ -2,9 +2,9 @@
 
 ## Cadence and authority
 
-At **23:00 `America/Chicago` every calendar day**, an explicitly configured scheduled Studio audit runs against the authoritative GitHub Issue inventory, `studio/runtime` jobs/slots/receipts/department event ledgers, actual source PRs/commits/CI/QA, and versioned content artifacts in Drive. Use the IANA zone, not a fixed UTC hour, so daylight saving transitions are respected. Reuse an existing scheduled S00 at 23:00 if actually configured, rather than adding an unapproved extra paid worker/task.
+At **23:00 `America/Chicago` every calendar day**, a deterministic scheduled Studio audit runs (without a model execution) against the authoritative GitHub Issue inventory, `studio/runtime` jobs/slots/receipts/department event ledgers, actual source PRs/commits/CI/QA, and versioned content artifacts in Drive. Use the IANA zone, not a fixed UTC hour, so daylight saving transitions are respected. The human opens a High chat if AI synthesis is desired; a deterministic scheduled audit may collect evidence and send a configured report without launching any ChatGPT model.
 
-A Skill alone cannot create the schedule or send the email. The scheduled task must be created/verified through real task controls; Gmail delivery requires an authorized connector and a verified recipient. Record actual sent message ID. If delivery is impossible, retain the report and mark `DAILY_EMAIL_BLOCKED`; don't claim it was delivered.
+A Skill alone cannot create the schedule or send the email. The deterministic scheduler must be configured and verified externally; Gmail delivery requires an authorized connector and a verified recipient. Record actual sent message ID. If delivery is impossible, retain the report and mark `DAILY_EMAIL_BLOCKED`; don't claim it was delivered.
 
 ## Reconciliation algorithm
 

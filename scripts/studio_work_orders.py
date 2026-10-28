@@ -3,8 +3,7 @@
 
 The source-producing job, its target branch and work branch all stay in
 the named source repository. This module never commits source or runs Work.
-A successful decision is merely a candidate for an independently configured
-native Work subscription after live authorization readback.
+This legacy entrypoint is archive-only. All worker launches are manual.
 """
 import re
 import source_targets
@@ -159,6 +158,5 @@ def route_work_order(event, policy, runtime_jobs=None, config=None):
     if policy["controls"].get("auto_spend_enabled") is not True:
         result.update(status="BLOCKED", reason="NO_SPEND_AUTHORIZATION")
         return result
-    result.update(status="CANDIDATE_FOR_NATIVE_WORK_SUBSCRIPTION",
-                  reason="RECHECK_OWNER_APPROVAL_LEASE_CI_SOURCE_PR_AND_BUDGET_IN_WORK")
+    result.update(status="BLOCKED", reason="MANUAL_CHAT_ONLY")
     return result

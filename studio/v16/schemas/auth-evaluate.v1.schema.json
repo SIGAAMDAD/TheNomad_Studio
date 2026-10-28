@@ -1,0 +1,95 @@
+{
+  "$id": "urn:nomad:studio:v16:auth-evaluate:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assignment_epoch": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/epoch"
+    },
+    "attempt_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/attempt_id"
+    },
+    "authority_revision": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/revision"
+    },
+    "claimed_principal_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/principal_id"
+    },
+    "external_credential_ref": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "grant_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "job_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/job_id"
+    },
+    "lease_generation": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/generation"
+    },
+    "operation": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/operation"
+    },
+    "policy_revision": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/revision"
+    },
+    "repo_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/repo"
+    },
+    "request_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "requested_at": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/utc"
+    },
+    "schema_id": {
+      "const": "AUTH-V16/EVALUATE/1"
+    },
+    "source_base_sha": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/git_sha"
+    },
+    "target_branch": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/branch"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "target_paths": {
+      "items": {
+        "$ref": "urn:nomad:studio:v16:common:1#/$defs/path"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "worker_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/worker_id"
+    }
+  },
+  "required": [
+    "schema_id",
+    "request_id",
+    "claimed_principal_id",
+    "external_credential_ref",
+    "job_id",
+    "worker_id",
+    "attempt_id",
+    "grant_id",
+    "operation",
+    "repo_id",
+    "target_paths",
+    "target_branch",
+    "source_base_sha",
+    "assignment_epoch",
+    "lease_generation",
+    "authority_revision",
+    "policy_revision",
+    "requested_at"
+  ],
+  "title": "Untrusted client request to gateway; no proof of identity",
+  "type": "object"
+}

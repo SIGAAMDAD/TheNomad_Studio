@@ -1,3 +1,5 @@
+> **V1.6 migration:** Historical V1 protocol and event vocabulary below are retained for old records only. New AI execution uses the manually user-opened High chat kernel at `studio/v16/worker/README.md`, WG-A `RUN-V16/1` and `AUTH-V16/1`. No recurring, scheduled or PR-event model launch; external writes require independent gateway authority. A report card may state ledger/relay pending when persistence is not actually verified.
+
 # The Nomad Studio V1 — authoritative execution contract
 
 Version: **Studio 1.0.0**. Historical V2/V3/V4 labels refer to pre-launch design iterations; existing wire formats (department ledger schema 4, comms schema 1, runtime schema 1) retain their version numbers for backward compatibility until deliberately migrated.

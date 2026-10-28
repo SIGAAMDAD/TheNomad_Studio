@@ -1,0 +1,134 @@
+{
+  "$id": "urn:nomad:studio:v16:db-result:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "properties": {
+        "commit_sequence": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "denial_code": {
+          "const": null
+        },
+        "result": {
+          "const": "COMMITTED"
+        }
+      }
+    },
+    {
+      "properties": {
+        "denial_code": {
+          "const": null
+        },
+        "result": {
+          "const": "DUPLICATE"
+        }
+      }
+    },
+    {
+      "properties": {
+        "denial_code": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/denial_code"
+        },
+        "result": {
+          "const": "DENIED"
+        }
+      }
+    },
+    {
+      "properties": {
+        "denial_code": {
+          "const": "RETRYABLE_BLOCKED"
+        },
+        "result": {
+          "const": "RETRYABLE_BLOCKED"
+        }
+      }
+    }
+  ],
+  "properties": {
+    "checkpoint_sha256": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "command_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "commit_sequence": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "denial_code": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/denial_code"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "journal_event_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/event_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "lease_generation": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/generation"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "recorded_at": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/utc"
+    },
+    "result": {
+      "enum": [
+        "COMMITTED",
+        "DUPLICATE",
+        "DENIED",
+        "RETRYABLE_BLOCKED"
+      ]
+    },
+    "schema_id": {
+      "const": "DB-CONTRACT/RESULT/1"
+    }
+  },
+  "required": [
+    "schema_id",
+    "command_id",
+    "result",
+    "denial_code",
+    "commit_sequence",
+    "lease_generation",
+    "journal_event_id",
+    "checkpoint_sha256",
+    "recorded_at"
+  ],
+  "title": "Atomic result or denial without provider side effects",
+  "type": "object"
+}

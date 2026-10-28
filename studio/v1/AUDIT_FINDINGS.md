@@ -1,3 +1,5 @@
+> **Historical only:** V1.6 replaces automated AI worker and Work-subscription guidance with `studio/v16/worker/README.md` (manual user-opened High chats). Findings and prior observations remain unchanged as dated historical records.
+
 # Studio 1.0.0 — Repository and Execution Audit
 
 **Observed:** October 27, 2026. **Controller repository:** `SIGAAMDAD/TheNomad_Studio`.

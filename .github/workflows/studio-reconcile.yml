@@ -16,6 +16,7 @@ jobs:
       - name: Checkout controller from default branch
         uses: actions/checkout@v4
         with:
+          ref: main
           persist-credentials: true
           fetch-depth: 0
       - uses: actions/setup-python@v5

@@ -1,0 +1,119 @@
+{
+  "$id": "urn:nomad:studio:v16:auth-decision:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "properties": {
+        "decision": {
+          "const": "ALLOW"
+        },
+        "denial_code": {
+          "const": null
+        },
+        "grant_id": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+        },
+        "verified_principal_id": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/principal_id"
+        }
+      }
+    },
+    {
+      "properties": {
+        "decision": {
+          "const": "DENY"
+        },
+        "denial_code": {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/denial_code"
+        },
+        "grant_id": {
+          "anyOf": [
+            {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verified_principal_id": {
+          "anyOf": [
+            {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/principal_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "properties": {
+    "audit_event_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/event_id"
+    },
+    "decision": {
+      "enum": [
+        "ALLOW",
+        "DENY"
+      ]
+    },
+    "denial_code": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/denial_code"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "evaluated_at": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/utc"
+    },
+    "grant_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "policy_revision": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/revision"
+    },
+    "request_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "schema_id": {
+      "const": "AUTH-V16/DECISION/1"
+    },
+    "verified_principal_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/principal_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_id",
+    "request_id",
+    "decision",
+    "denial_code",
+    "verified_principal_id",
+    "grant_id",
+    "policy_revision",
+    "evaluated_at",
+    "audit_event_id"
+  ],
+  "title": "Gateway-only access outcome with exact denial reason",
+  "type": "object"
+}

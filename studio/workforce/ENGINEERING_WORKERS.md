@@ -1,3 +1,5 @@
+> **Historical only:** V1.6 replaces automated AI worker and Work-subscription guidance with `studio/v16/worker/README.md` (manual user-opened High chats). Findings and prior observations remain unchanged as dated historical records.
+
 # Engineering worker launch prompts — The Nomad Studio
 
 These are **separate copy-ready chat prompts**. Choose GPT-6 Luna Medium for E01–E04, GPT-6 Sol Medium/High for E05–E06 and GPT-6 Sol Medium for E07. Model effort is chosen in the ChatGPT UI, not through prompt text.

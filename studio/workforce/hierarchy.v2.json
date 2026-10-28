@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "status": "DRAFT_REVIEW_ONLY",
-  "title": "The Nomad Studio: event-driven, model-tiered worker hierarchy",
+  "status": "ARCHIVE_ONLY_NO_AI_DISPATCH",
+  "title": "Historical V2 task hierarchy — NOT an active worker launch registry",
   "created_date": "2026-10-26",
   "provenance": {
     "role_library": "skills://rpg-studio-all-roles/references/roles_manifest.json",
@@ -51,56 +51,57 @@
     ],
     "max_writers": 2,
     "max_independent_reviewers": 1,
-    "actual_task_configuration": "NOT_CHANGED",
-    "scheduled_role_routing_note": "S01 dynamically covers systems/technical design formerly on S02; paused S02/S05/S06/S07/S09 slots remain reusable when staffing changes."
+    "actual_task_configuration": "RETIRED_DO_NOT_ACTIVATE",
+    "scheduled_role_routing_note": "S01 dynamically covers systems/technical design formerly on S02; paused S02/S05/S06/S07/S09 slots remain reusable when staffing changes.",
+    "historical_slot_proposal_only": true
   },
   "profiles": {
     "W01": {
       "title": "Junior Alpha Implementation Engineer",
       "model": "GPT-6 Luna",
       "reasoning": "Default",
-      "mode": "event_triggered_work",
-      "activation": "approved alpha source PR; code scaffolding and bounded first passes",
+      "mode": "ARCHIVED_LEGACY_STAGE",
+      "activation": "ARCHIVED ONLY. No task, schedule, PR label or GitHub event may launch an AI chat.",
       "role_contract": "frozen interfaces, junior alpha features, boilerplate, fixtures, targeted tests; exact commit and receipt"
     },
     "W02": {
       "title": "Mid-Level Feature Completion Engineer",
       "model": "GPT-6.1 Terra",
       "reasoning": "Medium",
-      "mode": "event_triggered_work",
-      "activation": "approved implement stage; junior checkpoint or source-ready self-contained feature",
+      "mode": "ARCHIVED_LEGACY_STAGE",
+      "activation": "ARCHIVED ONLY. No task, schedule, PR label or GitHub event may launch an AI chat.",
       "role_contract": "complete conventional features, cross-file bounded changes, refactor, routine debugging, build/negative tests, commit; escalate architectural issues"
     },
     "W03": {
       "title": "Senior Debugging Engineer",
       "model": "GPT-6 Sol",
       "reasoning": "Medium",
-      "mode": "event_triggered_work",
-      "activation": "verified failed CI, crash, or independent QA REWORK",
+      "mode": "ARCHIVED_LEGACY_STAGE",
+      "activation": "ARCHIVED ONLY. No task, schedule, PR label or GitHub event may launch an AI chat.",
       "role_contract": "diagnose difficult failures at exact source SHA, minimal root-cause fixes, regression tests; no uncontrolled integration"
     },
     "W04": {
       "title": "Senior Integration Engineer",
       "model": "GPT-6 Sol",
       "reasoning": "Medium",
-      "mode": "event_triggered_work",
-      "activation": "multiple independently accepted upstream jobs and frozen ABI",
+      "mode": "ARCHIVED_LEGACY_STAGE",
+      "activation": "ARCHIVED ONLY. No task, schedule, PR label or GitHub event may launch an AI chat.",
       "role_contract": "reconcile system boundaries and merge-safe changes, test link/build, publish integration commit; hand defects to W03"
     },
     "W05": {
       "title": "Independent Technical QA Engineer",
       "model": "GPT-6 Sol",
       "reasoning": "Medium",
-      "mode": "event_triggered_work",
-      "activation": "immutable final source SHA after CI and reviewer reservation",
+      "mode": "ARCHIVED_LEGACY_STAGE",
+      "activation": "ARCHIVED ONLY. No task, schedule, PR label or GitHub event may launch an AI chat.",
       "role_contract": "independent exact-SHA review, tests, PASS/REWORK, no source changes"
     },
     "W06": {
       "title": "Principal Architecture and Integration Escalation",
       "model": "GPT-6.1 Sol",
       "reasoning": "High",
-      "mode": "manual_or_reallocated_work",
-      "activation": "explicit human owner escalation only; not a sixth active event worker",
+      "mode": "ARCHIVED_LEGACY_STAGE",
+      "activation": "ARCHIVED ONLY. No task, schedule, PR label or GitHub event may launch an AI chat.",
       "role_contract": "memory/concurrency/ABI or cross-system architecture decisions; owner must accept resulting changes"
     }
   },
@@ -3295,7 +3296,7 @@
     "user_final_authority": true
   },
   "event_trigger_strategy": {
-    "mode": "generalist_hub_work_orders",
+    "mode": "ARCHIVE_ONLY_NO_DISPATCH",
     "trigger_repo": "SIGAAMDAD/TheNomad_Studio",
     "trigger_target_branch": "main",
     "trigger_event": "pull_request_ready_for_review",
@@ -3314,6 +3315,8 @@
     },
     "native_work_subscriptions_installed": false,
     "work_order_publisher_installed": false,
-    "note": "Native Work setup and Work task model selection require user UI action; this policy only validates events."
-  }
+    "note": "Historical PR routing fixture for existing offline tests; WG-G will remove runtime route. Not a ChatGPT execution configuration."
+  },
+  "active_manual_registry": "studio/v16/worker/ROLE_REGISTRY.v1.json",
+  "manual_launch_contract": "studio/v16/worker/README.md"
 }

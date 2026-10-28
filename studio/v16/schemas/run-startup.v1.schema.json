@@ -1,0 +1,117 @@
+{
+  "$id": "urn:nomad:studio:v16:run-startup:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "access_preflight": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "consent_state": {
+            "enum": [
+              "NOT_REQUESTED",
+              "REQUESTED",
+              "CONSENTED",
+              "DECLINED"
+            ]
+          },
+          "operation": {
+            "enum": [
+              "READ",
+              "WRITE"
+            ]
+          },
+          "provider": {
+            "enum": [
+              "GITHUB",
+              "GOOGLE_DRIVE"
+            ]
+          },
+          "reason": {
+            "maxLength": 400,
+            "minLength": 5,
+            "type": "string"
+          },
+          "resource_id": {
+            "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+          }
+        },
+        "required": [
+          "provider",
+          "resource_id",
+          "operation",
+          "reason",
+          "consent_state"
+        ],
+        "type": "object"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": false
+    },
+    "assignment_epoch": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/epoch"
+    },
+    "attempt_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/attempt_id"
+    },
+    "claimed_role_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "execution_mode": {
+      "enum": [
+        "LOCAL_PATCH_ONLY",
+        "ISOLATED_GATEWAY"
+      ]
+    },
+    "external_connector_called": {
+      "const": false
+    },
+    "job_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/job_id"
+    },
+    "launch_mode": {
+      "const": "USER_OPENED_MANUAL_CHAT"
+    },
+    "reasoning": {
+      "const": "HIGH"
+    },
+    "schema_id": {
+      "const": "RUN-V16/STARTUP/1"
+    },
+    "source_archive_sha256": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+    },
+    "source_base_sha": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/git_sha"
+    },
+    "source_repo": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/repo"
+    },
+    "started_at": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/utc"
+    },
+    "worker_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/worker_id"
+    }
+  },
+  "required": [
+    "schema_id",
+    "launch_mode",
+    "reasoning",
+    "execution_mode",
+    "job_id",
+    "worker_id",
+    "attempt_id",
+    "assignment_epoch",
+    "claimed_role_id",
+    "source_repo",
+    "source_base_sha",
+    "source_archive_sha256",
+    "access_preflight",
+    "external_connector_called",
+    "started_at"
+  ],
+  "title": "Explicit first-step manual chat access preflight",
+  "type": "object"
+}

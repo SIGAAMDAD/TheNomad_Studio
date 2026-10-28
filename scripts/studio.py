@@ -219,6 +219,8 @@ def validate(jobs, slots, config):
 
 def dispatch(jobs, slots, config, now=None):
     """Reserve work only; it does not wake, pay, or change scheduled ChatGPT tasks."""
+    if config.get("runtime_authority") == "POSTGRES_ACTIVE":
+        return []  # V1 cannot claim work after the owner-approved authority switch.
     if not config.get("auto_dispatch_enabled", False):
         return []
     now = now or dt.datetime.now(dt.timezone.utc).isoformat()
@@ -392,6 +394,12 @@ def main(argv=None):
     parser.add_argument("--write", action="store_true", help="Persist validated state changes")
     args = parser.parse_args(argv)
     jobs, slots, config = (read(args.root, name) for name in ("jobs.json", "slots.json", "config.json"))
+    if config.get("runtime_authority") not in (None, "LEGACY", "POSTGRES_SHADOW", "POSTGRES_ACTIVE"):
+        print("INVALID_RUNTIME_AUTHORITY_MODE", file=sys.stderr)
+        return 2
+    if config.get("runtime_authority") == "POSTGRES_ACTIVE" and args.write:
+        print("LEGACY_MUTATION_BLOCKED_POSTGRES_AUTHORITY", file=sys.stderr)
+        return 2
     errors = validate(jobs, slots, config)
     if errors:
         print("\n".join(errors), file=sys.stderr)

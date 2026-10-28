@@ -420,6 +420,10 @@ def main(argv=None):
     jobs = load(args.root, "jobs.json")
     slots = load(args.root, "slots.json")
     config = load(args.root, "config.json")
+    if config.get("runtime_authority") not in (None, "LEGACY", "POSTGRES_SHADOW", "POSTGRES_ACTIVE"):
+        raise SystemExit("INVALID_RUNTIME_AUTHORITY_MODE")
+    if config.get("runtime_authority") == "POSTGRES_ACTIVE" and args.write:
+        raise SystemExit("LEGACY_MUTATION_BLOCKED_POSTGRES_AUTHORITY")
     output = {}
     if args.command in ("admit", "status"):
         output["approval_gates"] = reconcile_owner_approval(features, jobs, config)

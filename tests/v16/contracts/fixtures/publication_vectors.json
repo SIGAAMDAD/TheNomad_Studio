@@ -1,0 +1,439 @@
+{
+  "cases": [
+    {
+      "case": "valid_shape_but_cutover_denied",
+      "expected": "CUTOVER_NOT_APPROVED",
+      "intent_overrides": {},
+      "receipt_overrides": {},
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "owner_missing",
+      "expected": "OWNER_APPROVAL_REQUIRED",
+      "intent_overrides": {},
+      "receipt_overrides": {},
+      "trusted_context_overrides": {
+        "owner_approved": false
+      }
+    },
+    {
+      "case": "identity_wrong",
+      "expected": "IDENTITY_UNVERIFIED",
+      "intent_overrides": {},
+      "receipt_overrides": {},
+      "trusted_context_overrides": {
+        "authenticated_principal_id": "someone-else"
+      }
+    },
+    {
+      "case": "qa_unverified",
+      "expected": "QA_PENDING",
+      "intent_overrides": {},
+      "receipt_overrides": {},
+      "trusted_context_overrides": {
+        "qa_attested": false
+      }
+    },
+    {
+      "case": "qa_self_review",
+      "expected": "SELF_REVIEW",
+      "intent_overrides": {
+        "independent_qa": {
+          "evidence_ref": "artifact:qa-report-A",
+          "review_id": "REVIEW-A",
+          "reviewer_principal_id": "principal-worker-001",
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "verdict": "PASS"
+        }
+      },
+      "receipt_overrides": {},
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "source_base_moved",
+      "expected": "REBASE_REQUIRED",
+      "intent_overrides": {},
+      "receipt_overrides": {},
+      "trusted_context_overrides": {
+        "live_source_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    {
+      "case": "epoch_changed",
+      "expected": "STALE_ASSIGNMENT",
+      "intent_overrides": {
+        "assignment_epoch": 1
+      },
+      "receipt_overrides": {},
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "lease_changed",
+      "expected": "STALE_LEASE",
+      "intent_overrides": {
+        "lease_generation": 3
+      },
+      "receipt_overrides": {},
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "wrong_branch",
+      "expected": "INVALID_SCOPE",
+      "intent_overrides": {
+        "target": {
+          "changed_paths": [
+            "studio/v16/contracts/AUTH-V16.md"
+          ],
+          "operation": "SOURCE_BRANCH_UPDATE",
+          "patch_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "proposed_tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "provider": "GITHUB",
+          "repo_id": "SIGAAMDAD/TheNomad_Studio",
+          "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "work_branch": "main"
+        }
+      },
+      "receipt_overrides": {},
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "tamper_patch_hash_replay",
+      "expected": "IDEMPOTENCY_CONFLICT",
+      "intent_overrides": {
+        "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "receipt_overrides": {},
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "qa_subject_changed",
+      "expected": "QA_PENDING",
+      "intent_overrides": {
+        "independent_qa": {
+          "evidence_ref": "artifact:qa-report-A",
+          "review_id": "REVIEW-A",
+          "reviewer_principal_id": "principal-qa-002",
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "subject_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "verdict": "PASS"
+        }
+      },
+      "receipt_overrides": {},
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "fake_readback",
+      "expected": "SOURCE_SHA_MISMATCH",
+      "intent_overrides": {},
+      "receipt_overrides": {
+        "observed": {
+          "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "commit_sha": "0000000000000000000000000000000000000000",
+          "repo_id": "SIGAAMDAD/TheNomad_Studio",
+          "tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "work_branch": "studio/workorders/JOB-V16-A/contract"
+        }
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "artifact_readback_drift",
+      "expected": "SOURCE_SHA_MISMATCH",
+      "intent_overrides": {},
+      "receipt_overrides": {
+        "observed": {
+          "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "commit_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "repo_id": "SIGAAMDAD/TheNomad_Studio",
+          "tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "work_branch": "studio/workorders/JOB-V16-A/contract"
+        }
+      },
+      "trusted_context_overrides": {
+        "trusted_provider_readback": {
+          "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "commit_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "repo_id": "SIGAAMDAD/TheNomad_Studio",
+          "tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "work_branch": "studio/workorders/JOB-V16-A/contract"
+        }
+      }
+    },
+    {
+      "case": "result_provider_changed",
+      "expected": "INVALID_SCOPE",
+      "intent_overrides": {},
+      "receipt_overrides": {
+        "provider": "GOOGLE_DRIVE"
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "readback_unconfirmed",
+      "expected": "RETRYABLE_BLOCKED",
+      "intent_overrides": {},
+      "receipt_overrides": {
+        "observed": null,
+        "status": "PREPARED",
+        "verified_at": null
+      },
+      "trusted_context_overrides": {}
+    },
+    {
+      "case": "gateway_down",
+      "expected": "GATEWAY_UNAVAILABLE",
+      "intent_overrides": {},
+      "receipt_overrides": {},
+      "trusted_context_overrides": {
+        "gateway_online": false
+      }
+    }
+  ],
+  "full_cases": [
+    {
+      "case": "drive_revision_conflict",
+      "expected": "DOCUMENT_CONFLICT",
+      "intent": {
+        "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "assignment_epoch": 2,
+        "attempt_id": "ATTEMPT-20261027-A",
+        "authority_revision": "authority:approved-v16-a",
+        "evidence_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "gateway_mode": "ISOLATED_GATEWAY",
+        "grant_id": "GRANT-20261027-A",
+        "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "independent_qa": {
+          "evidence_ref": "artifact:qa-report-A",
+          "review_id": "REVIEW-A",
+          "reviewer_principal_id": "principal-qa-002",
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "verdict": "PASS"
+        },
+        "job_id": "JOB-V16-A",
+        "lease_generation": 4,
+        "owner_decision_ref": "OWNER-DECISION-001",
+        "policy_revision": "policy:approved-v16-a",
+        "principal_id": "principal-worker-001",
+        "publication_id": "PUB-001",
+        "requested_at": "2026-10-27T20:00:00Z",
+        "schema_id": "PUBLISH-V16/INTENT/1",
+        "target": {
+          "document_owner_ref": "owner-principal-001",
+          "expected_revision": "rev-17",
+          "exported_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "file_id": "drive-file-example-1",
+          "operation": "DRIVE_REVISION_UPDATE",
+          "provider": "GOOGLE_DRIVE"
+        },
+        "worker_id": "CW-ENG-001"
+      },
+      "receipt": {
+        "audit_event_id": "EVT-20261027-0001",
+        "denial_code": null,
+        "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "observed": {
+          "exported_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "file_id": "drive-file-example-1",
+          "revision": "rev-18"
+        },
+        "provider": "GOOGLE_DRIVE",
+        "provider_request_id": "provider-req-1",
+        "publication_id": "PUB-001",
+        "schema_id": "PUBLISH-V16/READBACK/1",
+        "status": "VERIFIED",
+        "verified_at": "2026-10-27T20:00:00Z"
+      },
+      "trusted_context": {
+        "assignment_epoch": 2,
+        "authenticated_principal_id": "principal-worker-001",
+        "authorized_work_branch": "studio/workorders/JOB-V16-A/contract",
+        "gateway_online": true,
+        "lease_generation": 4,
+        "live_drive_revision": "rev-19",
+        "live_source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "owned_path_prefixes": [
+          "studio/v16/"
+        ],
+        "owner_approved": true,
+        "owner_decision_ref": "OWNER-DECISION-001",
+        "publication_enabled": false,
+        "qa_attested": true,
+        "qa_subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "reserved_artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "reserved_idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "trusted_provider_readback": {
+          "exported_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "file_id": "drive-file-example-1",
+          "revision": "rev-18"
+        }
+      }
+    },
+    {
+      "case": "drive_valid_shape_but_cutover_denied",
+      "expected": "CUTOVER_NOT_APPROVED",
+      "intent": {
+        "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "assignment_epoch": 2,
+        "attempt_id": "ATTEMPT-20261027-A",
+        "authority_revision": "authority:approved-v16-a",
+        "evidence_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "gateway_mode": "ISOLATED_GATEWAY",
+        "grant_id": "GRANT-20261027-A",
+        "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "independent_qa": {
+          "evidence_ref": "artifact:qa-report-A",
+          "review_id": "REVIEW-A",
+          "reviewer_principal_id": "principal-qa-002",
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "verdict": "PASS"
+        },
+        "job_id": "JOB-V16-A",
+        "lease_generation": 4,
+        "owner_decision_ref": "OWNER-DECISION-001",
+        "policy_revision": "policy:approved-v16-a",
+        "principal_id": "principal-worker-001",
+        "publication_id": "PUB-001",
+        "requested_at": "2026-10-27T20:00:00Z",
+        "schema_id": "PUBLISH-V16/INTENT/1",
+        "target": {
+          "document_owner_ref": "owner-principal-001",
+          "expected_revision": "rev-17",
+          "exported_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "file_id": "drive-file-example-1",
+          "operation": "DRIVE_REVISION_UPDATE",
+          "provider": "GOOGLE_DRIVE"
+        },
+        "worker_id": "CW-ENG-001"
+      },
+      "receipt": {
+        "audit_event_id": "EVT-20261027-0001",
+        "denial_code": null,
+        "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "observed": {
+          "exported_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "file_id": "drive-file-example-1",
+          "revision": "rev-18"
+        },
+        "provider": "GOOGLE_DRIVE",
+        "provider_request_id": "provider-req-1",
+        "publication_id": "PUB-001",
+        "schema_id": "PUBLISH-V16/READBACK/1",
+        "status": "VERIFIED",
+        "verified_at": "2026-10-27T20:00:00Z"
+      },
+      "trusted_context": {
+        "assignment_epoch": 2,
+        "authenticated_principal_id": "principal-worker-001",
+        "authorized_work_branch": "studio/workorders/JOB-V16-A/contract",
+        "gateway_online": true,
+        "lease_generation": 4,
+        "live_drive_revision": "rev-17",
+        "live_source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "owned_path_prefixes": [
+          "studio/v16/"
+        ],
+        "owner_approved": true,
+        "owner_decision_ref": "OWNER-DECISION-001",
+        "publication_enabled": false,
+        "qa_attested": true,
+        "qa_subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "reserved_artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "reserved_idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "trusted_provider_readback": {
+          "exported_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "file_id": "drive-file-example-1",
+          "revision": "rev-18"
+        }
+      }
+    }
+  ],
+  "intent": {
+    "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "assignment_epoch": 2,
+    "attempt_id": "ATTEMPT-20261027-A",
+    "authority_revision": "authority:approved-v16-a",
+    "evidence_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "gateway_mode": "ISOLATED_GATEWAY",
+    "grant_id": "GRANT-20261027-A",
+    "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "independent_qa": {
+      "evidence_ref": "artifact:qa-report-A",
+      "review_id": "REVIEW-A",
+      "reviewer_principal_id": "principal-qa-002",
+      "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "verdict": "PASS"
+    },
+    "job_id": "JOB-V16-A",
+    "lease_generation": 4,
+    "owner_decision_ref": "OWNER-DECISION-001",
+    "policy_revision": "policy:approved-v16-a",
+    "principal_id": "principal-worker-001",
+    "publication_id": "PUB-001",
+    "requested_at": "2026-10-27T20:00:00Z",
+    "schema_id": "PUBLISH-V16/INTENT/1",
+    "target": {
+      "changed_paths": [
+        "studio/v16/contracts/AUTH-V16.md"
+      ],
+      "operation": "SOURCE_BRANCH_UPDATE",
+      "patch_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "proposed_tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "provider": "GITHUB",
+      "repo_id": "SIGAAMDAD/TheNomad_Studio",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "work_branch": "studio/workorders/JOB-V16-A/contract"
+    },
+    "worker_id": "CW-ENG-001"
+  },
+  "receipt": {
+    "audit_event_id": "EVT-20261027-0001",
+    "denial_code": null,
+    "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "observed": {
+      "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "commit_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "repo_id": "SIGAAMDAD/TheNomad_Studio",
+      "tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "work_branch": "studio/workorders/JOB-V16-A/contract"
+    },
+    "provider": "GITHUB",
+    "provider_request_id": "provider-req-1",
+    "publication_id": "PUB-001",
+    "schema_id": "PUBLISH-V16/READBACK/1",
+    "status": "VERIFIED",
+    "verified_at": "2026-10-27T20:00:00Z"
+  },
+  "synthetic_trusted_gateway_state": {
+    "assignment_epoch": 2,
+    "authenticated_principal_id": "principal-worker-001",
+    "authorized_work_branch": "studio/workorders/JOB-V16-A/contract",
+    "gateway_online": true,
+    "lease_generation": 4,
+    "live_drive_revision": "rev-17",
+    "live_source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "owned_path_prefixes": [
+      "studio/v16/"
+    ],
+    "owner_approved": true,
+    "owner_decision_ref": "OWNER-DECISION-001",
+    "publication_enabled": false,
+    "qa_attested": true,
+    "qa_subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "reserved_artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "reserved_idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "trusted_provider_readback": {
+      "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "commit_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "repo_id": "SIGAAMDAD/TheNomad_Studio",
+      "tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "work_branch": "studio/workorders/JOB-V16-A/contract"
+    }
+  }
+}

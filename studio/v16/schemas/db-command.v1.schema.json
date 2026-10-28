@@ -1,0 +1,375 @@
+{
+  "$id": "urn:nomad:studio:v16:db-command:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "properties": {
+        "command_kind": {
+          "const": "CLAIM"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "expected_lease_generation": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/generation"
+            },
+            "grant_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "lease_expires_at": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/utc"
+            },
+            "owner_decision_ref": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "resource_key": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "source_base_sha": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/git_sha"
+            }
+          },
+          "required": [
+            "source_base_sha",
+            "resource_key",
+            "expected_lease_generation",
+            "lease_expires_at",
+            "owner_decision_ref",
+            "grant_id"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    {
+      "properties": {
+        "command_kind": {
+          "const": "CHECKPOINT"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "artifact_ref": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/uri"
+            },
+            "checkpoint_sha256": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+            },
+            "elapsed_observed_seconds": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "resume_required": {
+              "type": "boolean"
+            },
+            "source_base_sha": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/git_sha"
+            },
+            "state": {
+              "enum": [
+                "STARTED",
+                "HEARTBEAT",
+                "CHECKPOINTED",
+                "YIELDED",
+                "SUBMITTED",
+                "STOPPED"
+              ]
+            }
+          },
+          "required": [
+            "checkpoint_sha256",
+            "artifact_ref",
+            "state",
+            "elapsed_observed_seconds",
+            "resume_required",
+            "source_base_sha"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    {
+      "properties": {
+        "command_kind": {
+          "const": "ACK"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "delivery_assignment_epoch": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/epoch"
+            },
+            "effect_name": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "event_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/event_id"
+            },
+            "recipient_worker_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/worker_id"
+            }
+          },
+          "required": [
+            "event_id",
+            "recipient_worker_id",
+            "delivery_assignment_epoch",
+            "effect_name"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    {
+      "properties": {
+        "command_kind": {
+          "const": "REASSIGN"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "new_assignment_epoch": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/epoch"
+            },
+            "new_lease_generation": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/generation"
+            },
+            "new_worker_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/worker_id"
+            },
+            "revocation_decision_ref": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "transfer_checkpoint_sha256": {
+              "anyOf": [
+                {
+                  "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "new_worker_id",
+            "new_assignment_epoch",
+            "new_lease_generation",
+            "transfer_checkpoint_sha256",
+            "revocation_decision_ref"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    {
+      "properties": {
+        "command_kind": {
+          "const": "RESERVE_PUBLICATION"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "artifact_sha256": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+            },
+            "idempotency_key": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+            },
+            "operation": {
+              "enum": [
+                "SOURCE_BRANCH_UPDATE",
+                "DRIVE_REVISION_UPDATE"
+              ]
+            },
+            "publication_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "source_base_sha": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/git_sha"
+            },
+            "target_ref": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            }
+          },
+          "required": [
+            "publication_id",
+            "idempotency_key",
+            "artifact_sha256",
+            "source_base_sha",
+            "operation",
+            "target_ref"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    {
+      "properties": {
+        "command_kind": {
+          "const": "RECONCILE_PUBLICATION"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "observed_revision": {
+              "anyOf": [
+                {
+                  "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "observed_sha256": {
+              "anyOf": [
+                {
+                  "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "provider_request_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "publication_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "readback_state": {
+              "enum": [
+                "PRESENT",
+                "ABSENT",
+                "CONFLICT"
+              ]
+            }
+          },
+          "required": [
+            "publication_id",
+            "provider_request_id",
+            "readback_state",
+            "observed_revision",
+            "observed_sha256"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    {
+      "properties": {
+        "command_kind": {
+          "const": "OUTBOX_SCHEDULE"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "destination": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "event_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/event_id"
+            },
+            "kind": {
+              "enum": [
+                "NOTICE",
+                "REPORT",
+                "GITHUB_EFFECT",
+                "DRIVE_EFFECT"
+              ]
+            },
+            "payload_sha256": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+            }
+          },
+          "required": [
+            "event_id",
+            "destination",
+            "kind",
+            "payload_sha256"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    {
+      "properties": {
+        "command_kind": {
+          "const": "OUTBOX_ACK"
+        },
+        "payload": {
+          "additionalProperties": false,
+          "properties": {
+            "effect_sha256": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+            },
+            "outbox_id": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            },
+            "provider_ref": {
+              "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+            }
+          },
+          "required": [
+            "outbox_id",
+            "provider_ref",
+            "effect_sha256"
+          ],
+          "type": "object"
+        }
+      }
+    }
+  ],
+  "properties": {
+    "assignment_epoch": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/epoch"
+    },
+    "attempt_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/attempt_id"
+    },
+    "authority_revision": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/revision"
+    },
+    "command_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "command_kind": {
+      "enum": [
+        "CLAIM",
+        "CHECKPOINT",
+        "ACK",
+        "REASSIGN",
+        "RESERVE_PUBLICATION",
+        "RECONCILE_PUBLICATION",
+        "OUTBOX_SCHEDULE",
+        "OUTBOX_ACK"
+      ]
+    },
+    "job_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/job_id"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "schema_id": {
+      "const": "DB-CONTRACT/COMMAND/1"
+    },
+    "worker_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/worker_id"
+    }
+  },
+  "required": [
+    "schema_id",
+    "command_id",
+    "command_kind",
+    "job_id",
+    "attempt_id",
+    "worker_id",
+    "assignment_epoch",
+    "authority_revision",
+    "payload"
+  ],
+  "title": "DB provider-independent atomic transaction intent",
+  "type": "object"
+}

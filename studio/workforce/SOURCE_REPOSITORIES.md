@@ -71,45 +71,15 @@ work branch or language makes an engineering job invalid.
 verified at job admission; observed SHAs in the registry are not
 automatically frozen baselines.
 
-## Worker pull, commit, push and source PR rules
+## Manual High source work and independent publication
 
-1. S00 admits an owner-approved scoped job with exact source repository,
-   workstream, branch, baseline SHA, authorized paths and exclusivity.
-2. W01–W04 fetch from THAT source repository. The work branch is
-   `studio/<JOB_ID>` **inside that same source repository**.
-3. The worker modifies only approved paths, commits/pushes only its
-   work branch and opens/updates a source PR with base equal to the
-   canonical development target. It must never push to source
-   integration branches directly.
-4. Source CI tests the exact source commit. Studio stores immutable
-   source commit SHA, PR URL, CI run, Drive completion report and QA
-   receipt. Studio receives no implementation source.
-5. W02 can continue W01's branch after an exclusive-lease handoff;
-   W03 performs difficult debugging; W04 integrates independently
-   verified systems under a separate integration job; W05 reviews
-   the exact source revision without editing it.
-6. Only the owner accepts and merges changes **inside the source repo**.
+1. The owner/head prepares an approved, bounded job with explicit source repository, workstream, branch, baseline SHA, allowed paths, and independent QA recipient. Source registry metadata alone is not proof of an authenticated grant.
+2. The user **manually opens** GPT-6 High with the source snapshot and role launcher. The worker operates in a local worktree, with no GitHub/Drive calls unless first requesting specific provider, resource/ref/path, READ/WRITE and purpose and receiving explicit consent.
+3. Workers perform all feasible scoped edits, run local tests and export **one batched binary patch** plus manifest, test evidence and response attempt report card. No shared owner/admin connector publication; no automatic source pushes. A local commit is not a verified remote SHA.
+4. After independent exact-patch QA, an independently authenticated owner/head may publish to a noncanonical source work branch through the actual verified gateway/provider and read back exact SHA. Canonical merge is separately owner-gated. QA remains source read-only and engineering integrators remain staging-only. WG-D/G/I own gateway/publisher/cutover deployment.
+5. A new High response is a new `attempt_id`. Continue from `RUN-V16/RESUME/1`, comparing immutable source hash, epoch, lease and owned paths before any authorized external write; relay/ledger writes without readback are `PENDING`.
 
-If a job crosses source boundaries, it must be split into child jobs
-with separately pinned baselines, paths, reviews and explicit
-dependencies. Never push or cherry-pick one repo's code into another
-as an automatic substitute for a planned adapter.
-
-For a new, authorized NomadMain C# job, the source Git flow is:
-
-```bash
-git clone https://github.com/SIGAAMDAD/NomadMain.git
-cd NomadMain
-git fetch origin main
-git switch -c studio/FEATURE-100-MOD-01 <PINNED_MAIN_SHA>
-# Edit only approved mod-specific C# paths, compile and test
-git add Source/Items
-git commit -m "feat(mod): approved mod behavior - FEATURE-100-MOD-01"
-git push -u origin studio/FEATURE-100-MOD-01
-```
-
-This is illustrative only. Do not create/reset or force-push a work
-branch without the source baseline, owner approval and source-write gate.
+If a task spans multiple repositories, split into separately scoped source jobs and independent QA. Never move game code into the Studio control plane or auto-change branches to GitHub defaults.
 
 ## Production dependencies
 
@@ -154,12 +124,8 @@ PR revision through a verified GitHub owner review and merge. See
   remain in effect. Work spending/credentials are separately gated.
 - S00 must acquire source baselines and actual build evidence before
   admitting source jobs. The canonical source registry is not frozen.
-- The reusable W01-W05 native Work tasks may subscribe to *Studio hub
-  work-order PR* activity as a control-plane signal. These PRs contain
-  metadata only; their exact source repository, baseline SHA and source
-  branch are validated against the approved job. All source code commits,
-  source CI and implementation PRs remain exclusively in the actual source
-  repositories. See GENERALIST_WORK_SETUP.md.
-- The reviewed Studio PR routing GitHub Action is only a non-spending
-  audit; it does not itself start native Work executions.
+- Historical W01–W05 event labels are **archive-only**; no Work subscriptions or
+  Studio hub PR events may launch ChatGPT. See GENERALIST_WORK_SETUP.md.
+- WG-G will retire the old PR router and its CI entrypoints; until then,
+  deterministic audit actions have zero authority to launch an AI response.
 - The source-repo-specific commit/QA/owner-merge gates remain binding.

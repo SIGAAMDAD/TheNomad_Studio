@@ -1,0 +1,814 @@
+[
+  {
+    "case": "auth_unknown_field",
+    "schema": "auth-evaluate",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "claimed_principal_id": "principal-worker-001",
+      "external_credential_ref": "gateway-session-opaque-001",
+      "grant_id": "GRANT-20261027-A",
+      "is_owner": true,
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "operation": "SOURCE_BRANCH_UPDATE",
+      "policy_revision": "policy:approved-v16-a",
+      "repo_id": "SIGAAMDAD/TheNomad_Studio",
+      "request_id": "REQ-001",
+      "requested_at": "2026-10-27T20:00:00Z",
+      "schema_id": "AUTH-V16/EVALUATE/1",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "target_branch": "studio/workorders/JOB-V16-A/contract",
+      "target_paths": [
+        "studio/v16/contracts/AUTH-V16.md"
+      ],
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "auth_malformed_sha",
+    "schema": "auth-evaluate",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "claimed_principal_id": "principal-worker-001",
+      "external_credential_ref": "gateway-session-opaque-001",
+      "grant_id": "GRANT-20261027-A",
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "operation": "SOURCE_BRANCH_UPDATE",
+      "policy_revision": "policy:approved-v16-a",
+      "repo_id": "SIGAAMDAD/TheNomad_Studio",
+      "request_id": "REQ-001",
+      "requested_at": "2026-10-27T20:00:00Z",
+      "schema_id": "AUTH-V16/EVALUATE/1",
+      "source_base_sha": "main",
+      "target_branch": "studio/workorders/JOB-V16-A/contract",
+      "target_paths": [
+        "studio/v16/contracts/AUTH-V16.md"
+      ],
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "auth_epoch_zero",
+    "schema": "auth-evaluate",
+    "value": {
+      "assignment_epoch": 0,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "claimed_principal_id": "principal-worker-001",
+      "external_credential_ref": "gateway-session-opaque-001",
+      "grant_id": "GRANT-20261027-A",
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "operation": "SOURCE_BRANCH_UPDATE",
+      "policy_revision": "policy:approved-v16-a",
+      "repo_id": "SIGAAMDAD/TheNomad_Studio",
+      "request_id": "REQ-001",
+      "requested_at": "2026-10-27T20:00:00Z",
+      "schema_id": "AUTH-V16/EVALUATE/1",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "target_branch": "studio/workorders/JOB-V16-A/contract",
+      "target_paths": [
+        "studio/v16/contracts/AUTH-V16.md"
+      ],
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "grant_missing_owner",
+    "schema": "auth-grant",
+    "value": {
+      "allowed_operations": [
+        "SOURCE_BRANCH_UPDATE"
+      ],
+      "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "assignment_epoch": 2,
+      "authority_revision": "authority:approved-v16-a",
+      "expires_at": "2026-10-27T21:00:00Z",
+      "grant_id": "GRANT-20261027-A",
+      "issued_at": "2026-10-27T19:00:00Z",
+      "issuer_principal_id": "owner-principal-001",
+      "issuer_proof_ref": "external-proof-not-trustable-by-parsing",
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "owned_path_prefixes": [
+        "studio/v16/"
+      ],
+      "policy_revision": "policy:approved-v16-a",
+      "principal_id": "principal-worker-001",
+      "repo_id": "SIGAAMDAD/TheNomad_Studio",
+      "revoked_at": null,
+      "schema_id": "AUTH-V16/GRANT/1",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "grant_unknown_role_field",
+    "schema": "auth-grant",
+    "value": {
+      "allowed_operations": [
+        "SOURCE_BRANCH_UPDATE"
+      ],
+      "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "assignment_epoch": 2,
+      "authority_revision": "authority:approved-v16-a",
+      "expires_at": "2026-10-27T21:00:00Z",
+      "grant_id": "GRANT-20261027-A",
+      "issued_at": "2026-10-27T19:00:00Z",
+      "issuer_principal_id": "owner-principal-001",
+      "issuer_proof_ref": "external-proof-not-trustable-by-parsing",
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "owned_path_prefixes": [
+        "studio/v16/"
+      ],
+      "owner_decision_ref": "OWNER-DECISION-001",
+      "policy_revision": "policy:approved-v16-a",
+      "principal_id": "principal-worker-001",
+      "repo_id": "SIGAAMDAD/TheNomad_Studio",
+      "revoked_at": null,
+      "role": "owner",
+      "schema_id": "AUTH-V16/GRANT/1",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "grant_bad_scope_prefix",
+    "schema": "auth-grant",
+    "value": {
+      "allowed_operations": [
+        "SOURCE_BRANCH_UPDATE"
+      ],
+      "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "assignment_epoch": 2,
+      "authority_revision": "authority:approved-v16-a",
+      "expires_at": "2026-10-27T21:00:00Z",
+      "grant_id": "GRANT-20261027-A",
+      "issued_at": "2026-10-27T19:00:00Z",
+      "issuer_principal_id": "owner-principal-001",
+      "issuer_proof_ref": "external-proof-not-trustable-by-parsing",
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "owned_path_prefixes": [
+        "../"
+      ],
+      "owner_decision_ref": "OWNER-DECISION-001",
+      "policy_revision": "policy:approved-v16-a",
+      "principal_id": "principal-worker-001",
+      "repo_id": "SIGAAMDAD/TheNomad_Studio",
+      "revoked_at": null,
+      "schema_id": "AUTH-V16/GRANT/1",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "deny_unknown_code",
+    "schema": "auth-decision",
+    "value": {
+      "audit_event_id": "EVT-20261027-0001",
+      "decision": "DENY",
+      "denial_code": "LOL",
+      "evaluated_at": "2026-10-27T20:00:00Z",
+      "grant_id": null,
+      "policy_revision": "policy:approved-v16-a",
+      "request_id": "REQ-001",
+      "schema_id": "AUTH-V16/DECISION/1",
+      "verified_principal_id": null
+    }
+  },
+  {
+    "case": "allow_with_denial",
+    "schema": "auth-decision",
+    "value": {
+      "audit_event_id": "EVT-20261027-0001",
+      "decision": "ALLOW",
+      "denial_code": "STALE_LEASE",
+      "evaluated_at": "2026-10-27T20:00:00Z",
+      "grant_id": "GRANT-20261027-A",
+      "policy_revision": "policy:approved-v16-a",
+      "request_id": "REQ-001",
+      "schema_id": "AUTH-V16/DECISION/1",
+      "verified_principal_id": "principal-worker-001"
+    }
+  },
+  {
+    "case": "db_extra_payload",
+    "schema": "db-command",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "command_id": "CMD-001",
+      "command_kind": "CLAIM",
+      "job_id": "JOB-V16-A",
+      "payload": {
+        "expected_lease_generation": 4,
+        "grant_id": "GRANT-20261027-A",
+        "lease_expires_at": "2026-10-27T20:00:00Z",
+        "model_trigger": "PR_READY",
+        "owner_decision_ref": "OWNER-DECISION-001",
+        "resource_key": "studio-v16-contracts",
+        "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "schema_id": "DB-CONTRACT/COMMAND/1",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "db_wrong_payload_kind",
+    "schema": "db-command",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "command_id": "CMD-001",
+      "command_kind": "ACK",
+      "job_id": "JOB-V16-A",
+      "payload": {
+        "expected_lease_generation": 4,
+        "grant_id": "GRANT-20261027-A",
+        "lease_expires_at": "2026-10-27T20:00:00Z",
+        "owner_decision_ref": "OWNER-DECISION-001",
+        "resource_key": "studio-v16-contracts",
+        "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "schema_id": "DB-CONTRACT/COMMAND/1",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "db_negative_elapsed",
+    "schema": "db-command",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "command_id": "CMD-001",
+      "command_kind": "CHECKPOINT",
+      "job_id": "JOB-V16-A",
+      "payload": {
+        "artifact_ref": "artifact:checkpoint-1",
+        "checkpoint_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "elapsed_observed_seconds": -1,
+        "resume_required": true,
+        "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "state": "YIELDED"
+      },
+      "schema_id": "DB-CONTRACT/COMMAND/1",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "db_unknown_kind",
+    "schema": "db-command",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "command_id": "CMD-001",
+      "command_kind": "LAUNCH_CHAT",
+      "job_id": "JOB-V16-A",
+      "payload": {
+        "expected_lease_generation": 4,
+        "grant_id": "GRANT-20261027-A",
+        "lease_expires_at": "2026-10-27T20:00:00Z",
+        "owner_decision_ref": "OWNER-DECISION-001",
+        "resource_key": "studio-v16-contracts",
+        "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "schema_id": "DB-CONTRACT/COMMAND/1",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "db_result_committed_no_sequence",
+    "schema": "db-result",
+    "value": {
+      "checkpoint_sha256": null,
+      "command_id": "CMD-001",
+      "commit_sequence": null,
+      "denial_code": null,
+      "journal_event_id": "EVT-20261027-0001",
+      "lease_generation": 4,
+      "recorded_at": "2026-10-27T20:00:00Z",
+      "result": "COMMITTED",
+      "schema_id": "DB-CONTRACT/RESULT/1"
+    }
+  },
+  {
+    "case": "event_ai_launch",
+    "schema": "db-event",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "causation_id": null,
+      "correlation_id": "manual-job-001",
+      "delivery_authority": "ARCHIVE_ONLY",
+      "event_id": "EVT-20261027-0001",
+      "event_kind": "LAUNCH_CHAT",
+      "immutable_evidence_ref": "artifact:handoff-A",
+      "job_id": "JOB-V16-A",
+      "payload_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "producer": "manual-worker-submission",
+      "received_at": "2026-10-27T20:00:00Z",
+      "schema_id": "DB-CONTRACT/EVENT/1",
+      "transport_delivery_id": "manual-handoff-001",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "event_privilege",
+    "schema": "db-event",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "causation_id": null,
+      "correlation_id": "manual-job-001",
+      "delivery_authority": "EXECUTE",
+      "event_id": "EVT-20261027-0001",
+      "event_kind": "SUBMITTED",
+      "immutable_evidence_ref": "artifact:handoff-A",
+      "job_id": "JOB-V16-A",
+      "payload_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "producer": "manual-worker-submission",
+      "received_at": "2026-10-27T20:00:00Z",
+      "schema_id": "DB-CONTRACT/EVENT/1",
+      "transport_delivery_id": "manual-handoff-001",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "run_scheduled",
+    "schema": "run-startup",
+    "value": {
+      "access_preflight": [],
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "claimed_role_id": "rpg-ai-programmer",
+      "execution_mode": "LOCAL_PATCH_ONLY",
+      "external_connector_called": false,
+      "job_id": "JOB-V16-A",
+      "launch_mode": "PR_READY",
+      "reasoning": "HIGH",
+      "schema_id": "RUN-V16/STARTUP/1",
+      "source_archive_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source_repo": "SIGAAMDAD/TheNomad_Studio",
+      "started_at": "2026-10-27T20:00:00Z",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "run_not_high",
+    "schema": "run-startup",
+    "value": {
+      "access_preflight": [],
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "claimed_role_id": "rpg-ai-programmer",
+      "execution_mode": "LOCAL_PATCH_ONLY",
+      "external_connector_called": false,
+      "job_id": "JOB-V16-A",
+      "launch_mode": "USER_OPENED_MANUAL_CHAT",
+      "reasoning": "LOW",
+      "schema_id": "RUN-V16/STARTUP/1",
+      "source_archive_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source_repo": "SIGAAMDAD/TheNomad_Studio",
+      "started_at": "2026-10-27T20:00:00Z",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "run_connector_called",
+    "schema": "run-startup",
+    "value": {
+      "access_preflight": [],
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "claimed_role_id": "rpg-ai-programmer",
+      "execution_mode": "LOCAL_PATCH_ONLY",
+      "external_connector_called": true,
+      "job_id": "JOB-V16-A",
+      "launch_mode": "USER_OPENED_MANUAL_CHAT",
+      "reasoning": "HIGH",
+      "schema_id": "RUN-V16/STARTUP/1",
+      "source_archive_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source_repo": "SIGAAMDAD/TheNomad_Studio",
+      "started_at": "2026-10-27T20:00:00Z",
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "run_unknown_field",
+    "schema": "run-receipt",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "auto_restart": true,
+      "chat_thread_id": null,
+      "checkpoint_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "completed_at": "2026-10-27T20:00:00Z",
+      "elapsed_observed_seconds": 60,
+      "evidence_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "host_attestation_ref": null,
+      "identity_assurance": "UNVERIFIED_SHARED_OWNER",
+      "job_id": "JOB-V16-A",
+      "launch_mode": "USER_OPENED_MANUAL_CHAT",
+      "lease_generation": null,
+      "resume_required": false,
+      "schema_id": "RUN-V16/RECEIPT/1",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source_repo": "SIGAAMDAD/TheNomad_Studio",
+      "status": "SUBMITTED",
+      "tests": [
+        {
+          "command": "python -m unittest discover",
+          "evidence_ref": "artifact:unit-log-A",
+          "exit_code": 0
+        }
+      ],
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "run_evidence_missing_test_exit",
+    "schema": "run-receipt",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "chat_thread_id": null,
+      "checkpoint_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "completed_at": "2026-10-27T20:00:00Z",
+      "elapsed_observed_seconds": 60,
+      "evidence_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "host_attestation_ref": null,
+      "identity_assurance": "UNVERIFIED_SHARED_OWNER",
+      "job_id": "JOB-V16-A",
+      "launch_mode": "USER_OPENED_MANUAL_CHAT",
+      "lease_generation": null,
+      "resume_required": false,
+      "schema_id": "RUN-V16/RECEIPT/1",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source_repo": "SIGAAMDAD/TheNomad_Studio",
+      "status": "SUBMITTED",
+      "tests": [
+        {
+          "command": "python -m unittest discover",
+          "evidence_ref": "artifact:unit-log-A"
+        }
+      ],
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "resume_bad_path",
+    "schema": "run-resume",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "blocked_dependency_ids": [],
+      "changed_paths": [
+        "../secrets"
+      ],
+      "checkpoint_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "job_id": "JOB-V16-A",
+      "lease_generation": null,
+      "next_action": "Independent head reviews exact patch baseline",
+      "owned_path_prefixes": [
+        "studio/v16/"
+      ],
+      "schema_id": "RUN-V16/RESUME/1",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source_repo": "SIGAAMDAD/TheNomad_Studio",
+      "source_snapshot_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "tests_evidence_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "uncompleted_acceptance_ids": [],
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "publish_canonical_merge",
+    "schema": "publish-intent",
+    "value": {
+      "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "evidence_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "gateway_mode": "ISOLATED_GATEWAY",
+      "grant_id": "GRANT-20261027-A",
+      "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "independent_qa": {
+        "evidence_ref": "artifact:qa-report-A",
+        "review_id": "REVIEW-A",
+        "reviewer_principal_id": "principal-qa-002",
+        "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "verdict": "PASS"
+      },
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "owner_decision_ref": "OWNER-DECISION-001",
+      "policy_revision": "policy:approved-v16-a",
+      "principal_id": "principal-worker-001",
+      "publication_id": "PUB-001",
+      "requested_at": "2026-10-27T20:00:00Z",
+      "schema_id": "PUBLISH-V16/INTENT/1",
+      "target": {
+        "changed_paths": [
+          "studio/v16/contracts/AUTH-V16.md"
+        ],
+        "operation": "SOURCE_MERGE",
+        "patch_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "proposed_tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "provider": "GITHUB",
+        "repo_id": "SIGAAMDAD/TheNomad_Studio",
+        "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "work_branch": "studio/workorders/JOB-V16-A/contract"
+      },
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "publish_unbounded_fields",
+    "schema": "publish-intent",
+    "value": {
+      "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "evidence_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "gateway_mode": "ISOLATED_GATEWAY",
+      "grant_id": "GRANT-20261027-A",
+      "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "independent_qa": {
+        "evidence_ref": "artifact:qa-report-A",
+        "review_id": "REVIEW-A",
+        "reviewer_principal_id": "principal-qa-002",
+        "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "verdict": "PASS"
+      },
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "owner_decision_ref": "OWNER-DECISION-001",
+      "policy_revision": "policy:approved-v16-a",
+      "principal_id": "principal-worker-001",
+      "publication_id": "PUB-001",
+      "requested_at": "2026-10-27T20:00:00Z",
+      "schema_id": "PUBLISH-V16/INTENT/1",
+      "target": {
+        "changed_paths": [
+          "studio/v16/contracts/AUTH-V16.md"
+        ],
+        "force_push": true,
+        "operation": "SOURCE_BRANCH_UPDATE",
+        "patch_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "proposed_tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "provider": "GITHUB",
+        "repo_id": "SIGAAMDAD/TheNomad_Studio",
+        "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "work_branch": "studio/workorders/JOB-V16-A/contract"
+      },
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "publish_wrong_gateway",
+    "schema": "publish-intent",
+    "value": {
+      "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "evidence_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "gateway_mode": "OWNER_CONNECTOR",
+      "grant_id": "GRANT-20261027-A",
+      "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "independent_qa": {
+        "evidence_ref": "artifact:qa-report-A",
+        "review_id": "REVIEW-A",
+        "reviewer_principal_id": "principal-qa-002",
+        "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "verdict": "PASS"
+      },
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "owner_decision_ref": "OWNER-DECISION-001",
+      "policy_revision": "policy:approved-v16-a",
+      "principal_id": "principal-worker-001",
+      "publication_id": "PUB-001",
+      "requested_at": "2026-10-27T20:00:00Z",
+      "schema_id": "PUBLISH-V16/INTENT/1",
+      "target": {
+        "changed_paths": [
+          "studio/v16/contracts/AUTH-V16.md"
+        ],
+        "operation": "SOURCE_BRANCH_UPDATE",
+        "patch_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "proposed_tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "provider": "GITHUB",
+        "repo_id": "SIGAAMDAD/TheNomad_Studio",
+        "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "work_branch": "studio/workorders/JOB-V16-A/contract"
+      },
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "publish_drive_without_revision",
+    "schema": "publish-intent",
+    "value": {
+      "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "evidence_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "gateway_mode": "ISOLATED_GATEWAY",
+      "grant_id": "GRANT-20261027-A",
+      "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "independent_qa": {
+        "evidence_ref": "artifact:qa-report-A",
+        "review_id": "REVIEW-A",
+        "reviewer_principal_id": "principal-qa-002",
+        "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "verdict": "PASS"
+      },
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "owner_decision_ref": "OWNER-DECISION-001",
+      "policy_revision": "policy:approved-v16-a",
+      "principal_id": "principal-worker-001",
+      "publication_id": "PUB-001",
+      "requested_at": "2026-10-27T20:00:00Z",
+      "schema_id": "PUBLISH-V16/INTENT/1",
+      "target": {
+        "document_owner_ref": "owner-principal-001",
+        "exported_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "file_id": "drive-file-example-1",
+        "operation": "DRIVE_REVISION_UPDATE",
+        "provider": "GOOGLE_DRIVE"
+      },
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "readback_missing_observed",
+    "schema": "publish-readback",
+    "value": {
+      "audit_event_id": "EVT-20261027-0001",
+      "denial_code": null,
+      "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "observed": null,
+      "provider": "GITHUB",
+      "provider_request_id": "provider-req-1",
+      "publication_id": "PUB-001",
+      "schema_id": "PUBLISH-V16/READBACK/1",
+      "status": "VERIFIED",
+      "verified_at": "2026-10-27T20:00:00Z"
+    }
+  },
+  {
+    "case": "readback_wrong_provider_shape",
+    "schema": "publish-readback",
+    "value": {
+      "audit_event_id": "EVT-20261027-0001",
+      "denial_code": null,
+      "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "observed": {
+        "exported_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "file_id": "drive-file-example-1",
+        "revision": "rev-18"
+      },
+      "provider": "GITHUB",
+      "provider_request_id": "provider-req-1",
+      "publication_id": "PUB-001",
+      "schema_id": "PUBLISH-V16/READBACK/1",
+      "status": "VERIFIED",
+      "verified_at": "2026-10-27T20:00:00Z"
+    }
+  },
+  {
+    "case": "readback_fake_verified",
+    "schema": "publish-readback",
+    "value": {
+      "audit_event_id": "EVT-20261027-0001",
+      "denial_code": "ACCESS_REQUIRED",
+      "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "observed": null,
+      "provider": "GITHUB",
+      "provider_request_id": "provider-req-1",
+      "publication_id": "PUB-001",
+      "schema_id": "PUBLISH-V16/READBACK/1",
+      "status": "VERIFIED",
+      "verified_at": null
+    }
+  },
+  {
+    "case": "publish_qa_rework",
+    "schema": "publish-intent",
+    "value": {
+      "approved_scope_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "evidence_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "gateway_mode": "ISOLATED_GATEWAY",
+      "grant_id": "GRANT-20261027-A",
+      "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "independent_qa": {
+        "evidence_ref": "artifact:qa-report-A",
+        "review_id": "REVIEW-A",
+        "reviewer_principal_id": "principal-qa-002",
+        "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "subject_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "verdict": "REWORK"
+      },
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "owner_decision_ref": "OWNER-DECISION-001",
+      "policy_revision": "policy:approved-v16-a",
+      "principal_id": "principal-worker-001",
+      "publication_id": "PUB-001",
+      "requested_at": "2026-10-27T20:00:00Z",
+      "schema_id": "PUBLISH-V16/INTENT/1",
+      "target": {
+        "changed_paths": [
+          "studio/v16/contracts/AUTH-V16.md"
+        ],
+        "operation": "SOURCE_BRANCH_UPDATE",
+        "patch_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "proposed_tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "provider": "GITHUB",
+        "repo_id": "SIGAAMDAD/TheNomad_Studio",
+        "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "work_branch": "studio/workorders/JOB-V16-A/contract"
+      },
+      "worker_id": "CW-ENG-001"
+    }
+  },
+  {
+    "case": "readback_blocked_with_fake_observation",
+    "schema": "publish-readback",
+    "value": {
+      "audit_event_id": "EVT-20261027-0001",
+      "denial_code": "ACCESS_REQUIRED",
+      "idempotency_key": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "observed": {
+        "artifact_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "commit_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "repo_id": "SIGAAMDAD/TheNomad_Studio",
+        "tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "work_branch": "studio/workorders/JOB-V16-A/contract"
+      },
+      "provider": "GITHUB",
+      "provider_request_id": "provider-req-1",
+      "publication_id": "PUB-001",
+      "schema_id": "PUBLISH-V16/READBACK/1",
+      "status": "BLOCKED",
+      "verified_at": null
+    }
+  },
+  {
+    "case": "unknown_major_schema_version",
+    "schema": "auth-evaluate",
+    "value": {
+      "assignment_epoch": 2,
+      "attempt_id": "ATTEMPT-20261027-A",
+      "authority_revision": "authority:approved-v16-a",
+      "claimed_principal_id": "principal-worker-001",
+      "external_credential_ref": "gateway-session-opaque-001",
+      "grant_id": "GRANT-20261027-A",
+      "job_id": "JOB-V16-A",
+      "lease_generation": 4,
+      "operation": "SOURCE_BRANCH_UPDATE",
+      "policy_revision": "policy:approved-v16-a",
+      "repo_id": "SIGAAMDAD/TheNomad_Studio",
+      "request_id": "REQ-001",
+      "requested_at": "2026-10-27T20:00:00Z",
+      "schema_id": "AUTH-V16/EVALUATE/2",
+      "source_base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "target_branch": "studio/workorders/JOB-V16-A/contract",
+      "target_paths": [
+        "studio/v16/contracts/AUTH-V16.md"
+      ],
+      "worker_id": "CW-ENG-001"
+    }
+  }
+]

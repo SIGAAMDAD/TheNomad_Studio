@@ -1,3 +1,5 @@
+> **Historical only:** V1.6 replaces automated AI worker and Work-subscription guidance with `studio/v16/worker/README.md` (manual user-opened High chats). Findings and prior observations remain unchanged as dated historical records.
+
 # Studio V1.5 — 500-worker architecture audit and launch gates
 
 Scope: actual `SIGAAMDAD/TheNomad_Studio` main @ `755740cb46b1ea281876c9eeb7ba17385c4e2908` and `SIGAAMDAD/TheNomad_Studio_Oversight` main @ `d7f926265fb5ed6d1517bf115b6ebe5df7c79f60`.

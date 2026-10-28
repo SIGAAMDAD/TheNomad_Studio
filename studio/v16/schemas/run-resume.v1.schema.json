@@ -1,0 +1,104 @@
+{
+  "$id": "urn:nomad:studio:v16:run-resume:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assignment_epoch": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/epoch"
+    },
+    "attempt_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/attempt_id"
+    },
+    "blocked_dependency_ids": {
+      "items": {
+        "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "changed_paths": {
+      "items": {
+        "$ref": "urn:nomad:studio:v16:common:1#/$defs/path"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "checkpoint_sha256": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+    },
+    "job_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/job_id"
+    },
+    "lease_generation": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/generation"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "next_action": {
+      "maxLength": 500,
+      "minLength": 5,
+      "type": "string"
+    },
+    "owned_path_prefixes": {
+      "items": {
+        "$ref": "urn:nomad:studio:v16:common:1#/$defs/prefix"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_id": {
+      "const": "RUN-V16/RESUME/1"
+    },
+    "source_base_sha": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/git_sha"
+    },
+    "source_repo": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/repo"
+    },
+    "source_snapshot_sha256": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+    },
+    "tests_evidence_sha256": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+    },
+    "uncompleted_acceptance_ids": {
+      "items": {
+        "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+      },
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "worker_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/worker_id"
+    }
+  },
+  "required": [
+    "schema_id",
+    "job_id",
+    "attempt_id",
+    "worker_id",
+    "assignment_epoch",
+    "lease_generation",
+    "source_repo",
+    "source_base_sha",
+    "source_snapshot_sha256",
+    "owned_path_prefixes",
+    "checkpoint_sha256",
+    "changed_paths",
+    "tests_evidence_sha256",
+    "uncompleted_acceptance_ids",
+    "blocked_dependency_ids",
+    "next_action"
+  ],
+  "title": "Resume capsule for a new explicitly opened chat only",
+  "type": "object"
+}

@@ -35,6 +35,13 @@ def job(jid, kind="design", paths=None, deps=None, state="READY", priority=10):
 
 
 class StudioTests(unittest.TestCase):
+    def test_active_pg_blocks_legacy_dispatch(self):
+        jobs,slots,config=fixture()
+        config['runtime_authority']='POSTGRES_ACTIVE'
+        jobs['jobs'].append(job('NEW-JOB'))
+        self.assertEqual([],studio.dispatch(jobs,slots,config))
+        self.assertTrue(all(s['job'] is None for s in slots['slots']))
+
     def test_fixture_discards_real_runtime_assignment(self):
         # Reproduce the S01 -> OPS-BOOT-001 reservation from the failed
         # runtime-branch Actions job without modifying the actual queue.

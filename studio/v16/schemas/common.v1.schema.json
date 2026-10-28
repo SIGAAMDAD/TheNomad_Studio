@@ -1,0 +1,139 @@
+{
+  "$defs": {
+    "attempt_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{7,127}$",
+      "type": "string"
+    },
+    "branch": {
+      "maxLength": 240,
+      "minLength": 1,
+      "pattern": "^(?!.*//)(?!.*(?:^|/)\\.\\.?(/|$))[A-Za-z0-9][A-Za-z0-9_./-]*$",
+      "type": "string"
+    },
+    "denial_code": {
+      "enum": [
+        "ACCESS_REQUIRED",
+        "IDENTITY_UNVERIFIED",
+        "UNTRUSTED_CONNECTOR",
+        "INVALID_SCOPE",
+        "INVALID_PATH",
+        "PROTECTED_PATH",
+        "POLICY_REVISION_MISMATCH",
+        "AUTHORITY_REVISION_MISMATCH",
+        "OWNER_APPROVAL_REQUIRED",
+        "EXPIRED_GRANT",
+        "REVOKED_GRANT",
+        "STALE_ASSIGNMENT",
+        "STALE_LEASE",
+        "REBASE_REQUIRED",
+        "SOURCE_SHA_MISMATCH",
+        "QA_PENDING",
+        "SELF_REVIEW",
+        "BUDGET_DENIED",
+        "CUTOVER_NOT_APPROVED",
+        "GATEWAY_UNAVAILABLE",
+        "DOCUMENT_CONFLICT",
+        "IDEMPOTENCY_CONFLICT",
+        "UNKNOWN_SCHEMA_VERSION",
+        "RETRYABLE_BLOCKED",
+        "MALFORMED_REQUEST"
+      ]
+    },
+    "epoch": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "event_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{7,127}$",
+      "type": "string"
+    },
+    "generation": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "git_sha": {
+      "pattern": "^[a-f0-9]{40}$",
+      "type": "string"
+    },
+    "job_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{1,99}$",
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "SOURCE_BRANCH_UPDATE",
+        "SOURCE_MERGE",
+        "DRIVE_REVISION_UPDATE",
+        "READ_SOURCE",
+        "READ_DOCUMENT",
+        "ACK_EVENT",
+        "REASSIGN",
+        "CLAIM_JOB",
+        "SUBMIT_QA",
+        "APPROVE_CANON",
+        "DEPLOY",
+        "APPROVE_SPEND"
+      ]
+    },
+    "path": {
+      "maxLength": 512,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*(?:/[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*)*$",
+      "type": "string"
+    },
+    "prefix": {
+      "maxLength": 512,
+      "minLength": 1,
+      "pattern": "^(?:[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*/)+$",
+      "type": "string"
+    },
+    "principal_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{2,127}$",
+      "type": "string"
+    },
+    "repo": {
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+      "type": "string"
+    },
+    "revision": {
+      "maxLength": 160,
+      "minLength": 4,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9:_.@-]*$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "token": {
+      "maxLength": 180,
+      "minLength": 1,
+      "type": "string"
+    },
+    "uri": {
+      "maxLength": 512,
+      "minLength": 3,
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s]+$",
+      "type": "string"
+    },
+    "utc": {
+      "format": "date-time",
+      "pattern": "Z$",
+      "type": "string"
+    },
+    "worker_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{1,99}$",
+      "type": "string"
+    }
+  },
+  "$id": "urn:nomad:studio:v16:common:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {},
+  "required": [],
+  "title": "Reusable V1.6 closed primitive definitions",
+  "type": "object"
+}

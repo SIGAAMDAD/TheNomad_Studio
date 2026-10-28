@@ -1,0 +1,91 @@
+{
+  "$id": "urn:nomad:studio:v16:db-event:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assignment_epoch": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/epoch"
+    },
+    "attempt_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/attempt_id"
+    },
+    "causation_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:nomad:studio:v16:common:1#/$defs/event_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "correlation_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "delivery_authority": {
+      "const": "ARCHIVE_ONLY"
+    },
+    "event_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/event_id"
+    },
+    "event_kind": {
+      "enum": [
+        "STARTED",
+        "HEARTBEAT",
+        "CHECKPOINT",
+        "YIELDED",
+        "SUBMITTED",
+        "STOPPED",
+        "HANDOFF_READY",
+        "QA_REQUEST",
+        "QA_RESULT",
+        "CI_RESULT",
+        "ACK",
+        "BLOCKED"
+      ]
+    },
+    "immutable_evidence_ref": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/uri"
+    },
+    "job_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/job_id"
+    },
+    "payload_sha256": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/sha256"
+    },
+    "producer": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "received_at": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/utc"
+    },
+    "schema_id": {
+      "const": "DB-CONTRACT/EVENT/1"
+    },
+    "transport_delivery_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/token"
+    },
+    "worker_id": {
+      "$ref": "urn:nomad:studio:v16:common:1#/$defs/worker_id"
+    }
+  },
+  "required": [
+    "schema_id",
+    "event_id",
+    "transport_delivery_id",
+    "producer",
+    "job_id",
+    "worker_id",
+    "attempt_id",
+    "assignment_epoch",
+    "event_kind",
+    "causation_id",
+    "correlation_id",
+    "payload_sha256",
+    "immutable_evidence_ref",
+    "received_at",
+    "delivery_authority"
+  ],
+  "title": "Immutable journal event; archive only is not execution",
+  "type": "object"
+}
