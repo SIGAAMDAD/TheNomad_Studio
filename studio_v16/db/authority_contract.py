@@ -54,6 +54,7 @@ class GatewayContext:
     provider_readback_verified: bool = False
     verified_external_receipt: bool = False
     verified_source_base: bool = False
+    source_proof: object | None = None
 
 
 def _utc() -> str:

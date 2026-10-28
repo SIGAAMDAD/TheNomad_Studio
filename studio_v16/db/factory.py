@@ -15,7 +15,7 @@ class StorageConfig:
     recovery_principals: tuple[str, ...] = ()
 
 
-def create_store(config: StorageConfig, *, postgres_connect=None) -> DurableStore:
+def create_store(config: StorageConfig, *, postgres_connect=None, source_verifier=None) -> DurableStore:
     if not isinstance(config, StorageConfig):
         raise TypeError('trusted server StorageConfig required')
     if config.backend == 'sqlite_v2':
@@ -26,7 +26,8 @@ def create_store(config: StorageConfig, *, postgres_connect=None) -> DurableStor
         owner = ConnectionOwner(config.database, topology=config.topology,
                                 busy_ms=config.busy_ms, queue_limit=config.queue_limit)
         try:
-            return SQLiteStore(owner, recovery_principals=config.recovery_principals)
+            return SQLiteStore(owner, recovery_principals=config.recovery_principals,
+                               source_verifier=source_verifier)
         except BaseException:
             owner.close()
             raise

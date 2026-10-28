@@ -1,13 +1,16 @@
 """Authenticated response port; selection is a trusted server callback."""
+from dataclasses import replace
+
 from .document_access import DocumentAccess
 from .gateway import AdmissionError
 
 
 class ResponseAccess:
-    def __init__(self, coordination, principal, *, eligible_command):
+    def __init__(self, coordination, principal, *, eligible_command, source_verifier):
         self._coordination = coordination
         self._principal = principal
         self._eligible_command = eligible_command
+        self._source_verifier = source_verifier
 
     def _context(self):
         return DocumentAccess._context(self._principal)
@@ -22,7 +25,12 @@ class ResponseAccess:
         command = self._eligible_command(response_id, self._principal)
         if command is None:
             return None
-        result = self._coordination.claim_for_response(response_id, command, self._context())
+        if self._source_verifier is None:
+            raise AdmissionError('GATEWAY_UNAVAILABLE')
+        context = self._context()
+        proof = self._source_verifier.verify(command, context.principal_id)
+        context = replace(context, verified_source_base=True, source_proof=proof)
+        result = self._coordination.claim_for_response(response_id, command, context)
         if result['result'] not in ('COMMITTED', 'DUPLICATE'):
             raise AdmissionError(result['denial_code'])
         return dict(command, claim_receipt=result)

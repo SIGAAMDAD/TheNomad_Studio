@@ -21,9 +21,10 @@ class SQLiteStore(SQLiteRecovery, SQLitePublication):
     _result = staticmethod(make_result)
     _deny_if_untrusted = staticmethod(deny_if_untrusted)
 
-    def __init__(self, owner: ConnectionOwner, *, apply_migrations=True, recovery_principals=()):
+    def __init__(self, owner: ConnectionOwner, *, apply_migrations=True, recovery_principals=(), source_verifier=None):
         self.owner = owner
         self.recovery_principals = frozenset(recovery_principals)
+        self.source_verifier = source_verifier
         if apply_migrations:
             migrate(owner)
 
@@ -219,6 +220,14 @@ class SQLiteStore(SQLiteRecovery, SQLitePublication):
         p = cmd['payload']
         if p['source_base_sha'] != j['base'] or not ctx.verified_source_base:
             raise Denied('REBASE_REQUIRED')
+        if self.source_verifier is not None:
+            from studio_v16.gateway.gateway import AdmissionError
+            try:
+                self.source_verifier.confirm_in_claim(
+                    cmd, ctx.principal_id, ctx.source_proof,
+                    db_repo=j['repo'], db_base=j['base'], db_epoch=j['epoch'])
+            except AdmissionError as exc:
+                raise Denied(exc.code) from None
         if (p['resource_key'] != j['resource'] or p['grant_id'] != j['grant_id']
                 or p['owner_decision_ref'] != j['decision_id']):
             raise Denied('INVALID_SCOPE')
