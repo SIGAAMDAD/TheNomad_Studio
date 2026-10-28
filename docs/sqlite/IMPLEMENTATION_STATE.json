@@ -5,14 +5,16 @@
   "branch": "studio/v16-sqlite-unified",
   "source_base_sha": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
   "source_head_at_run_start": "fa14928ea36ba68fe607448d690cc00bb64488c1",
-  "current_checkpoint": "C5",
+  "current_checkpoint": "C6",
   "completed_checkpoints": [],
   "checkpoint_contract_revision": "DB-STORAGE/2-SQLITE DRAFT",
   "files_changed_in_latest_checkpoint": [
-    "studio_v16/db/sqlite/migrations/0004_cm_hr.sql",
-    "studio_v16/communications/service.py",
-    "studio_v16/communications/__init__.py",
-    "studio_v16/leadership/__init__.py"
+    "studio_v16/gateway/document_access.py",
+    "studio_v16/gateway/leadership_access.py",
+    "studio_v16/gateway/response_access.py",
+    "studio_v16/adapters/response.py",
+    "studio/v16/worker/manual_kernel.py",
+    "studio_v16/db/sqlite/migrations/0005_response_evidence.sql"
   ],
   "tests": [
     {
@@ -40,15 +42,16 @@
     "live_github_drive_credentials": "PENDING",
     "active_cutover": "NOT_AUTHORIZED"
   },
-  "next_specific_edit": "C5: gateway document read/write fences and manual multi-job response runner",
-  "last_checkpoint_parent_sha": "02305bd7e69029a4c674bc9c8ca6d1cf085d6f30",
+  "next_specific_edit": "C6: indexed controller/head views, compact provider batches and independent watchdog",
+  "last_checkpoint_parent_sha": "92cde8402a7d685dcf6697c68066a49480a8071f",
   "note": "Do not embed the SHA of this file's own commit in the file; report actual HEAD after commit.",
   "implemented_checkpoints": [
     "C0",
     "C1",
     "C2",
     "C3",
-    "C4"
+    "C4",
+    "C5"
   ],
   "frozen_files": {
     "count": 19,
@@ -66,7 +69,8 @@
     "C1": "IMPLEMENTED_UNTESTED; schema execution and fault/concurrency gates deferred",
     "C2": "IMPLEMENTED_UNTESTED; publication surfaces follow in C3; runtime suites deferred",
     "C3": "IMPLEMENTED_UNTESTED; provider fault/revocation/concurrency acceptance suites deferred",
-    "C4": "IMPLEMENTED_UNTESTED; indexed query plans, inbox/control/leader/document race gates deferred"
+    "C4": "IMPLEMENTED_UNTESTED; indexed query plans, inbox/control/leader/document race gates deferred",
+    "C5": "IMPLEMENTED_UNTESTED; document/role/kernel/control suites deferred"
   },
   "runtime_requirements": {
     "sqlite_minimum": "3.45.0",
@@ -76,7 +80,8 @@
     "0001_core_sqlite",
     "0002_publication_sqlite",
     "0003_dispatch_retry",
-    "0004_cm_hr"
+    "0004_cm_hr",
+    "0005_response_evidence"
   ],
   "next_verification_commands": [
     "python -m compileall -q studio_v16",

@@ -51,6 +51,10 @@ class State:
     document_writes_enabled: bool = False
     # Independently verified CI/test evidence digest from trusted authority.
     evidence_sha256: str | None = None
+    # Internal document/leadership fences; frozen wire envelopes remain unchanged.
+    document_writer_generation: int | None = None
+    document_writer_token: str | None = None
+    leader_epoch: int | None = None
 
 
 @dataclass(frozen=True)

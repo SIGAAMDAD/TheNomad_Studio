@@ -111,6 +111,19 @@ class SQLitePublication:
                 or target['document_owner_ref'] != state.drive_document_owner_ref
                 or target['exported_sha256'] != intent['artifact_sha256']):
             deny('INVALID_SCOPE')
+        if operation == 'DRIVE_REVISION_UPDATE':
+            document = row(conn, '''SELECT h.*,r.owner_principal_id,r.department,r.reader_scope_json
+                FROM document_heads h JOIN document_refs r ON r.file_id=h.file_id AND r.revision=h.revision
+                WHERE h.file_id=?''', (target['file_id'],))
+            leader = row(conn, 'SELECT * FROM leader_state WHERE department=?', (document['department'],)) if document else None
+            if (document is None or leader is None or document['revision'] != target['expected_revision']
+                    or document['writer_principal_id'] != g['principal_id']
+                    or document['writer_generation'] != state.document_writer_generation
+                    or document['writer_token'] != state.document_writer_token or not state.document_writer_token
+                    or document['writer_expires_at'] is None or document['writer_expires_at'] <= now
+                    or document['leader_epoch'] != state.leader_epoch or leader['leader_epoch'] != state.leader_epoch
+                    or leader['delegation_paused']):
+                deny('DOCUMENT_CONFLICT')
         qa = state.qa
         if (qa is None or qa.verdict != 'PASS' or not state.evidence_sha256
                 or qa.reviewer_principal_id in ids or qa.source_sha != j['source_base_sha']
@@ -298,6 +311,17 @@ class SQLitePublication:
                     (revision, observed['tree_sha256'], receipt['provider_request_id'], now, record['publication_id']))
             else:
                 revision = observed['revision']
+                document = row(conn, '''SELECT r.* FROM document_heads h JOIN document_refs r
+                    ON r.file_id=h.file_id AND r.revision=h.revision WHERE h.file_id=?''', (intent['target']['file_id'],))
+                if document is None or document['revision'] != intent['target']['expected_revision']:
+                    deny('DOCUMENT_CONFLICT')
+                conn.execute('''INSERT INTO document_refs(file_id,revision,exported_sha256,owner_principal_id,
+                    department,reader_scope_json,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?)''',
+                    (document['file_id'], revision, observed['exported_sha256'], document['owner_principal_id'],
+                     document['department'], document['reader_scope_json'], 'publication:' + record['publication_id'], now))
+                conn.execute('''UPDATE document_heads SET revision=?,writer_principal_id=NULL,
+                    writer_token=NULL,writer_expires_at=NULL WHERE file_id=? AND revision=?''',
+                    (revision, document['file_id'], document['revision']))
                 conn.execute('''UPDATE document_publications SET status='VERIFIED',resulting_revision=?,
                     observed_sha256=?,provider_request_id=?,verified_at=? WHERE publication_id=?''',
                     (revision, observed['exported_sha256'], receipt['provider_request_id'], now, record['publication_id']))

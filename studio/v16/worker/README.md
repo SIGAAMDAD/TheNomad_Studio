@@ -21,3 +21,17 @@
 Human owner opens chat -> department head assigns a verified bounded job -> human opens the worker chat with its specific prompt -> worker returns local outputs and evidence -> independent human/head QA and authorized staging publisher perform readback -> owner controls deployment and canon. All management and specialist roles can be exercised within a manual chat; no 1:1 paid task identity is required.
 
 Frozen authority/seams: [`AUTH-V16`](../contracts/AUTH-V16.md), [`RUN-V16`](../contracts/RUN-V16.md), [`PUBLISH-V16`](../contracts/PUBLISH-V16.md), [`legacy-retirement`](../contracts/legacy-retirement.v1.json). WG-C/D/F/G own the database, gateway, runtime and provider code; this worker directory implements none of those services. All historical W/slot labels and receipts remain archive-only and are not converted into live triggers.
+# Multi-job response service
+
+The manual host can call `manual_kernel.run_bounded_response` with an authenticated
+`ResponseAccess` client. Load the pinned role brief once per invocation. Each new
+invocation has a new response ID; each claim is durably associated with it before
+work begins. Complete and checkpoint eligible jobs until a real STOP/DRAIN/PAUSE,
+no eligible work, or a bounded resource limit. Completing one job does not end the
+response. Controls are checked between jobs; they do not interrupt a running tool.
+
+The service records authenticated control observations and every attempted job.
+A missing outcome stays UNKNOWN. Report cards separate reported evidence from
+independent QA and retain partial failures. A resource boundary produces YIELD
+with the actual resume capsule; only an observed authenticated STOP produces a
+STOP receipt. Workers receive no SQLite path, database handle or service secret.

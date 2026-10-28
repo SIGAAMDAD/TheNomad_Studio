@@ -105,7 +105,7 @@ class SQLiteStore(SQLiteRecovery, SQLitePublication):
             raise Denied('IDEMPOTENCY_CONFLICT')
         return dict(parse_json(row[1]), result='DUPLICATE', commit_sequence=None)
 
-    def execute(self, command: dict, context: GatewayContext) -> dict:
+    def execute(self, command: dict, context: GatewayContext, *, response_id=None) -> dict:
         cmd = command
         try:
             COMMAND_VALIDATOR.validate(cmd)
@@ -118,7 +118,22 @@ class SQLiteStore(SQLiteRecovery, SQLitePublication):
                 self._principal(conn, context)
                 saved = self._saved_result(conn, cmd, payload_hash)
                 if saved:
+                    if response_id is not None and cmd['command_kind'] == 'CLAIM' and not conn.execute(
+                            'SELECT 1 FROM response_job_starts WHERE response_id=? AND attempt_id=?',
+                            (response_id, cmd['attempt_id'])).fetchone():
+                        raise Denied('IDEMPOTENCY_CONFLICT')
                     return saved
+                if response_id is not None and cmd['command_kind'] == 'CLAIM':
+                    response = conn.execute('''SELECT principal_id,worker_id,status FROM response_attempts
+                        WHERE response_id=?''', (response_id,)).fetchone()
+                    control = conn.execute('''SELECT action FROM response_controls WHERE response_id=?
+                        ORDER BY control_epoch DESC LIMIT 1''', (response_id,)).fetchone()
+                    stopped = conn.execute("SELECT 1 FROM response_controls WHERE response_id=? AND action='STOP' LIMIT 1",
+                                           (response_id,)).fetchone()
+                    if response != (context.principal_id, cmd['worker_id'], 'RUNNING'):
+                        raise Denied('ACCESS_REQUIRED')
+                    if stopped or (control and control[0] in ('STOP', 'DRAIN', 'PAUSE')):
+                        raise Denied('RETRYABLE_BLOCKED')
                 handlers = {'CLAIM': self._claim, 'CHECKPOINT': self._checkpoint,
                             'REASSIGN': self._reassign, 'ACK': self._ack,
                             'OUTBOX_SCHEDULE': self._schedule, 'OUTBOX_ACK': self._outbox_ack}
@@ -128,6 +143,9 @@ class SQLiteStore(SQLiteRecovery, SQLitePublication):
                 if handler is None:
                     raise Denied('MALFORMED_REQUEST')
                 data = handler(conn, cmd, context, now)
+                if response_id is not None and cmd['command_kind'] == 'CLAIM':
+                    conn.execute('''INSERT INTO response_job_starts(response_id,job_id,attempt_id,started_at)
+                        VALUES(?,?,?,?)''', (response_id, cmd['job_id'], cmd['attempt_id'], now))
                 event = data.get('event_id') or self._journal_internal(conn, cmd, now)
                 # Store the complete result in one immutable INSERT. The immediate
                 # writer reservation protects allocation, including explicit imports.

@@ -31,6 +31,19 @@ class JobError(ValueError):
     """Invalid local input, not an externally authenticated access denial."""
 
 
+def run_bounded_response(authenticated_port, response_id, worker_id, department,
+                         execute_job, capture_resume, *, max_jobs=20, max_seconds=600):
+    """Manual host entry point; the port owns service authentication and claims.
+
+    Load the pinned role brief once before invoking this method. The callbacks
+    execute local work and checkpoint actual evidence after each attempted job.
+    No ordinary chat is awakened by this helper.
+    """
+    from studio_v16.adapters.response import run_response
+    return run_response(authenticated_port, response_id, worker_id, department,
+                        execute_job, capture_resume, max_jobs=max_jobs, max_seconds=max_seconds)
+
+
 def read_json(path):
     return json.loads(path.read_text(encoding="utf-8"))
 

@@ -20,6 +20,18 @@ class DriveRevisionProvider:
             raise ProviderBlocked('DOCUMENT_CONFLICT')
         return value
 
+    def read_pinned(self, file_id, revision, exported_sha256):
+        # Existing clients expose current revision readback. Historical exports
+        # require a separately supplied pinned-revision client; never fall back
+        # to unpinned connector content.
+        pinned = getattr(self._client, 'read_revision', None)
+        data = pinned(file_id, revision) if pinned is not None else self._client.readback(file_id)
+        if (not isinstance(data, dict) or data.get('revision') != revision
+                or not isinstance(data.get('content'), bytes)
+                or hashlib.sha256(data['content']).hexdigest() != exported_sha256):
+            raise ProviderBlocked('DOCUMENT_CONFLICT')
+        return data['content']
+
     def readback(self,intent):
         target=intent['target']
         data=self._client.readback(target['file_id'])

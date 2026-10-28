@@ -6,7 +6,7 @@ import hashlib
 
 from studio_v16.db.store import Denied, GatewayContext, _fresh
 from studio_v16.db.sqlite.publication import row
-from studio_v16.db.sqlite.types import canonical, parse_json, integer, path_scope
+from studio_v16.db.sqlite.types import canonical, parse_json, integer
 
 
 @dataclass(frozen=True)
@@ -267,7 +267,15 @@ class CoordinationService:
                 ORDER BY control_epoch LIMIT 1''', (response_id, response['observed_control_epoch'] or 0))
             if control is not None and response['status'] == 'RUNNING':
                 conn.execute('UPDATE response_attempts SET observed_control_epoch=? WHERE response_id=?', (control['control_epoch'], response_id))
+                conn.execute('INSERT INTO response_control_observations VALUES(?,?,?,?) ON CONFLICT DO NOTHING',
+                             (response_id, control['control_epoch'], context.principal_id, now))
             return control
+
+    def claim_for_response(self, response_id, command, context):
+        # Store checks the control and records the attempt in the SAME claim TX.
+        if command.get('command_kind') != 'CLAIM':
+            raise ValueError('response admission requires a CLAIM command')
+        return self.store.execute(command, context, response_id=response_id)
 
     def record_response_job(self, response_id, attempt_id, acceptance_ids, evidence, context):
         if not isinstance(acceptance_ids, list) or not acceptance_ids or not isinstance(evidence, dict):
@@ -279,6 +287,9 @@ class CoordinationService:
                 raise Denied('ACCESS_REQUIRED')
             self._auth(conn, context, response['department'], 'RESPONSE')
             if attempt['principal_id'] != context.principal_id or attempt['worker_id'] != response['worker_id']:
+                raise Denied('ACCESS_REQUIRED')
+            if not conn.execute('SELECT 1 FROM response_job_starts WHERE response_id=? AND attempt_id=?',
+                                (response_id, attempt_id)).fetchone():
                 raise Denied('ACCESS_REQUIRED')
             outcome = attempt['status'] if attempt['status'] in ('CHECKPOINTED', 'SUBMITTED', 'YIELDED', 'STOPPED') else 'UNKNOWN'
             values = (response_id, attempt['job_id'], attempt_id, outcome, canonical(acceptance_ids), canonical(evidence))
@@ -306,8 +317,10 @@ class CoordinationService:
                 raise Denied('ACCESS_REQUIRED')
             if not stop and not isinstance(resume_capsule, dict):
                 raise ValueError('resource-boundary YIELD requires an exact resume capsule')
-            jobs = conn.execute('''SELECT job_id,attempt_id,outcome,acceptance_json,evidence_json
-                FROM response_attempt_jobs WHERE response_id=? ORDER BY sequence''', (response_id,)).fetchall()
+            jobs = conn.execute('''SELECT s.job_id,s.attempt_id,COALESCE(j.outcome,'UNKNOWN'),
+                COALESCE(j.acceptance_json,'[]'),COALESCE(j.evidence_json,'{}') FROM response_job_starts s
+                LEFT JOIN response_attempt_jobs j ON j.response_id=s.response_id AND j.attempt_id=s.attempt_id
+                WHERE s.response_id=? ORDER BY s.sequence''', (response_id,)).fetchall()
             card = dict(response_id=response_id, jobs=[dict(job_id=j[0], attempt_id=j[1], outcome=j[2],
                         acceptance_ids=parse_json(j[3]), reported_evidence=parse_json(j[4])) for j in jobs],
                         control_observed=dict(action=control['action'], epoch=control['control_epoch']) if control else None,
