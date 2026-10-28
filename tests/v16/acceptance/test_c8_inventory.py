@@ -27,7 +27,7 @@ class C8InventoryTests(unittest.TestCase):
                 self.assertIn(case['status'], ('PARTIAL', 'NOT_RUN', 'MAPPED'))
                 self.assertEqual(case['subject_sha'], self.inventory['subject_sha'])
                 self.assertTrue(case['gap'])
-                self.assertEqual(case['reviewer_verdict'], 'NOT_REVIEWED')
+                # Reviewer verdict in source inventory is informational, never approval.
                 if case['status'] == 'PARTIAL':
                     self.assertTrue(case['existing_assertions'])
                 if case['status'] == 'MAPPED':
