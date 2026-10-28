@@ -1,0 +1,31 @@
+{
+  "task": "A10",
+  "status": "OPEN",
+  "base_sha": "3e5695e495924ec6f7a44114948bca26caa25887",
+  "completed": [
+    "Real-file local tests reject missing snapshot/manifest, logical digest drift, existing restore destination",
+    "Online snapshot under active writes verifies logical manifest and restores in SHADOW",
+    "Added local recovery tests to SQLite CI"
+  ],
+  "validation": [
+    {
+      "command": "python -m unittest discover -s tests/v16/recovery -p test_*.py -q",
+      "exit_code": 0,
+      "tests": 5
+    },
+    {
+      "command": "python -m infra.sqlite.backup --help",
+      "exit_code": 0
+    },
+    {
+      "command": "python scripts/sqlite_c8_validate.py",
+      "exit_code": 0,
+      "tests": 235
+    }
+  ],
+  "remaining": [
+    "Crash/fsync fault injection, operator off-host verifier, rollback routing and conditional PG provenance",
+    "Independent host/storage restore, real RPO/RTO and owner acceptance remain external"
+  ],
+  "pg_exists": "UNKNOWN"
+}

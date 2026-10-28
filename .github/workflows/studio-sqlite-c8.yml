@@ -8,6 +8,7 @@ on:
       - "scripts/sqlite_c8_validate.py"
       - "scripts/sqlite_acceptance.py"
       - "tests/v16/acceptance/**"
+      - "tests/v16/recovery/**"
       - "docs/production/c8/**"
       - ".github/workflows/studio-sqlite-c8.yml"
   push:
@@ -20,6 +21,7 @@ on:
       - "scripts/sqlite_c8_validate.py"
       - "scripts/sqlite_acceptance.py"
       - "tests/v16/acceptance/**"
+      - "tests/v16/recovery/**"
       - "docs/production/c8/**"
       - ".github/workflows/studio-sqlite-c8.yml"
   workflow_dispatch:
@@ -46,6 +48,8 @@ jobs:
         run: python scripts/sqlite_c8_validate.py --json "$RUNNER_TEMP/sqlite-c8-receipt.json"
       - name: Validate acceptance mapping tests
         run: python -m unittest discover -s tests/v16/acceptance -p "test_*.py" -v
+      - name: Run local backup recovery tests
+        run: python -m unittest discover -s tests/v16/recovery -p "test_*.py" -v
       - name: Validate source syntax and registry
         run: |
           python -m compileall -q studio_v16 infra/sqlite tests/v16/db
