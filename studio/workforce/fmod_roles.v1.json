@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "family": "The Nomad Studio FMOD Specialists",
+  "created_at_utc": "2026-10-28T02:44:02.430196+00:00",
+  "source_of_truth": "Standalone portable skills, not yet merged into Studio live 174-role routing registry",
+  "base_studio_roles": 174,
+  "additional_roles": 19,
+  "router_skills": 1,
+  "roles": [
+    {
+      "name": "fmod-specialist-router",
+      "title": "FMOD Studio Specialist Router",
+      "home_department": "audio",
+      "discipline": "router",
+      "reports_to": "rpg-audio-director",
+      "ownership": "routing and coordinating FMOD-specific engineering, authoring and technical QA specialist work across the Nomad Studio",
+      "partners": [
+        "rpg-audio-director",
+        "rpg-lead-engineer",
+        "rpg-qa-lead"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-specialist-router.zip",
+      "size": 4869,
+      "sha256": "d884744b6ad37f3fef55640c4005aecc6920b02c34162317791c51cf6e9cb104"
+    },
+    {
+      "name": "fmod-audio-engineering-lead",
+      "title": "FMOD Audio Engineering Lead",
+      "home_department": "audio",
+      "discipline": "audio_engineering",
+      "reports_to": "rpg-audio-director",
+      "ownership": "FMOD sound-production architecture, creative delivery standards and artist-facing implementation handoffs",
+      "partners": [
+        "rpg-audio-director",
+        "fmod-studio-event-authoring-engineer",
+        "fmod-middleware-technical-lead"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-audio-engineering-lead.zip",
+      "size": 5005,
+      "sha256": "ce8424e09a543e07e78094279654ed93a44c2ee92e214660aa50b22dbfcf536b"
+    },
+    {
+      "name": "fmod-sound-design-engineer",
+      "title": "FMOD Sound Design Engineer",
+      "home_department": "audio",
+      "discipline": "audio_engineering",
+      "reports_to": "rpg-audio-director",
+      "ownership": "designed weapon, impact, movement, environmental and creature sound assets",
+      "partners": [
+        "fmod-studio-event-authoring-engineer",
+        "fmod-mix-mastering-engineer",
+        "rpg-combat-feedback-designer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-sound-design-engineer.zip",
+      "size": 4890,
+      "sha256": "55e92abda97128b15f33a50f071b3977fa880305bfc4c115b9694dce9776b61b"
+    },
+    {
+      "name": "fmod-recording-editing-engineer",
+      "title": "FMOD Recording and Editing Engineer",
+      "home_department": "audio",
+      "discipline": "audio_engineering",
+      "reports_to": "rpg-audio-director",
+      "ownership": "field, foley, ADR and studio recording capture, editing and repair",
+      "partners": [
+        "fmod-sound-design-engineer",
+        "fmod-voice-dialogue-engineer",
+        "fmod-audio-asset-format-engineer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-recording-editing-engineer.zip",
+      "size": 4935,
+      "sha256": "bdec610e87a55d7b2839e97f22e0d293bdcb82f0224e954920ecd9128d90a238"
+    },
+    {
+      "name": "fmod-mix-mastering-engineer",
+      "title": "FMOD Mixing and Mastering Engineer",
+      "home_department": "audio",
+      "discipline": "audio_engineering",
+      "reports_to": "rpg-audio-director",
+      "ownership": "gameplay mix balance, bus layout, VCAs, snapshots, dynamics and final audio output quality",
+      "partners": [
+        "fmod-studio-event-authoring-engineer",
+        "fmod-voice-dialogue-engineer",
+        "fmod-audio-performance-programmer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-mix-mastering-engineer.zip",
+      "size": 5002,
+      "sha256": "e3c4d5ef9fa6dacb5e88f7368482d5cb9096eb632c85f800c4aee79a6e83899a"
+    },
+    {
+      "name": "fmod-spatial-audio-engineer",
+      "title": "FMOD Spatial Audio Engineer",
+      "home_department": "audio",
+      "discipline": "audio_engineering",
+      "reports_to": "rpg-audio-director",
+      "ownership": "acoustic perceptual design and FMOD 3D event authoring including distance, spread and environment sends",
+      "partners": [
+        "fmod-godot-integration-programmer",
+        "fmod-studio-event-authoring-engineer",
+        "rpg-level-designer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-spatial-audio-engineer.zip",
+      "size": 4963,
+      "sha256": "2c60c7d09f9922a4d8979b55cad220c828f316ac0424dfa55c6a9ba592891a5b"
+    },
+    {
+      "name": "fmod-adaptive-music-engineer",
+      "title": "FMOD Adaptive Music Engineer",
+      "home_department": "audio",
+      "discipline": "audio_engineering",
+      "reports_to": "rpg-audio-director",
+      "ownership": "interactive score timeline, layered stems, transitions, stingers, tempo maps and music states",
+      "partners": [
+        "rpg-composer",
+        "fmod-studio-event-authoring-engineer",
+        "fmod-studio-api-programmer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-adaptive-music-engineer.zip",
+      "size": 4858,
+      "sha256": "7bece2203624bedabcd2baa92ba3169d96e40c96fe1b318bfdde5346edca43c5"
+    },
+    {
+      "name": "fmod-voice-dialogue-engineer",
+      "title": "FMOD Voice and Dialogue Engineer",
+      "home_department": "audio",
+      "discipline": "audio_engineering",
+      "reports_to": "rpg-audio-director",
+      "ownership": "dialogue recording/cleaning, voice intelligibility, barks and localized VO audio content",
+      "partners": [
+        "rpg-voice-director",
+        "fmod-mix-mastering-engineer",
+        "fmod-studio-event-authoring-engineer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-voice-dialogue-engineer.zip",
+      "size": 4920,
+      "sha256": "c5e04856f0cbc01e325194860ee0ef60bf257e01412ee27fd4a1b5a0eb6c72f0"
+    },
+    {
+      "name": "fmod-studio-event-authoring-engineer",
+      "title": "FMOD Studio Event Authoring Engineer",
+      "home_department": "audio",
+      "discipline": "audio_engineering",
+      "reports_to": "rpg-audio-director",
+      "ownership": "FMOD Studio project authoring of events, banks, parameters, tracks, instruments and routing",
+      "partners": [
+        "fmod-sound-design-engineer",
+        "fmod-middleware-technical-lead",
+        "fmod-bank-build-programmer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-studio-event-authoring-engineer.zip",
+      "size": 4930,
+      "sha256": "1443fa8d838bb427c48eb5fb69de39acac2d9b1657e3f8f54c5a3820d73ece42"
+    },
+    {
+      "name": "fmod-audio-asset-format-engineer",
+      "title": "FMOD Audio Asset Format Engineer",
+      "home_department": "audio",
+      "discipline": "audio_engineering",
+      "reports_to": "rpg-audio-director",
+      "ownership": "source audio preparation, decoding, sample-rate conversion, channel layouts, loudness metadata and codec audition",
+      "partners": [
+        "fmod-bank-build-programmer",
+        "fmod-recording-editing-engineer",
+        "fmod-mix-mastering-engineer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-audio-asset-format-engineer.zip",
+      "size": 5062,
+      "sha256": "4956dd0bbdc2e9070f3115e331ff2ce00660da38e32a3cc76e189b88b1d94f94"
+    },
+    {
+      "name": "fmod-middleware-technical-lead",
+      "title": "FMOD Middleware Technical Lead",
+      "home_department": "engineering",
+      "discipline": "audio_programming",
+      "reports_to": "rpg-lead-engineer",
+      "ownership": "FMOD middleware integration architecture, SDK/ABI contracts, API version migration and technical worker routing",
+      "partners": [
+        "rpg-lead-engineer",
+        "fmod-audio-engineering-lead",
+        "fmod-audio-qa-analyst"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-middleware-technical-lead.zip",
+      "size": 4940,
+      "sha256": "76b4885cce17a7b73bec5e8bdce80c7fa8e4f0a41711ef0792f99349b53b0c7e"
+    },
+    {
+      "name": "fmod-studio-api-programmer",
+      "title": "FMOD Studio API Programmer",
+      "home_department": "engineering",
+      "discipline": "audio_programming",
+      "reports_to": "rpg-lead-engineer",
+      "ownership": "FMOD Studio API lifecycle, banks, event instances, parameters, callbacks, snapshots and runtime control",
+      "partners": [
+        "fmod-studio-event-authoring-engineer",
+        "fmod-godot-integration-programmer",
+        "fmod-bank-build-programmer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-studio-api-programmer.zip",
+      "size": 4891,
+      "sha256": "64fd040359862e630563ae758e9f778e2fd3b098de0609b7e66a9e23897bc084"
+    },
+    {
+      "name": "fmod-godot-integration-programmer",
+      "title": "FMOD Godot Integration Programmer",
+      "home_department": "engineering",
+      "discipline": "audio_programming",
+      "reports_to": "rpg-lead-engineer",
+      "ownership": "Godot 4.x native/GDExtension or managed bridge, listener/emitter nodes, scene lifecycle and coordinate transforms for FMOD",
+      "partners": [
+        "fmod-studio-api-programmer",
+        "fmod-spatial-audio-engineer",
+        "rpg-engine-programmer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-godot-integration-programmer.zip",
+      "size": 5054,
+      "sha256": "bec58f1de90b5103f3c3362f628269b9e47de1c998878079289f27dabc83493c"
+    },
+    {
+      "name": "fmod-core-api-programmer",
+      "title": "FMOD Core API Programmer",
+      "home_department": "engineering",
+      "discipline": "audio_programming",
+      "reports_to": "rpg-lead-engineer",
+      "ownership": "FMOD low-level System, Sound, Channel, ChannelGroup, DSP graph and custom memory/file callback control",
+      "partners": [
+        "fmod-studio-api-programmer",
+        "fmod-dsp-plugin-programmer",
+        "fmod-audio-performance-programmer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-core-api-programmer.zip",
+      "size": 4871,
+      "sha256": "b97d702df37d138c14a78f6917596336a870866c0441054f36dc15148a34d1bc"
+    },
+    {
+      "name": "fmod-dsp-plugin-programmer",
+      "title": "FMOD DSP Plugin Programmer",
+      "home_department": "engineering",
+      "discipline": "audio_programming",
+      "reports_to": "rpg-lead-engineer",
+      "ownership": "custom sample-processing FMOD DSP plugins using the FMOD plugin SDK",
+      "partners": [
+        "fmod-core-api-programmer",
+        "fmod-middleware-technical-lead",
+        "fmod-audio-qa-analyst"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-dsp-plugin-programmer.zip",
+      "size": 4994,
+      "sha256": "f0febf5a379a8659e39e3c4f6b9c8c0ffc0b0b119287265ea0b8c1011d909ef8"
+    },
+    {
+      "name": "fmod-codec-output-plugin-programmer",
+      "title": "FMOD Codec and Output Plugin Programmer",
+      "home_department": "engineering",
+      "discipline": "audio_programming",
+      "reports_to": "rpg-lead-engineer",
+      "ownership": "FMOD low-level codec plugins, stream decoding and custom audio output backend plugins",
+      "partners": [
+        "fmod-core-api-programmer",
+        "fmod-audio-asset-format-engineer",
+        "fmod-audio-performance-programmer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-codec-output-plugin-programmer.zip",
+      "size": 5060,
+      "sha256": "e5aa57f40c9bd9da4bbc99d858f4c7bf34b8e4f8e0642f4c17a0f517456af16e"
+    },
+    {
+      "name": "fmod-bank-build-programmer",
+      "title": "FMOD Bank Build and Pipeline Programmer",
+      "home_department": "engineering",
+      "discipline": "audio_programming",
+      "reports_to": "rpg-lead-engineer",
+      "ownership": "reproducible bank builds, bank manifests, build automation, content revisions and asset deployment",
+      "partners": [
+        "fmod-studio-event-authoring-engineer",
+        "fmod-studio-api-programmer",
+        "rpg-build-engineer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-bank-build-programmer.zip",
+      "size": 4996,
+      "sha256": "3186bca33e0fdb0174101df657c0f81c097785317a6d778f84e2261d65c641f2"
+    },
+    {
+      "name": "fmod-studio-scripting-programmer",
+      "title": "FMOD Studio Scripting Programmer",
+      "home_department": "engineering",
+      "discipline": "audio_programming",
+      "reports_to": "rpg-lead-engineer",
+      "ownership": "FMOD Studio JavaScript scripting API automation, project introspection and validation tooling",
+      "partners": [
+        "fmod-studio-event-authoring-engineer",
+        "fmod-bank-build-programmer",
+        "rpg-tools-programmer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-studio-scripting-programmer.zip",
+      "size": 4917,
+      "sha256": "7f4a657fd1aef162efe2bdc05e15afc8d9d53674eb17aed6f38fc67d725750c3"
+    },
+    {
+      "name": "fmod-audio-performance-programmer",
+      "title": "FMOD Audio Performance Programmer",
+      "home_department": "engineering",
+      "discipline": "audio_programming",
+      "reports_to": "rpg-lead-engineer",
+      "ownership": "voice/virtual voice constraints, DSP CPU, bank/sample memory, streaming IO and runtime audio profiling",
+      "partners": [
+        "fmod-studio-api-programmer",
+        "fmod-mix-mastering-engineer",
+        "rpg-performance-engineer"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-audio-performance-programmer.zip",
+      "size": 5068,
+      "sha256": "30ba2eb4983339e9b8ccf9e05a7e1937f223d34567ebde54c715d88fae6471dd"
+    },
+    {
+      "name": "fmod-audio-qa-analyst",
+      "title": "FMOD Independent Audio QA Analyst",
+      "home_department": "qa",
+      "discipline": "independent_qa",
+      "reports_to": "rpg-qa-lead",
+      "ownership": "independent audible and technical verification of FMOD assets, bank builds, API behavior and audio regressions",
+      "partners": [
+        "rpg-qa-lead",
+        "fmod-middleware-technical-lead",
+        "fmod-audio-engineering-lead"
+      ],
+      "skill_zip": "FMOD_SPECIALISTS/fmod-audio-qa-analyst.zip",
+      "size": 4958,
+      "sha256": "68d566b26db8f45f6c097000baf3392bbfb61b20b781683c253dd31ce6ba97aa"
+    }
+  ],
+  "routing": {
+    "audio_engineering": "rpg-audio-director",
+    "audio_programming": "rpg-lead-engineer",
+    "independent_qa": "rpg-qa-lead",
+    "router": "rpg-audio-director"
+  }
+}
