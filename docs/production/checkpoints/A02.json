@@ -2,7 +2,7 @@
   "task": "A02",
   "status": "OPEN",
   "base_sha": "c73ecfc2ce7bdaa39e68324271e8071f39459008",
-  "changes": "Seven real-file test functions cover 100 identical claims, changed migration bytes, process ownership, pre-commit kill, post-commit abrupt exit, busy lock recovery and WAL reader snapshot isolation.",
+  "changes": "Seven real-file test functions cover 100 identical claims, changed migration bytes, process ownership, pre-commit kill, post-commit abrupt exit, busy lock recovery and WAL reader snapshot isolation. Four further real-file type conversion tests cover timestamps, signed integer limits, canonical JSON, scope paths and decimal precision.",
   "verification": [
     {
       "command": "python -m unittest tests.v16.db.test_sqlite_extra_c8 -v",
@@ -18,8 +18,18 @@
       "command": "python -m unittest discover -s tests/v16/acceptance -p test_*.py -v",
       "exit_code": 0,
       "tests": 2
+    },
+    {
+      "command": "python -m unittest tests.v16.db.test_sqlite_types_extra_c8 -v",
+      "exit_code": 0,
+      "tests": 4
+    },
+    {
+      "command": "python scripts/sqlite_c8_validate.py after type tests",
+      "exit_code": 0,
+      "tests": 220
     }
   ],
-  "case_scope": "Partial local evidence for TX-01, TX-06, TX-07, TX-08, TX-11 and SQLITE-07; no full-case PASS claimed.",
+  "case_scope": "Partial local evidence for TX-01, TX-06, TX-07, TX-08, TX-11 and SQLITE-07; no full-case PASS claimed. Partial local evidence for SQLITE-02.",
   "remaining": "Complete A00/A01 and the remaining SQLITE/TX acceptance scenarios, including command readback across actual crash, checksum crash/replay, busy snapshot, disk-full, fsync, WAL retention and external cases."
 }
