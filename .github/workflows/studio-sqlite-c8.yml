@@ -10,6 +10,8 @@ on:
       - "tests/v16/acceptance/**"
       - "tests/v16/recovery/**"
       - "tests/v16/adapters/test_response_faults_c8.py"
+      - "tests/v16/performance/**"
+      - "scripts/sqlite_perf_bench.py"
       - "docs/production/c8/**"
       - ".github/workflows/studio-sqlite-c8.yml"
   push:
@@ -24,6 +26,8 @@ on:
       - "tests/v16/acceptance/**"
       - "tests/v16/recovery/**"
       - "tests/v16/adapters/test_response_faults_c8.py"
+      - "tests/v16/performance/**"
+      - "scripts/sqlite_perf_bench.py"
       - "docs/production/c8/**"
       - ".github/workflows/studio-sqlite-c8.yml"
   workflow_dispatch:
@@ -54,6 +58,11 @@ jobs:
         run: python -m unittest discover -s tests/v16/recovery -p "test_*.py" -v
       - name: Validate bounded response continuation and fault handling
         run: python -m unittest tests.v16.adapters.test_response_faults_c8 -v
+      - name: PERF-01 reproducible SQLite query-plan and latency evidence
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests/v16/performance -p "test_*.py" -v
+          python scripts/sqlite_perf_bench.py --rows 3000 --iterations 250 | tee "$RUNNER_TEMP/sqlite-perf-bench.json"
       - name: Validate source syntax and registry
         run: |
           python -m compileall -q studio_v16 infra/sqlite tests/v16/db

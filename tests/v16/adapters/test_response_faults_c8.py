@@ -99,6 +99,40 @@ class ResponseFaultsC8(unittest.TestCase):
         self.assertEqual(result['resume_capsule'], {'checkpoint': 'durable'})
         self.assertEqual(len(port.jobs), 1)
 
+    def test_unbounded_continue_transport_yields_without_new_claim(self):
+        class RepeatingPort(MemoryPort):
+            def observe_control(self, response_id):
+                self.events.append('OBSERVE')
+                return {'action': 'CONTINUE'}
+        port = RepeatingPort([{'job_id': 'one', 'attempt_id': 'attempt-one'}])
+        result = self.run_port(port)
+        self.assertEqual(port.events.count('OBSERVE'), 256)
+        self.assertNotIn('CLAIM', port.events)
+        self.assertEqual(len(port.jobs), 1)
+        self.assertEqual(result['failures'], [{'stage': 'CONTROL', 'error_type': 'ControlObservationLimit'}])
+        self.assertFalse(result['stop'])
+        self.assertEqual(result['resume_capsule'], {'checkpoint': 'durable'})
+
+    def test_unavailable_control_transport_yields_without_claim(self):
+        class UnavailablePort(MemoryPort):
+            def observe_control(self, response_id):
+                raise OSError('control service unavailable')
+        port = UnavailablePort([{'job_id': 'one', 'attempt_id': 'attempt-one'}])
+        result = self.run_port(port)
+        self.assertEqual(result['failures'], [{'stage': 'CONTROL', 'error_type': 'OSError'}])
+        self.assertNotIn('CLAIM', port.events)
+        self.assertEqual(result['resume_capsule'], {'checkpoint': 'durable'})
+
+    def test_malformed_control_fails_closed_with_checkpoint(self):
+        for invalid in ({'action': 'INJECTED'}, {'action': None}, [], 'STOP'):
+            with self.subTest(invalid=invalid):
+                port = MemoryPort([{'job_id': 'one', 'attempt_id': 'attempt-one'}], [invalid])
+                result = self.run_port(port)
+                self.assertEqual(result['failures'], [{'stage': 'CONTROL', 'error_type': 'InvalidControl'}])
+                self.assertNotIn('CLAIM', port.events)
+                self.assertFalse(result['stop'])
+                self.assertEqual(result['resume_capsule'], {'checkpoint': 'durable'})
+
     def test_invalid_time_budget_rejected_before_start(self):
         for value in (None, '20', True, 0, 3601):
             with self.subTest(value=value):

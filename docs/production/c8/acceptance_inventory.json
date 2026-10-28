@@ -40,17 +40,32 @@
       "required_evidence": "All 25 logical tables, constraints and migration digests; second run no-op",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
           "test": "SQLiteC8Tests.test_migration_idempotent_and_complete",
           "scope_and_gap": "Checks eight migration versions, re-run and SQLite pragmas; does not enumerate all 25 tables and constraints.",
           "path": "tests/v16/db/test_sqlite_c8.py"
+        },
+        {
+          "test": "tests.v16.db.test_sqlite_acceptance_fault_matrix_c8.SQLiteSchemaC8.test_25_core_tables_constraints_and_ordered_migrations_replay_noop",
+          "path": "tests/v16/db/test_sqlite_acceptance_fault_matrix_c8.py",
+          "scope_and_gap": "Real local SQLite fixture; exact-SHA independent QA is separate."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local executable evidence mapped; independent QA and external release approval remain unreviewed.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_acceptance_fault_matrix_c8.SQLiteSchemaC8.test_25_core_tables_constraints_and_ordered_migrations_replay_noop"
+        ],
+        "assertions": [
+          "All 25 enumerated logical tables and their STRICT declarations, 102 canonical schema objects, 36 foreign keys, and eight exact SHA-256 migration digests match the baseline; foreign_key_check is empty; a second migration run does not modify the digest ledger."
+        ]
+      }
     },
     {
       "case_id": "SQLITE-02",
@@ -345,10 +360,16 @@
       "required_evidence": "explicit retry/unavailable result and intact data/manifest; never pretend COMPLETE",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: explicit retry/unavailable result and intact data/manifest; never pretend COMPLETE",
+      "existing_assertions": [
+        {
+          "test": "SQLiteBusyC8.test_busy_claim_denies_retryably_without_mutation_or_false_receipt",
+          "path": "tests/v16/db/test_sqlite_acceptance_fault_matrix_c8.py",
+          "scope_and_gap": "Real-file SQLITE_BUSY retry plus clean manifest; SQLITE_BUSY_SNAPSHOT, disk-full and fsync command-transaction paths remain unverified."
+        }
+      ],
+      "gap": "Real-file SQLITE_BUSY retry plus clean manifest; SQLITE_BUSY_SNAPSHOT, disk-full and fsync command-transaction paths remain unverified.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -689,10 +710,16 @@
       "required_evidence": "Continue next eligible job in same attempt; no early final",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A04",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Continue next eligible job in same attempt; no early final",
+      "existing_assertions": [
+        {
+          "test": "ResponseFaultsC8.test_two_authorized_jobs_continue_within_one_response",
+          "path": "tests/v16/adapters/test_response_faults_c8.py",
+          "scope_and_gap": "Bounded adapter test proves two sequential jobs; real ResponseAccess claim integration awaits server-side source proof."
+        }
+      ],
+      "gap": "Bounded adapter test proves two sequential jobs; real ResponseAccess claim integration awaits server-side source proof.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -878,10 +905,16 @@
       "required_evidence": "Worker attempts job 2 in same active response; no false normal finalization",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A05",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Worker attempts job 2 in same active response; no false normal finalization",
+      "existing_assertions": [
+        {
+          "test": "ResponseFaultsC8.test_two_authorized_jobs_continue_within_one_response",
+          "path": "tests/v16/adapters/test_response_faults_c8.py",
+          "scope_and_gap": "Local simulated response continuation, without authenticated real SQLite claims or external provider."
+        }
+      ],
+      "gap": "Local simulated response continuation, without authenticated real SQLite claims or external provider.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -890,10 +923,16 @@
       "required_evidence": "No job 3 claim; checkpoint, report card, STOP receipt, unfinished work preserved",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A05",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: No job 3 claim; checkpoint, report card, STOP receipt, unfinished work preserved",
+      "existing_assertions": [
+        {
+          "test": "ResponseFaultsC8.test_stop_before_next_claim_preserves_unstarted_jobs",
+          "path": "tests/v16/adapters/test_response_faults_c8.py",
+          "scope_and_gap": "Local bounded adapter leaves unclaimed job intact on STOP; exact external STOP receipt and recovery packet remain untested."
+        }
+      ],
+      "gap": "Local bounded adapter leaves unclaimed job intact on STOP; exact external STOP receipt and recovery packet remain untested.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1238,11 +1277,34 @@
       "required_evidence": "Benchmark numbers with reproducible input and real SQL plan",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A09",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Benchmark numbers with reproducible input and real SQL plan",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "existing_assertions": [
+        {
+          "test": "tests.v16.performance.test_sqlite_perf_c8.SQLitePerformanceC8.test_full_history_baseline_is_real_scan_and_matches_indexed_result",
+          "path": "tests/v16/performance/test_sqlite_perf_c8.py",
+          "scope_and_gap": "Real local SQLite fixture; exact-SHA independent QA is separate."
+        },
+        {
+          "test": "tests.v16.performance.test_sqlite_perf_c8.SQLitePerformanceC8.test_performance_receipt_contains_real_plan_samples_and_fixed_input",
+          "path": "tests/v16/performance/test_sqlite_perf_c8.py",
+          "scope_and_gap": "Real local SQLite fixture; exact-SHA independent QA is separate."
+        }
+      ],
+      "gap": "Local executable evidence mapped; independent QA and external release approval remain unreviewed.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.performance.test_sqlite_perf_c8.SQLitePerformanceC8.test_full_history_baseline_is_real_scan_and_matches_indexed_result",
+          "tests.v16.performance.test_sqlite_perf_c8.SQLitePerformanceC8.test_performance_receipt_contains_real_plan_samples_and_fixed_input"
+        ],
+        "assertions": [
+          "A reproducible temporary-file benchmark seeds a fixed 1500-row workload and measures baseline forced table scan versus indexed inbox retrieval with identical rows, records genuine EXPLAIN QUERY PLAN output and observed median/p95/p99 latency in microseconds.",
+          "The CI performance command emits a larger 3000-row, 250-iteration receipt; timing varies by host and is not a production SLO claim."
+        ]
+      }
     },
     {
       "case_id": "PERF-02",
