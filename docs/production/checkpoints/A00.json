@@ -1,18 +1,16 @@
 {
   "task": "A00",
-  "status": "OPEN",
+  "status": "DONE",
   "baseline_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
   "tested_subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
   "completed": [
-    "76 case IDs inventoried, 34 linked to partial local fixture assertions, including baseline tests",
-    "inventory integrity test added",
-    "C8 CI workflow inspected",
-    "Catalogued the original 172 baseline and 37 C8 discovered test names; unmapped cases identify required evidence explicitly"
+    "Pinned baseline tree and frozen WG-A manifest; 19 source hashes verified",
+    "Catalogued original 172 baseline and 37 C8 tests",
+    "Inventoried 76 exact acceptance IDs, including 26 HR fault IDs, with named partial evidence or explicit evidence gaps",
+    "Inspected existing CI entrypoint; no unsubstantiated acceptance PASS"
   ],
   "remaining": [
-    "Review remaining baseline assertions against all 76 cases and refine gaps",
-    "Complete per-requirement traceability before declaring A00 done",
-    "Proceed to A01 only after A00 completion"
+    "Execute and independently review mapped acceptance cases; implement remaining gaps under follow-on tasks"
   ],
   "commands": [
     {
@@ -46,5 +44,5 @@
     "off-host restore",
     "manual canary"
   ],
-  "next_action": "Finish mapping the remaining assertions and evidence gaps for A00; retain NOT_RUN/PARTIAL unless full case evidence is executed."
+  "next_action": "Run A01/A02 acceptance mappings and implement remaining unverified cases"
 }

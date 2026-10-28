@@ -9,6 +9,7 @@ import sqlite3
 import subprocess
 import sys
 import unittest
+from unittest.mock import patch
 
 from studio_v16.db.sqlite.connection import ConnectionOwner, Unavailable
 from studio_v16.db.sqlite.migrate import MIGRATIONS, migrate
@@ -104,6 +105,30 @@ class SQLiteProcessAndMigrationC8(unittest.TestCase):
         self.addCleanup(self.owner.close)
         migrate(self.owner)
 
+    def test_immutable_event_review_and_anchor_reject_mutation_and_roll_back(self):
+        with self.owner.write() as (db, _):
+            db.execute('CREATE TABLE rollback_probe (id INTEGER) STRICT')
+            db.execute("INSERT INTO principals(principal_id,issuer,subject,kind,status) VALUES('reviewer','fixture','r','WORKER','ACTIVE')")
+            db.execute("INSERT INTO event_journal(event_id,producer,transport_delivery_id,partition_key,payload_sha256,canonical_event_json) VALUES('evt','p','delivery','q',?,'{}')", ('a'*64,))
+            db.execute("INSERT INTO reviews(review_id,subject_publication_id,reviewer_principal_id,subject_sha,verdict,evidence_ref) VALUES('review','pub','reviewer',?,'PASS','fixture')", ('a'*64,))
+            db.execute("INSERT INTO audit_anchors(anchor_id,partition_id,sequence_from,sequence_to,batch_hash,external_ref) VALUES('anchor','p',1,1,?,'fixture')", ('a'*64,))
+        statements = ["UPDATE event_journal SET partition_key='changed' WHERE event_id='evt'",
+                      "DELETE FROM event_journal WHERE event_id='evt'",
+                      "UPDATE reviews SET verdict='REWORK' WHERE review_id='review'",
+                      "DELETE FROM reviews WHERE review_id='review'",
+                      "UPDATE audit_anchors SET external_ref='changed' WHERE anchor_id='anchor'",
+                      "DELETE FROM audit_anchors WHERE anchor_id='anchor'"]
+        for statement in statements:
+            with self.subTest(statement=statement), self.assertRaisesRegex(sqlite3.IntegrityError, 'IMMUTABLE_EVIDENCE'):
+                with self.owner.write() as (db, _):
+                    db.execute('INSERT INTO rollback_probe VALUES (1)')
+                    db.execute(statement)
+        with self.owner.connection(readonly=True) as db:
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM rollback_probe').fetchone()[0], 0)
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM event_journal').fetchone()[0], 1)
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM reviews').fetchone()[0], 1)
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM audit_anchors').fetchone()[0], 1)
+
     def test_all_baseline_relations_and_migration_digests_survive_replay(self):
         baseline = {'schema_migrations', 'principals', 'jobs', 'job_dependencies', 'decisions',
                     'grants', 'worker_assignments', 'attempts', 'resource_leases', 'event_journal',
@@ -144,6 +169,38 @@ class SQLiteProcessAndMigrationC8(unittest.TestCase):
             ConnectionOwner(path)
         self.assertEqual(path.read_bytes(), b'not a sqlite database')
 
+    def test_interrupted_migration_rolls_back_and_replays(self):
+        path = self.root / 'interrupted-migration.db'
+        code = """
+from contextlib import contextmanager
+import os, sys
+from studio_v16.db.sqlite.connection import ConnectionOwner
+from studio_v16.db.sqlite.migrate import migrate
+owner = ConnectionOwner(sys.argv[1])
+original = owner.write
+@contextmanager
+def crash_before_commit():
+    with original() as transaction:
+        yield transaction
+        os._exit(0)
+owner.write = crash_before_commit
+migrate(owner)
+os._exit(8)
+"""
+        child = subprocess.run([sys.executable, '-c', code, str(path)],
+                               capture_output=True, text=True, timeout=20)
+        self.assertEqual(child.returncode, 0, child.stderr)
+        with ConnectionOwner(path) as recovered:
+            with recovered.connection(readonly=True) as db:
+                self.assertIsNone(db.execute("SELECT name FROM sqlite_master WHERE name='schema_migrations'").fetchone())
+                self.assertIsNone(db.execute("SELECT name FROM sqlite_master WHERE name='jobs'").fetchone())
+                self.assertEqual(db.execute('PRAGMA integrity_check').fetchone(), ('ok',))
+            applied = migrate(recovered)
+            self.assertEqual(len(applied), len(list(MIGRATIONS.glob('[0-9][0-9][0-9][0-9]_*.sql'))))
+            self.assertEqual(migrate(recovered), [])
+            with recovered.connection(readonly=True) as db:
+                self.assertEqual(db.execute('PRAGMA foreign_key_check').fetchall(), [])
+
     def test_modified_migration_file_is_rejected_without_changes(self):
         migrations = self.root / 'migrations'
         shutil.copytree(MIGRATIONS, migrations)
@@ -151,10 +208,12 @@ class SQLiteProcessAndMigrationC8(unittest.TestCase):
         script.write_bytes(script.read_bytes() + b'\n-- modified after application\n')
         with self.owner.connection(readonly=True) as db:
             before = db.execute('SELECT version, checksum FROM schema_migrations ORDER BY version').fetchall()
+            before_dump = list(db.iterdump())
         with self.assertRaisesRegex(ValueError, 'MIGRATION_CHECKSUM_MISMATCH'):
             migrate(self.owner, directory=migrations)
         with self.owner.connection(readonly=True) as db:
             self.assertEqual(before, db.execute('SELECT version, checksum FROM schema_migrations ORDER BY version').fetchall())
+            self.assertEqual(before_dump, list(db.iterdump()))
             self.assertEqual(db.execute('PRAGMA integrity_check').fetchone(), ('ok',))
 
     def test_external_writer_lock_returns_busy_and_recovers(self):
@@ -233,6 +292,19 @@ os._exit(0)
             with recovered.connection(readonly=True) as db:
                 self.assertEqual(db.execute('SELECT id FROM durable').fetchall(), [(1,)])
                 self.assertEqual(db.execute('PRAGMA integrity_check').fetchone(), ('ok',))
+
+    def test_shared_or_network_topology_is_rejected_before_open(self):
+        path = self.root / 'network.db'
+        with self.assertRaisesRegex(ValueError, 'private absolute local DB path'):
+            ConnectionOwner(path, topology='shared')
+        self.assertFalse(path.exists())
+        if not Path('/proc/mounts').exists():
+            self.skipTest('network mount table probing requires /proc/mounts')
+        fake_mounts = f'server {self.root} nfs rw 0 0\n'
+        with patch.object(Path, 'read_text', return_value=fake_mounts):
+            with self.assertRaisesRegex(ValueError, 'network database files are unsupported'):
+                ConnectionOwner(path)
+        self.assertFalse(path.exists())
 
     def test_separate_process_cannot_acquire_existing_owner(self):
         code = '''\nimport sys\nfrom studio_v16.db.sqlite.connection import ConnectionOwner\ntry:\n    owner = ConnectionOwner(sys.argv[1])\nexcept (BlockingIOError, OSError):\n    sys.exit(0)\nelse:\n    owner.close()\n    sys.exit(9)\n'''

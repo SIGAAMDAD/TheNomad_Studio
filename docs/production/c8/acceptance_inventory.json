@@ -84,7 +84,7 @@
       "required_evidence": "Mutating event, review, audit anchor or terminal publication rejected with rollback",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
@@ -93,8 +93,20 @@
           "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fixture mapping; independent QA remains separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_extra_c8.SQLiteProcessAndMigrationC8.test_immutable_event_review_and_anchor_reject_mutation_and_roll_back",
+          "tests.v16.db.test_sqlite_publication_extra_c8.PublicationIdentityExtraC8.test_verified_publication_receipt_cannot_be_changed"
+        ],
+        "assertions": [
+          "Updates and deletes to event, review and audit anchor are rejected and preceding writes roll back.",
+          "A verified publication cannot transition to conflict and preceding writes roll back."
+        ]
+      }
     },
     {
       "case_id": "SQLITE-04",
@@ -102,7 +114,7 @@
       "required_evidence": "`foreign_key_check` empty, duplicate active assignment and publication IDs rejected",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
@@ -111,8 +123,20 @@
           "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fixture mapping; independent QA remains separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_extra_c8.SQLiteProcessAndMigrationC8.test_duplicate_active_assignment_is_rejected_atomically",
+          "tests.v16.db.test_sqlite_publication_extra_c8.PublicationIdentityExtraC8.test_duplicate_publication_ids_and_keys_are_rejected"
+        ],
+        "assertions": [
+          "A second active assignment for one job is rejected atomically and foreign_key_check remains empty.",
+          "Duplicate publication IDs and idempotency keys fail without changing the original publication, and foreign_key_check remains empty."
+        ]
+      }
     },
     {
       "case_id": "SQLITE-05",
@@ -144,7 +168,7 @@
       "required_evidence": "Drift rejected, original DB unchanged; crash and replay after restart",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
@@ -158,8 +182,20 @@
           "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fixture mapping; independent QA remains separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_extra_c8.SQLiteProcessAndMigrationC8.test_modified_migration_file_is_rejected_without_changes",
+          "tests.v16.db.test_sqlite_extra_c8.SQLiteProcessAndMigrationC8.test_interrupted_migration_rolls_back_and_replays"
+        ],
+        "assertions": [
+          "Checksum drift is rejected and database logical dump is unchanged.",
+          "Process exit immediately before migration commit leaves no partial migration; replay succeeds with integrity and foreign-key checks."
+        ]
+      }
     },
     {
       "case_id": "TX-01",
@@ -335,7 +371,7 @@
       "required_evidence": "only appointed owner performs mutations; other denied or read-only; no accidental multi-host share",
       "external_class": "VERIFY_EXTERNAL_RELEVANCE",
       "primary_task": "A02",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
@@ -344,8 +380,20 @@
           "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fixture mapping; the NFS mount table is simulated and actual deployment storage requires independent verification.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_extra_c8.SQLiteProcessAndMigrationC8.test_separate_process_cannot_acquire_existing_owner",
+          "tests.v16.db.test_sqlite_extra_c8.SQLiteProcessAndMigrationC8.test_shared_or_network_topology_is_rejected_before_open"
+        ],
+        "assertions": [
+          "An independently started process cannot acquire the owned database and the original owner still writes.",
+          "Declared shared topology and an injected NFS mount entry are rejected before database creation; this is not an actual network filesystem test."
+        ]
+      }
     },
     {
       "case_id": "PUB-01",
@@ -598,7 +646,7 @@
       "required_evidence": "Rejected; no unauthorized pause/finalize",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A04",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
@@ -612,8 +660,18 @@
           "path": "tests/v16/db/test_sqlite_controls_c8.py"
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local fixture mapping; deployed credential and independent QA remain separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_controls_extra_c8.SQLiteControlsExtraC8.test_forged_stop_and_stale_leader_epoch_do_not_pause"
+        ],
+        "assertions": [
+          "Unverified leader, verified nonleader and stale leader epoch each fail STOP; no control is stored and the response remains RUNNING with epoch zero."
+        ]
+      }
     },
     {
       "case_id": "STOP-03",

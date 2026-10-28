@@ -46,12 +46,12 @@ jobs:
         run: python scripts/sqlite_c8_validate.py --json "$RUNNER_TEMP/sqlite-c8-receipt.json"
       - name: Validate acceptance mapping tests
         run: python -m unittest discover -s tests/v16/acceptance -p "test_*.py" -v
-      - name: Require complete acceptance mappings
-        run: |
-          python scripts/sqlite_acceptance.py --run-mapped --json "$RUNNER_TEMP/acceptance-map.json" || { cat "$RUNNER_TEMP/acceptance-map.json"; exit 1; }
       - name: Validate source syntax and registry
         run: |
           python -m compileall -q studio_v16 infra/sqlite tests/v16/db
           python scripts/studio.py validate
           python scripts/production.py validate
           python skills/rpg-studio-all-roles/scripts/validate_v4.py
+      - name: Require complete acceptance mappings
+        run: |
+          python scripts/sqlite_acceptance.py --run-mapped --json "$RUNNER_TEMP/acceptance-map.json" || { cat "$RUNNER_TEMP/acceptance-map.json"; exit 1; }

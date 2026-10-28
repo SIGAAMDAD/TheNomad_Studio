@@ -1,7 +1,7 @@
 {
   "task": "A01",
   "status": "OPEN",
-  "base_sha": "25c3e32ba84a99f8c432fd40a640650b6c370988",
+  "base_sha": "dad13f999da4d18bec56d3a5e42b974a449e761a",
   "completed": [
     "Fail-closed map checker validates case set, assertion mapping, and inventory subject consistency",
     "Runner executes fully mapped case tests on clean Git checkout, blocks skips, captures local evidence summary and exact subject SHA",
@@ -10,7 +10,7 @@
     "Runner binds its evidence digest to source, case and test result; family selection executes mapped tests"
   ],
   "remaining": [
-    "Map and verify remaining 72 cases; external gates and independent QA remain separate"
+    "Map and verify remaining 67 cases; external gates and independent QA remain separate"
   ],
   "validation": [
     {
@@ -38,6 +38,11 @@
       "command": "temporary clean Git fixture: python scripts/sqlite_acceptance.py --run-mapped",
       "exit_code": 1,
       "reason": "4 local cases executed successfully; 72 remain unmapped"
+    },
+    {
+      "command": "temporary clean Git fixture: python scripts/sqlite_acceptance.py --run-mapped",
+      "exit_code": 1,
+      "reason": "9 local case mappings pass, 67 cases unverified; synthetic fixture SHA"
     }
   ],
   "ci_impact": "SQLite C8 workflow intentionally fails until all required cases are mapped and pass."
