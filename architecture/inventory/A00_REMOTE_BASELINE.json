@@ -1,0 +1,2814 @@
+{
+  "schema": "NOMAD-A00-REMOTE-BASELINE/1",
+  "repository": "SIGAAMDAD/TheNomad_Studio",
+  "verified_pr": 32,
+  "branch": "studio/v16-sqlite-unified",
+  "source_commit_sha": "a7841a3b9e1bfb891e548ec3faa1fa665f500557",
+  "source_tree_sha": "a7841a3b9e1bfb891e548ec3faa1fa665f500557",
+  "tracked_file_count": 558,
+  "files": {
+    ".github/ISSUE_TEMPLATE/feature.yml": {
+      "sha": "bacebf7e473d933bf5f315c6a6dd2bb18812f247",
+      "size": 2138,
+      "classification": "IMPORT_ONLY"
+    },
+    ".github/workflows/ai-draft.yml": {
+      "sha": "0430773c8e0d1cb5ac3c1bdebfbef3d7e4d1cee8",
+      "size": 1158,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/ai-manual.yml": {
+      "sha": "d1cce36106f498b2109efa2c5cc71f34db6b0bfd",
+      "size": 1021,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/hyperscale-hardening-check.yml": {
+      "sha": "d81e8f7c25b84c95dcad7e77558ba587b776099b",
+      "size": 861,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/hyperscale-plan-check.yml": {
+      "sha": "cded8d53214088ba3dd36452aa747c6f24046175",
+      "size": 2163,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-board-sync.yml": {
+      "sha": "e40f9a4ed13cdbab0a61cf9a1c2b45e6dbea3158",
+      "size": 4046,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-bootstrap-labels.yml": {
+      "sha": "73c6f4beb49c7b09e30e74ab853ebd20b3ba2ba5",
+      "size": 1115,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-check.yml": {
+      "sha": "8a952da975ec620a2b82b8db53df7dcf4c0fd699",
+      "size": 2283,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-ci-evidence-check.yml": {
+      "sha": "148e9113e28cbc4f260f062d5aa6b856bc06da9f",
+      "size": 579,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-ci-evidence-relay.yml": {
+      "sha": "803ff2d710c3599e0a15a929514f09ba7296277b",
+      "size": 3414,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-comms-broker.yml": {
+      "sha": "6ec119bbc84fb9e4dd4088ae9897ad71891f1e8d",
+      "size": 4685,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-comms-check.yml": {
+      "sha": "8305d15514161ecf9f2490fc0f4f4d271c7bfd91",
+      "size": 603,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-director-pulse-check.yml": {
+      "sha": "63480f5420e54c494b7c5d7b33cfc06663c7cc14",
+      "size": 528,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-director-pulse.yml": {
+      "sha": "5ce18c68169bc4258f83e70340da607257debc75",
+      "size": 3222,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-event-route.yml": {
+      "sha": "bd237dbc00fbaf0291321d1ee4442aac6e161df9",
+      "size": 562,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-reconcile.yml": {
+      "sha": "9b7a20e79b3ff2502e63060a4d48ffaf8f378463",
+      "size": 3426,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-report.yml": {
+      "sha": "73052ff42edd039d6c5f2845ebd8b265191a73ef",
+      "size": 1003,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-scale-check.yml": {
+      "sha": "a29a22bbaffc4dd7872012a3cb299afe1a7247ea",
+      "size": 1284,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-sqlite-c8-coverage.yml": {
+      "sha": "e0478008d28ec0e42b16c46e85a833a442f28e1b",
+      "size": 1411,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-sqlite-c8-merge-gate.yml": {
+      "sha": "3d09a5d5c00817fba9df4184ebb109767de3404e",
+      "size": 1708,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-sqlite-c8.yml": {
+      "sha": "eff9d38653f7372d806888b40efb9c7d1e039264",
+      "size": 2668,
+      "classification": "RUNNING"
+    },
+    ".github/workflows/studio-v4-skill-check.yml": {
+      "sha": "52a3035200fe9805fd122dc28ad7cb94fd023995",
+      "size": 747,
+      "classification": "RUNNING"
+    },
+    "README.md": {
+      "sha": "23e9e44afdcabf863bd4933c503bda79725ff5a7",
+      "size": 2609,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/CHATGPT_SETUP.md": {
+      "sha": "7f89f059c8676bfa8b6ed647fe7a8eec76f1a6b7",
+      "size": 2302,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/OWNER_SETUP.md": {
+      "sha": "bbf5dfd149a8312e0ff4c6d01cb8809f9117673b",
+      "size": 2509,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/PRODUCTION_PIPELINE.md": {
+      "sha": "751fe60b2746457cb89794e7016ad403e7e0dbe5",
+      "size": 7535,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/SETUP.md": {
+      "sha": "84b8b03a3506d93a83b2191465e408cb413330b9",
+      "size": 6947,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/c8/A10_OFFHOST_RESTORE_DRILL.md": {
+      "sha": "9eeedd3ab93a8ef6914a87e8f826891ffe8a2ac1",
+      "size": 3930,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/c8/CI_CONTRACT.md": {
+      "sha": "49945fbda7e507a00e6254d111ede248f7e9080a",
+      "size": 2177,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/c8/acceptance_inventory.json": {
+      "sha": "11f274671ffc568e060670d4670f951f8f2d0e63",
+      "size": 127720,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/c8/response_claim_source_verification_blocker.md": {
+      "sha": "ac9f71f6f23483fa6340c1cef1c55283c01bf664",
+      "size": 1700,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/checkpoints/A00.json": {
+      "sha": "8d400102a3162d4863f7ff259bde10eaedb9178d",
+      "size": 1538,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/checkpoints/A01.json": {
+      "sha": "41c6eb46d63baa908c61144428b37e5882d18464",
+      "size": 2478,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/checkpoints/A02.json": {
+      "sha": "10d8c38cac7142c035312d5a2a5564ac64cfdab4",
+      "size": 1971,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/checkpoints/A10.json": {
+      "sha": "2e709e416280819133f3a858d7eff666ea4f7ffb",
+      "size": 983,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/checkpoints/B00.json": {
+      "sha": "9da076d867290bfe3aa012ba7558924dca0e1c27",
+      "size": 940,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/contracts/B00_CONTENT_CONTRACT_PROPOSAL.md": {
+      "sha": "0d3a1389649b197a45887cf1af7df67810842c3b",
+      "size": 5544,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/contracts/CONTENT_MANIFEST_1_EXAMPLE.xml": {
+      "sha": "61a59cc1ceb48013621813a2608e608196a712ef",
+      "size": 579,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/production/contracts/CONTENT_MANIFEST_1_PROPOSED.xsd": {
+      "sha": "3d18cf4ea90e703f5dc318ac464a9419e598c524",
+      "size": 2544,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/sqlite/ACCEPTANCE_STATUS.json": {
+      "sha": "25c9a8828168f7d446e8400b55550cfebdca8258",
+      "size": 3187,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/sqlite/C8_TEST_REPORT.md": {
+      "sha": "d1f1865c963de0f6a5f6599fe03d41651a6e33ec",
+      "size": 3094,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/sqlite/DB_STORAGE_2_SQLITE.md": {
+      "sha": "73f7fe8dfb22ee9d10a751bf43dafe6a9492344e",
+      "size": 3105,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/sqlite/FINAL_IMPLEMENTATION_HANDOFF.md": {
+      "sha": "94fb9c64415e7d8ff9bc43df5f614350d8572d1f",
+      "size": 7226,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/sqlite/IMPLEMENTATION_STATE.json": {
+      "sha": "420eda8403a8b3ea12f4b4dafa642d7010332050",
+      "size": 6039,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/sqlite/MIGRATION_RUNBOOK.md": {
+      "sha": "f9ff6e098f01218d78a6cbadca3c9aa4adb67d19",
+      "size": 5041,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/sqlite/ROLLBACK.md": {
+      "sha": "cc75c19499771fbf05d4fa7b6a842e97df22e182",
+      "size": 1552,
+      "classification": "IMPORT_ONLY"
+    },
+    "docs/sqlite/STATIC_RECEIPT.json": {
+      "sha": "64d6cbb6b8c2f587a1ed44acb24d07ea8facdb44",
+      "size": 4779,
+      "classification": "IMPORT_ONLY"
+    },
+    "examples/job.example.json": {
+      "sha": "dd45f459bac21e0215b52491d876f7538526dc07",
+      "size": 619,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/db/.env.example": {
+      "sha": "c55487b99ced4795654a7d52026fa67a58665e77",
+      "size": 302,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/db/docker-compose.yml": {
+      "sha": "94c5912b6265ce35a6761215403efc6a4c3e3107",
+      "size": 448,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/db/requirements.txt": {
+      "sha": "f58eb845761d185a7ca28467258363937cf6bca1",
+      "size": 44,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/db/roles.template.sql": {
+      "sha": "e589b17b983ef516518e91cf19bb7dcdcec6550e",
+      "size": 932,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/db/verify_backup_restore.py": {
+      "sha": "4f7c23c67d269f4be424e9b8c814e542c5bd4e53",
+      "size": 2864,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/gateway/README.md": {
+      "sha": "88a010fe488ab10ee9d1cc832ae7a04794e7c905",
+      "size": 4277,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/gateway/requirements.txt": {
+      "sha": "52e9884aff6e91ef7efa1135367f276554043d05",
+      "size": 34,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/providers/README.md": {
+      "sha": "43c9fc00a4425441f7a7c1f1cf6722cae51fec4e",
+      "size": 1228,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/sqlite/__init__.py": {
+      "sha": "a4a2346059bbdaa73ee997ce2f0c11889eb10569",
+      "size": 85,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/sqlite/backup.py": {
+      "sha": "d8f92d758acde9eb1aa2a26144c9d3307c9637c5",
+      "size": 7638,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/sqlite/offhost_drill.py": {
+      "sha": "f7280635e9568ff366535f7d74d364b46cf82394",
+      "size": 3400,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/sqlite/telemetry.py": {
+      "sha": "6589232f9ea68e3791c89bf8ac8f518d84bcdfc8",
+      "size": 1619,
+      "classification": "IMPORT_ONLY"
+    },
+    "infra/sqlite/transfer.py": {
+      "sha": "25104424d30a08a3020b54424d913708b13a86e9",
+      "size": 11350,
+      "classification": "IMPORT_ONLY"
+    },
+    "integrations/apps-script/DriveIntake.gs": {
+      "sha": "7a5238bcdcc67e58ebea620b462e694fdcf54a99",
+      "size": 4475,
+      "classification": "IMPORT_ONLY"
+    },
+    "integrations/github-actions/engineering-review.yml": {
+      "sha": "23449f26e99100563c399117f075bc4d2965a01f",
+      "size": 2637,
+      "classification": "IMPORT_ONLY"
+    },
+    "scripts/ai_draft.py": {
+      "sha": "7d87b1a3868b1c100d1cb170bb55bc70eb068c24",
+      "size": 2923,
+      "classification": "RUNNING"
+    },
+    "scripts/architecture_enforcer.py": {
+      "sha": "b7e8385847b37273aa442030e765e80b9072b3d4",
+      "size": 9361,
+      "classification": "RUNNING"
+    },
+    "scripts/board_sync.py": {
+      "sha": "307c7389baaf0e9ca6753a98a74acdf5295180c5",
+      "size": 9487,
+      "classification": "RUNNING"
+    },
+    "scripts/engineering_packet.py": {
+      "sha": "58c57c3723588f0d966858b9f71dfc69be3f3307",
+      "size": 8974,
+      "classification": "RUNNING"
+    },
+    "scripts/github_api.py": {
+      "sha": "45f76f9e72a7752519b2d0351f4e55d6229b9558",
+      "size": 7905,
+      "classification": "RUNNING"
+    },
+    "scripts/metrics.py": {
+      "sha": "d20920f80c785429bc3a4f33c8da7f917ba8ed1f",
+      "size": 4016,
+      "classification": "RUNNING"
+    },
+    "scripts/production.py": {
+      "sha": "24c10964884cd1c3df895edef3d888f67651fa5b",
+      "size": 21962,
+      "classification": "RUNNING"
+    },
+    "scripts/project_publish.py": {
+      "sha": "2b1cdfcfe1c672628d6917486f39b6a15220d7c8",
+      "size": 890,
+      "classification": "RUNNING"
+    },
+    "scripts/source_targets.py": {
+      "sha": "3d17d0e23520ea99dd22e31820eb708e69e3c200",
+      "size": 5602,
+      "classification": "RUNNING"
+    },
+    "scripts/sqlite_acceptance.py": {
+      "sha": "3c4d70425f48658088cc0dbeabfbd37364a03828",
+      "size": 13663,
+      "classification": "RUNNING"
+    },
+    "scripts/sqlite_c8_merge_gate.py": {
+      "sha": "7356d6ddeea3905d00f36e4fc1e237c916bc490d",
+      "size": 5109,
+      "classification": "RUNNING"
+    },
+    "scripts/sqlite_c8_validate.py": {
+      "sha": "5a1061247958208ac62c5941337545abc620cfaa",
+      "size": 4175,
+      "classification": "RUNNING"
+    },
+    "scripts/sqlite_perf_bench.py": {
+      "sha": "e443e6a1a8ca8b5d269ff13004a74afca5ebf62a",
+      "size": 7240,
+      "classification": "RUNNING"
+    },
+    "scripts/studio.py": {
+      "sha": "ff5ddd5ce373786e1857838b0ab9d7b7b11f31b2",
+      "size": 24216,
+      "classification": "RUNNING"
+    },
+    "scripts/studio_ci_evidence.py": {
+      "sha": "0f183876cfc0d1fa73009d32d90f20b68cd6e4fe",
+      "size": 10872,
+      "classification": "RUNNING"
+    },
+    "scripts/studio_comms.py": {
+      "sha": "6209a0684e04f8494b9d573eac45a1db988f7b99",
+      "size": 23905,
+      "classification": "RUNNING"
+    },
+    "scripts/studio_director_pulse.py": {
+      "sha": "d07c707e819058b740551108b87864275ed7c1a7",
+      "size": 7655,
+      "classification": "RUNNING"
+    },
+    "scripts/studio_inbox.py": {
+      "sha": "b072249e7a700457e9e31d5bb003926195c78041",
+      "size": 11852,
+      "classification": "RUNNING"
+    },
+    "scripts/studio_scale_probe.py": {
+      "sha": "816c7d18c46a937eda07b54ed971fe926ec232bd",
+      "size": 3644,
+      "classification": "RUNNING"
+    },
+    "scripts/studio_work_orders.py": {
+      "sha": "9f0a7298881615fbd11c69b6e52ae9cd51113b3c",
+      "size": 8231,
+      "classification": "RUNNING"
+    },
+    "scripts/studio_worker_health.py": {
+      "sha": "a9e012209bfe3236f3a265351f3ace6e2644cab0",
+      "size": 7036,
+      "classification": "RUNNING"
+    },
+    "scripts/work_event_router.py": {
+      "sha": "89e0e301142fe88a6e986121af6399c8d33220e4",
+      "size": 13219,
+      "classification": "RUNNING"
+    },
+    "skills/nomad-studio-intake/SKILL.md": {
+      "sha": "28cac919dd2c9e1f39815db77fd1f0992a018e8a",
+      "size": 2562,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/nomad-studio-intake/agents/openai.yaml": {
+      "sha": "cc18c5ed5861e0597daca20ed8c1e2829c15037a",
+      "size": 168,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/nomad-studio-intake/references/examples.md": {
+      "sha": "89f2c4d8a35f077fc98691431f55359f5bab15bc",
+      "size": 667,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/SKILL.md": {
+      "sha": "6638c5e4b0fb838a5a5cba35a61c1cfbffc2be77",
+      "size": 7339,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/agents/openai.yaml": {
+      "sha": "bd5768bdc0310df33858ccd4d7405fcfa058b84f",
+      "size": 292,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/examples/questline-ledger-event.json": {
+      "sha": "8ff8accd3e12383daf1e216219d3bf165d89f380",
+      "size": 1088,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/examples/questline-work-order.md": {
+      "sha": "eda528db7e6858599cbce2067fb5272bbe6a8040",
+      "size": 1025,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/CHAIN_OF_COMMAND.md": {
+      "sha": "2a1fc6fb4c44844ed345c47ba207f33011e3ffd7",
+      "size": 5689,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/DAILY_AUDIT.md": {
+      "sha": "7e493c9b969d1b00d8b464cd109c83eb27959f20",
+      "size": 3494,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/DEPARTMENT_CHAIN.md": {
+      "sha": "a64a90fde1648283faf1088add4ed42893476ef0",
+      "size": 5208,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/LEDGER_EVENTS.md": {
+      "sha": "528b722b58afeaf916b7f685a92845660247adff",
+      "size": 5580,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/REVIEW_GATES.md": {
+      "sha": "5455b19fa27d2fb126814e1b27d38526b93d839b",
+      "size": 4290,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/ROLE_INDEX.md": {
+      "sha": "2aa1df094607f92ddaaaa4724ea3769f3f6ac61c",
+      "size": 32820,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/STUDIO_V15_KERNEL.md": {
+      "sha": "b1617c877c642ff193c506acdbd0250fbe2e1a11",
+      "size": 854,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/STUDIO_V1_EXECUTION.md": {
+      "sha": "ee1504efd45377bb53365d7ecfb83335e5044143",
+      "size": 5295,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/STUDIO_V1_MERGE.md": {
+      "sha": "3c1cf40ad6de1e504f68879f1c705e7aa7cfe5a6",
+      "size": 1276,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/departments.v4.json": {
+      "sha": "0b2a3deb1fd5bb27e6df825772f6c2716e40d4f1",
+      "size": 61510,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/ledger_event.schema.json": {
+      "sha": "2fde873c4c6fa09550c8f67846912ce50b7b828c",
+      "size": 3424,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/references/roles_manifest.json": {
+      "sha": "73d5f2fcf48cc52acf3c33fc2613c17d33466e05",
+      "size": 149023,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/scripts/audit_ledger.py": {
+      "sha": "411b640d375efd79ce04023d2e76b71bc7e6b522",
+      "size": 4095,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/scripts/validate_v4.py": {
+      "sha": "5063af6fc71d654f06d9f2e403127437bfbb38d2",
+      "size": 4988,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/rpg-studio-all-roles/tests/test_studio_v4.py": {
+      "sha": "6468b871065bc8c3e596ebd9ac556ac9c5002e35",
+      "size": 3575,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/SKILL.md": {
+      "sha": "ae3fa2a6ec377e835ae082f09dabbac352cac1e8",
+      "size": 5251,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/agents/openai.yaml": {
+      "sha": "499dac41006d18c45982a3fede18a39c918ab5e6",
+      "size": 310,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/references/CHAIN_OF_COMMAND.md": {
+      "sha": "2a1fc6fb4c44844ed345c47ba207f33011e3ffd7",
+      "size": 5689,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/references/DAILY_AUDIT.md": {
+      "sha": "7e493c9b969d1b00d8b464cd109c83eb27959f20",
+      "size": 3494,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/references/DEPARTMENT_CHAIN.md": {
+      "sha": "a64a90fde1648283faf1088add4ed42893476ef0",
+      "size": 5208,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/references/LEDGER_EVENTS.md": {
+      "sha": "528b722b58afeaf916b7f685a92845660247adff",
+      "size": 5580,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/references/REVIEW_GATES.md": {
+      "sha": "5455b19fa27d2fb126814e1b27d38526b93d839b",
+      "size": 4290,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/references/STUDIO_V15_KERNEL.md": {
+      "sha": "b1617c877c642ff193c506acdbd0250fbe2e1a11",
+      "size": 854,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/references/STUDIO_V1_EXECUTION.md": {
+      "sha": "ee1504efd45377bb53365d7ecfb83335e5044143",
+      "size": 5295,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/references/STUDIO_V1_MERGE.md": {
+      "sha": "3c1cf40ad6de1e504f68879f1c705e7aa7cfe5a6",
+      "size": 1276,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/references/departments.v4.json": {
+      "sha": "0b2a3deb1fd5bb27e6df825772f6c2716e40d4f1",
+      "size": 61510,
+      "classification": "IMPORT_ONLY"
+    },
+    "skills/studio-director/references/ledger_event.schema.json": {
+      "sha": "2fde873c4c6fa09550c8f67846912ce50b7b828c",
+      "size": 3424,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/DIRECTOR_CONTRACT.md": {
+      "sha": "4e9ad511fca275690a1d4a52465ec7f09c8c1044",
+      "size": 5416,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/VERSION.json": {
+      "sha": "c901d39223d36189c653b635e2881a69f1d1e452",
+      "size": 474,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/WORKER_CONTRACT.md": {
+      "sha": "f7f13f69d15614039a820bac9094b557388e5e0c",
+      "size": 7240,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/architecture/hyperscale/v1/00_ARCHITECTURE.md": {
+      "sha": "abb19cbed31710ed45f16cc0e2356f0f4bb11e82",
+      "size": 13073,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/00_MASTER_PARALLELIZATION_AND_MERGE_MAP.md": {
+      "sha": "22644486dc0c22c75fefaf1256be8849e06297dd",
+      "size": 5586,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/01_CONTRACTS_AND_SEMANTICS.md": {
+      "sha": "d4a8b89014a27c8d16f89cd5c7bb1e35d6c1a487",
+      "size": 8545,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/02_MIGRATION_AND_WORKGROUPS.md": {
+      "sha": "f1f910dd96605fce504635e32ca9403cb608032b",
+      "size": 9152,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/03_CAPACITY_OPERATIONS_TESTS.md": {
+      "sha": "591d3ec4dfcfe509c835b09c430f80bf216db412",
+      "size": 9013,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/04_DEPLOYMENT_AND_SECURITY.md": {
+      "sha": "289cc5ce46913a77163934208f356850be0168a3",
+      "size": 5088,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/05_V1_CLEANUP_RECONCILIATION.md": {
+      "sha": "facd8c3b255b7f6e1b8471c3e68b8bae096af766",
+      "size": 4203,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/07_SHIFT_EXECUTION_CONTRACT.md": {
+      "sha": "03547158ae56bdde11f55e4831a84db5273cc02c",
+      "size": 8148,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/08_HOURLY_REPORTING_METRICS.md": {
+      "sha": "ce2243c04081840e3ecbd4ac1fc60bfdda32b9b1",
+      "size": 5244,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/09_RELIABILITY_AND_EXECUTION_PATCH_PLAN.md": {
+      "sha": "6f94013227ba056fb11c9b93de5a448c62fc7c69",
+      "size": 33118,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/10_DATABASE_DRIVE_AND_AUTHORITY.md": {
+      "sha": "7e74d14e73e6c81318ec3cc2ce2c8454952e461b",
+      "size": 7384,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/11_REPOSITORY_SETTINGS_AND_OVERSIGHT.md": {
+      "sha": "d5ff8306acb6c9a6fc366c1be2f8bb20553ef558",
+      "size": 4697,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/12_EXECUTION_ATTEMPT_IDENTITY.md": {
+      "sha": "ddcb3f971bf4507458cd53c502f55ff528f64fc6",
+      "size": 3058,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/CHAT_LAUNCH_PROMPTS.md": {
+      "sha": "01d96ea94b07aa1e61305e4e5aae26601400578f",
+      "size": 11648,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/README.md": {
+      "sha": "0b3150fa66f0f2f6754c6ffe975d63f11268756f",
+      "size": 4147,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/WG_A_EVT-V2_AUTHZ-V2_ACK-V2_SEGMENT-V2_FREEZE_COORDINATION_V2_CONTRACTS.md": {
+      "sha": "9c7ebedadac4b8abadbf073b405c71916495c2dc",
+      "size": 4475,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/WG_B_INGRESS-WEBHOOK_RECONCILIATION_GITHUB_AND_SIGNED_INTAKE_ADAPTER.md": {
+      "sha": "3891904ff9cb60e2e70054bfac2bcf78a10c3822",
+      "size": 4034,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/WG_C_DURABLE-LOG_OUTBOX_QUEUE_TRANSACTIONAL_JOURNAL_AND_PARTITIONED_DURABLE_QUEUE.md": {
+      "sha": "aff35636ef23788db7f5950b3c0c290571b58f01",
+      "size": 4426,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/WG_D_INBOX-V2_ACK-V2_INCREMENTAL_INBOX_AND_ACKNOWLEDGMENT_PROJECTORS.md": {
+      "sha": "2076a27ff4f097fba60a4356491d8e40b1b02c9e",
+      "size": 4326,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/WG_E_DAG-V2_LEASE-FENCE_DEPENDENCY_DAG_WRITER_LEASES_AND_SCHEDULER.md": {
+      "sha": "01c054f2d2bfebc6e9ca8d355670068bbe801697",
+      "size": 4433,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/WG_F_CI-REF_GITHUB-MIRROR_BATCH-ANCHOR_GITHUB_CI_MIRROR_AND_BATCH_AUDIT_BRIDGE.md": {
+      "sha": "84e740ab60027995e80536d7745148cb7ce60602",
+      "size": 4168,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/WG_G_OVERSIGHT-NOTICE_OVERSIGHT_ISOLATION_AND_SIGNED_ENFORCEMENT_ADAPTER.md": {
+      "sha": "0a34ba5c1a84a6a266705efba85b86a140639f99",
+      "size": 4127,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/WG_H_LOAD-MODEL_CHAOS-TESTS_SYNTHETIC_SCALE_AND_CHAOS_BENCHMARK_HARNESS.md": {
+      "sha": "7497c652b2734c7d59cda5887fb3620ef7e7ab01",
+      "size": 4084,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/WG_I_INTEGRATION_SHADOW-CUTOVER_ROLLBACK_SINGLE_INTEGRATOR_SHADOW_MIGRATION_AND_CUTOVER.md": {
+      "sha": "02785d5913261495552e844a204cde797ba5304a",
+      "size": 4977,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/WG_J_REPORT-V2_TELEMETRY_OBSERVABILITY_AND_HIERARCHICAL_AGGREGATION.md": {
+      "sha": "d009ffd1fbe7842df9e99a72dae492ea3f570488",
+      "size": 4054,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/hardening_patches.v1.json": {
+      "sha": "5770d07dd187414ee682c1e7b179821691642482",
+      "size": 35019,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/schemas/shift-control.v1.schema.json": {
+      "sha": "4807c02d5d50f027432ba1e0cf4b07dd395dd404",
+      "size": 2871,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/tools/validate_hardening_plan.py": {
+      "sha": "ca8076e2e4e6848e24e584aae46eae8dbf0f49bb",
+      "size": 7032,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/tools/validate_workgroups.py": {
+      "sha": "afc64a2ae1360c4680b6be835850ae3888c24d51",
+      "size": 3703,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/architecture/hyperscale/v1/workgroups.json": {
+      "sha": "4618a5acc44e7a85e487b4773cfa35ddd7411d1b",
+      "size": 33191,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/board.json": {
+      "sha": "e730b142bb6edad4f64e921dda6efb953dd12372",
+      "size": 319,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/BROKER.md": {
+      "sha": "b7ba3c313c1a479fe7a28a8dcf7e134b65e2a48a",
+      "size": 3625,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/CI_EVIDENCE.md": {
+      "sha": "96fc9e80a3b4f7b6495618cb52a0eb38ec0b5005",
+      "size": 2092,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/DEPLOYMENT.md": {
+      "sha": "f0649ffd1a76f70aa187b5fc86bfe724279597fb",
+      "size": 1570,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/DIRECTOR_PULSE.md": {
+      "sha": "574f4476ca429a921288cf3a6abc9a52b02b9fad",
+      "size": 1759,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/INBOX_PROTOCOL.md": {
+      "sha": "9b4aa8c84f23e2de43aa820429593743e9d15580",
+      "size": 3130,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/OPERATIONS.md": {
+      "sha": "c9f507ba86ce540c575f0c3046ff76adf2a1a6b8",
+      "size": 3307,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/README.md": {
+      "sha": "5357419697d217905341e973c824beadfb9398c6",
+      "size": 1586,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/SECURITY.md": {
+      "sha": "0f65c2b5db37df65a4f400d245fdd461563fbcb4",
+      "size": 2491,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/WORKERS.md": {
+      "sha": "03cd4389b7f7eb8b773478be3734152e7284f6bf",
+      "size": 2373,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/schemas/chat-worker-registry.v1.schema.json": {
+      "sha": "664d7177de19330a02b3e2e748ccb5865d1264f2",
+      "size": 1827,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/schemas/inbox.v1.schema.json": {
+      "sha": "36067d566a0ac0adb709bd19ff52dd4ee4ead981",
+      "size": 2651,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/schemas/normalized-event.v1.schema.json": {
+      "sha": "690ab11aa6abceb1514870ac9a6164be4d75cded",
+      "size": 3552,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/communications/schemas/source-ci-evidence.v1.schema.json": {
+      "sha": "a03296de57a104150d86ae35835e956ef36edb80",
+      "size": 1854,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/config.json": {
+      "sha": "258d2e87bca2c90062778598a2d94f72c8c0ecf7",
+      "size": 718,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/features.json": {
+      "sha": "8347a368e9a758f93d23c25af2f0385c8f155476",
+      "size": 36,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/jobs.json": {
+      "sha": "c253c32dd4c81bafb380905f27327b56fed5116f",
+      "size": 32,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/roles/studio-ops-pilot.md": {
+      "sha": "e4f52df939a3cf34bb13b10d95c99adac7bf9746",
+      "size": 1682,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/slots.json": {
+      "sha": "ab6874c0525dc3d323fda1cdfaae0520d3144877",
+      "size": 2344,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/specs/EXAMPLE.json": {
+      "sha": "0fca96554a0bc066bf374cd7a145177123c24d59",
+      "size": 1375,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/specs/README.md": {
+      "sha": "d26f00b811f01a5806c7b93aa7292f9e575aae40",
+      "size": 3698,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v1/AUDIT_FINDINGS.md": {
+      "sha": "fa7e1d4d36c60477f6e47e4e9d639e97c6a30c88",
+      "size": 5684,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/GOAP_CLEANUP.md": {
+      "sha": "47cc86897a6b3c10392c84f1b6b7f26aa4dec2df",
+      "size": 1108,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/LAUNCH_CHECKLIST.md": {
+      "sha": "2bbb4dbb5e00b09aa676e35445671b1490a1b889",
+      "size": 1323,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/MERGE_AUTHORITY.md": {
+      "sha": "3c1cf40ad6de1e504f68879f1c705e7aa7cfe5a6",
+      "size": 1276,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/OPERATING_CONTRACT.md": {
+      "sha": "1bab2e2847eccad0c5f20a05cf72c19470bbfe17",
+      "size": 5574,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/PROMPT_KERNEL_V15.md": {
+      "sha": "b1617c877c642ff193c506acdbd0250fbe2e1a11",
+      "size": 854,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/QA_REPORT_V15.md": {
+      "sha": "cfccee78afab2a72214c42546a88feb8897d8853",
+      "size": 5215,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/SCALING_GATES.md": {
+      "sha": "5989136c8b97e8dee7d8ada48574e038a42a7a2d",
+      "size": 4583,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/SOURCE_HEAD_AUDIT.json": {
+      "sha": "cdc30a4f72f373f49bfed39b8acf9f08b8941666",
+      "size": 1708,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/INDEX.md": {
+      "sha": "b109a0dc2217b0481de61a82339c714afc8b984a",
+      "size": 13579,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/S00.md": {
+      "sha": "73fb20988a53958d1e8da6a000762858d468a050",
+      "size": 691,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/S01.md": {
+      "sha": "159a164a14eab451760bb74360a1387265559523",
+      "size": 672,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/S02.md": {
+      "sha": "47b3590edb3d80973b2b6d3d85562427305118f9",
+      "size": 675,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/S03.md": {
+      "sha": "5ad7c873e0c4428b230a9f28879953fbd2e66867",
+      "size": 676,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/S04.md": {
+      "sha": "cd84f9383c732512e22433f3858cf09cd2df33ff",
+      "size": 667,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/S05.md": {
+      "sha": "851ca356d5811712db2c7a09bf131623983e9fdd",
+      "size": 680,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/S06.md": {
+      "sha": "eae2610da975ad9e8bbfa7654509d7b902d06f1f",
+      "size": 682,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/S07.md": {
+      "sha": "8fd7b87728941b150b21613d740c0475f38dd275",
+      "size": 673,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/S08.md": {
+      "sha": "7667d50d452a70890e2fcfabf30be8f83e1cbd59",
+      "size": 669,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/S09.md": {
+      "sha": "d687ba76571095da10b742a0a7e24e957211c463",
+      "size": 685,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/W01.md": {
+      "sha": "7a33f17450a6e8e6859f5d3fe905d7cc68fe5baf",
+      "size": 1187,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/W02.md": {
+      "sha": "fcd73b1f7eb4867b457c3ad8688e8f636d87a673",
+      "size": 1183,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/W03.md": {
+      "sha": "c22a8c291f127e29cf64781e16105cb331100e1c",
+      "size": 1208,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/W04.md": {
+      "sha": "6797f7e0f26d8b1b37a3a2c2efca42c764d42c97",
+      "size": 1198,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/W05.md": {
+      "sha": "745aaefddd90b22a6e40866bd9805838e0357d9c",
+      "size": 1198,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/W06.md": {
+      "sha": "3aadc04472cb3013f4281865d3819cba10bca66a",
+      "size": 1202,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-ability-framework-programmer.md": {
+      "sha": "7bedf7d5a1456f4ecfed36c5f7abddc35ae5f012",
+      "size": 1691,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-accessibility-designer.md": {
+      "sha": "bcb975a5b319e5748ba15f87cd6921e937474e17",
+      "size": 1574,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-accessibility-tester.md": {
+      "sha": "e22866076d684f00b4a0d39e5101a99663eeacf1",
+      "size": 1546,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-ai-behavior-designer.md": {
+      "sha": "faa7637869a06523618aa2e4b1ed83b439d62c7b",
+      "size": 1556,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-ai-programmer.md": {
+      "sha": "2188e491a683035dc31e0f7606f7394aa5fb2c15",
+      "size": 1537,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-animation-director.md": {
+      "sha": "4e6f43739c533cd74200617bf32a3148c23c9c44",
+      "size": 1539,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-animation-programmer.md": {
+      "sha": "becbd3606bf598467b87b39e6947b65be51983f2",
+      "size": 1547,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-art-director.md": {
+      "sha": "12fb82149acc235e33e45e4c2a8d7427ebfe5729",
+      "size": 1549,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-asset-import-pipeline-engineer.md": {
+      "sha": "68d44f373ebe20c5fdf2c84cde379a75c10f2336",
+      "size": 1645,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-audio-director.md": {
+      "sha": "b08ba2623235ddc8551701fe3d039073db37ab3c",
+      "size": 1516,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-audio-implementer.md": {
+      "sha": "c83488292461fab4a622a13871e4b0ddee59614e",
+      "size": 1511,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-audio-mixer.md": {
+      "sha": "34045af2414ec1f72dfd5b6f0e2eb2bb2682ce05",
+      "size": 1506,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-audio-programmer.md": {
+      "sha": "3fcec07ca7ee1eb0d30f57a5d42affff13232350",
+      "size": 1532,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-automation-qa-engineer.md": {
+      "sha": "3ce69e9676f3b70c43bf83e476245cd6a25d1132",
+      "size": 1493,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-autonomous-workgroup-controller.md": {
+      "sha": "a50f0bdf306895f9698ad95f51034c813d940518",
+      "size": 1696,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-balance-designer.md": {
+      "sha": "04b6008b831ff2d679f498926c81203c206c4e56",
+      "size": 1541,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-boss-behavior-programmer.md": {
+      "sha": "f590e9a68a847698086aa3ac16beed2aa724518d",
+      "size": 1675,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-boss-encounter-designer.md": {
+      "sha": "b8d501410acffdff96c68156a4ed8c3e33ec5e40",
+      "size": 1646,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-branching-dialogue-writer.md": {
+      "sha": "511ebc2a964765e2c34360e4d4776cb3a7801455",
+      "size": 1630,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-brand-marketing-manager.md": {
+      "sha": "9b49a87f4c4894bd01423d0702b9d129de138052",
+      "size": 1550,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-build-engineer.md": {
+      "sha": "8a1817f4097e81b487b1532cdb0e6bdd60492807",
+      "size": 1551,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-business-development-manager.md": {
+      "sha": "adbd85f4da33eb3fd1861dd1f1eaa8d782f1dd6b",
+      "size": 1563,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-canon-continuity-keeper.md": {
+      "sha": "d726db4cc32f9ebeefe956a973c28b5483c91b74",
+      "size": 1644,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-certification-specialist.md": {
+      "sha": "ed76586f4d3b5b3b684996d41958a3df40fd0b86",
+      "size": 1551,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-character-arc-writer.md": {
+      "sha": "90f4250b97f40a4f2bf59d4d67ef3188ad9be378",
+      "size": 1610,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-character-artist.md": {
+      "sha": "5d8a7ba5a0f7aace0b1dafce103a91b327b87fe4",
+      "size": 1555,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-character-rigger.md": {
+      "sha": "f6d136d5066ea084171cd30afb3a3e4391a18626",
+      "size": 1520,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-character-technical-artist.md": {
+      "sha": "f568422ba9b01662260babcea7a3a6d95b3a1b1f",
+      "size": 1567,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-ci-devops-engineer.md": {
+      "sha": "6f4780eec20c072216ba755a8b2a332cb2c2054a",
+      "size": 1523,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-cinematic-animator.md": {
+      "sha": "60e927c45c070ee9186ec9d1a354e4d65dd3c807",
+      "size": 1506,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-cinematic-designer.md": {
+      "sha": "720068ad9a766e249b3c13cccb7eec7a0ad02012",
+      "size": 1554,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-cinematic-scriptwriter.md": {
+      "sha": "988ab4a6f5ae7f9685a1e38b0cf4e92da59c65da",
+      "size": 1641,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-combat-animator.md": {
+      "sha": "fd39f91c6d0211d6a55e9f3f475d1996d7219154",
+      "size": 1516,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-combat-designer.md": {
+      "sha": "c8f96a91e7a45cb078db03a47f8b7a06b9c80b24",
+      "size": 1544,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-combat-feedback-designer.md": {
+      "sha": "8f096f451c747a2fc9229fe235b08e87c143b0db",
+      "size": 1646,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-combat-programmer.md": {
+      "sha": "5b768f7dd216223709c56873ec8c798b1088765f",
+      "size": 1548,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-combat-test-engineer.md": {
+      "sha": "5aa7c7ecf4c7bc5d853c467cc2cd60b0ae495978",
+      "size": 1623,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-community-manager.md": {
+      "sha": "200f81f67a7548ba2e0bd28d56a0e10b3eeda28c",
+      "size": 1557,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-compatibility-tester.md": {
+      "sha": "2b31a4df119b5ea45a97201ae6c3b348ea7cb362",
+      "size": 1495,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-composer.md": {
+      "sha": "8cd284d2283664845ffbd2a8261d43bb58ffc660",
+      "size": 1523,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-concept-artist.md": {
+      "sha": "69945fac4af5bfabc94e0e6be9cac3550dd5d9cb",
+      "size": 1552,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-content-validation-engineer.md": {
+      "sha": "c986e6f4054db16de6e9d13d66dbac1448ccd352",
+      "size": 1637,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-creative-director.md": {
+      "sha": "7e66c086efe523adb2008b6700006d48d8491e81",
+      "size": 1554,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-creature-animator.md": {
+      "sha": "cb86807a26f12e0832b83e680ed4b068a9f6c8b2",
+      "size": 1522,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-creature-artist.md": {
+      "sha": "90e6b4279559a5371f2d94f8cf4dbcf34cd0e231",
+      "size": 1531,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-design-director.md": {
+      "sha": "94f001fe7eee0ff2e2858307c4ec87ab62807bed",
+      "size": 1513,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-designer-workflow-tools-programmer.md": {
+      "sha": "7c4b36b6428832c86559ff2bcd03f73a06506ec0",
+      "size": 1684,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-dialogue-designer.md": {
+      "sha": "28d2923e298a799aaf44ed94331eaf9245777395",
+      "size": 1544,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-dialogue-editor.md": {
+      "sha": "ce33bda7326797b3fb4fbb9ea4c1dba8f25d9e90",
+      "size": 1502,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-difficulty-designer.md": {
+      "sha": "0dea90b3a94f5aed31028a84d7176a3b029872fc",
+      "size": 1657,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-documentation-manager.md": {
+      "sha": "4e63c79673766fdd00bf829b42942147c92230ad",
+      "size": 1581,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-economy-designer.md": {
+      "sha": "3aebf359a68e9742d5f767fc622bc26b4f197551",
+      "size": 1519,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-encounter-designer.md": {
+      "sha": "300497e8c8b1b2ef14cc2e4d55538f35bacbab6e",
+      "size": 1531,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-engine-profiler-tools-programmer.md": {
+      "sha": "2b22ba8ad88c15cadcde2ca1c647c35fec415a28",
+      "size": 1678,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-engine-programmer.md": {
+      "sha": "c330802625c19b2bdf353057ef1eb0a37e7b6306",
+      "size": 1527,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-environment-artist.md": {
+      "sha": "c46fb194a13acfddb476a67d995067a8246c81e1",
+      "size": 1557,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-environment-technical-artist.md": {
+      "sha": "911e395e23e1dbd6c8efde494b5658ab42829a96",
+      "size": 1589,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-environmental-interaction-designer.md": {
+      "sha": "54b2a8cb8b87109d48f9f585c6f812b46f13a992",
+      "size": 1702,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-environmental-storytelling-designer.md": {
+      "sha": "17cecccac982ec20528f463866987b3d1b490629",
+      "size": 1654,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-executive-producer.md": {
+      "sha": "3d4140f00547b997b966aa4cac9280987fdf9e80",
+      "size": 1545,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-external-development-producer.md": {
+      "sha": "bf0a9e38cc2c0b1a9b12bfecb2e927c4d9a99e25",
+      "size": 1560,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-facial-animator.md": {
+      "sha": "1ffed1332c45e153b20bfe44fbc6d1892096a27e",
+      "size": 1523,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-finance-producer.md": {
+      "sha": "51ee9e9b9951c490690f3d2a0af17e0d29eb8cf2",
+      "size": 1536,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-functional-qa-tester.md": {
+      "sha": "ec5bda61cd0a6e1ecd0d326ffb73f61a3e1442c3",
+      "size": 1487,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-game-director.md": {
+      "sha": "7bf5b6094dd979d8a2347cf6dc69613f66f63291",
+      "size": 1549,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-game-writer.md": {
+      "sha": "fd4d0ea146d4f6058e3fc1ad3d516bc0e187e7a1",
+      "size": 1514,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-gameplay-animator.md": {
+      "sha": "7b434cf5f34d127ce351617a1583cea8b341da0c",
+      "size": 1545,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-gameplay-data-designer.md": {
+      "sha": "57eedc9445d89a8b8cfbbe26889ce7a202670ddf",
+      "size": 1651,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-gameplay-data-editor-programmer.md": {
+      "sha": "083a13cfe2d9f64884a113c3f0ab456e0b79e904",
+      "size": 1670,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-gameplay-debugging-engineer.md": {
+      "sha": "1d85bda33ea0e355cb217b96226f24babfb98719",
+      "size": 1676,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-gameplay-designer.md": {
+      "sha": "fe6eef8626b542aec5dc43db2e8286f22adc2864",
+      "size": 1558,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-gameplay-programmer.md": {
+      "sha": "94d14b494bcaf2d582f138f1154de24e66b8ed24",
+      "size": 1548,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-gameplay-scripting-programmer.md": {
+      "sha": "3b6b4e8c65536a9a1a79b2a1e09f800907014f92",
+      "size": 1695,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-godot-editor-extension-programmer.md": {
+      "sha": "d671a037c236e0bcd38866655325188883156c21",
+      "size": 1686,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-gpu-driven-rendering-engineer.md": {
+      "sha": "6830d6aed173d9050eedcb157b17190030bdd8f0",
+      "size": 1664,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-gpu-memory-engineer.md": {
+      "sha": "ff895c27c65d2c3b215364fad3169616465ab6e9",
+      "size": 1673,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-graphics-backend-engineer.md": {
+      "sha": "aaa29625d6782037ed7ada6a6a5a56778247db01",
+      "size": 1676,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-hlod-cook-tools-programmer.md": {
+      "sha": "136ddfa0815e1923d896a696798dc2efabd27e40",
+      "size": 1697,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-illustration-artist.md": {
+      "sha": "6dafa4e62eebd667bb7ea73d148cfa1fd6e41602",
+      "size": 1535,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-integration-engineer.md": {
+      "sha": "4c3c172dff6eeb21d509c36f127b528657fd7b76",
+      "size": 1642,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-interaction-systems-programmer.md": {
+      "sha": "a21cd21c15740747858ec0631e997d347b5a2bd0",
+      "size": 1676,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-interactive-music-designer.md": {
+      "sha": "e407c6ccd274e0e14724fedd17b4d7a0743cba01",
+      "size": 1530,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-inventory-equipment-programmer.md": {
+      "sha": "0adfb791e5aeba8e7c29f52fe51657f7de2bd5e7",
+      "size": 1670,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-lead-engineer.md": {
+      "sha": "9a3ee6485d94f8fcac47404cac67dfcc21e03982",
+      "size": 1532,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-lead-game-designer.md": {
+      "sha": "857f5f0ccf1e1e27ee7d6790ed0da650e3831503",
+      "size": 1572,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-lead-producer.md": {
+      "sha": "fcda7b541ec6681bf809e5020ba4f330e643973c",
+      "size": 1522,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-legal-licensing-manager.md": {
+      "sha": "9e6137db2d64fdcfdc979cfbbfb1342f5cc59986",
+      "size": 1573,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-level-artist.md": {
+      "sha": "e655cabd24ffb84700cef1b0ce6790b02bb57ba3",
+      "size": 1537,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-level-designer.md": {
+      "sha": "fe1a4460343d6fa237775698da1f61f45d686c66",
+      "size": 1531,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-lighting-artist.md": {
+      "sha": "f5a505c796ea5a6e20ce8d9d92eeaa4e2f034cac",
+      "size": 1521,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-lighting-renderer-engineer.md": {
+      "sha": "b76417bb5753d71be43c6533889c83158462b1aa",
+      "size": 1652,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-localization-producer.md": {
+      "sha": "df415f24a0537f5531776413b375ee9d64d80384",
+      "size": 1530,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-localization-qa-tester.md": {
+      "sha": "8017aeb1fa103e258a24579d00dd8e98062f9830",
+      "size": 1531,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-localization-specialist.md": {
+      "sha": "91c3db0682861db7ecc0ffd4f3ca322f753e7e92",
+      "size": 1532,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-locomotion-physics-programmer.md": {
+      "sha": "130ab730a3f94b3f24e00dedcc29a1ba77f471ed",
+      "size": 1712,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-loot-itemization-designer.md": {
+      "sha": "889ff740a73528a062af1c61b678a55f394cf8fe",
+      "size": 1653,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-lore-writer.md": {
+      "sha": "3339b6e50f661b2cd082020b8c43dd16992d10a6",
+      "size": 1536,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-marketing-capture-artist.md": {
+      "sha": "40e746abda4f7d32a3573978af5f8c7cc2976459",
+      "size": 1578,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-material-artist.md": {
+      "sha": "d7630976e0198300fbbcfd1d5095dcffadff936b",
+      "size": 1553,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-material-system-engineer.md": {
+      "sha": "7f1cea31ff7f9173abb530964a82ad989fbed70e",
+      "size": 1682,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-memory-systems-programmer.md": {
+      "sha": "78c7d38f1f083b646a78710052542d48598f1f19",
+      "size": 1551,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-mission-designer.md": {
+      "sha": "f90c63e27201f5b11a69c60ba0397b7424ff9c8d",
+      "size": 1536,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-motion-capture-specialist.md": {
+      "sha": "cc3d27aa63d91899322b6559e8c09ac47cd4fac9",
+      "size": 1564,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-narrative-creator.md": {
+      "sha": "e88f807bb41f53bff1b59200bcd88f76eb26487c",
+      "size": 1694,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-narrative-designer.md": {
+      "sha": "caf270c76cdbb9b31daeb323285a0302c46f9b9a",
+      "size": 1531,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-narrative-director.md": {
+      "sha": "ac99c95734d585e7d454b1c65df4a0ff1f66c5d1",
+      "size": 1533,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-narrative-editor.md": {
+      "sha": "d0e1c45ff459f165e123dc6214d7c44e87d63f27",
+      "size": 1506,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-narrative-systems-designer.md": {
+      "sha": "9cc5239e49b40f8ad90652d7372fe2158899d348",
+      "size": 1670,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-narrative-validation-engineer.md": {
+      "sha": "e88a61831b0a11662821ee5c5e5d2466d5679d55",
+      "size": 1659,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-navigation-programmer.md": {
+      "sha": "3be44714383d51593f108c485fd8a7da8965b0ab",
+      "size": 1546,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-network-programmer.md": {
+      "sha": "e8f34c97b407f77f207b8282fde4812a5532c29a",
+      "size": 1529,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-performance-engineer.md": {
+      "sha": "4bec081bba5f93def3a599f17b230a537318921f",
+      "size": 1566,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-performance-qa-analyst.md": {
+      "sha": "026af1ee16c293790b4135a12bef2ef0e59ad2e8",
+      "size": 1524,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-physics-programmer.md": {
+      "sha": "a82313e4b2e1f0c52377f496a8ab98f76c96149d",
+      "size": 1552,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-platform-programmer.md": {
+      "sha": "72273200c744fbd107b4549d0db318419048b293",
+      "size": 1557,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-player-controller-programmer.md": {
+      "sha": "e4871c1457cbcd308b13c9c8908dc52fb2a73ce7",
+      "size": 1724,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-player-insights-analyst.md": {
+      "sha": "85381d1ff9f6adb1a2ba1a52cee9f60e5c2c6b8a",
+      "size": 1543,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-player-movement-designer.md": {
+      "sha": "1c02bda80dc3263ac03df12151794aa3a3eafd2b",
+      "size": 1567,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-player-support-specialist.md": {
+      "sha": "8c1f5609eacfcb48e99fcd2e5c9684a1915897da",
+      "size": 1548,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-playtest-coordinator.md": {
+      "sha": "6520736d821274cb2e1db4819d6bfab0c8eabae3",
+      "size": 1518,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-post-processing-engineer.md": {
+      "sha": "cea54e5b84ab8739bbd125d395831f6481166a6f",
+      "size": 1656,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-procedural-environment-artist.md": {
+      "sha": "206b7e79606149b451f2d3cc2878bde97d1790a7",
+      "size": 1563,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-procedural-tools-tech-artist.md": {
+      "sha": "9edb30b46c5326413601664c23ff3cd0bb85aee8",
+      "size": 1575,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-product-manager.md": {
+      "sha": "925f78793424fb93e1e175432cc490ba970625bf",
+      "size": 1532,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-production-coordinator.md": {
+      "sha": "87f34966c2ff6b4a74cc3bb1dfab935b0604dd1b",
+      "size": 1512,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-progression-designer.md": {
+      "sha": "3f8ee05535bd17832a64a23a5b8cf0a2c6a1471b",
+      "size": 1512,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-prop-artist.md": {
+      "sha": "1f641cfb1918f3368fb9906b42cacc057ad3c31d",
+      "size": 1511,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-public-relations-manager.md": {
+      "sha": "3b08d6b852a25e53646626e17c91c96a04262201",
+      "size": 1515,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-qa-lead.md": {
+      "sha": "fe7b99f7366d8b4ee11f6ecd44e7e3fd3cf08a28",
+      "size": 1492,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-quest-designer.md": {
+      "sha": "fb193bda8dd80a7317155e12f7beb207e88a5300",
+      "size": 1515,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-quest-runtime-programmer.md": {
+      "sha": "d89f96adbca1a735f6133c09f588f17c17c6e956",
+      "size": 1668,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-release-manager.md": {
+      "sha": "97f73a7964cf9083ff2662ed9316191f2b9c58a5",
+      "size": 1510,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-render-graph-engineer.md": {
+      "sha": "5814c405fdedd6eabc6a0bc67b06258faa6d5ff2",
+      "size": 1656,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-rendering-programmer.md": {
+      "sha": "42f482bcfcb6c8a355cc1cd9bd45c3935b872f88",
+      "size": 1582,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-rendering-regression-engineer.md": {
+      "sha": "d02a6972f6ad21fd39068c3706267f3e63737e63",
+      "size": 1657,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-save-systems-programmer.md": {
+      "sha": "25bcf4c45a322699ae159e96cc2705bddd4afde6",
+      "size": 1557,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-shader-build-tools-programmer.md": {
+      "sha": "aa37e638eb866576d4805ec9cc6b7b49845c795e",
+      "size": 1661,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-shader-compiler-engineer.md": {
+      "sha": "7015c8543f86e9009dc882d282a95f41e02cb850",
+      "size": 1680,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-shader-technical-artist.md": {
+      "sha": "83506ff7da5823fb6347794adf2b62601b0bb72a",
+      "size": 1561,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-sound-designer.md": {
+      "sha": "fbc6ee77c39368a67f38fd09f9d5184a66f2ce54",
+      "size": 1489,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-storyboard-artist.md": {
+      "sha": "d6b5179ea4e392ed8934c716f47e95e6ff5185d5",
+      "size": 1541,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-studio-operations-manager.md": {
+      "sha": "86020c0dd14a62bb606586016586e6e8942f7ee4",
+      "size": 1537,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-systems-designer.md": {
+      "sha": "8cb3c240010636c05d58b7c185660809a5894342",
+      "size": 1553,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-technical-animator.md": {
+      "sha": "603707747fe7a65e090bd2a01d02f1124f9cf53c",
+      "size": 1523,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-technical-art-director.md": {
+      "sha": "9a4e725427aab8bb125c5783ebc04625256aea65",
+      "size": 1568,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-technical-artist.md": {
+      "sha": "b8f95143d9606c22f697fd8a7892dbfb2b7f0af0",
+      "size": 1539,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-technical-director.md": {
+      "sha": "28ec756483c0d4e09b138ca0176cf18fc2a3364d",
+      "size": 1579,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-technical-game-designer.md": {
+      "sha": "4d64cf1271dfc372f098480787ed5a46439b6ef0",
+      "size": 1556,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-technical-producer.md": {
+      "sha": "2b8559c51691a3496ad0cc34d83206781884d0d2",
+      "size": 1542,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-technical-qa-analyst.md": {
+      "sha": "af5826cf7e5e0adff1dc07cf98050245703e38d7",
+      "size": 1507,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-technical-sound-designer.md": {
+      "sha": "e6682a20d47143608a7c0c84e83a7cdcf2bcb16f",
+      "size": 1521,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-terrain-authoring-tools-programmer.md": {
+      "sha": "5f9e4399547ea736e513b71d5cf586c676a1e896",
+      "size": 1696,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-terrain-rendering-engineer.md": {
+      "sha": "5b3221fa89a75faa6388cde601ca5bd0f1e4c3ed",
+      "size": 1724,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-tools-programmer.md": {
+      "sha": "6bc6e0be84db0963163d6956b1b43777f4056f28",
+      "size": 1559,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-trailer-editor.md": {
+      "sha": "89dd453d682520d0620955585512d815c3a09d7f",
+      "size": 1552,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-traversal-encounter-designer.md": {
+      "sha": "59afb0a7e3fa3ad2c94aa05635d3290d2960655f",
+      "size": 1661,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-tutorial-onboarding-designer.md": {
+      "sha": "a608a23e862aeff5db3503b3e11c3d04191afccb",
+      "size": 1678,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-ui-artist.md": {
+      "sha": "6e4a7604afdd2e26604fce8c8e8c855aadc73b5f",
+      "size": 1470,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-ui-designer.md": {
+      "sha": "9d1677790ce6417c30989a9f8e1aad7b0f3c66f6",
+      "size": 1458,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-ui-motion-designer.md": {
+      "sha": "53dd5238543ca5230d8e0561373d5bcce806c6dc",
+      "size": 1519,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-ui-programmer.md": {
+      "sha": "7abf48b649009fe06c9911bb97e364228d64740e",
+      "size": 1522,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-user-researcher.md": {
+      "sha": "527623837d389beeb96bfd62f069d2479d1424d8",
+      "size": 1529,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-ux-designer.md": {
+      "sha": "20e60d398d492183384713a0ee38eb043680c72e",
+      "size": 1502,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-ux-director.md": {
+      "sha": "49c165ad53847bce1b80d2062d621485802b6825",
+      "size": 1487,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-vendor-outsourcing-manager.md": {
+      "sha": "9b726b9992d79724d8125441638163065b84a9e4",
+      "size": 1593,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-vfx-artist.md": {
+      "sha": "e3b2fd33b570db80d6566f48e0db1a87f954d1a5",
+      "size": 1525,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-vfx-technical-artist.md": {
+      "sha": "90aa0025ef6921cad5ebb4d1df37957e0402945a",
+      "size": 1545,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-visibility-occlusion-engineer.md": {
+      "sha": "62f72c630bd10bd405dcfbb0ca0091566ce75eef",
+      "size": 1688,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-voice-director.md": {
+      "sha": "b73748d7ddfe0f8355760701ef471e6968567aeb",
+      "size": 1525,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-volumetric-rendering-engineer.md": {
+      "sha": "4047875015e22ba9fc93a29c8d03b1d0039c9a35",
+      "size": 1683,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-weapon-artist.md": {
+      "sha": "e595e0a3a0ae06f7fe1a90f82866e4b79fdf20f1",
+      "size": 1513,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-weapons-designer.md": {
+      "sha": "6842cdfb067f330bde85cbfdd2e597d9bd34a127",
+      "size": 1527,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-world-designer.md": {
+      "sha": "977df3a7065716472c1685310ffbccf24ea7995f",
+      "size": 1553,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v1/prompts/rpg-world-streaming-programmer.md": {
+      "sha": "641b4bffbf52a71dceb811766c5648dbd1f776f9",
+      "size": 1572,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/v16/contracts/00_CONTRACT_INDEX.md": {
+      "sha": "5ac3576149bc3149e41df9a54893eac026ca6398",
+      "size": 4494,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/contracts/AUTH-V16.md": {
+      "sha": "7682480aa5dc24d58ffc8f3b1cbc92826593fa6b",
+      "size": 4864,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/contracts/DB-CONTRACT.md": {
+      "sha": "ee5893c47761496d0430acbc44b64f89df47a347",
+      "size": 4452,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/contracts/FREEZE_MANIFEST.v1.json": {
+      "sha": "27169d784b72b58242ad7916ec3b582375fd386d",
+      "size": 3462,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/contracts/PUBLISH-V16.md": {
+      "sha": "ef1c402c6cf8cc74675dc06771b879dee9a07ec9",
+      "size": 2619,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/contracts/RETIREMENT_AND_CUTOVER.md": {
+      "sha": "f258fc9c3d07d17896d480d827a1b8b471282a37",
+      "size": 1909,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/contracts/RUN-V16.md": {
+      "sha": "a04da4174bdbaf812967a8b0c0bf45f8e88213cc",
+      "size": 2718,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/contracts/WG_A_HANDOFF.md": {
+      "sha": "5a4729c9e41a14bae5417f95bdbc2f9d70565de1",
+      "size": 2648,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/contracts/legacy-retirement.v1.json": {
+      "sha": "873a3685c45474ed26ab92f10b416916b6840797",
+      "size": 1058,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/qa/README.md": {
+      "sha": "41cc4e45a87ce8bb5e64d657dbfb652bec0d95a9",
+      "size": 5838,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/qa/TEST_MATRIX.md": {
+      "sha": "832cb2d84922f9912ea901a7d03da3204bd9c76b",
+      "size": 2140,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/qa/adapter_cases.v1.json": {
+      "sha": "20ab8fae4b42a70c64fbfaca17900179fc4468a0",
+      "size": 3262,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/auth-decision.v1.schema.json": {
+      "sha": "f836db2e0bf1772df0ff71b7ea43cffebdae7579",
+      "size": 2579,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/auth-evaluate.v1.schema.json": {
+      "sha": "dbb4e45af7e5527c56724f4caee3bd838b8cca62",
+      "size": 2450,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/auth-grant.v1.schema.json": {
+      "sha": "a1d5711c2b2a18f050b07289066e9bb0c197fc61",
+      "size": 2796,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/common.v1.schema.json": {
+      "sha": "07b1e9ce0a982b43c987ab4f43b9c34c2d26305d",
+      "size": 3344,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/db-command.v1.schema.json": {
+      "sha": "9bc2737b509fb8b8e03ca3bb12e3770a66c31c95",
+      "size": 10091,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/db-event.v1.schema.json": {
+      "sha": "844da59db5b9824fd4eadc3a66de08a71618e321",
+      "size": 2173,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/db-result.v1.schema.json": {
+      "sha": "f2026cd2bbc7144d7fb95914268ab93ea57e37a2",
+      "size": 2589,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/publish-intent.v1.schema.json": {
+      "sha": "70e7eb3ee447310db21715a24071963acfe27dca",
+      "size": 5644,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/publish-readback.v1.schema.json": {
+      "sha": "7e7934420b0ef6fcd4b1e9bb4a61a63a1fddd5aa",
+      "size": 4531,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/run-receipt.v1.schema.json": {
+      "sha": "bf357310209537725b7316dcbe04c8d93c47725a",
+      "size": 3397,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/run-resume.v1.schema.json": {
+      "sha": "586eca3f2b208bc3fcdeca3dff0d0623f11c45af",
+      "size": 2593,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/schemas/run-startup.v1.schema.json": {
+      "sha": "821508e7c7d72d282bd4228d8d603a10612ff284",
+      "size": 2780,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/worker/MANUAL_LAUNCHERS.md": {
+      "sha": "bccfb6a7606ff14b16c01722e037aaf03ec98645",
+      "size": 2416,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/worker/PROFILES.v1.json": {
+      "sha": "886cb0ad60b5f3df8d089d772cfec2f8c85ae749",
+      "size": 1769,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/worker/README.md": {
+      "sha": "25e5c8c161af7e44f7b014fbfc26530fba2dded4",
+      "size": 7090,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/worker/ROLE_REGISTRY.v1.json": {
+      "sha": "c30592fb5b91aad70b6a65c352b03e671891dd40",
+      "size": 105020,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/v16/worker/manual_kernel.py": {
+      "sha": "7984a2c56d2a654363809868f5e3ba43e81b792d",
+      "size": 11846,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/ARCHITECTURE_ENFORCER.md": {
+      "sha": "d731dae549549e8e1ae3940ef6d7939e40846e51",
+      "size": 7565,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/ARCHITECTURE_PROPOSAL_TEMPLATE.md": {
+      "sha": "318677da250ffba3023092e6ee1a88b73cb47441",
+      "size": 3248,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/ENGINEERING_PIPELINE.md": {
+      "sha": "eba571a6129d1147af5241704ffe7aae165f0355",
+      "size": 4607,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/ENGINEERING_WORKERS.md": {
+      "sha": "f5e3abf5f0fee02aede6e9d29d2db86768379c80",
+      "size": 7939,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/EVENT_WORKERS.md": {
+      "sha": "d5fe3ea5931caeca51d53bbbed71b8c3c291324f",
+      "size": 1127,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/GENERALIST_WORK_SETUP.md": {
+      "sha": "48a2d7e2f37fbd2f0c8578fe4c1ffaffbedf9b85",
+      "size": 2282,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/SOURCE_REPOSITORIES.md": {
+      "sha": "842df203f47c14d7828e3bd4cc72b6e065814f82",
+      "size": 7191,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/WORKER_PROMPTS_V2.md": {
+      "sha": "22f7c3fd64de3a7b22661ba2a89e71a059ccaf03",
+      "size": 1492,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/architecture_policy.v1.json": {
+      "sha": "f31052e183ba47e9a0c76bcf017d0d5b4f959229",
+      "size": 2989,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/hierarchy.v2.json": {
+      "sha": "f7299e6ca7577a1192cbf18dad0048a4ab2c6cd4",
+      "size": 117865,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/source_targets.v1.json": {
+      "sha": "c90f325b4e1ddbd9fbf775f224cbeca2c775a903",
+      "size": 6578,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio/workforce/v4/CHAIN_OF_COMMAND.md": {
+      "sha": "e296155f76a76edb44ee03dd7598af0b4789bcca",
+      "size": 5604,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/workforce/v4/DAILY_AUDIT.md": {
+      "sha": "fddfab75ebb10cf9707b09e7f89dda570d5dd4c8",
+      "size": 3422,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/workforce/v4/DEPARTMENT_CHAIN.md": {
+      "sha": "a64a90fde1648283faf1088add4ed42893476ef0",
+      "size": 5208,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/workforce/v4/LEDGER_EVENTS.md": {
+      "sha": "528b722b58afeaf916b7f685a92845660247adff",
+      "size": 5580,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/workforce/v4/README.md": {
+      "sha": "982f5de4bc21b663f539b957eaaa0834f9a83ee0",
+      "size": 1736,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/workforce/v4/REVIEW_GATES.md": {
+      "sha": "5455b19fa27d2fb126814e1b27d38526b93d839b",
+      "size": 4290,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/workforce/v4/departments.v4.json": {
+      "sha": "0b2a3deb1fd5bb27e6df825772f6c2716e40d4f1",
+      "size": 61510,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio/workforce/v4/ledger_event.schema.json": {
+      "sha": "2fde873c4c6fa09550c8f67846912ce50b7b828c",
+      "size": 3424,
+      "classification": "DELETION_CANDIDATE"
+    },
+    "studio_v16/__init__.py": {
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "classification": "RUNNING"
+    },
+    "studio_v16/adapters/README.md": {
+      "sha": "68a23cab387809738400c437783b58306a487e43",
+      "size": 1196,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio_v16/adapters/__init__.py": {
+      "sha": "43b84ce408863783ce895d47767842fe53e27788",
+      "size": 172,
+      "classification": "RUNNING"
+    },
+    "studio_v16/adapters/authority.py": {
+      "sha": "4b7ec629c88e1eed414eadc722d54f1699b6a56e",
+      "size": 3622,
+      "classification": "RUNNING"
+    },
+    "studio_v16/adapters/response.py": {
+      "sha": "f4b027a568dee900ac54148bb0153e073eedde62",
+      "size": 4079,
+      "classification": "RUNNING"
+    },
+    "studio_v16/adapters/runtime.py": {
+      "sha": "f7ffac95bbc1a64920ddb7539615b424b2f7614f",
+      "size": 8026,
+      "classification": "RUNNING"
+    },
+    "studio_v16/communications/__init__.py": {
+      "sha": "cb916d239d4f28246bd99d2baa989cd177d1e818",
+      "size": 78,
+      "classification": "RUNNING"
+    },
+    "studio_v16/communications/service.py": {
+      "sha": "e1bcd2a01769a4569ae44433418ed2a32cca200b",
+      "size": 22869,
+      "classification": "RUNNING"
+    },
+    "studio_v16/controller/__init__.py": {
+      "sha": "f04a2ca85a6cb8d62ca39fe0f805a4b43c6629e3",
+      "size": 71,
+      "classification": "RUNNING"
+    },
+    "studio_v16/controller/views.py": {
+      "sha": "300272031694169abd9696a779cfbd8bd5e91892",
+      "size": 7030,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/PUBLICATION_AUTHORITY_V2.md": {
+      "sha": "5dc7d5b838d2e976286c575a7fcac08a8d7a9551",
+      "size": 5020,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio_v16/db/README.md": {
+      "sha": "61c637c039756a49d6b79b92bd1f671cadfa2cf9",
+      "size": 5909,
+      "classification": "IMPORT_ONLY"
+    },
+    "studio_v16/db/__init__.py": {
+      "sha": "53090b0d4cb4bfc68eb6ec043d6b263d2fdd8d8c",
+      "size": 376,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/factory.py": {
+      "sha": "21554b193a19383c64df7f5f1b472e0b1ad3e9e2",
+      "size": 1421,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/migrate.py": {
+      "sha": "3353fad1d96879515c7c5bf3e4bb0bcde5f478c2",
+      "size": 2718,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/migrations/0001_core.down.sql": {
+      "sha": "fdc4bc8696f4656033087a020a5254ca6daee7d5",
+      "size": 207,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/migrations/0001_core.up.sql": {
+      "sha": "af3d11874cb6abdcfacbc9adb84da0e9be9a86f5",
+      "size": 11383,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/migrations/0002_publication_authority.down.sql": {
+      "sha": "b82861dc26527c0519b15e301c5b275b1547ce49",
+      "size": 270,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/migrations/0002_publication_authority.up.sql": {
+      "sha": "e2291d1947ce5747d6eaaff25803f33a21e83c70",
+      "size": 3908,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/publication.py": {
+      "sha": "196308df9ea3ac89694fe572f1dad6c607ac3541",
+      "size": 26365,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/__init__.py": {
+      "sha": "1d5c234149206fc88002ae8a83b4c566ed5f5cc4",
+      "size": 80,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/connection.py": {
+      "sha": "e337248814829b3c617720c0342aac8c2ee4bbb4",
+      "size": 6695,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/migrate.py": {
+      "sha": "fdd29a8531af5c5a4ccbeb9726f660f05cb2d752",
+      "size": 2826,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/migrations/0001_core_sqlite.sql": {
+      "sha": "36d513c870ee6c754cf545f846b6e55c1c4e405b",
+      "size": 18401,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/migrations/0002_publication_sqlite.sql": {
+      "sha": "b9ca6fdc3e64e4718d9cb76ae7005af4a3870089",
+      "size": 8488,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/migrations/0003_dispatch_retry.sql": {
+      "sha": "5e3e89cad41b089120ad6a1bdd4512ac2cbfe41c",
+      "size": 2929,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/migrations/0004_cm_hr.sql": {
+      "sha": "25a763ab5afeccb2b27f42b0f237d2329aac8782",
+      "size": 8594,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/migrations/0005_response_evidence.sql": {
+      "sha": "2077e078d7d9abc236b92f894b5b44a955d6396a",
+      "size": 1248,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/migrations/0006_controller_watchdog.sql": {
+      "sha": "1d7472103566eafedeaaf7ffb45ac74e0ee05d51",
+      "size": 968,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/migrations/0007_transfer_provenance.sql": {
+      "sha": "caadeb9cfa48f97bec19663faef1017e24625d6d",
+      "size": 1017,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/migrations/0008_response_claim_fence.sql": {
+      "sha": "afb1e6c07766c60b56694f88f099a83aa017bf90",
+      "size": 396,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/publication.py": {
+      "sha": "eb948cf5251af05b0c3175e9868c141c9362a7c6",
+      "size": 25819,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/recovery.py": {
+      "sha": "6fc85d6a24daeae7cda608eef62411d8544c50f3",
+      "size": 4561,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/store.py": {
+      "sha": "7685892e2c7eddb6e2aaafc628d32e5d1d878546",
+      "size": 35857,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/sqlite/types.py": {
+      "sha": "ba9ae079553801a4ddfb2fa8bb4a5ce04f7b7cda",
+      "size": 2608,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/storage_protocol.py": {
+      "sha": "fb5fcd922ee4372997a25e12974fa88d75653e5a",
+      "size": 1839,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/store.py": {
+      "sha": "598209beef93b16b03431f90d3e256267d6c94bc",
+      "size": 38022,
+      "classification": "RUNNING"
+    },
+    "studio_v16/db/store_helpers.py": {
+      "sha": "96035d729765318264153bcdef95af5667b2e963",
+      "size": 209,
+      "classification": "RUNNING"
+    },
+    "studio_v16/gateway/__init__.py": {
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "classification": "RUNNING"
+    },
+    "studio_v16/gateway/contracts.py": {
+      "sha": "9e73a930cf4b4336b91e3096330c90424c1ba028",
+      "size": 2053,
+      "classification": "RUNNING"
+    },
+    "studio_v16/gateway/credentials.py": {
+      "sha": "82446f70b40d0ea6164ea7f1f97027f5f05a63cf",
+      "size": 3231,
+      "classification": "RUNNING"
+    },
+    "studio_v16/gateway/document_access.py": {
+      "sha": "c0ca7464e8686ef0574d07ebfe29e1564069ceaa",
+      "size": 2066,
+      "classification": "RUNNING"
+    },
+    "studio_v16/gateway/gateway.py": {
+      "sha": "9a037cd2df46c963c640e043ab9a6776a7ff82e3",
+      "size": 22035,
+      "classification": "RUNNING"
+    },
+    "studio_v16/gateway/interfaces.py": {
+      "sha": "fe84bd3375b3e0c193d130146489cae210dc1d0d",
+      "size": 3602,
+      "classification": "RUNNING"
+    },
+    "studio_v16/gateway/leadership_access.py": {
+      "sha": "035291212580fd3feed889d8e2eea0975131c0e7",
+      "size": 1128,
+      "classification": "RUNNING"
+    },
+    "studio_v16/gateway/paths.py": {
+      "sha": "25c498c390bfc4e7eca12b8df34798109ca10541",
+      "size": 3136,
+      "classification": "RUNNING"
+    },
+    "studio_v16/gateway/recovery.py": {
+      "sha": "4e64cbf4b4048d92e92322e73f64d28230466643",
+      "size": 3976,
+      "classification": "RUNNING"
+    },
+    "studio_v16/gateway/response_access.py": {
+      "sha": "e0527a46d2f5b5edfcb951d74dc2029ca72cad97",
+      "size": 1633,
+      "classification": "RUNNING"
+    },
+    "studio_v16/gateway/transport.py": {
+      "sha": "7edaf028055afc6a1def2064a578bb1a3b5df489",
+      "size": 5701,
+      "classification": "RUNNING"
+    },
+    "studio_v16/leadership/__init__.py": {
+      "sha": "ed112ab2f911f84f50ce0d0dbefba7daddb2ae63",
+      "size": 190,
+      "classification": "RUNNING"
+    },
+    "studio_v16/providers/__init__.py": {
+      "sha": "652721033279f0f273ae9bbf6ab1d7fcecf59607",
+      "size": 185,
+      "classification": "RUNNING"
+    },
+    "studio_v16/providers/drive_provider.py": {
+      "sha": "ca65d72ef4b9f95bd889f297a7fdd8b59d363407",
+      "size": 4502,
+      "classification": "RUNNING"
+    },
+    "studio_v16/providers/git_provider.py": {
+      "sha": "ea975837e628d96e0e76e3ec82bbbdac1ad9cd3a",
+      "size": 11891,
+      "classification": "RUNNING"
+    },
+    "studio_v16/watchdog/__init__.py": {
+      "sha": "20704e8b33dc15c0624f86b4f73a089c6d350efe",
+      "size": 79,
+      "classification": "RUNNING"
+    },
+    "studio_v16/watchdog/service.py": {
+      "sha": "62db12f588e30003fbfd0dfcfb2ded32ef6dec8f",
+      "size": 12779,
+      "classification": "RUNNING"
+    },
+    "tests/fixtures/board_issues.json": {
+      "sha": "49d2d803e227b427bece0691a8fff64e4a153d37",
+      "size": 404,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_architecture_enforcer.py": {
+      "sha": "240a858cc23fd121fb0ee777bd1d32f96835d268",
+      "size": 10368,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_engineering_packet.py": {
+      "sha": "18594cafc89d77f0d1bdc039ef4859833e8c6892",
+      "size": 3346,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_production_chain.py": {
+      "sha": "6eb06c258929c0af1b211a6a2042edb6955b9315",
+      "size": 20990,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_source_targets.py": {
+      "sha": "7423c4b1f641713e221225c5eb513ec7a39cb09a",
+      "size": 11114,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio.py": {
+      "sha": "c4bdec9a66a7822fb0121a345f6b55c04bfda18b",
+      "size": 16908,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio_ci_evidence.py": {
+      "sha": "33278c99e07502b493ae980c8e1d4ee3597de0db",
+      "size": 5337,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio_comms.py": {
+      "sha": "ca53b761802c3b256586c2ed7da505218212df39",
+      "size": 8574,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio_director_pulse.py": {
+      "sha": "fdcaf6a15b43506c057edb48d09abf625e3becfc",
+      "size": 3653,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio_inbox.py": {
+      "sha": "1313fb0f417cd66a5be1810778877def2aad33a5",
+      "size": 7347,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio_prompt_v15.py": {
+      "sha": "adf6b2659c90993b92be0c637c6dc626b7e2f9f9",
+      "size": 3039,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio_reconcile_bundle.py": {
+      "sha": "0dbd055001a8340d455007942021bd66e91fafde",
+      "size": 1676,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio_scale_v15.py": {
+      "sha": "43dc40922bab5ac0478877f0707fc3e9ecf0bbcd",
+      "size": 3737,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio_v1_end_to_end.py": {
+      "sha": "7f8cfd13a2c433cbed243fbd48c2c9f236f02f94",
+      "size": 4763,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio_v1_lifecycle.py": {
+      "sha": "4208718df2ef84f41b509df243320a403a3408b0",
+      "size": 2212,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio_work_orders.py": {
+      "sha": "a488c8f16917debff9a5dde6ea7c6ad15e865db4",
+      "size": 9358,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_studio_worker_health.py": {
+      "sha": "8502f8295cc740fb44f5b3200757c22637d93ab2",
+      "size": 4399,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_work_event_router.py": {
+      "sha": "dbb525b2fe44c09c73953a3721c38bf366de5a37",
+      "size": 12851,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/test_worker_prompts.py": {
+      "sha": "3f84723e290ce63705ba5705eb5f8d1ee84b9aa0",
+      "size": 6633,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/acceptance/test_acceptance_map.py": {
+      "sha": "295cf7c6cedf69c2ea57251ac73a209491065af1",
+      "size": 7089,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/acceptance/test_c8_inventory.py": {
+      "sha": "d5ff74770277579b55fc4967abca66292fa07421",
+      "size": 2185,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/acceptance/test_sqlite_acceptance_reporting.py": {
+      "sha": "31e96a28203b9f167a1b2a17a28373d1cfbc8b2c",
+      "size": 4522,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/acceptance/test_sqlite_ci_separation.py": {
+      "sha": "351cc71635621ed80218a9c366d1a7f0a9d67237",
+      "size": 5435,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/adapters/test_response_faults_c8.py": {
+      "sha": "9ab9bac351fcdf9047a2b2d838fef602f59175d4",
+      "size": 7030,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/adapters/test_runtime.py": {
+      "sha": "1a5296a79f189a583d349fcc0daaf9aeedf4f364",
+      "size": 4444,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/contracts/__init__.py": {
+      "sha": "fcdf3595d737fd6d2dac9ac63db4f971b3291dba",
+      "size": 41,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/contracts/fixtures/authorization_vectors.json": {
+      "sha": "41fce55093526a2506dcc49c15c3053563cfb185",
+      "size": 10172,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/contracts/fixtures/positive.json": {
+      "sha": "ccc551d6acc5536a7dc538a7ecdc2e745d3b8320",
+      "size": 15933,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/contracts/fixtures/publication_vectors.json": {
+      "sha": "d455c0288d440ce7d302a7d0ec85ebd43298ccbc",
+      "size": 17165,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/contracts/fixtures/schema_invalid.json": {
+      "sha": "9f77a81ba8930674ebcb75779ecee01f3d11fc83",
+      "size": 30224,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/contracts/reference_policy.py": {
+      "sha": "8e4886e4b127f31b6f20551e1d7ae560a760e349",
+      "size": 6880,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/contracts/test_contracts.py": {
+      "sha": "fbc714097b1360562b009b61ef3ac41a0f54ecf0",
+      "size": 10100,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_postgres_integration.py": {
+      "sha": "44e4fb2383fba2538420abe9247e862a0d9ef2f0",
+      "size": 12605,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_publication_authority.py": {
+      "sha": "fb3b7af7ed9ed6048b2cc19c5baab9fa32daa2f5",
+      "size": 6381,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_publication_integration.py": {
+      "sha": "b6fe42b60f631cf8a3d39fa056d14869786d0dee",
+      "size": 14862,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_acceptance_fault_matrix_c8.py": {
+      "sha": "983adb5b40d26925a01d2dec1842737c9d707c87",
+      "size": 4926,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_backpressure_c8.py": {
+      "sha": "3c41a36ab0b30f62168ca82b8d7e3131aa243941",
+      "size": 4322,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_c8.py": {
+      "sha": "9ef89492996dff7b35d40b38f5ca9556b20de34e",
+      "size": 11875,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_commands_c8.py": {
+      "sha": "e11adf39bd8747aa7b6d2588881ae3fa1a74f458",
+      "size": 7094,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_communications_extra_c8.py": {
+      "sha": "38257231f07246db01ef363a22a5e34cb8976fd1",
+      "size": 2354,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_controls_c8.py": {
+      "sha": "16848079e3bbbdec8c11e870280bedd5f232d00a",
+      "size": 4565,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_controls_extra_c8.py": {
+      "sha": "4a7fde7d122636b2eee03a31dab19a6409b94928",
+      "size": 1295,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_dispatch_restart_c8.py": {
+      "sha": "788db31e99cd22e104e4bf87fda7451b0158e7f9",
+      "size": 5076,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_extra_c8.py": {
+      "sha": "5ef4bcdd0f9ca231eebca83d351bf84b255673eb",
+      "size": 18080,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_leadership_race_c8.py": {
+      "sha": "68dbd9623e47fdc743f42b65ab59207b30217436",
+      "size": 4896,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_missing_receipts_c8.py": {
+      "sha": "5beed42b6839cd3bd2d4f556ae804ed379ef36de",
+      "size": 4559,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_multi_job_response_c8.py": {
+      "sha": "3858d3c40e90ad70b998ce10fef85871bcc163b6",
+      "size": 6905,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_pg_import_crash_c8.py": {
+      "sha": "8df67f8052ddcd149af076360d8857cd55b2d96c",
+      "size": 5255,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_publication_c8.py": {
+      "sha": "aa87cfc355c31f44815284a7f9b32ffa07fc12a5",
+      "size": 12140,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_publication_conflict_c8.py": {
+      "sha": "37f593d331349ddf8a137a074ad4872edca11cc7",
+      "size": 4296,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_publication_extra_c8.py": {
+      "sha": "f4e2d4df88dd953d784a73e9205d9f7d9c21ef25",
+      "size": 4659,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_quarantine_scope_c8.py": {
+      "sha": "7cc4268f7456ca0c83641f359726f3a184c479f5",
+      "size": 4402,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_recovery_security_log_c8.py": {
+      "sha": "798db27ca5513f0b95d081294ed9d8614a5fb349",
+      "size": 3943,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_resource_boundary_c8.py": {
+      "sha": "d66ac7f12e00948df036f7bf6bb5ac58777ae366",
+      "size": 3233,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_response_extra_c8.py": {
+      "sha": "1676e30b6cd0f0320d6ab4121ab26195c1594026",
+      "size": 2827,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_revision_qa_c8.py": {
+      "sha": "2acc188a55ab48b6a732c0c7a1a0c45ba06204c5",
+      "size": 6164,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_revoked_recovery_c8.py": {
+      "sha": "0accda27a838796ce4c70dc0ab7db431b4c41c18",
+      "size": 6105,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_shadow_import_isolation_c8.py": {
+      "sha": "1dbbf4d7f989e3ab5f6f75fd19ec93a2e8e711b6",
+      "size": 4424,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_transaction_fences_c8.py": {
+      "sha": "c6440609d8254516dd5ca47eed82233e200f30de",
+      "size": 8161,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_transfer_crash_c8.py": {
+      "sha": "53cad0fb68f9730d3595e3515b0a34249eecf4ee",
+      "size": 5577,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_types_extra_c8.py": {
+      "sha": "ab49d99ba600e3a355449abdfe079db7de715628",
+      "size": 3310,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_watchdog_c8.py": {
+      "sha": "42a38c405c4e4e9b0ffa9bf6f678a65ff9c5ea8f",
+      "size": 5278,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_sqlite_watchdog_faults_c8.py": {
+      "sha": "c31dfaed6dcf2daa7a0f5fa622410d8b9cd49bb7",
+      "size": 5339,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_static_semantics.py": {
+      "sha": "0f9f2c0b3757843de2ebdcff20a09433a4aee299",
+      "size": 2075,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/db/test_storage_contracts.py": {
+      "sha": "024bc352ff24f759de1441952feaf7b2565e0491",
+      "size": 3695,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/gateway/__init__.py": {
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/gateway/test_gateway.py": {
+      "sha": "f024630aeb91f28d1134554d771109fe7ffe4935",
+      "size": 24516,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/load/test_workload.py": {
+      "sha": "9e33417f1fc4f9bf551342342d66be367600e3c2",
+      "size": 2282,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/load/workload.py": {
+      "sha": "1ad9895a269c944fe82b3ec01e8d0c412141a444",
+      "size": 9436,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/performance/__init__.py": {
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/performance/test_sqlite_perf_c8.py": {
+      "sha": "43e5af28eabf715529fdf3aba1af139dcc57a72d",
+      "size": 2461,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/providers/test_git_drive.py": {
+      "sha": "9a5712190a4df1278195487fee95c7597739f342",
+      "size": 7206,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/providers/test_retirement.py": {
+      "sha": "c16049ee6764c874091e2ba25daed084e560b074",
+      "size": 2645,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/recovery/test_backup_failures.py": {
+      "sha": "cc2fa5bf055e0cc42e3beff506c76192c3101876",
+      "size": 5002,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/recovery/test_corrupt_startup_c8.py": {
+      "sha": "15c99eb1a604d4f3be02dd38df2f02e28599bcdc",
+      "size": 4116,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/recovery/test_operator_drill_c8.py": {
+      "sha": "4ff0ebb66a09c7854eeab9812f5a13a04d6c1351",
+      "size": 2370,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/recovery/test_snapshot_crash_c8.py": {
+      "sha": "e03364220f73063a44a9be069117e832df94653c",
+      "size": 5381,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/security/test_boundary.py": {
+      "sha": "3f8d7f6cbdc70db39ddee799c75858b6d47e3e4f",
+      "size": 6489,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/system/adapter_gate.py": {
+      "sha": "431ad2dc03b29357eb5d6b8fddad33aeb4836719",
+      "size": 5892,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/system/fake_pipeline.py": {
+      "sha": "3e3703b65790e05e07ba516e9cac284ba03de9af",
+      "size": 12297,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/system/test_adapter_gate.py": {
+      "sha": "5d7a1477179bf67f09a46a5f972b030e115401d1",
+      "size": 1917,
+      "classification": "IMPORT_ONLY"
+    },
+    "tests/v16/system/test_pipeline.py": {
+      "sha": "acd0820df05569a58330241f44791e75228580e7",
+      "size": 8690,
+      "classification": "IMPORT_ONLY"
+    }
+  },
+  "source_classification_semantics": "RUNNING means eligible runtime or CI entrypoint in source, not proven deployed",
+  "deployment_readback": "UNVERIFIED",
+  "pg_exists": "UNKNOWN",
+  "approval_state": "NOT_AUTHORIZED",
+  "delete_operations_performed": false,
+  "open_evidence": [
+    "deployed_postgresql_existence",
+    "default_branch_writer_schedules",
+    "runtime_comms_branch_heads",
+    "external_job_and_skill_consumers",
+    "off_host_archive_and_restore",
+    "owner_signed_deletion_scope"
+  ]
+}
