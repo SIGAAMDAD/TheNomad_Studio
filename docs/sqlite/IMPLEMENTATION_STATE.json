@@ -5,10 +5,16 @@
   "branch": "studio/v16-sqlite-unified",
   "source_base_sha": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
   "source_head_at_run_start": "fa14928ea36ba68fe607448d690cc00bb64488c1",
-  "current_checkpoint": "C1",
+  "current_checkpoint": "C2",
   "completed_checkpoints": [],
   "checkpoint_contract_revision": "DB-STORAGE/2-SQLITE DRAFT",
-  "files_changed_in_latest_checkpoint": [],
+  "files_changed_in_latest_checkpoint": [
+    "studio_v16/db/sqlite/connection.py",
+    "studio_v16/db/sqlite/types.py",
+    "studio_v16/db/sqlite/migrate.py",
+    "studio_v16/db/sqlite/migrations/0001_core_sqlite.sql",
+    "studio_v16/db/sqlite/migrations/0002_publication_sqlite.sql"
+  ],
   "tests": [
     {
       "command": "SHA-256 frozen manifest verification",
@@ -17,6 +23,14 @@
     {
       "command": "all test suites",
       "status": "DEFERRED_BY_USER"
+    },
+    {
+      "command": "python -m compileall -q studio_v16/db/sqlite",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
     }
   ],
   "open_code_defects": [],
@@ -27,11 +41,12 @@
     "live_github_drive_credentials": "PENDING",
     "active_cutover": "NOT_AUTHORIZED"
   },
-  "next_specific_edit": "C1: SQLite schema and migration service",
-  "last_checkpoint_parent_sha": null,
+  "next_specific_edit": "C2: explicit SQLite command store, outbox and resume operations; backend protocol/factory",
+  "last_checkpoint_parent_sha": "21ef63717c5838a00aa8dd20b2e5b5d28c51cd0d",
   "note": "Do not embed the SHA of this file's own commit in the file; report actual HEAD after commit.",
   "implemented_checkpoints": [
-    "C0"
+    "C0",
+    "C1"
   ],
   "frozen_files": {
     "count": 19,
@@ -43,5 +58,13 @@
     "RC": "MISSING durable multi-job response controls",
     "CM": "MISSING addressed SQLite inbox/document metadata",
     "HR": "MISSING durable leader epochs and independent watchdog"
+  },
+  "acceptance_gates": {
+    "C0": "STATIC_HASH_CHECK_ONLY; tests deferred",
+    "C1": "IMPLEMENTED_UNTESTED; schema execution and fault/concurrency gates deferred"
+  },
+  "runtime_requirements": {
+    "sqlite_minimum": "3.45.0",
+    "platform": "POSIX local service filesystem"
   }
 }
