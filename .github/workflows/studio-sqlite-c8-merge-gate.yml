@@ -1,6 +1,9 @@
 name: SQLite C8 Merge Gate
 on:
   pull_request:
+    # Draft PRs are evaluated by regression + acceptance coverage checks.
+    # The strict staging gate runs on ready_for_review and on every subsequent update.
+    types: [opened, reopened, synchronize, ready_for_review, converted_to_draft]
     paths:
       - "studio_v16/**"
       - "infra/sqlite/**"
@@ -26,6 +29,9 @@ permissions:
   pull-requests: read
 jobs:
   merge-acceptance:
+    # Drafts cannot merge; do not repeatedly fail the final release gate during work.
+    # Explicit manual dispatch still permits an owner-requested full evaluation.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false }}
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
