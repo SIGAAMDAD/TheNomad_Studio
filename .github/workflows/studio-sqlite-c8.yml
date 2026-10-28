@@ -1,43 +1,24 @@
-name: SQLite C8 isolated acceptance tests
+name: SQLite C8 Regression
 on:
   pull_request:
     paths:
       - "studio_v16/**"
       - "infra/sqlite/**"
-      - "tests/v16/db/test_sqlite*_c8.py"
-      - "scripts/sqlite_c8_validate.py"
+      - "tests/v16/**"
+      - "scripts/sqlite_c8_*.py"
       - "scripts/sqlite_acceptance.py"
-      - "tests/v16/acceptance/**"
-      - "tests/v16/recovery/**"
-      - "tests/v16/adapters/test_response_faults_c8.py"
-      - "tests/v16/performance/**"
       - "scripts/sqlite_perf_bench.py"
       - "docs/production/c8/**"
-      - ".github/workflows/studio-sqlite-c8.yml"
-  push:
-    branches:
-      - studio/v16-sqlite-unified
-    paths:
-      - "studio_v16/**"
-      - "infra/sqlite/**"
-      - "tests/v16/db/test_sqlite*_c8.py"
-      - "scripts/sqlite_c8_validate.py"
-      - "scripts/sqlite_acceptance.py"
-      - "tests/v16/acceptance/**"
-      - "tests/v16/recovery/**"
-      - "tests/v16/adapters/test_response_faults_c8.py"
-      - "tests/v16/performance/**"
-      - "scripts/sqlite_perf_bench.py"
-      - "docs/production/c8/**"
-      - ".github/workflows/studio-sqlite-c8.yml"
+      - "docs/sqlite/ACCEPTANCE_STATUS.json"
+      - ".github/workflows/studio-sqlite-c8*.yml"
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  isolated-sqlite-c8:
+  sqlite-regression:
     if: github.ref != 'refs/heads/studio/runtime'
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -50,36 +31,32 @@ jobs:
       - name: Check SQLite engine minimum
         run: |
           python -c "import sqlite3; assert sqlite3.sqlite_version_info >= (3,45,0), sqlite3.sqlite_version; print(sqlite3.sqlite_version)"
-      - name: Run baseline and C8 temporary-file suites
+      - name: Run baseline and isolated SQLite regression suites
         run: python scripts/sqlite_c8_validate.py --json "$RUNNER_TEMP/sqlite-c8-receipt.json"
-      - name: Validate acceptance mapping tests
+      - name: Validate test mapping syntax and release gate invariants
         run: python -m unittest discover -s tests/v16/acceptance -p "test_*.py" -v
-      - name: Run local backup recovery tests
+      - name: Validate backup and crash recovery
         run: python -m unittest discover -s tests/v16/recovery -p "test_*.py" -v
       - name: Validate bounded response continuation and fault handling
         run: python -m unittest tests.v16.adapters.test_response_faults_c8 -v
-      - name: PERF-01 reproducible SQLite query-plan and latency evidence
+      - name: PERF-01 reproducible SQL query plan and latency
         run: |
           set -o pipefail
           python -m unittest discover -s tests/v16/performance -p "test_*.py" -v
           python scripts/sqlite_perf_bench.py --rows 3000 --iterations 250 | tee "$RUNNER_TEMP/sqlite-perf-bench.json"
       - name: Validate source syntax and registry
         run: |
-          python -m compileall -q studio_v16 infra/sqlite tests/v16/db
+          python -m compileall -q studio_v16 infra/sqlite scripts/sqlite_c8_merge_gate.py scripts/sqlite_acceptance.py tests/v16
           python scripts/studio.py validate
           python scripts/production.py validate
           python skills/rpg-studio-all-roles/scripts/validate_v4.py
-      - name: Require complete acceptance mappings
-        run: |
-          python scripts/sqlite_acceptance.py --run-mapped --json "$RUNNER_TEMP/acceptance-map.json" || { cat "$RUNNER_TEMP/acceptance-map.json"; exit 1; }
-      - name: Preserve exact-SHA C8 evidence even if strict acceptance fails
+      - name: Preserve exact-checkout regression evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sqlite-c8-${{ github.sha }}
+          name: sqlite-regression-${{ github.sha }}
           path: |
             ${{ runner.temp }}/sqlite-c8-receipt.json
             ${{ runner.temp }}/sqlite-perf-bench.json
-            ${{ runner.temp }}/acceptance-map.json
           if-no-files-found: warn
           retention-days: 30

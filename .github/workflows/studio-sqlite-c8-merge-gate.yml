@@ -1,0 +1,45 @@
+name: SQLite C8 Merge Gate
+on:
+  pull_request:
+    paths:
+      - "studio_v16/**"
+      - "infra/sqlite/**"
+      - "tests/v16/**"
+      - "scripts/sqlite_c8_*.py"
+      - "scripts/sqlite_acceptance.py"
+      - "docs/production/c8/**"
+      - "docs/sqlite/ACCEPTANCE_STATUS.json"
+      - ".github/workflows/studio-sqlite-c8*.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  merge-acceptance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install runtime test dependencies
+        run: python -m pip install -r infra/gateway/requirements.txt
+      - name: Check SQLite engine minimum
+        run: python -c "import sqlite3; assert sqlite3.sqlite_version_info >= (3,45,0), sqlite3.sqlite_version"
+      - name: Require 76 executable acceptance cases on exact checkout
+        run: python scripts/sqlite_acceptance.py --run-mapped --json "$RUNNER_TEMP/strict-acceptance.json"
+      - name: Require independent exact-head QA, providers, restore, canary, owner approval
+        if: always()
+        run: python scripts/sqlite_c8_merge_gate.py --coverage "$RUNNER_TEMP/strict-acceptance.json" --json "$RUNNER_TEMP/release-gates.json"
+      - name: Preserve full release-blocker evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sqlite-merge-gate-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/strict-acceptance.json
+            ${{ runner.temp }}/release-gates.json
+          if-no-files-found: warn
+          retention-days: 30

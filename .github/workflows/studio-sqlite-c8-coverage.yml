@@ -1,0 +1,40 @@
+name: SQLite C8 Acceptance Coverage
+on:
+  pull_request:
+    paths:
+      - "studio_v16/**"
+      - "infra/sqlite/**"
+      - "tests/v16/**"
+      - "scripts/sqlite_c8_*.py"
+      - "scripts/sqlite_acceptance.py"
+      - "docs/production/c8/**"
+      - "docs/sqlite/ACCEPTANCE_STATUS.json"
+      - ".github/workflows/studio-sqlite-c8*.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acceptance-coverage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install runtime test dependencies
+        run: python -m pip install -r infra/gateway/requirements.txt
+      - name: Check SQLite engine minimum
+        run: python -c "import sqlite3; assert sqlite3.sqlite_version_info >= (3,45,0), sqlite3.sqlite_version"
+      - name: Execute mapped cases and report unresolved requirements
+        run: python scripts/sqlite_acceptance.py --run-mapped --report-only --json "$RUNNER_TEMP/sqlite-coverage.json"
+      - name: Preserve exact-checkout coverage receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sqlite-coverage-${{ github.sha }}
+          path: ${{ runner.temp }}/sqlite-coverage.json
+          if-no-files-found: error
+          retention-days: 30

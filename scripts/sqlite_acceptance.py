@@ -147,7 +147,7 @@ def clean_head(root=ROOT):
 
 TEST_HARNESS = r"""import json, sys, unittest
 suite = unittest.TestLoader().loadTestsFromNames(sys.argv[1:])
-result = unittest.TextTestRunner(stream=open('/dev/null','w'), verbosity=0).run(suite)
+result = unittest.TextTestRunner(stream=sys.stderr, verbosity=2).run(suite)
 print(json.dumps({'tests_run': result.testsRun, 'failures': len(result.failures),
                   'errors': len(result.errors), 'skipped': len(result.skipped)}))
 sys.exit(0 if result.wasSuccessful() else 1)
@@ -164,9 +164,12 @@ def run_tests(tests):
                                   capture_output=True, text=True, timeout=120, env=env)
         data = json.loads(proc.stdout)
         data['exit_code'] = proc.returncode
+        if proc.returncode or data.get('failures') or data.get('errors') or data.get('skipped'):
+            data['diagnostics'] = proc.stderr[-24000:]
         return data
-    except (OSError, subprocess.TimeoutExpired, ValueError):
-        return {'tests_run': 0, 'failures': 0, 'errors': 1, 'skipped': 0, 'exit_code': 1}
+    except (OSError, subprocess.TimeoutExpired, ValueError) as exc:
+        return {'tests_run': 0, 'failures': 0, 'errors': 1, 'skipped': 0,
+                'exit_code': 1, 'runner_exception': type(exc).__name__ + ': ' + str(exc)[:500]}
 
 
 def main(argv=None):
@@ -174,9 +177,12 @@ def main(argv=None):
     parser.add_argument('--check-map', action='store_true')
     parser.add_argument('--run-case', help='execute a completely mapped case on a clean checkout')
     parser.add_argument('--run-mapped', action='store_true', help='execute all mapped cases and fail on remaining gaps')
+    parser.add_argument('--report-only', action='store_true', help='coverage reporting only; still fail on mapped test errors')
     parser.add_argument('--family', action='append', default=[])
     parser.add_argument('--json', type=Path, help='write local report to this path')
     args = parser.parse_args(argv)
+    if args.report_only and (not args.run_mapped or args.run_case or args.check_map):
+        parser.error('--report-only is valid only with --run-mapped')
     if args.family and not args.check_map and not args.run_case:
         args.run_mapped = True
     if not args.check_map and not args.family and not args.run_case and not args.run_mapped:
@@ -205,14 +211,38 @@ def main(argv=None):
             results = [execute_case(inventory, c['case_id'], subject_sha, run_tests) for c in selected]
             if clean_head() != subject_sha:
                 raise ValueError('checkout changed while tests ran')
+            statuses = {'MAPPED': 0, 'PARTIAL': 0, 'NOT_RUN': 0}
+            for case in inventory['cases']:
+                if not args.family or case['case_id'].split('-')[0] in args.family:
+                    statuses[case['status']] += 1
+            event = {}
+            if os.environ.get('GITHUB_EVENT_PATH'):
+                event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
+            pr = event.get('pull_request') or {}
+            pr_head = (pr.get('head') or {}).get('sha')
+            pr_base = (pr.get('base') or {}).get('sha')
+            if os.environ.get('GITHUB_SHA') and os.environ['GITHUB_SHA'] != subject_sha:
+                raise ValueError('GITHUB_SHA differs from verified checkout')
             report = {'schema': 'NOMAD-ACCEPTANCE-RUN/1', 'subject_sha': subject_sha,
-                      'results': results, 'unverified_cases': gaps}
+                      'source_identity': {'tested_checkout_sha': subject_sha,
+                                          'pr_head_sha': pr_head, 'pr_base_sha': pr_base,
+                                          'inventory_baseline_sha': inventory.get('subject_sha'),
+                                          'github_run_id': os.environ.get('GITHUB_RUN_ID')},
+                      'case_counts': statuses, 'results': results, 'unverified_cases': gaps,
+                      'independent_qa': 'NOT_RUN', 'live_provider_qa': 'NOT_RUN',
+                      'release_authorized': False}
             output = json.dumps(report, indent=2, sort_keys=True) + '\n'
             if args.json:
                 args.json.write_text(output)
             else:
                 print(output, end='')
-            return 1 if gaps or any(r['status'] != 'EXECUTED_PASS' for r in results) else 0
+            failed = [r for r in results if r['status'] != 'EXECUTED_PASS']
+            print('C8_ACCEPTANCE_SUMMARY ' + json.dumps({'tested_checkout_sha': subject_sha,
+                  'mapped': len(results), 'failed': len(failed), 'unverified': len(gaps),
+                  'report_only': args.report_only}, sort_keys=True))
+            for item in failed:
+                print('C8_ACCEPTANCE_FAILURE ' + json.dumps(item, sort_keys=True), file=sys.stderr)
+            return 1 if failed or (gaps and not args.report_only) else 0
     except (OSError, ValueError, TypeError) as exc:
         errors, gaps = [str(exc)], []
         inventory = {}
