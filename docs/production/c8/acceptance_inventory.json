@@ -218,7 +218,7 @@
       "required_evidence": "Exactly one valid holder and one counted acceptance; others DUPLICATE/blocked, no split lease",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
@@ -230,10 +230,32 @@
           "test": "SyntheticSagaTests.test_one_claim_winner_among_100_simultaneous_attempts",
           "path": "tests/v16/system/test_pipeline.py",
           "scope_and_gap": "100 distinct claims use FakeJournal, not same-key requests against SQLite gateway."
+        },
+        {
+          "test": "SQLiteTransactionFencesC8.test_distinct_concurrent_claims_have_one_lease_holder_and_one_effect",
+          "path": "tests/v16/db/test_sqlite_transaction_fences_c8.py",
+          "scope_and_gap": "100 distinct competing claims, one SQLite winner, 99 blocked, one attempt, one lease, one journal effect."
+        },
+        {
+          "test": "SQLiteSameCommandC8.test_hundred_simultaneous_same_key_claims_commit_once",
+          "path": "tests/v16/db/test_sqlite_extra_c8.py",
+          "scope_and_gap": "100 identical command requests converge on one durable commit and 99 exact DUPLICATE responses."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Complete real-file local fixture mapping; independent exact-SHA QA remains NOT_REVIEWED.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_extra_c8.SQLiteSameCommandC8.test_hundred_simultaneous_same_key_claims_commit_once",
+          "tests.v16.db.test_sqlite_transaction_fences_c8.SQLiteTransactionFencesC8.test_distinct_concurrent_claims_have_one_lease_holder_and_one_effect"
+        ],
+        "assertions": [
+          "100 concurrent identical command identities yield one counted durable acceptance, 99 DUPLICATE replies, and exactly one attempt, lease and command result.",
+          "100 distinct attempts for the same resource produce exactly one winner, 99 RETRYABLE_BLOCKED denials, one durable journal effect, and one valid lease holder."
+        ]
+      }
     },
     {
       "case_id": "TX-02",
@@ -253,11 +275,40 @@
       "required_evidence": "Old epoch/lease denied at same transaction boundary; no partial journal/outbox",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A02",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Old epoch/lease denied at same transaction boundary; no partial journal/outbox",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "existing_assertions": [
+        {
+          "test": "SQLiteTransactionFencesC8.test_stale_assignment_and_lease_rejected_with_atomic_empty_journal",
+          "path": "tests/v16/db/test_sqlite_transaction_fences_c8.py",
+          "scope_and_gap": "Stale assignment epoch and lease generation are denied with zero attempts, leases, journal or outbox effects."
+        },
+        {
+          "test": "SQLiteTransactionFencesC8.test_revocation_before_claim_denies_atomically",
+          "path": "tests/v16/db/test_sqlite_transaction_fences_c8.py",
+          "scope_and_gap": "Grant revoked before claim denies with no acceptance, journal or outbox mutation."
+        },
+        {
+          "test": "SQLiteTransactionFencesC8.test_concurrent_revocation_cannot_split_claim_transaction",
+          "path": "tests/v16/db/test_sqlite_transaction_fences_c8.py",
+          "scope_and_gap": "Concurrent grant revocation serialized across a real SQLite write transaction; subsequent checkpoint forbidden and no partial effect."
+        }
+      ],
+      "gap": "Complete local transaction serialization and revocation tests; exact provider/QA attestation separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_transaction_fences_c8.SQLiteTransactionFencesC8.test_stale_assignment_and_lease_rejected_with_atomic_empty_journal",
+          "tests.v16.db.test_sqlite_transaction_fences_c8.SQLiteTransactionFencesC8.test_revocation_before_claim_denies_atomically",
+          "tests.v16.db.test_sqlite_transaction_fences_c8.SQLiteTransactionFencesC8.test_concurrent_revocation_cannot_split_claim_transaction"
+        ],
+        "assertions": [
+          "Denied stale assignment and lease-generation paths roll back atomically with no journal, attempt, lease, command-result or outbox effect.",
+          "Grant revocation before admission forbids claim; revocation concurrent with an already-authorized write transaction serializes after that commit, and revocation then blocks a subsequent checkpoint with unchanged counted effects."
+        ]
+      }
     },
     {
       "case_id": "TX-04",
@@ -272,9 +323,14 @@
           "test": "SQLiteCommandsC8.test_reassign_fences_old_worker",
           "scope_and_gap": "Tests old worker checkpoint denial after reassignment; full concurrent leadership transfer remains unproven.",
           "path": "tests/v16/db/test_sqlite_commands_c8.py"
+        },
+        {
+          "test": "SQLiteTransactionFencesC8.test_reassignment_advances_both_epoch_and_lease_and_fences_old_writer",
+          "path": "tests/v16/db/test_sqlite_transaction_fences_c8.py",
+          "scope_and_gap": "Real-file reassign advances assignment and lease generations, revokes old writer and denies stale checkpoint without new journal; coupled leader transfer still not established."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
+      "gap": "Real-file reassign advances assignment and lease generations, revokes old writer and denies stale checkpoint without new journal; coupled leader transfer still not established.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -959,10 +1015,16 @@
       "required_evidence": "Head fences old writer lease, grants replacement after CAS, old write denied",
       "external_class": "VERIFY_EXTERNAL_RELEVANCE",
       "primary_task": "A05",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Head fences old writer lease, grants replacement after CAS, old write denied",
+      "existing_assertions": [
+        {
+          "test": "SQLiteTransactionFencesC8.test_reassignment_advances_both_epoch_and_lease_and_fences_old_writer",
+          "path": "tests/v16/db/test_sqlite_transaction_fences_c8.py",
+          "scope_and_gap": "SQLite writer fencing is proven locally; actual Drive draft CAS, leader recovery, and provider denial are not exercised."
+        }
+      ],
+      "gap": "SQLite writer fencing is proven locally; actual Drive draft CAS, leader recovery, and provider denial are not exercised.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -1181,10 +1243,16 @@
       "required_evidence": "Reject unauthenticated command, maintain current shift epoch",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A07",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Reject unauthenticated command, maintain current shift epoch",
+      "existing_assertions": [
+        {
+          "test": "SQLiteControlsExtraC8.test_forged_stop_and_stale_leader_epoch_do_not_pause",
+          "path": "tests/v16/db/test_sqlite_controls_extra_c8.py",
+          "scope_and_gap": "Real SQLite control rejects untrusted or stale leader STOP and preserves RUNNING epoch 0; actual forged Issue comment and head succession not exercised."
+        }
+      ],
+      "gap": "Local STOP forgery denial verified; external Issue comment and head succession still untested.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
