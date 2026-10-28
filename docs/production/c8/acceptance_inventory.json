@@ -990,11 +990,28 @@
       "required_evidence": "YIELDED/UNKNOWN; durable checkpoint; manual resume",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A04",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: YIELDED/UNKNOWN; durable checkpoint; manual resume",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "existing_assertions": [
+        {
+          "test": "SQLiteResourceBoundaryC8.test_platform_boundary_preserves_unreported_job_and_manual_resume",
+          "path": "tests/v16/db/test_sqlite_resource_boundary_c8.py",
+          "scope_and_gap": "Real SQLite response and job-receipt persistence across process owner restart; a fresh response must be manually invoked. External platform lifetime and owner response scheduling are separate."
+        }
+      ],
+      "gap": "Local durable YIELD/UNKNOWN checkpoint and manual-resume behavior mapped; platform-side notification and independent exact-SHA QA require external evidence.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_resource_boundary_c8.SQLiteResourceBoundaryC8.test_platform_boundary_preserves_unreported_job_and_manual_resume"
+        ],
+        "assertions": [
+          "A worker response cut off before any verified STOP durably writes RESOURCE_BOUNDARY_YIELD with a source-provided resume capsule and explicit Unavailable failure; the unreported attempt outcome remains UNKNOWN, the job remains CLAIMED, and there is no invented response-job receipt.",
+          "After the SQLite owner is closed and reopened, the original card and resume capsule read back identically; an explicitly started fresh response is RUNNING while the previous response remains YIELDED without an automatic restart or promoted completion."
+        ]
+      }
     },
     {
       "case_id": "CM-01",
