@@ -12,7 +12,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-from studio_v16.db.store import GatewayContext, PostgresStore
+from studio_v16.db.store import GatewayContext
+from studio_v16.db.storage_protocol import DurableStore
 
 
 class RuntimeBlocked(RuntimeError):
@@ -50,7 +51,7 @@ class DurableRuntime:
     SHADOW imports are *not* treated as authoritative state. The bridge sends
     authenticated DB commands unchanged to WG-C, which gates each mutation.
     """
-    def __init__(self, store: PostgresStore, context_factory: Callable[[], GatewayContext]):
+    def __init__(self, store: DurableStore, context_factory: Callable[[], GatewayContext]):
         self.store = store
         self._context_factory = context_factory
 

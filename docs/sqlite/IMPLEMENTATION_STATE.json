@@ -5,15 +5,15 @@
   "branch": "studio/v16-sqlite-unified",
   "source_base_sha": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
   "source_head_at_run_start": "fa14928ea36ba68fe607448d690cc00bb64488c1",
-  "current_checkpoint": "C2",
+  "current_checkpoint": "C3",
   "completed_checkpoints": [],
   "checkpoint_contract_revision": "DB-STORAGE/2-SQLITE DRAFT",
   "files_changed_in_latest_checkpoint": [
-    "studio_v16/db/sqlite/connection.py",
-    "studio_v16/db/sqlite/types.py",
-    "studio_v16/db/sqlite/migrate.py",
-    "studio_v16/db/sqlite/migrations/0001_core_sqlite.sql",
-    "studio_v16/db/sqlite/migrations/0002_publication_sqlite.sql"
+    "studio_v16/db/sqlite/store.py",
+    "studio_v16/db/storage_protocol.py",
+    "studio_v16/db/factory.py",
+    "studio_v16/db/__init__.py",
+    "studio_v16/adapters/runtime.py"
   ],
   "tests": [
     {
@@ -41,12 +41,13 @@
     "live_github_drive_credentials": "PENDING",
     "active_cutover": "NOT_AUTHORIZED"
   },
-  "next_specific_edit": "C2: explicit SQLite command store, outbox and resume operations; backend protocol/factory",
-  "last_checkpoint_parent_sha": "21ef63717c5838a00aa8dd20b2e5b5d28c51cd0d",
+  "next_specific_edit": "C3: implement SQLite publication state validation, immutable dispatch and recovery-only gateway",
+  "last_checkpoint_parent_sha": "d62230ee77f950e8e142fb8224b2e97924639f5d",
   "note": "Do not embed the SHA of this file's own commit in the file; report actual HEAD after commit.",
   "implemented_checkpoints": [
     "C0",
-    "C1"
+    "C1",
+    "C2"
   ],
   "frozen_files": {
     "count": 19,
@@ -61,7 +62,8 @@
   },
   "acceptance_gates": {
     "C0": "STATIC_HASH_CHECK_ONLY; tests deferred",
-    "C1": "IMPLEMENTED_UNTESTED; schema execution and fault/concurrency gates deferred"
+    "C1": "IMPLEMENTED_UNTESTED; schema execution and fault/concurrency gates deferred",
+    "C2": "IMPLEMENTED_UNTESTED; publication surfaces follow in C3; runtime suites deferred"
   },
   "runtime_requirements": {
     "sqlite_minimum": "3.45.0",
