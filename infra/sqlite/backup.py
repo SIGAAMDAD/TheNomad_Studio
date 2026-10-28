@@ -90,6 +90,7 @@ def snapshot(database, destination, *, timeout_seconds=120):
     if manifest_path.exists():
         destination.unlink()
         raise FileExistsError(manifest_path)
+    manifest_created = False
     start = time.monotonic()
     def progress(status, remaining, total):
         if time.monotonic() - start > timeout_seconds:
@@ -105,6 +106,7 @@ def snapshot(database, destination, *, timeout_seconds=120):
                         backup_duration_seconds=time.monotonic() - start,
                         off_host_verified=False, rpo='UNMEASURED', rto='UNMEASURED')
         fd = os.open(manifest_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
+        manifest_created = True
         with os.fdopen(fd, 'w') as output:
             output.write(canonical(manifest) + '\n')
             output.flush()
@@ -113,6 +115,11 @@ def snapshot(database, destination, *, timeout_seconds=120):
         destination.chmod(0o400)
         return manifest
     except BaseException:
+        # A failure after creating the manifest must not leave a stale, partially
+        # durable companion that prevents a safe retry or resembles a valid backup.
+        # Never remove a manifest that existed before this invocation.
+        if manifest_created:
+            manifest_path.unlink(missing_ok=True)
         destination.unlink(missing_ok=True)
         raise
 
