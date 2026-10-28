@@ -861,11 +861,28 @@
       "required_evidence": "No false COMPLETE; new authorized job acquired or verified STOP/forced YIELD",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A04",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: No false COMPLETE; new authorized job acquired or verified STOP/forced YIELD",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "existing_assertions": [
+        {
+          "test": "SQLiteMultiJobResponseC8.test_response_claims_second_ready_job_without_stop_and_persists_unknown_free_cards",
+          "path": "tests/v16/db/test_sqlite_multi_job_response_c8.py",
+          "scope_and_gap": "Local end-to-end response runner and durable SQLite claims for two authorized READY jobs with exact reports; real remote chat scheduling and independent QA remain separate."
+        }
+      ],
+      "gap": "Local end-to-end SQLite response continuation and truthful report mapping complete; independently witnessed provider response lifetime/QA remains outstanding.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_multi_job_response_c8.SQLiteMultiJobResponseC8.test_response_claims_second_ready_job_without_stop_and_persists_unknown_free_cards"
+        ],
+        "assertions": [
+          "The same bounded response starts once and durably claims two distinct READY jobs through the authenticated CoordinationService/SQLiteStore port, each under independent resource lease and grant; first job checkpoints SUBMITTED, second checkpoints YIELDED.",
+          "Without an authenticated STOP, the response records two exact response-attempt-job evidence receipts and terminates RESOURCE_BOUNDARY_YIELD; SQL state shows exactly two attempts and response-job-starts, both outcomes supported by committed transactions, no fabricated COMPLETE or QA attestation."
+        ]
+      }
     },
     {
       "case_id": "RC-02",
@@ -972,17 +989,33 @@
       "required_evidence": "Continue next eligible job in same attempt; no early final",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A04",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
           "test": "ResponseFaultsC8.test_two_authorized_jobs_continue_within_one_response",
           "path": "tests/v16/adapters/test_response_faults_c8.py",
           "scope_and_gap": "Bounded adapter test proves two sequential jobs; real ResponseAccess claim integration awaits server-side source proof."
+        },
+        {
+          "test": "SQLiteMultiJobResponseC8.test_response_claims_second_ready_job_without_stop_and_persists_unknown_free_cards",
+          "path": "tests/v16/db/test_sqlite_multi_job_response_c8.py",
+          "scope_and_gap": "Local end-to-end response runner and durable SQLite claims for two authorized READY jobs with exact reports; real remote chat scheduling and independent QA remain separate."
         }
       ],
-      "gap": "Bounded adapter test proves two sequential jobs; real ResponseAccess claim integration awaits server-side source proof.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local end-to-end SQLite response continuation and truthful report mapping complete; independently witnessed provider response lifetime/QA remains outstanding.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_multi_job_response_c8.SQLiteMultiJobResponseC8.test_response_claims_second_ready_job_without_stop_and_persists_unknown_free_cards"
+        ],
+        "assertions": [
+          "The same bounded response starts once and durably claims two distinct READY jobs through the authenticated CoordinationService/SQLiteStore port, each under independent resource lease and grant; first job checkpoints SUBMITTED, second checkpoints YIELDED.",
+          "Without an authenticated STOP, the response records two exact response-attempt-job evidence receipts and terminates RESOURCE_BOUNDARY_YIELD; SQL state shows exactly two attempts and response-job-starts, both outcomes supported by committed transactions, no fabricated COMPLETE or QA attestation."
+        ]
+      }
     },
     {
       "case_id": "STOP-04",
@@ -1194,17 +1227,33 @@
       "required_evidence": "Worker attempts job 2 in same active response; no false normal finalization",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A05",
-      "status": "PARTIAL",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
           "test": "ResponseFaultsC8.test_two_authorized_jobs_continue_within_one_response",
           "path": "tests/v16/adapters/test_response_faults_c8.py",
           "scope_and_gap": "Local simulated response continuation, without authenticated real SQLite claims or external provider."
+        },
+        {
+          "test": "SQLiteMultiJobResponseC8.test_response_claims_second_ready_job_without_stop_and_persists_unknown_free_cards",
+          "path": "tests/v16/db/test_sqlite_multi_job_response_c8.py",
+          "scope_and_gap": "Local end-to-end response runner and durable SQLite claims for two authorized READY jobs with exact reports; real remote chat scheduling and independent QA remain separate."
         }
       ],
-      "gap": "Local simulated response continuation, without authenticated real SQLite claims or external provider.",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "gap": "Local end-to-end SQLite response continuation and truthful report mapping complete; independently witnessed provider response lifetime/QA remains outstanding.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_multi_job_response_c8.SQLiteMultiJobResponseC8.test_response_claims_second_ready_job_without_stop_and_persists_unknown_free_cards"
+        ],
+        "assertions": [
+          "The same bounded response starts once and durably claims two distinct READY jobs through the authenticated CoordinationService/SQLiteStore port, each under independent resource lease and grant; first job checkpoints SUBMITTED, second checkpoints YIELDED.",
+          "Without an authenticated STOP, the response records two exact response-attempt-job evidence receipts and terminates RESOURCE_BOUNDARY_YIELD; SQL state shows exactly two attempts and response-job-starts, both outcomes supported by committed transactions, no fabricated COMPLETE or QA attestation."
+        ]
+      }
     },
     {
       "case_id": "HR-FAULT-02",
