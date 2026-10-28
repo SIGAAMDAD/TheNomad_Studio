@@ -8,7 +8,10 @@ from pathlib import Path
 import re
 import subprocess
 import sys
-from scripts.sqlite_attestations import evidence_digest,load_external_trust,verify_set
+if __package__:
+    from scripts.sqlite_attestations import evidence_digest, load_external_trust, verify_set
+else:
+    from sqlite_attestations import evidence_digest, load_external_trust, verify_set
 
 ROOT=Path(__file__).resolve().parents[1]
 INVENTORY=ROOT/'docs/production/c8/acceptance_inventory.json'

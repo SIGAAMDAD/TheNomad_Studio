@@ -4,8 +4,12 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from scripts.sqlite_attestations import evidence_digest,load_external_trust,verify_set
-from scripts.sqlite_c8_merge_gate import evaluate,ROOT
+if __package__:
+    from scripts.sqlite_attestations import evidence_digest, load_external_trust, verify_set
+    from scripts.sqlite_c8_merge_gate import evaluate, ROOT
+else:
+    from sqlite_attestations import evidence_digest, load_external_trust, verify_set
+    from sqlite_c8_merge_gate import evaluate, ROOT
 
 PRODUCTION_KINDS=('INDEPENDENT_QA','OWNER_STAGING_MERGE','EXTERNAL_PROVIDER',
                   'OFFHOST_RESTORE','HR_FAULT_MATRIX','PERFORMANCE',
