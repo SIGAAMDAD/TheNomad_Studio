@@ -1,0 +1,1066 @@
+{
+  "schema": "NOMAD-C8-TRACEABILITY-INVENTORY/1",
+  "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+  "source_tree": "84bb0389410a8ff1d7656fbe398c701da825d798",
+  "scope": "Static inventory of local fixture assertions. No numbered case is certified PASS. Unmapped does not prove no corresponding test exists outside the reviewed C8 files.",
+  "ci_entrypoint": ".github/workflows/studio-sqlite-c8.yml",
+  "suite": "python scripts/sqlite_c8_validate.py",
+  "observed_local_suite": {
+    "c8_tests": 37,
+    "total_tests": 209,
+    "result": "PASS",
+    "sqlite_version": "3.53.1",
+    "independent_review": "NOT_RUN"
+  },
+  "frozen_manifest_sha256": "624b30db2bd6c1ebc7d3204096adfaabef779a07fdf4280ce8dd0419c423858d",
+  "frozen_hash_verification": "19/19 verified by PLAN/validate_plan.py on snapshot",
+  "hr_mapping": "HR-FAULT-01 through HR-FAULT-26 correspond to HR-01 through HR-26 in PLAN/reference/HR26_FAILURE_INJECTION.md",
+  "cases": [
+    {
+      "case_id": "SQLITE-00",
+      "scenario": "Frozen A contract and JSON schema parity",
+      "required_evidence": "19/19 frozen hashes unchanged; J approved DB-STORAGE/2 exception",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A00",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "SQLITE-01",
+      "scenario": "Migrate blank file; re-run unchanged files",
+      "required_evidence": "All 25 logical tables, constraints and migration digests; second run no-op",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_c8.SQLiteC8Tests.test_migration_idempotent_and_complete",
+          "scope_and_gap": "Checks eight migration versions, re-run and SQLite pragmas; does not enumerate all 25 tables and constraints."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "SQLITE-02",
+      "scenario": "SQLite types/roundtrip",
+      "required_evidence": "ISO UTC to epoch-us, 64-bit generation, JSON canonical hash, `text[]` path scopes, Decimal scaled currency exact; no lossy values",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "SQLITE-03",
+      "scenario": "Immutable evidence and terminal receipts",
+      "required_evidence": "Mutating event, review, audit anchor or terminal publication rejected with rollback",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_c8.SQLiteC8Tests.test_immutable_department_evidence_and_foreign_key",
+          "scope_and_gap": "Checks department event deletion; not every listed immutable evidence category."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "SQLITE-04",
+      "scenario": "Foreign keys/partial unique indexes",
+      "required_evidence": "`foreign_key_check` empty, duplicate active assignment and publication IDs rejected",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_c8.SQLiteC8Tests.test_immutable_department_evidence_and_foreign_key",
+          "scope_and_gap": "Checks one foreign-key violation; not foreign_key_check or both requested unique constraints."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "SQLITE-05",
+      "scenario": "PG to SQLite transfer, if live PG exists",
+      "required_evidence": "Signed row-count+digest manifest, source snapshot/watermark, restored FK and statuses, second import no-op",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A10",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "SQLITE-06",
+      "scenario": "Direct SQLite-first when PG absent",
+      "required_evidence": "Verified empty source DB and shadow-import snapshots; no fictitious PG import claim",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A10",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "SQLITE-07",
+      "scenario": "Migration checksum edits or partial apply",
+      "required_evidence": "Drift rejected, original DB unchanged; crash and replay after restart",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_c8.SQLiteC8Tests.test_migration_checksum_tamper_rejected",
+          "scope_and_gap": "Checks immutable ledger row; does not alter migration source and restart after a crash."
+        },
+        {
+          "test": "test_sqlite_c8.SQLiteC8Tests.test_failed_migration_rolls_back_all_changes",
+          "scope_and_gap": "Checks failed SQL rolls back a table; not process-crash replay."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "TX-01",
+      "scenario": "100 concurrent same-key CLAIM attempts through one gateway",
+      "required_evidence": "Exactly one valid holder and one counted acceptance; others DUPLICATE/blocked, no split lease",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_commands_c8.SQLiteCommandsC8.test_concurrent_claim_one_winner",
+          "scope_and_gap": "Tests 16 distinct attempts; case requires 100 same-key requests."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "TX-02",
+      "scenario": "Parallel different departments, many readers + writer",
+      "required_evidence": "Correct ordering and bounded backpressure, no lost source/authority state",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "TX-03",
+      "scenario": "Revoke grant midway through command",
+      "required_evidence": "Old epoch/lease denied at same transaction boundary; no partial journal/outbox",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "TX-04",
+      "scenario": "Atomic REASSIGN of leader and attempt",
+      "required_evidence": "old worker fenced, next epoch/generation strictly greater; no old-writer effect",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_commands_c8.SQLiteCommandsC8.test_reassign_fences_old_worker",
+          "scope_and_gap": "Tests old worker checkpoint denial after reassignment; full concurrent leadership transfer remains unproven."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "TX-05",
+      "scenario": "Duplicate ACK, reordered ACK and reconnect",
+      "required_evidence": "exactly one delivery effect and nondecreasing **sequence** cursor; no leap over unseen mandatory messages",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_c8.SQLiteC8Tests.test_department_inbox_requires_delivery_and_ordered_ack",
+          "scope_and_gap": "Checks ordered ACK and rejection before delivery; reconnect and duplicate ACK not established."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "TX-06",
+      "scenario": "Abrupt process exit before COMMIT",
+      "required_evidence": "SQLite rollback, no published acknowledgement/effect",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "TX-07",
+      "scenario": "Crash just after COMMIT before transport response",
+      "required_evidence": "stable command readback returns DUPLICATE/saved result, no duplicated effect",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "TX-08",
+      "scenario": "`SQLITE_BUSY`, `SQLITE_BUSY_SNAPSHOT`, disk full, failed fsync",
+      "required_evidence": "explicit retry/unavailable result and intact data/manifest; never pretend COMPLETE",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A02",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "TX-09",
+      "scenario": "Long reader prevents checkpoint progress",
+      "required_evidence": "observable growing WAL alert; bounded reader lifetime and successful later checkpoint",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A09",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "TX-10",
+      "scenario": "Corrupt WAL/db, missing snapshot, mismatched digest",
+      "required_evidence": "fail safe startup and stop writes, restore only from verified snapshot",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A10",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "TX-11",
+      "scenario": "Two service processes try to own one DB",
+      "required_evidence": "only appointed owner performs mutations; other denied or read-only; no accidental multi-host share",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A02",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_c8.SQLiteC8Tests.test_only_one_process_owner",
+          "scope_and_gap": "Checks a second owner in one process; separate process and shared host behavior not established."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PUB-01",
+      "scenario": "Source patch digest vs proposed tree digest",
+      "required_evidence": "Stored separately and verified against actual Git readback; mismatch terminal conflict",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A03",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_reserve_exact_idempotency_and_separate_hashes",
+          "scope_and_gap": "Tests persisted distinct hashes; actual provider readback remains untested."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PUB-02",
+      "scenario": "Drive expected revision CAS",
+      "required_evidence": "exactly one winner; stale writer receives DOCUMENT_CONFLICT; no lost content",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A03",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PUB-03",
+      "scenario": "Concurrent duplicate publication ID/key",
+      "required_evidence": "exact duplicate idempotent; changed payload with same identity denied",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A03",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_concurrent_reservations_one_result",
+          "scope_and_gap": "Tests duplicate reservation, not changed-payload identity conflict."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PUB-04",
+      "scenario": "Provider crashes/timeouts at dispatch edges",
+      "required_evidence": "durable DISPATCH_STARTED before write; readback before reattempt; uncertain remains pending",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A03",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_no_duplicate_dispatch_without_verified_absence",
+          "scope_and_gap": "Tests duplicate dispatch denial; provider crash/timeout edges are not exercised."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PUB-05",
+      "scenario": "Revoke grant or switch SHADOW after provider dispatch",
+      "required_evidence": "new external writes denied; separately authenticated recovery principal can VERIFY matching prior effect",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A03",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_trusted_recovery_after_revocation_and_shadow",
+          "scope_and_gap": "Tests authenticated local fixture reconciliation after dispatch; does not exercise a real provider or fresh-write denial."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PUB-06",
+      "scenario": "Forged recovery principal or missing dispatch row",
+      "required_evidence": "cannot reconcile/readback to VERIFIED; logged security denial",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A03",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_untrusted_recovery_cannot_complete",
+          "scope_and_gap": "Tests untrusted local recovery denial; missing dispatch and security audit requirements remain."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PUB-07",
+      "scenario": "Provider readback mismatch or unsupported response",
+      "required_evidence": "CONFLICT and outbox BLOCKED atomically, future same-identity effect denied",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A03",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_wrong_tree_readback_rejected",
+          "scope_and_gap": "Tests denial of mismatched tree; atomic CONFLICT and blocked outbox are not asserted."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PUB-08",
+      "scenario": "Drive/Git API 429/5xx, branch drift, stale tree",
+      "required_evidence": "bounded retries only after absence proof and fresh authority; source drift returns REBASE_REQUIRED",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A03",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PUB-09",
+      "scenario": "Wrong QA subject, self review, stale owner decision or revision",
+      "required_evidence": "fail closed before external effect",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A03",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PUB-10",
+      "scenario": "SHADOW import of historical publication",
+      "required_evidence": "no active grant or external effect authorized by imported rows",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A03",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "RC-01",
+      "scenario": "End response with one of several jobs finished",
+      "required_evidence": "No false COMPLETE; new authorized job acquired or verified STOP/forced YIELD",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A04",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "RC-02",
+      "scenario": "Missing report card or failed ledger write",
+      "required_evidence": "Explicit missing receipt; job remains active, auditor recovery packet",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A04",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "RC-03",
+      "scenario": "Fake QA PASS or untested code",
+      "required_evidence": "Exact SHA+test evidence required; rejects fabricated proof",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A04",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "STOP-01",
+      "scenario": "STOP arrives while worker implementing",
+      "required_evidence": "Next real control checkpoint notices verified command, checkpoints and reports",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A04",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_controls_c8.SQLiteControlsC8.test_worker_observes_stop_and_cannot_observe_another_response",
+          "scope_and_gap": "Tests observation of STOP; real execution checkpoint and report not covered."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "STOP-02",
+      "scenario": "Forged STOP/stale epoch",
+      "required_evidence": "Rejected; no unauthorized pause/finalize",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A04",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_controls_c8.SQLiteControlsC8.test_nonleader_cannot_issue_controls",
+          "scope_and_gap": "Checks nonleader denial."
+        },
+        {
+          "test": "test_sqlite_controls_c8.SQLiteControlsC8.test_stale_leader_epoch_denied",
+          "scope_and_gap": "Checks stale epoch denial for DRAIN; exact forged STOP case needs proof."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "STOP-03",
+      "scenario": "Complete job with no STOP",
+      "required_evidence": "Continue next eligible job in same attempt; no early final",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A04",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "STOP-04",
+      "scenario": "Platform/tool boundary before STOP",
+      "required_evidence": "YIELDED/UNKNOWN; durable checkpoint; manual resume",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A04",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "CM-01",
+      "scenario": "Duplicate message, ACK after retry",
+      "required_evidence": "One inbox effect and idempotent cursor advance",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A04",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_c8.SQLiteC8Tests.test_department_routing_idempotency_and_conflict",
+          "scope_and_gap": "Tests duplicate route and payload conflict; ACK replay cursor not proven."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "CM-02",
+      "scenario": "Cross-department briefing",
+      "required_evidence": "Addressed DB notification, approved Drive pinned revision and readback",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A04",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "CM-03",
+      "scenario": "Two Drive writers contend",
+      "required_evidence": "One valid writer/fenced CAS; stale writer rejected",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A04",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_c8.SQLiteC8Tests.test_leader_epoch_and_document_generation_fences",
+          "scope_and_gap": "Tests database generation decrement denial; concurrent Drive CAS remains unproven."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "CM-04",
+      "scenario": "Delayed GitHub or Drive commit response",
+      "required_evidence": "Readback/reconcile prevents duplicate acceptance or overwritten document",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A04",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-SUMMARY-01",
+      "scenario": "Department head/senior unobserved",
+      "required_evidence": "Scope-specific owner notification and recoverable state, not presumed death",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A05",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-SUMMARY-02",
+      "scenario": "Head submits wrong-source or privileged decision",
+      "required_evidence": "Gateway denies inline; audit evidence preserved; independent escalation",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A05",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-SUMMARY-03",
+      "scenario": "Production Director missing or incorrect",
+      "required_evidence": "Preserve all departments; restrict new global approvals; owner alert",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A05",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-SUMMARY-04",
+      "scenario": "Reviewer self-approval or wrong exact SHA",
+      "required_evidence": "Verdict rejected and affected jobs held for independent re-review",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A08",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-SUMMARY-05",
+      "scenario": "Leader replaced while old execution still writing",
+      "required_evidence": "Leader_epoch fencing denies old writer and prevents double publish",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A08",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_c8.SQLiteC8Tests.test_leader_epoch_and_document_generation_fences",
+          "scope_and_gap": "Checks SQLite monotonic epoch and generation; stale external publication not exercised."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-SUMMARY-06",
+      "scenario": "Auditor stops, health check fails",
+      "required_evidence": "Independent watchdog marks missing scheduled receipt and alerts owner",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A08",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_missing_audit_is_degraded_not_silent_success",
+          "scope_and_gap": "Tests local degraded status; independent deployed watchdog and owner alert not attested."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-01",
+      "scenario": "Worker finishes job 1; job 2 already READY; no STOP",
+      "required_evidence": "Worker attempts job 2 in same active response; no false normal finalization",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A05",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-02",
+      "scenario": "Authenticated STOP after job 2; job 3 READY",
+      "required_evidence": "No job 3 claim; checkpoint, report card, STOP receipt, unfinished work preserved",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A05",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-03",
+      "scenario": "Worker execution disappears after local commit before terminal report",
+      "required_evidence": "`UNOBSERVED/UNKNOWN`, no invented card; recover exact commit if published, otherwise local checkpoint evidence only",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A05",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_unobserved_response_not_misreported_as_crash",
+          "scope_and_gap": "Checks unobserved status; commit recovery and terminal report absence not exercised."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-04",
+      "scenario": "Senior disappears during an approved Drive draft",
+      "required_evidence": "Head fences old writer lease, grants replacement after CAS, old write denied",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A05",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-05",
+      "scenario": "Department head misses expected report",
+      "required_evidence": "Scope-limited delegation pause; existing valid bounded workers preserved; owner/S00 escalation",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A05",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-06",
+      "scenario": "Old head publishes after authorized replacement",
+      "required_evidence": "Old epoch rejected at admission and pre-publication; no split-brain edits",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A05",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-07",
+      "scenario": "Department head delegates work outside owned paths",
+      "required_evidence": "Gateway rejects; unauthorized worker never gets publish power",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A05",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-08",
+      "scenario": "Department head claims independent QA on its own implementation",
+      "required_evidence": "Approval rejected and immutable violation recorded",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A06",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-09",
+      "scenario": "S00 stops reporting amid active independent departments",
+      "required_evidence": "Global new-delegation freeze; existing safe leases respected; owner recovery packet generated",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A06",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-10",
+      "scenario": "S00 submits false global completion",
+      "required_evidence": "Child DAG and exact receipts override claim, no parent closure",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A06",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-11",
+      "scenario": "S00 attempts unapproved privileged policy/budget change",
+      "required_evidence": "Inline denial and owner exception alert, no actor self-promotion",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A06",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-12",
+      "scenario": "Auditor scheduled invocation missing",
+      "required_evidence": "External watchdog raises `AUDIT_UNAVAILABLE` with verified missing run; no false all-green",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A06",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_missing_audit_is_degraded_not_silent_success",
+          "scope_and_gap": "Tests fixture degradation; external watchdog and alert delivery are not verified."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-13",
+      "scenario": "Auditor returns malformed or stale green report",
+      "required_evidence": "Watchdog rejects missing digest/age, records degraded supervision",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A06",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-14",
+      "scenario": "Auditor and GitHub unavailable together",
+      "required_evidence": "Independent monitoring path detects degraded service or explicitly marks undetected until configured; no invented guarantee",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A06",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-15",
+      "scenario": "QA reviewer disappears; new reviewer sees amended SHA",
+      "required_evidence": "New independent review required on new exact SHA; old verdict not inherited",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A07",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-16",
+      "scenario": "PostgreSQL fails just after event transaction but before outbox publish",
+      "required_evidence": "Transaction/outbox reconciliation creates one effect, not duplicate leadership grants",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A07",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-17",
+      "scenario": "GitHub publish times out after success",
+      "required_evidence": "Readback deduplication prevents duplicate commit/receipt",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A07",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-18",
+      "scenario": "Drive write succeeds but readback fails",
+      "required_evidence": "Unknown external effect held for reconciliation, no VERIFIED document state",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A07",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-19",
+      "scenario": "Director and head both absent",
+      "required_evidence": "Human owner recovery escalation; no worker auto-elevation",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A07",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-20",
+      "scenario": "Unauthorized worker forges STOP or head succession in Issue comment",
+      "required_evidence": "Reject unauthenticated command, maintain current shift epoch",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A07",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-21",
+      "scenario": "Concurrent transfer and old controller retry race",
+      "required_evidence": "One leadership epoch wins; old command fenced, immutable trail intact",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A08",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-22",
+      "scenario": "Owner cannot respond while architecture/canon decision pending",
+      "required_evidence": "Existing approved safe work may continue; new privileged decision blocked",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A08",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-23",
+      "scenario": "Wrong cross-department contract triggers 10 dependent jobs",
+      "required_evidence": "Quarantine only affected subtree; exact affected jobs identified; safe work continues",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A08",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-24",
+      "scenario": "Repeated fake report cards or incorrect QA receipts",
+      "required_evidence": "Reported vs derived status separated; anomaly surfaced; no false completion",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A08",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-25",
+      "scenario": "Auditor output not delivered by email",
+      "required_evidence": "Persist `ALERT_DELIVERY_PENDING`, retry bounded, alternate visible owner dashboard",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A08",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_unverified_alert_remains_pending_until_readback",
+          "scope_and_gap": "Checks pending then verified fixture readback; actual email failure and alternate dashboard not established."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "HR-FAULT-26",
+      "scenario": "Leader tries to merge without native branch protections",
+      "required_evidence": "Trusted gateway policy rejects canonical write; worker never holds broad write credential",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A08",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PERF-01",
+      "scenario": "Old full-history inbox scan vs indexed query",
+      "required_evidence": "Benchmark numbers with reproducible input and real SQL plan",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A09",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "PERF-02",
+      "scenario": "High publication fanout",
+      "required_evidence": "Batch counts, API usage and provider rate-limit instrumentation",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A09",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "RECOVER-01",
+      "scenario": "DB crash during transfer/retry",
+      "required_evidence": "Atomic rollback/replay, no split authority",
+      "external_class": "LOCAL_FIRST",
+      "primary_task": "A10",
+      "status": "PARTIAL",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [
+        {
+          "test": "test_sqlite_c8.SQLiteC8Tests.test_one_writer_and_atomic_rollback",
+          "scope_and_gap": "Checks exception rollback; process crash during transfer/retry is not exercised."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    },
+    {
+      "case_id": "RECOVER-02",
+      "scenario": "Git/Drive unavailable while worker runs",
+      "required_evidence": "Safe terminal YIELD, buffered evidence, blocked outbound until recovered",
+      "external_class": "VERIFY_EXTERNAL_RELEVANCE",
+      "primary_task": "A10",
+      "status": "NOT_RUN",
+      "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
+      "existing_assertions": [],
+      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "reviewer_verdict": "NOT_REVIEWED"
+    }
+  ],
+  "external_gates": [
+    "independent QA",
+    "live provider verification",
+    "off-host restore",
+    "owner-authorized canary and release"
+  ]
+}
