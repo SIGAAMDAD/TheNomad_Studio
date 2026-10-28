@@ -29,8 +29,8 @@ class C8InventoryTests(unittest.TestCase):
                 self.assertEqual(case['reviewer_verdict'], 'NOT_REVIEWED')
                 self.assertEqual(case['status'] == 'PARTIAL', bool(case['existing_assertions']))
                 for evidence in case['existing_assertions']:
-                    module, class_name, method = evidence['test'].split('.')
-                    source = ROOT / 'tests/v16/db' / (module + '.py')
+                    class_name, method = evidence['test'].split('.')
+                    source = ROOT / evidence['path']
                     parsed = ast.parse(source.read_text())
                     classes = [n for n in parsed.body if isinstance(n, ast.ClassDef) and n.name == class_name]
                     self.assertEqual(len(classes), 1)

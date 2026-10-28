@@ -4,12 +4,12 @@
   "baseline_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
   "tested_subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
   "completed": [
-    "76 case IDs inventoried, 24 linked to explicitly partial C8 fixture assertions",
+    "76 case IDs inventoried, 34 linked to partial local fixture assertions, including baseline tests",
     "inventory integrity test added",
     "C8 CI workflow inspected"
   ],
   "remaining": [
-    "Review remaining baseline and C8 assertions against all 76 cases and refine gaps",
+    "Review remaining baseline assertions against all 76 cases and refine gaps",
     "Complete per-requirement traceability before declaring A00 done",
     "Proceed to A01 only after A00 completion"
   ],
@@ -32,6 +32,11 @@
       "command": "python scripts/sqlite_c8_validate.py",
       "exit_code": 0,
       "tests": 209
+    },
+    {
+      "command": "python -m unittest discover -s tests/v16/acceptance -p test_*.py -v after expanding mappings",
+      "exit_code": 0,
+      "tests": 2
     }
   ],
   "external_not_run": [

@@ -2,7 +2,7 @@
   "schema": "NOMAD-C8-TRACEABILITY-INVENTORY/1",
   "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
   "source_tree": "84bb0389410a8ff1d7656fbe398c701da825d798",
-  "scope": "Static inventory of local fixture assertions. No numbered case is certified PASS. Unmapped does not prove no corresponding test exists outside the reviewed C8 files.",
+  "scope": "Static inventory of selected local fixture assertions; unmapped does not prove no other test exists. No numbered case is certified PASS.",
   "ci_entrypoint": ".github/workflows/studio-sqlite-c8.yml",
   "suite": "python scripts/sqlite_c8_validate.py",
   "observed_local_suite": {
@@ -22,10 +22,16 @@
       "required_evidence": "19/19 frozen hashes unchanged; J approved DB-STORAGE/2 exception",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A00",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "existing_assertions": [
+        {
+          "test": "WGAFrozenContracts.test_freeze_manifest_matches_every_contract_file",
+          "path": "tests/v16/contracts/test_contracts.py",
+          "scope_and_gap": "Checks frozen manifest file hashes; approved DB-STORAGE/2 exception still needs documentary review."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -38,8 +44,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_c8.SQLiteC8Tests.test_migration_idempotent_and_complete",
-          "scope_and_gap": "Checks eight migration versions, re-run and SQLite pragmas; does not enumerate all 25 tables and constraints."
+          "test": "SQLiteC8Tests.test_migration_idempotent_and_complete",
+          "scope_and_gap": "Checks eight migration versions, re-run and SQLite pragmas; does not enumerate all 25 tables and constraints.",
+          "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -67,8 +74,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_c8.SQLiteC8Tests.test_immutable_department_evidence_and_foreign_key",
-          "scope_and_gap": "Checks department event deletion; not every listed immutable evidence category."
+          "test": "SQLiteC8Tests.test_immutable_department_evidence_and_foreign_key",
+          "scope_and_gap": "Checks department event deletion; not every listed immutable evidence category.",
+          "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -84,8 +92,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_c8.SQLiteC8Tests.test_immutable_department_evidence_and_foreign_key",
-          "scope_and_gap": "Checks one foreign-key violation; not foreign_key_check or both requested unique constraints."
+          "test": "SQLiteC8Tests.test_immutable_department_evidence_and_foreign_key",
+          "scope_and_gap": "Checks one foreign-key violation; not foreign_key_check or both requested unique constraints.",
+          "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -125,12 +134,14 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_c8.SQLiteC8Tests.test_migration_checksum_tamper_rejected",
-          "scope_and_gap": "Checks immutable ledger row; does not alter migration source and restart after a crash."
+          "test": "SQLiteC8Tests.test_migration_checksum_tamper_rejected",
+          "scope_and_gap": "Checks immutable ledger row; does not alter migration source and restart after a crash.",
+          "path": "tests/v16/db/test_sqlite_c8.py"
         },
         {
-          "test": "test_sqlite_c8.SQLiteC8Tests.test_failed_migration_rolls_back_all_changes",
-          "scope_and_gap": "Checks failed SQL rolls back a table; not process-crash replay."
+          "test": "SQLiteC8Tests.test_failed_migration_rolls_back_all_changes",
+          "scope_and_gap": "Checks failed SQL rolls back a table; not process-crash replay.",
+          "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -146,8 +157,14 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_commands_c8.SQLiteCommandsC8.test_concurrent_claim_one_winner",
-          "scope_and_gap": "Tests 16 distinct attempts; case requires 100 same-key requests."
+          "test": "SQLiteCommandsC8.test_concurrent_claim_one_winner",
+          "scope_and_gap": "Tests 16 distinct attempts; case requires 100 same-key requests.",
+          "path": "tests/v16/db/test_sqlite_commands_c8.py"
+        },
+        {
+          "test": "SyntheticSagaTests.test_one_claim_winner_among_100_simultaneous_attempts",
+          "path": "tests/v16/system/test_pipeline.py",
+          "scope_and_gap": "100 distinct claims use FakeJournal, not same-key requests against SQLite gateway."
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -187,8 +204,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_commands_c8.SQLiteCommandsC8.test_reassign_fences_old_worker",
-          "scope_and_gap": "Tests old worker checkpoint denial after reassignment; full concurrent leadership transfer remains unproven."
+          "test": "SQLiteCommandsC8.test_reassign_fences_old_worker",
+          "scope_and_gap": "Tests old worker checkpoint denial after reassignment; full concurrent leadership transfer remains unproven.",
+          "path": "tests/v16/db/test_sqlite_commands_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -204,8 +222,14 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_c8.SQLiteC8Tests.test_department_inbox_requires_delivery_and_ordered_ack",
-          "scope_and_gap": "Checks ordered ACK and rejection before delivery; reconnect and duplicate ACK not established."
+          "test": "SQLiteC8Tests.test_department_inbox_requires_delivery_and_ordered_ack",
+          "scope_and_gap": "Checks ordered ACK and rejection before delivery; reconnect and duplicate ACK not established.",
+          "path": "tests/v16/db/test_sqlite_c8.py"
+        },
+        {
+          "test": "SyntheticSagaTests.test_out_of_order_event_ack_and_duplicate_webhooks",
+          "path": "tests/v16/system/test_pipeline.py",
+          "scope_and_gap": "FakeJournal replay and stale ACK; no real SQLite reconnect or cursor ordering."
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -281,8 +305,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_c8.SQLiteC8Tests.test_only_one_process_owner",
-          "scope_and_gap": "Checks a second owner in one process; separate process and shared host behavior not established."
+          "test": "SQLiteC8Tests.test_only_one_process_owner",
+          "scope_and_gap": "Checks a second owner in one process; separate process and shared host behavior not established.",
+          "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -298,8 +323,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_reserve_exact_idempotency_and_separate_hashes",
-          "scope_and_gap": "Tests persisted distinct hashes; actual provider readback remains untested."
+          "test": "SQLitePublicationC8.test_reserve_exact_idempotency_and_separate_hashes",
+          "scope_and_gap": "Tests persisted distinct hashes; actual provider readback remains untested.",
+          "path": "tests/v16/db/test_sqlite_publication_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -311,10 +337,16 @@
       "required_evidence": "exactly one winner; stale writer receives DOCUMENT_CONFLICT; no lost content",
       "external_class": "VERIFY_EXTERNAL_RELEVANCE",
       "primary_task": "A03",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "existing_assertions": [
+        {
+          "test": "DriveTests.test_revision_conflict",
+          "path": "tests/v16/providers/test_git_drive.py",
+          "scope_and_gap": "Injected Drive fake rejects a stale revision; no concurrent real-provider CAS."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -327,8 +359,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_concurrent_reservations_one_result",
-          "scope_and_gap": "Tests duplicate reservation, not changed-payload identity conflict."
+          "test": "SQLitePublicationC8.test_concurrent_reservations_one_result",
+          "scope_and_gap": "Tests duplicate reservation, not changed-payload identity conflict.",
+          "path": "tests/v16/db/test_sqlite_publication_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -344,8 +377,14 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_no_duplicate_dispatch_without_verified_absence",
-          "scope_and_gap": "Tests duplicate dispatch denial; provider crash/timeout edges are not exercised."
+          "test": "SQLitePublicationC8.test_no_duplicate_dispatch_without_verified_absence",
+          "scope_and_gap": "Tests duplicate dispatch denial; provider crash/timeout edges are not exercised.",
+          "path": "tests/v16/db/test_sqlite_publication_c8.py"
+        },
+        {
+          "test": "SyntheticSagaTests.test_crash_after_provider_write_restore",
+          "path": "tests/v16/system/test_pipeline.py",
+          "scope_and_gap": "Synthetic journal/provider simulated crash and readback; no real SQLite process termination."
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -361,8 +400,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_trusted_recovery_after_revocation_and_shadow",
-          "scope_and_gap": "Tests authenticated local fixture reconciliation after dispatch; does not exercise a real provider or fresh-write denial."
+          "test": "SQLitePublicationC8.test_trusted_recovery_after_revocation_and_shadow",
+          "scope_and_gap": "Tests authenticated local fixture reconciliation after dispatch; does not exercise a real provider or fresh-write denial.",
+          "path": "tests/v16/db/test_sqlite_publication_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -378,8 +418,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_untrusted_recovery_cannot_complete",
-          "scope_and_gap": "Tests untrusted local recovery denial; missing dispatch and security audit requirements remain."
+          "test": "SQLitePublicationC8.test_untrusted_recovery_cannot_complete",
+          "scope_and_gap": "Tests untrusted local recovery denial; missing dispatch and security audit requirements remain.",
+          "path": "tests/v16/db/test_sqlite_publication_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -395,8 +436,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_publication_c8.SQLitePublicationC8.test_wrong_tree_readback_rejected",
-          "scope_and_gap": "Tests denial of mismatched tree; atomic CONFLICT and blocked outbox are not asserted."
+          "test": "SQLitePublicationC8.test_wrong_tree_readback_rejected",
+          "scope_and_gap": "Tests denial of mismatched tree; atomic CONFLICT and blocked outbox are not asserted.",
+          "path": "tests/v16/db/test_sqlite_publication_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -408,10 +450,16 @@
       "required_evidence": "bounded retries only after absence proof and fresh authority; source drift returns REBASE_REQUIRED",
       "external_class": "VERIFY_EXTERNAL_RELEVANCE",
       "primary_task": "A03",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "existing_assertions": [
+        {
+          "test": "GitProviderTests.test_conflict_does_not_move_branch",
+          "path": "tests/v16/providers/test_git_drive.py",
+          "scope_and_gap": "Local bare Git provider returns REBASE_REQUIRED on branch drift; 429/5xx and fresh authority remain untested."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -420,10 +468,16 @@
       "required_evidence": "fail closed before external effect",
       "external_class": "VERIFY_EXTERNAL_RELEVANCE",
       "primary_task": "A03",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "existing_assertions": [
+        {
+          "test": "SchemaBoundaryTests.test_source_qa_change_or_self_review_blocks_publication",
+          "path": "tests/v16/security/test_boundary.py",
+          "scope_and_gap": "Reference policy fixture rejects missing QA and self review; not live gateway effect verification."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -484,8 +538,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_controls_c8.SQLiteControlsC8.test_worker_observes_stop_and_cannot_observe_another_response",
-          "scope_and_gap": "Tests observation of STOP; real execution checkpoint and report not covered."
+          "test": "SQLiteControlsC8.test_worker_observes_stop_and_cannot_observe_another_response",
+          "scope_and_gap": "Tests observation of STOP; real execution checkpoint and report not covered.",
+          "path": "tests/v16/db/test_sqlite_controls_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -501,12 +556,14 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_controls_c8.SQLiteControlsC8.test_nonleader_cannot_issue_controls",
-          "scope_and_gap": "Checks nonleader denial."
+          "test": "SQLiteControlsC8.test_nonleader_cannot_issue_controls",
+          "scope_and_gap": "Checks nonleader denial.",
+          "path": "tests/v16/db/test_sqlite_controls_c8.py"
         },
         {
-          "test": "test_sqlite_controls_c8.SQLiteControlsC8.test_stale_leader_epoch_denied",
-          "scope_and_gap": "Checks stale epoch denial for DRAIN; exact forged STOP case needs proof."
+          "test": "SQLiteControlsC8.test_stale_leader_epoch_denied",
+          "scope_and_gap": "Checks stale epoch denial for DRAIN; exact forged STOP case needs proof.",
+          "path": "tests/v16/db/test_sqlite_controls_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -546,8 +603,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_c8.SQLiteC8Tests.test_department_routing_idempotency_and_conflict",
-          "scope_and_gap": "Tests duplicate route and payload conflict; ACK replay cursor not proven."
+          "test": "SQLiteC8Tests.test_department_routing_idempotency_and_conflict",
+          "scope_and_gap": "Tests duplicate route and payload conflict; ACK replay cursor not proven.",
+          "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -575,8 +633,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_c8.SQLiteC8Tests.test_leader_epoch_and_document_generation_fences",
-          "scope_and_gap": "Tests database generation decrement denial; concurrent Drive CAS remains unproven."
+          "test": "SQLiteC8Tests.test_leader_epoch_and_document_generation_fences",
+          "scope_and_gap": "Tests database generation decrement denial; concurrent Drive CAS remains unproven.",
+          "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -588,10 +647,21 @@
       "required_evidence": "Readback/reconcile prevents duplicate acceptance or overwritten document",
       "external_class": "VERIFY_EXTERNAL_RELEVANCE",
       "primary_task": "A04",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "existing_assertions": [
+        {
+          "test": "GitProviderTests.test_push_timeout_after_effect_is_read_back",
+          "path": "tests/v16/providers/test_git_drive.py",
+          "scope_and_gap": "Local bare Git injected lost response; Drive and deployed service not verified."
+        },
+        {
+          "test": "DriveTests.test_timeout_after_atomic_write_reads_back",
+          "path": "tests/v16/providers/test_git_drive.py",
+          "scope_and_gap": "Injected Drive fake loses response after mutation; actual Drive not verified."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -652,8 +722,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_c8.SQLiteC8Tests.test_leader_epoch_and_document_generation_fences",
-          "scope_and_gap": "Checks SQLite monotonic epoch and generation; stale external publication not exercised."
+          "test": "SQLiteC8Tests.test_leader_epoch_and_document_generation_fences",
+          "scope_and_gap": "Checks SQLite monotonic epoch and generation; stale external publication not exercised.",
+          "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -669,8 +740,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_missing_audit_is_degraded_not_silent_success",
-          "scope_and_gap": "Tests local degraded status; independent deployed watchdog and owner alert not attested."
+          "test": "SQLiteWatchdogC8.test_missing_audit_is_degraded_not_silent_success",
+          "scope_and_gap": "Tests local degraded status; independent deployed watchdog and owner alert not attested.",
+          "path": "tests/v16/db/test_sqlite_watchdog_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -710,8 +782,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_unobserved_response_not_misreported_as_crash",
-          "scope_and_gap": "Checks unobserved status; commit recovery and terminal report absence not exercised."
+          "test": "SQLiteWatchdogC8.test_unobserved_response_not_misreported_as_crash",
+          "scope_and_gap": "Checks unobserved status; commit recovery and terminal report absence not exercised.",
+          "path": "tests/v16/db/test_sqlite_watchdog_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -759,10 +832,16 @@
       "required_evidence": "Gateway rejects; unauthorized worker never gets publish power",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A05",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "existing_assertions": [
+        {
+          "test": "SchemaBoundaryTests.test_full_path_attacks_and_case_unicode",
+          "path": "tests/v16/security/test_boundary.py",
+          "scope_and_gap": "Reference policy fixture rejects invalid or protected paths; real delegation authority/effect not proven."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -771,10 +850,16 @@
       "required_evidence": "Approval rejected and immutable violation recorded",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A06",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "existing_assertions": [
+        {
+          "test": "SchemaBoundaryTests.test_source_qa_change_or_self_review_blocks_publication",
+          "path": "tests/v16/security/test_boundary.py",
+          "scope_and_gap": "Reference policy denies self review; immutable violation record not established."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -823,8 +908,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_missing_audit_is_degraded_not_silent_success",
-          "scope_and_gap": "Tests fixture degradation; external watchdog and alert delivery are not verified."
+          "test": "SQLiteWatchdogC8.test_missing_audit_is_degraded_not_silent_success",
+          "scope_and_gap": "Tests fixture degradation; external watchdog and alert delivery are not verified.",
+          "path": "tests/v16/db/test_sqlite_watchdog_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -884,10 +970,16 @@
       "required_evidence": "Readback deduplication prevents duplicate commit/receipt",
       "external_class": "VERIFY_EXTERNAL_RELEVANCE",
       "primary_task": "A07",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "existing_assertions": [
+        {
+          "test": "GitProviderTests.test_push_timeout_after_effect_is_read_back",
+          "path": "tests/v16/providers/test_git_drive.py",
+          "scope_and_gap": "Local bare Git fault fixture verifies readback; actual GitHub receipt not exercised."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -896,10 +988,16 @@
       "required_evidence": "Unknown external effect held for reconciliation, no VERIFIED document state",
       "external_class": "VERIFY_EXTERNAL_RELEVANCE",
       "primary_task": "A07",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "existing_assertions": [
+        {
+          "test": "SyntheticSagaTests.test_drive_partial_write_recovery_and_revision_conflict",
+          "path": "tests/v16/system/test_pipeline.py",
+          "scope_and_gap": "Synthetic partial write and conflict; successful Drive write followed by failed readback not exercised."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -932,10 +1030,16 @@
       "required_evidence": "One leadership epoch wins; old command fenced, immutable trail intact",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A08",
-      "status": "NOT_RUN",
+      "status": "PARTIAL",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No case-specific evidence mapped in this inventory; execute and review the required scenario before claiming PASS.",
+      "existing_assertions": [
+        {
+          "test": "SyntheticSagaTests.test_new_lease_invalidates_old_authorization",
+          "path": "tests/v16/system/test_pipeline.py",
+          "scope_and_gap": "FakeJournal fences old assignment; concurrent controller transfer race and immutable trail unproven."
+        }
+      ],
+      "gap": "Full requirement not established by listed assertions.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {
@@ -984,8 +1088,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_watchdog_c8.SQLiteWatchdogC8.test_unverified_alert_remains_pending_until_readback",
-          "scope_and_gap": "Checks pending then verified fixture readback; actual email failure and alternate dashboard not established."
+          "test": "SQLiteWatchdogC8.test_unverified_alert_remains_pending_until_readback",
+          "scope_and_gap": "Checks pending then verified fixture readback; actual email failure and alternate dashboard not established.",
+          "path": "tests/v16/db/test_sqlite_watchdog_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -1037,8 +1142,9 @@
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
       "existing_assertions": [
         {
-          "test": "test_sqlite_c8.SQLiteC8Tests.test_one_writer_and_atomic_rollback",
-          "scope_and_gap": "Checks exception rollback; process crash during transfer/retry is not exercised."
+          "test": "SQLiteC8Tests.test_one_writer_and_atomic_rollback",
+          "scope_and_gap": "Checks exception rollback; process crash during transfer/retry is not exercised.",
+          "path": "tests/v16/db/test_sqlite_c8.py"
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
