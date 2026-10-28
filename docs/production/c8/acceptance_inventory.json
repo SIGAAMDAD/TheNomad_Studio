@@ -850,11 +850,35 @@
       "required_evidence": "Explicit missing receipt; job remains active, auditor recovery packet",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A04",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Explicit missing receipt; job remains active, auditor recovery packet",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "existing_assertions": [
+        {
+          "test": "SQLiteMissingReceiptC8.test_reported_terminal_response_does_not_erase_derived_missing_job",
+          "path": "tests/v16/db/test_sqlite_missing_receipts_c8.py",
+          "scope_and_gap": "Real SQLite missing receipt and unpromoted job state with owner recovery case; deployed watchdog/notification remain external."
+        },
+        {
+          "test": "SQLiteMissingReceiptC8.test_fresh_inflight_job_receipt_grace_and_stale_recovery_packet",
+          "path": "tests/v16/db/test_sqlite_missing_receipts_c8.py",
+          "scope_and_gap": "Real SQLite missing receipt and unpromoted job state with owner recovery case; deployed watchdog/notification remain external."
+        }
+      ],
+      "gap": "Local response and watchdog evidence complete; independent deployed auditor, owner notification, and exact-SHA QA still require separate attestation.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_missing_receipts_c8.SQLiteMissingReceiptC8.test_reported_terminal_response_does_not_erase_derived_missing_job",
+          "tests.v16.db.test_sqlite_missing_receipts_c8.SQLiteMissingReceiptC8.test_fresh_inflight_job_receipt_grace_and_stale_recovery_packet"
+        ],
+        "assertions": [
+          "A response may report YIELDED, yet its immutable response_job_starts has no response_attempt_jobs receipt; derived ControllerViews exposes the exact response/job/attempt as UNKNOWN and leaves the source job CLAIMED.",
+          "The independent watchdog derives an immutable case keyed to the missing attempt with response/job/attempt identifiers, owner recovery action and ALERT_DELIVERY_PENDING; no false COMPLETE.",
+          "Fresh running work is not prematurely classified as a missing job receipt; an immutable start older than the configured observation window triggers a job-specific owner recovery case, with no fabricated receipt or terminal job state."
+        ]
+      }
     },
     {
       "case_id": "RC-03",
@@ -1553,11 +1577,34 @@
       "required_evidence": "Reported vs derived status separated; anomaly surfaced; no false completion",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A08",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Reported vs derived status separated; anomaly surfaced; no false completion",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "existing_assertions": [
+        {
+          "test": "SQLiteMissingReceiptC8.test_reported_terminal_response_does_not_erase_derived_missing_job",
+          "path": "tests/v16/db/test_sqlite_missing_receipts_c8.py",
+          "scope_and_gap": "Real SQLite missing receipt and unpromoted job state with owner recovery case; deployed watchdog/notification remain external."
+        },
+        {
+          "test": "SQLiteMissingReceiptC8.test_fresh_inflight_job_receipt_grace_and_stale_recovery_packet",
+          "path": "tests/v16/db/test_sqlite_missing_receipts_c8.py",
+          "scope_and_gap": "Real SQLite missing receipt and unpromoted job state with owner recovery case; deployed watchdog/notification remain external."
+        }
+      ],
+      "gap": "Local response and watchdog evidence complete; independent deployed auditor, owner notification, and exact-SHA QA still require separate attestation.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_missing_receipts_c8.SQLiteMissingReceiptC8.test_reported_terminal_response_does_not_erase_derived_missing_job",
+          "tests.v16.db.test_sqlite_missing_receipts_c8.SQLiteMissingReceiptC8.test_fresh_inflight_job_receipt_grace_and_stale_recovery_packet"
+        ],
+        "assertions": [
+          "Reported response termination remains separate from derived job evidence: YIELDED response card containing UNKNOWN outcome never promotes a CLAIMED job, and watchdog exposes missing-attempt anomaly in its recovery packet.",
+          "Fresh running work is not prematurely classified as a missing job receipt; an immutable start older than the configured observation window triggers a job-specific owner recovery case, with no fabricated receipt or terminal job state."
+        ]
+      }
     },
     {
       "case_id": "HR-FAULT-25",

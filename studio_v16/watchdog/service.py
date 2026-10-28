@@ -80,13 +80,32 @@ class WatchdogService:
                 AND report_json IS NULL AND started_at<? ORDER BY started_at LIMIT 200''',
                 (department, now - response_stale_seconds * 1000000)).fetchall()
             problems.extend(('RESPONSE_UNOBSERVED', r[0]) for r in responses)
+            # A terminal report can still omit a started job. Derive the missing
+            # receipt independently from immutable SQLite start and job rows;
+            # alert on terminal responses immediately, but give running work its
+            # bounded observation window before raising a job-specific case.
+            missing = conn.execute('''SELECT s.response_id,s.job_id,s.attempt_id
+                FROM response_job_starts s JOIN response_attempts r
+                  ON r.response_id=s.response_id
+                LEFT JOIN response_attempt_jobs j
+                  ON j.response_id=s.response_id AND j.attempt_id=s.attempt_id
+                WHERE r.department=? AND j.attempt_id IS NULL
+                  AND (r.status<>'RUNNING' OR s.started_at<?)
+                ORDER BY s.sequence LIMIT 200''',
+                (department, now - response_stale_seconds * 1000000)).fetchall()
+            missing_by_attempt = {attempt_id: (response_id, job_id)
+                                  for response_id, job_id, attempt_id in missing}
+            problems.extend(('JOB_REPORT_MISSING', attempt_id) for attempt_id in missing_by_attempt)
             case_ids = []
             for reason, subject in problems:
                 case = 'case_' + sha([department, reason, subject, self.source_sha])[:40]
                 packet = dict(department=department, subject=subject, reason=reason, source_sha=self.source_sha,
-                              observation='UNKNOWN' if reason == 'RESPONSE_UNOBSERVED' else 'DEGRADED',
+                              observation='UNKNOWN' if reason in ('RESPONSE_UNOBSERVED', 'JOB_REPORT_MISSING') else 'DEGRADED',
                               owner_action='Review exact receipts and authorize recovery; no automatic promotion',
                               external_monitor='REQUIRED_FOR_HOST_OR_GATEWAY_OUTAGE')
+                if reason == 'JOB_REPORT_MISSING':
+                    packet.update(response_id=missing_by_attempt[subject][0],
+                                  job_id=missing_by_attempt[subject][1], attempt_id=subject)
                 conn.execute('''INSERT INTO recovery_cases(case_id,department,subject_id,reason,status,owner_packet_json,
                     created_at,next_retry_at) VALUES(?,?,?,?,'ALERT_DELIVERY_PENDING',?,?,?) ON CONFLICT DO NOTHING''',
                     (case, department, subject, reason, canonical(packet), now, now))
