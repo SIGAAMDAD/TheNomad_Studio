@@ -1,0 +1,124 @@
+{
+  "schema": "SQLITE-STATIC-RECEIPT/1",
+  "code_candidate_sha": "5dbec6504191ca3be9c82899dbc1c392439ecde2",
+  "code_candidate_tree": "9a658ae9ab5887add2785ef79698262a6d4b1a76",
+  "verification_kind": "STATIC_ONLY",
+  "checks": [
+    {
+      "command": "python -m compileall -q studio_v16 infra/sqlite studio/v16/worker",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    },
+    {
+      "command": "literal SQL placeholder/argument AST review",
+      "sites": 136,
+      "mismatches": 0,
+      "exit_code": 0
+    },
+    {
+      "command": "frozen SHA-256 manifest verification",
+      "files": 19,
+      "exit_code": 0
+    },
+    {
+      "command": "original PG migration byte comparison",
+      "files": 4,
+      "exit_code": 0
+    }
+  ],
+  "migrations": {
+    "0001_core_sqlite.sql": "784ed0b051d6f2ea12595ef990d193662ef223fe5852c3916106f665fdc8d6d3",
+    "0002_publication_sqlite.sql": "fed9af167b55e5b784617092adbcb4028c8b78bfe16dbc8bb536ce3076d112d5",
+    "0003_dispatch_retry.sql": "2ac54884de3e6d5f1b479f1e2af40d60b8d66fe20516bb8b462e98be9d19bf75",
+    "0004_cm_hr.sql": "fea9ce7345b4527502da41808b4865c014778c431f61d6cc113b0b96336f3e63",
+    "0005_response_evidence.sql": "aa883175f9a2bd2c481c843477b9ef3eb041e32b1ec140b4b96cfbabe5510c7a",
+    "0006_controller_watchdog.sql": "409bbf716da799379c7ead5d6bf103d338fb9364aa2344e785ef00b50dfa50fe",
+    "0007_transfer_provenance.sql": "50c33cfc8aa86e7fc70cb40f08bc9b6aa1eea44263311b518eb99e367587b095",
+    "0008_response_claim_fence.sql": "d54bfc01ef1eb715924898bae193c04b100acd7d7f0a5797cb6023c62563c77d"
+  },
+  "frozen_files": [
+    {
+      "path": "studio/v16/contracts/00_CONTRACT_INDEX.md",
+      "sha256": "4f8b8cf6c89637d65074837e1c7e0e306f68e89cb9c7ad16cc1273c95687ef6e"
+    },
+    {
+      "path": "studio/v16/contracts/AUTH-V16.md",
+      "sha256": "176e435aebf9c2ae2941e7158a12618678c7e537204b516d624aa05e319ed5af"
+    },
+    {
+      "path": "studio/v16/contracts/DB-CONTRACT.md",
+      "sha256": "93d4ad86684602a723f94e634bc4f3505fbe9840058a8f4c1177dc68c64bac45"
+    },
+    {
+      "path": "studio/v16/contracts/PUBLISH-V16.md",
+      "sha256": "ba51d2df53b71cd379af0d2978011d392ba6f4ec954d5547e136b18282fc55d4"
+    },
+    {
+      "path": "studio/v16/contracts/RETIREMENT_AND_CUTOVER.md",
+      "sha256": "1f9e4f85869a9c21cf771733f699ac87528c16b2ccd9e3e4428182d190832975"
+    },
+    {
+      "path": "studio/v16/contracts/RUN-V16.md",
+      "sha256": "0a9c81ce098db3c644a56873ce7100b2825a05927f6e04b6a0519eb6430f80b8"
+    },
+    {
+      "path": "studio/v16/contracts/legacy-retirement.v1.json",
+      "sha256": "9f5618c8ade70e4af690fe974139656768dc679fdec0e7a455fbc2b497dbaf1a"
+    },
+    {
+      "path": "studio/v16/schemas/auth-decision.v1.schema.json",
+      "sha256": "708959ac0cf97ebf99d8ff9a74683d84c3f93a6e12a3d8c313550275fadc3feb"
+    },
+    {
+      "path": "studio/v16/schemas/auth-evaluate.v1.schema.json",
+      "sha256": "bd2c218168c7658a0552671e3df8fac330b5029cd97d64c9ffb12590e9c215bd"
+    },
+    {
+      "path": "studio/v16/schemas/auth-grant.v1.schema.json",
+      "sha256": "11de9086477dfbfa4eb79e41b8ed433fa00519d054a7df8c349fa4d902e9e4a4"
+    },
+    {
+      "path": "studio/v16/schemas/common.v1.schema.json",
+      "sha256": "450976d1f91410eba45d40bc3c0f48f40694c1a85d0c6d093ac60e6665043c03"
+    },
+    {
+      "path": "studio/v16/schemas/db-command.v1.schema.json",
+      "sha256": "94d969c704507f8d9f9b1711079ab140e0d8cd8b5faac11ba8f67c43a7e3ec7f"
+    },
+    {
+      "path": "studio/v16/schemas/db-event.v1.schema.json",
+      "sha256": "6004afc1541e2a5838f5704865b41a81e3273ca1d68bdddf6cce1699d93b3036"
+    },
+    {
+      "path": "studio/v16/schemas/db-result.v1.schema.json",
+      "sha256": "ddb6758719baf5f8482158c7f0645a1b7df3edb189e13fa16d49d01b379182ff"
+    },
+    {
+      "path": "studio/v16/schemas/publish-intent.v1.schema.json",
+      "sha256": "da59e6501e04d1b1f6158b87c3bb5c3351a4ed2c93a569cf01d757c12b3be59b"
+    },
+    {
+      "path": "studio/v16/schemas/publish-readback.v1.schema.json",
+      "sha256": "ad36c585d0931a7bf6cc1107fc47ce96b47c4becef531a97de7edfdd866b4c1b"
+    },
+    {
+      "path": "studio/v16/schemas/run-receipt.v1.schema.json",
+      "sha256": "2f7cbc930824ec7a7cf16ae1699fa4c75c74ec59e376b842f3d1e879c41a0f0d"
+    },
+    {
+      "path": "studio/v16/schemas/run-resume.v1.schema.json",
+      "sha256": "06f4aa6a6764ac3b59c59e59c94fe89890fa17cef66e95b8ab9776ce2e408ac1"
+    },
+    {
+      "path": "studio/v16/schemas/run-startup.v1.schema.json",
+      "sha256": "f8cc621494d726d318f42606e0b8ad2a60f5ac62bea7e8d3ddb965e3b3859360"
+    }
+  ],
+  "tests": "DEFERRED_BY_USER",
+  "runtime_database_created": false,
+  "live_providers_exercised": false,
+  "remote_store_blob": "7685892e2c7eddb6e2aaafc628d32e5d1d878546"
+}

@@ -5,14 +5,14 @@
   "branch": "studio/v16-sqlite-unified",
   "source_base_sha": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
   "source_head_at_run_start": "fa14928ea36ba68fe607448d690cc00bb64488c1",
-  "current_checkpoint": "C9",
+  "current_checkpoint": "C8_DEFERRED_BY_USER",
   "completed_checkpoints": [],
   "checkpoint_contract_revision": "DB-STORAGE/2-SQLITE DRAFT",
   "files_changed_in_latest_checkpoint": [
-    "studio_v16/db/sqlite/connection.py",
-    "studio_v16/db/sqlite/store.py",
-    "studio_v16/gateway/transport.py",
-    "studio_v16/db/sqlite/migrations/0008_response_claim_fence.sql"
+    "docs/sqlite/FINAL_IMPLEMENTATION_HANDOFF.md",
+    "docs/sqlite/STATIC_RECEIPT.json",
+    "docs/sqlite/ACCEPTANCE_STATUS.json",
+    "docs/sqlite/IMPLEMENTATION_STATE.json"
   ],
   "tests": [
     {
@@ -37,18 +37,22 @@
       "kind": "STATIC_ONLY"
     }
   ],
-  "open_code_defects": [],
+  "open_code_defects": [
+    "No known static-check failure; runtime/schema/security/concurrency correctness has not been tested."
+  ],
   "external_gates": {
     "owner_contract_approval": "PENDING",
     "postgres_transfer_if_applicable": "UNKNOWN: no deployed database evidence supplied",
-    "independent_exact_sha_qa": "PENDING",
-    "live_github_drive_credentials": "PENDING",
+    "independent_exact_sha_qa": "NOT_RUN",
+    "live_github_drive_credentials": "NOT_RUN for deployed gateway/provider identities",
     "active_cutover": "NOT_AUTHORIZED",
     "independent_watchdog_host": "NOT_CONFIGURED",
-    "alert_delivery": "NOT_RUN"
+    "alert_delivery": "NOT_RUN",
+    "off_host_restore": "NOT_RUN",
+    "rpo_rto": "UNMEASURED"
   },
-  "next_specific_edit": "C9: publish final handoff and exact source receipt; next engineering phase is deferred C8",
-  "last_checkpoint_parent_sha": "5430b8c9f59118213711c24c8b4775bcce7fd4d9",
+  "next_specific_edit": "When tests are requested: add C8 real-file schema/command/publication/control/backup/fault tests, then run existing suites and resolve failures before independent QA",
+  "last_checkpoint_parent_sha": "5dbec6504191ca3be9c82899dbc1c392439ecde2",
   "note": "Do not embed the SHA of this file's own commit in the file; report actual HEAD after commit.",
   "implemented_checkpoints": [
     "C0",
@@ -58,7 +62,8 @@
     "C4",
     "C5",
     "C6",
-    "C7"
+    "C7",
+    "C9_SOURCE_HANDOFF"
   ],
   "frozen_files": {
     "count": 19,
@@ -80,7 +85,8 @@
     "C5": "IMPLEMENTED_UNTESTED; document/role/kernel/control suites deferred",
     "C6": "IMPLEMENTED_UNTESTED; query-plan/load/provider/watchdog/fault suites deferred; real independent scheduling and delivery require deployment",
     "C7": "IMPLEMENTED_UNTESTED; real snapshots/restores/PG transfer/drills not executed",
-    "C8": "DEFERRED_BY_USER: no tests, fault injection, load measurements, migration execution or restore drills run"
+    "C8": "DEFERRED_BY_USER: no tests, fault injection, load measurements, migration execution or restore drills run",
+    "C9": "SOURCE_COMMITTED_AND_REMOTE_VERIFIED; acceptance and production readiness NOT_CLAIMED"
   },
   "runtime_requirements": {
     "sqlite_minimum": "3.45.0",
@@ -102,5 +108,6 @@
   ],
   "source_status": "IMPLEMENTED_SHADOW_UNVALIDATED",
   "backend": "sqlite_v2",
-  "mode": "SHADOW_DEFAULT_ONLY; no database created or deployed"
+  "mode": "SHADOW_DEFAULT_ONLY; no database created or deployed",
+  "code_candidate_sha": "5dbec6504191ca3be9c82899dbc1c392439ecde2"
 }
