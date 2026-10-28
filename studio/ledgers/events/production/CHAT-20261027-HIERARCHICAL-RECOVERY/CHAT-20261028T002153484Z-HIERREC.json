@@ -1,0 +1,61 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261028T002153484Z-HIERREC",
+  "recorded_at_utc": "2026-10-28T00:21:53.484Z",
+  "request_id": "CHAT-20261027-HIERARCHICAL-RECOVERY",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "ARTIFACT_SUBMITTED",
+  "status": "SUBMITTED",
+  "summary": "Produced a post-integration planning add-on for STOP-gated multi-job responses, hierarchical recovery and incorrect-supervisor containment across workers, seniors, department heads, S00 director, independent QA, auditor/watchdog, PostgreSQL, GitHub, gateway and Drive. Eight planned patches HR00-HR07 reuse J-Q. No live source or runtime settings modified.",
+  "issue": null,
+  "job_id": null,
+  "attempt_id": "CHAT-20261028T002153484Z-HIERREC",
+  "todo": [
+    {
+      "id": "HR00",
+      "description": "Freeze additive recovery and leadership authority contract against accepted integrated source SHA",
+      "state": "OPEN"
+    },
+    {
+      "id": "HR01-HR04",
+      "description": "Implement DB fencing, gateway checks, worker/head kernel and independent QA fixtures",
+      "state": "OPEN"
+    },
+    {
+      "id": "HR05-HR06",
+      "description": "Implement deterministic leadership auditor and independent watchdog/alert publisher",
+      "state": "OPEN"
+    },
+    {
+      "id": "HR07",
+      "description": "Integrate, run canary and fault-injection tests, request owner approval",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [],
+  "artifacts": [
+    {
+      "kind": "planning_addon_zip",
+      "uri": "sandbox:/mnt/data/Nomad_Studio_V16_Hierarchical_Recovery_Addon_2026-10-27.zip",
+      "revision": "sha256:bb69b30f480f5d18ec76fed4ef445594d656f477e38e454201f1cf35fd1d3612",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Patch dependency ordering and concurrent file ownership",
+      "status": "PASS"
+    },
+    {
+      "name": "ZIP integrity and 12-file SHA256 manifest",
+      "status": "PASS"
+    },
+    {
+      "name": "Recovery implementation and live failover tests",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
