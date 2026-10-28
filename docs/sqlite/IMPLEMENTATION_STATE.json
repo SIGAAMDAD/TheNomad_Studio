@@ -5,14 +5,16 @@
   "branch": "studio/v16-sqlite-unified",
   "source_base_sha": "8d0b9002e1fedababe72fceffe2a8d6f4bbb3fcd",
   "source_head_at_run_start": "fa14928ea36ba68fe607448d690cc00bb64488c1",
-  "current_checkpoint": "C7",
+  "current_checkpoint": "C8",
   "completed_checkpoints": [],
   "checkpoint_contract_revision": "DB-STORAGE/2-SQLITE DRAFT",
   "files_changed_in_latest_checkpoint": [
-    "studio_v16/controller/views.py",
-    "studio_v16/watchdog/service.py",
-    "studio_v16/db/sqlite/migrations/0006_controller_watchdog.sql",
-    "studio_v16/providers/git_provider.py"
+    "infra/sqlite/backup.py",
+    "infra/sqlite/transfer.py",
+    "infra/sqlite/telemetry.py",
+    "docs/sqlite/MIGRATION_RUNBOOK.md",
+    "docs/sqlite/ROLLBACK.md",
+    "studio_v16/db/sqlite/migrations/0007_transfer_provenance.sql"
   ],
   "tests": [
     {
@@ -30,6 +32,11 @@
     {
       "command": "git diff --check",
       "exit_code": 0
+    },
+    {
+      "command": "AST literal SQL placeholder/argument count review (136 sites)",
+      "exit_code": 0,
+      "kind": "STATIC_ONLY"
     }
   ],
   "open_code_defects": [],
@@ -42,8 +49,8 @@
     "independent_watchdog_host": "NOT_CONFIGURED",
     "alert_delivery": "NOT_RUN"
   },
-  "next_specific_edit": "C7: online backup/restore, conditional PostgreSQL transfer and runbooks",
-  "last_checkpoint_parent_sha": "0757594e2ce7b5ab636c27f5299ea4e997d79202",
+  "next_specific_edit": "C8 tests deferred by user; C9 static integration review and unvalidated-source handoff",
+  "last_checkpoint_parent_sha": "4dddfbf2b661130697f03735af78e60262ff6d58",
   "note": "Do not embed the SHA of this file's own commit in the file; report actual HEAD after commit.",
   "implemented_checkpoints": [
     "C0",
@@ -52,7 +59,8 @@
     "C3",
     "C4",
     "C5",
-    "C6"
+    "C6",
+    "C7"
   ],
   "frozen_files": {
     "count": 19,
@@ -72,7 +80,8 @@
     "C3": "IMPLEMENTED_UNTESTED; provider fault/revocation/concurrency acceptance suites deferred",
     "C4": "IMPLEMENTED_UNTESTED; indexed query plans, inbox/control/leader/document race gates deferred",
     "C5": "IMPLEMENTED_UNTESTED; document/role/kernel/control suites deferred",
-    "C6": "IMPLEMENTED_UNTESTED; query-plan/load/provider/watchdog/fault suites deferred; real independent scheduling and delivery require deployment"
+    "C6": "IMPLEMENTED_UNTESTED; query-plan/load/provider/watchdog/fault suites deferred; real independent scheduling and delivery require deployment",
+    "C7": "IMPLEMENTED_UNTESTED; real snapshots/restores/PG transfer/drills not executed"
   },
   "runtime_requirements": {
     "sqlite_minimum": "3.45.0",
@@ -84,7 +93,8 @@
     "0003_dispatch_retry",
     "0004_cm_hr",
     "0005_response_evidence",
-    "0006_controller_watchdog"
+    "0006_controller_watchdog",
+    "0007_transfer_provenance"
   ],
   "next_verification_commands": [
     "python -m compileall -q studio_v16",
