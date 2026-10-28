@@ -950,6 +950,11 @@
           "test": "SQLiteWatchdogC8.test_missing_audit_is_degraded_not_silent_success",
           "scope_and_gap": "Tests local degraded status; independent deployed watchdog and owner alert not attested.",
           "path": "tests/v16/db/test_sqlite_watchdog_c8.py"
+        },
+        {
+          "test": "SQLiteWatchdogFaultsC8.test_failed_alert_delivery_remains_bounded_and_visible_to_real_owner",
+          "path": "tests/v16/db/test_sqlite_watchdog_faults_c8.py",
+          "scope_and_gap": "Local independent actor fixture observes audit absence, records owner packet, preserves pending queue; real watchdog scheduling and delivered owner alert still external."
         }
       ],
       "gap": "Full requirement not established by listed assertions.",
@@ -1147,11 +1152,41 @@
       "required_evidence": "Watchdog rejects missing digest/age, records degraded supervision",
       "external_class": "LOCAL_FIRST",
       "primary_task": "A06",
-      "status": "NOT_RUN",
+      "status": "MAPPED",
       "subject_sha": "b5bd1fa948ff0d007c2a2feb538d1dd96dc00031",
-      "existing_assertions": [],
-      "gap": "No reviewed assertion in this inventory establishes the required scenario: Watchdog rejects missing digest/age, records degraded supervision",
-      "reviewer_verdict": "NOT_REVIEWED"
+      "existing_assertions": [
+        {
+          "test": "SQLiteWatchdogFaultsC8.test_missing_audit_digest_is_rejected_by_storage",
+          "path": "tests/v16/db/test_sqlite_watchdog_faults_c8.py",
+          "scope_and_gap": "Missing required audit digest is rejected by SQLite integrity constraints and missing audit produces DEGRADED supervision with AUDIT_UNAVAILABLE recovery case. External watchdog and owner alert delivery require separate attestation."
+        },
+        {
+          "test": "SQLiteWatchdogFaultsC8.test_invalid_audit_digest_stays_degraded_and_creates_recovery_packet",
+          "path": "tests/v16/db/test_sqlite_watchdog_faults_c8.py",
+          "scope_and_gap": "Invalid evidence digest is never reported healthy; watchdog emits DEGRADED and persists AUDIT_INVALID owner recovery packet. External watchdog and owner alert delivery require separate attestation."
+        },
+        {
+          "test": "SQLiteWatchdogFaultsC8.test_stale_audit_timestamp_is_degraded_not_all_clear",
+          "path": "tests/v16/db/test_sqlite_watchdog_faults_c8.py",
+          "scope_and_gap": "Stale auditor timestamp produces DEGRADED and AUDIT_UNAVAILABLE even when a recent local audit exists. External watchdog and owner alert delivery require separate attestation."
+        }
+      ],
+      "gap": "Complete real-file local digest/age/degraded supervision mapping; independent deployed watchdog verification remains separate.",
+      "reviewer_verdict": "NOT_REVIEWED",
+      "execution": {
+        "coverage": "COMPLETE",
+        "kind": "REAL_SQLITE_FIXTURE",
+        "tests": [
+          "tests.v16.db.test_sqlite_watchdog_faults_c8.SQLiteWatchdogFaultsC8.test_missing_audit_digest_is_rejected_by_storage",
+          "tests.v16.db.test_sqlite_watchdog_faults_c8.SQLiteWatchdogFaultsC8.test_invalid_audit_digest_stays_degraded_and_creates_recovery_packet",
+          "tests.v16.db.test_sqlite_watchdog_faults_c8.SQLiteWatchdogFaultsC8.test_stale_audit_timestamp_is_degraded_not_all_clear"
+        ],
+        "assertions": [
+          "Missing required audit digest is rejected by SQLite integrity constraints and missing audit produces DEGRADED supervision with AUDIT_UNAVAILABLE recovery case.",
+          "Invalid evidence digest is never reported healthy; watchdog emits DEGRADED and persists AUDIT_INVALID owner recovery packet.",
+          "Stale auditor timestamp produces DEGRADED and AUDIT_UNAVAILABLE even when a recent local audit exists."
+        ]
+      }
     },
     {
       "case_id": "HR-FAULT-14",
@@ -1322,9 +1357,14 @@
           "test": "SQLiteWatchdogC8.test_unverified_alert_remains_pending_until_readback",
           "scope_and_gap": "Checks pending then verified fixture readback; actual email failure and alternate dashboard not established.",
           "path": "tests/v16/db/test_sqlite_watchdog_c8.py"
+        },
+        {
+          "test": "SQLiteWatchdogFaultsC8.test_failed_alert_delivery_remains_bounded_and_visible_to_real_owner",
+          "path": "tests/v16/db/test_sqlite_watchdog_faults_c8.py",
+          "scope_and_gap": "Injects delivery outage, verifies three bounded attempts and ALERT_DELIVERY_PENDING retained with read-only OWNER-kind gated view; real email outage and independent off-host dashboard remain unverified."
         }
       ],
-      "gap": "Full requirement not established by listed assertions.",
+      "gap": "Local bounded alert failures and owner recovery view established; real email delivery failure plus externally accessible owner dashboard remain outstanding.",
       "reviewer_verdict": "NOT_REVIEWED"
     },
     {

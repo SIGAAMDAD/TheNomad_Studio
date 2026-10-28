@@ -103,6 +103,27 @@ class WatchdogService:
             return dict(cases=case_ids, status='DEGRADED' if problems else 'OBSERVED', source_sha=self.source_sha,
                         auto_restart='UNSUPPORTED', independent_host_monitor='NOT_ATTESTED')
 
+    def owner_pending_alerts(self, department, context, *, limit=50):
+        """Read-only owner recovery view when an alert delivery remains pending.
+
+        This never claims that email was sent or that recovery was approved.
+        Require both an owner-scoped policy and persisted OWNER principal kind.
+        """
+        integer(limit, minimum=1, maximum=200)
+        with self.owner.connection(readonly=True) as conn:
+            scope = self.coordination._auth(conn, context, department, 'CONTROLLER')
+            kind = conn.execute('SELECT kind FROM principals WHERE principal_id=?',
+                                (context.principal_id,)).fetchone()
+            if not scope.owner or kind != ('OWNER',):
+                raise Denied('OWNER_APPROVAL_REQUIRED')
+            rows = conn.execute('''SELECT case_id,subject_id,reason,status,alert_attempts,
+                next_retry_at,owner_packet_json FROM recovery_cases WHERE department=?
+                AND status='ALERT_DELIVERY_PENDING' ORDER BY created_at,case_id LIMIT ?''',
+                (department, limit)).fetchall()
+            return [dict(case_id=r[0], subject_id=r[1], reason=r[2], status=r[3],
+                         alert_attempts=r[4], next_retry_at=r[5],
+                         owner_packet=parse_json(r[6])) for r in rows]
+
     def deliver_pending(self, department, context, deliver, *, limit=10, max_attempts=5):
         integer(limit, minimum=1, maximum=50)
         integer(max_attempts, minimum=1, maximum=10)
