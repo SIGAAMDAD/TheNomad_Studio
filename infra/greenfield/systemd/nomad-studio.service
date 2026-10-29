@@ -1,5 +1,5 @@
 [Unit]
-Description=Nomad Studio Greenfield private coordination service
+Description=Nomad Studio R9 private cabal control plane
 Documentation=man:systemd.service(5)
 After=network-online.target
 Wants=network-online.target
@@ -12,8 +12,8 @@ Group=nomad-studio
 WorkingDirectory=/opt/nomad-studio/current
 Environment=PYTHONDONTWRITEBYTECODE=1
 EnvironmentFile=/etc/nomad-studio/service.env
-# Integration root (WG-A and WG-B compose this). Intentionally absent in WG-P-only seed.
-ExecStart=/opt/nomad-studio/current/venv/bin/python -m nomad_studio.app
+# Never start a public listener from unverified native adapter configuration.
+ExecStart=/opt/nomad-studio/current/venv/bin/python -m nomad_studio.app --config /etc/nomad-studio/r9-runtime.json
 Restart=on-failure
 RestartSec=5s
 UMask=0077

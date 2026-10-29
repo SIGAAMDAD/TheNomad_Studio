@@ -1,343 +1,295 @@
-"""Integration-owned composition root for the one-wave greenfield Studio.
+"""The one R9 composition root: 22 frozen ports, scoped state and no V1 facade.
 
-One SQLite owner, frozen Component facades, explicitly injected trusted providers.
-Nothing here authenticates a prompt, launches a model or claims an external effect.
+A constructed runtime is a *local application*, not a native-host/QA proof.
+External adapters and evidence validators are supplied by the trusted operator;
+missing adapters cannot grant provider authority or make readiness successful.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
+from typing import Any, Callable, Mapping
+import argparse
+import json
+import os
+import signal
+import threading
 import time
-from typing import Any, Mapping
 
-from nomad_studio.contracts.v1 import CommandEnvelope, Component, Outcome, QueryEnvelope
-from nomad_studio.state.api import open_store, build_component as state_component
-from nomad_studio.trust.api import build_component as trust_component
-from nomad_studio.source.api import build_component as source_component
-from nomad_studio.registry.api import build_component as registry_component
-from nomad_studio.organization.api import build_component as organization_component
-from nomad_studio.budget.api import build_component as budget_component
-from nomad_studio.scheduler.api import build_component as scheduler_component
-from nomad_studio.relay.api import build_component as relay_component
-from nomad_studio.shift.api import build_component as shift_component
-from nomad_studio.review.api import build_component as review_component
-from nomad_studio.publication.api import build_component as publication_component
-from nomad_studio.artifacts.api import build_component as artifacts_component
-from nomad_studio.knowledge.api import build_component as knowledge_component
-from nomad_studio.archive.api import build_component as archive_component
-from nomad_studio.oversight.api import build_component as oversight_component
-from nomad_studio.operations.api import build_component as operations_component
-from nomad_studio.console.api import build_component as console_component
-from nomad_studio.deployment.api import build_component as deployment_component
-from nomad_studio.verification.api import build_component as verification_component
-from nomad_studio.gateway.api import build_transport, store_audit_sink
-from nomad_studio.integration_auth import InternalAuthorization
-from nomad_studio.integration_wire import WireComponent, gateway_facades
-from nomad_studio.single_operator.personas.api import build_component as persona_component
-from nomad_studio.single_operator.ownercontrol.api import build_component as ownercontrol_component
-from nomad_studio.single_operator.convergence.api import build_component as convergence_component
-from nomad_studio.single_operator.capabilities.api import build_component as capabilities_component
-from nomad_studio.hr_bridge.api import build_component as hr_bridge_component
-from nomad_studio.creative_authority.policy.api import build_component as creative_policy_component
-from nomad_studio.creative_authority.impact.api import build_component as creative_impact_component
-from nomad_studio.creative_authority.console.api import build_component as creative_console_component
-from nomad_studio.creative_authority.enforcement.api import build_component as creative_enforcement_component
-from nomad_studio.creative_authority.bindings.evaluation import build_component as artifact_bindings_component
-from nomad_studio.creative_authority.bindings.registry import BindingRegistry
+from nomad_studio.contracts.runtime_ports_v1 import Result
+from nomad_studio.state.r9_authority import R9Authority, DurableOutbox
+from nomad_studio.state.r9_cas import FileCAS, RecordCAS
+from nomad_studio.trust.evidence import ProviderEvidenceVerifier
+from nomad_studio.trust.api import IdentityService
+from nomad_studio.bibles.api import BibleRegistry
+from nomad_studio.governance.api import AuthorityService
+from nomad_studio.organization.api import ProjectRegistry
+from nomad_studio.production.intake.api import BriefService
+from nomad_studio.production.contract.api import FeatureContractCompiler
+from nomad_studio.production.director.api import DirectorService
+from nomad_studio.production.director.commands import CommandService
+from nomad_studio.production.director.workflow import ProductionWorkflow
+from nomad_studio.production.status.api import ProductionStatusService
+from nomad_studio.production.workgraph.api import WorkGraphService
+from nomad_studio.scheduler.api import SchedulingService
+from nomad_studio.cabals.core.service import CabalService
+from nomad_studio.cabals.council.api import CouncilService
+from nomad_studio.registry.api import CapabilityService
+from nomad_studio.single_operator.capabilities.host import WorkerHostService, AgentExecutionService
+from nomad_studio.production.context.service import ContextService
+from nomad_studio.production.context.adapter import ProjectAdapterService
+from nomad_studio.artifacts.runtime import ArtifactService
+from nomad_studio.production.repository.service import RepositoryService
+from nomad_studio.publication.runtime import EffectService
+from nomad_studio.production.quality.api import QualityService
+from nomad_studio.oversight.api import OversightNoticeService
 
-DOMAIN_ORDER = (
-    'state', 'trust', 'registry', 'source', 'organization', 'budget',
-    'scheduler', 'relay', 'shift', 'review', 'publication', 'artifacts',
-    'knowledge', 'archive', 'oversight', 'operations', 'console',
-    'deployment', 'verification',
+PORT_NAMES = (
+    'IdentityPort', 'BiblePort', 'AuthorityPort', 'ProjectPort', 'BriefPort',
+    'FeatureContractPort', 'DirectorPort', 'WorkGraphPort', 'SchedulingPort',
+    'CabalPort', 'CouncilPort', 'CapabilityPort', 'WorkerHostPort',
+    'AgentExecutionPort', 'ContextPort', 'ProjectAdapterPort', 'ArtifactPort',
+    'RepositoryPort', 'EffectPort', 'QualityPort', 'CommandPort', 'OversightNoticePort',
 )
 
-# These Studio V1 extensions are assembled internally. They are NOT implicitly
-# exposed on the A-S public gateway; each needs explicit trusted policy/port
-# registration before receiving external commands. Private Oversight modules
-# remain separate and are never imported into this process.
-EXTENSION_ORDER = (
-    'persona', 'ownercontrol', 'convergence', 'capabilities', 'hr_bridge',
-    'creative_policy', 'creative_impact', 'creative_console',
-    'creative_enforcement', 'artifact_bindings',
+# Required for live provider acceptance; dependency injection is only local wiring.
+# An authenticated provider probe and TLS ingress are additional runtime gates.
+_NATIVE_DEPENDENCIES = (
+    'native_readback', 'native_outbox_readback', 'trust_anchors', 'native_worker_host',
+    'native_task_authority', 'agent_authority', 'owner_gateway',
+    'source_readback', 'source_provider', 'source_scope', 'source_reviewer',
+    'runner', 'quality_proofs', 'native_permission_reader',
+    'context_source', 'adapter_registry', 'effect_provider',
+    'effect_scope', 'effect_owner_auth', 'immutable_request_reader',
+    'oversight_assignment_reader', 'oversight_notice_sink',
 )
 
 
-class ComponentRef:
-    """A late-bound frozen Component reference for genuine inter-service dependency cycles.
+class ProviderUnavailable(RuntimeError):
+    """A required provider is absent; this is never proof or acceptance."""
 
-    Until the owning implementation has been constructed, the reference FAILS CLOSED.
-    This isn't a fake external provider and never manufactures a positive receipt.
-    """
+
+class _Missing:
+    __slots__ = ('name',)
+
     def __init__(self, name: str):
         self.name = name
-        self._component: Component | None = None
 
-    def bind(self, component: Component) -> None:
-        if self._component is not None or component.name != self.name:
-            raise ValueError('component reference rebound or name mismatch')
-        self._component = component
+    def __getattr__(self, member: str):
+        def fail(*_args: Any, **_kwargs: Any) -> Any:
+            raise ProviderUnavailable(f'{self.name}.{member}: native provider not configured')
+        return fail
 
-    def execute(self, command: CommandEnvelope, identity: Any) -> Outcome:
-        if self._component is None:
-            return Outcome('NOT_RUN', 'NOT_CONFIGURED')
-        # Sisters authored in the one-wave use a mix of internal plain verbs
-        # and frozen dotted envelope operations. Reconcile at this root port.
-        if command.operation.startswith(self.name + '.'):
-            return WireComponent(self._component).execute(command, identity)
-        return self._component.execute(command, identity)
+    def __call__(self, *_args: Any, **_kwargs: Any) -> Any:
+        raise ProviderUnavailable(f'{self.name}: native provider not configured')
 
-    def query(self, query: QueryEnvelope, identity: Any) -> Outcome:
-        if self._component is None:
-            return Outcome('NOT_RUN', 'NOT_CONFIGURED')
-        if query.operation.startswith(self.name + '.'):
-            return WireComponent(self._component).query(query, identity)
-        return self._component.query(query, identity)
+
+class AuthenticatedIngress:
+    """In-process owner ingress, always anchored to CAB-H native proof verification.
+
+    No network entrypoint is offered unless a separately verified TLS transport
+    terminates mTLS and calls this adapter with an authenticated proof reference.
+    """
+    def __init__(self, identity: IdentityService, commands: CommandService):
+        self.identity, self.commands = identity, commands
+
+    def submit(self, command: Mapping[str, Any], proof_ref: str) -> Result:
+        if not isinstance(command, Mapping) or command.get('auth_proof_ref') != proof_ref:
+            return Result('REJECTED', 'UNAUTHENTICATED')
+        action_digest = command.get('request_digest')
+        if not isinstance(action_digest, str):
+            return Result('REJECTED', 'INVALID_INPUT')
+        owner = self.identity.authenticate_owner(proof_ref, action_digest)
+        if owner.status != 'OK' or owner.code != 'OK':
+            return owner
+        return self.commands.submit_owner_command(command, owner)
 
 
 @dataclass
 class StudioRuntime:
-    store: Any
-    components: Mapping[str, Component]
-    gateway: Any | None = None
+    state: R9Authority
+    cas: FileCAS
+    services: Mapping[str, Any]
+    outbox: DurableOutbox
+    ingress: AuthenticatedIngress
+    bound_native: Mapping[str, bool]
     closed: bool = False
-    extensions: Mapping[str, object] = field(default_factory=dict)
 
-    def component(self, domain: str) -> Component:
-        return self.components[domain]
-
-    def extension(self, name: str) -> object:
-        """Internal trusted-process extension; not an authenticated gateway route."""
+    def port(self, name: str) -> Any:
         if self.closed:
-            raise RuntimeError('runtime is closed')
-        return self.extensions[name]
+            raise RuntimeError('Studio runtime is closed')
+        return self.services[name]
 
-    def open_gateway(self, *, tls_context: Any, certificate_identities: Mapping[str, Any],
-                     host: str = '127.0.0.1', port: int = 0, **settings: Any) -> Any:
-        """Explicit mTLS-only host operation; never opens a socket during composition."""
-        if self.closed or self.gateway is not None:
-            raise RuntimeError('runtime closed or gateway already opened')
-        transport = build_transport({
-            'trust_component': self.components['trust'],
-            'components': gateway_facades(self.components),
-            'tls_context': tls_context,
-            'certificate_identities': certificate_identities,
-            'audit_sink': store_audit_sink(self.store),
-            'host': host,
-            'port': port,
-            **settings,
-        })
-        self.gateway = transport
-        return transport
+    def health(self) -> dict[str, Any]:
+        if self.closed:
+            return {'liveness': 'STOPPED', 'readiness': 'NOT_READY', 'reason': 'CLOSED'}
+        unbound = sorted(name for name, present in self.bound_native.items() if not present)
+        pending = self.state.outbox_rows('PENDING')
+        unknown = self.state.outbox_rows('UNKNOWN')
+        # Wire configuration is not a native credential, observed host
+        # capability, TLS ingress, or independent provider proof.
+        return {'liveness': 'ALIVE', 'readiness': 'NOT_READY',
+                'readiness_reason': 'LIVE_PROVIDER_AND_TLS_ACCEPTANCE_NOT_VERIFIED',
+                'database': 'R9_FRESH_SCHEMA_VERIFIED',
+                'registered_port_count': len(self.services),
+                'missing_native_dependencies': unbound,
+                'pending_outbox_count': len(pending),
+                'unknown_external_count': len(unknown),
+                'recovered_unknown_count': self.state.recovered_unknown_count,
+                'fenced_lease_count': self.state.fenced_lease_count}
 
     def close(self) -> None:
         if not self.closed:
             self.closed = True
-            try:
-                if self.gateway is not None:
-                    self.gateway.close()
-            finally:
-                self.store.close()
+            self.state.close()
 
     def __enter__(self) -> 'StudioRuntime':
         if self.closed:
-            raise RuntimeError('runtime is closed')
+            raise RuntimeError('runtime closed')
         return self
 
-    def __exit__(self, *exc: Any) -> None:
+    def __exit__(self, *_exc: Any) -> None:
         self.close()
 
 
-def open_studio(*, sqlite_path: str | Path, owner_principal_id: str,
-                trusted_issuer_ids: tuple[str, ...],
-                ports: Mapping[str, object] | None = None,
-                settings: Mapping[str, object] | None = None) -> StudioRuntime:
-    """Compose 19 public base facades and 10 internal Studio V1 extensions.
+def open_studio(*, sqlite_path: str | Path, cas_path: str | Path | None = None,
+                bindings: Mapping[str, Any] | None = None,
+                clock_us: Callable[[], int] | None = None) -> StudioRuntime:
+    """Build the new-only R9 runtime from the actual frozen port implementations.
 
-    `ports` are trusted, process-local operator wiring, NOT HTTP/chat input. Missing
-    external provider ports are left unconfigured, so source, QA, archive, connector
-    and Oversight operations fail closed. No default simulated verification.
+    `bindings` is trusted process-local injection, never user/agent request
+    input. Absent external proof cannot turn into a successful operation.
     """
-    if not isinstance(owner_principal_id, str) or not owner_principal_id.startswith('owner/') or not owner_principal_id[6:]:
-        raise ValueError('explicit trusted owner principal required')
-    if not trusted_issuer_ids or any(not isinstance(x, str) or not x for x in trusted_issuer_ids):
-        raise ValueError('explicit trusted issuer allowlist required')
-    if not isinstance(ports or {}, Mapping) or not isinstance(settings or {}, Mapping):
-        raise ValueError('ports and settings must be mappings')
-    ports = dict(ports or {})
-    settings = dict(settings or {})
+    if bindings is not None and not isinstance(bindings, Mapping):
+        raise TypeError('trusted native bindings must be a mapping')
+    injected = dict(bindings or {})
+    if clock_us is None:
+        clock_us = lambda: time.time_ns() // 1000
+    if not callable(clock_us):
+        raise TypeError('trusted clock is required')
 
-    def port(key: str) -> Any:
-        return ports.get(key)
+    def native(name: str) -> Any:
+        return injected.get(name) if injected.get(name) is not None else _Missing(name)
 
-    def clock_us() -> int:
-        return time.time_ns() // 1000
-
-    clock = port('clock_us') or clock_us
-    if not callable(clock):
-        raise ValueError('trusted clock port must be callable')
-    store_config = dict(settings.get('state', {}))
-    # A new Studio V1 database always uses the single pinned V1 schema.
-    store_config['path'] = str(Path(sqlite_path).resolve())
-    store = open_store(store_config)
-    refs = {name: ComponentRef(name) for name in DOMAIN_ORDER}
-    comps: dict[str, Component] = {}
-
-    def add(name: str, component: Component) -> None:
-        if not callable(getattr(component, 'query', None)) or not callable(getattr(component, 'execute', None)):
-            raise RuntimeError(f'{name} lacks required facade')
-        refs[name].bind(component)
-        comps[name] = component
-
+    state = R9Authority(sqlite_path)
     try:
-        # The only direct implementation imports occur here in the composition root.
-        add('state', state_component({'store': store, 'snapshot_dir': port('snapshot_dir')}))
-        slot_authority = port('slot_authority')
-        if slot_authority is not None and not callable(slot_authority):
-            raise ValueError('slot authority must be a trusted callable')
-        # Absent external authority means no worker slot can be authorized.
-        slot_authority = slot_authority or (lambda _worker_id: None)
-        add('trust', trust_component({'store': store, 'slot_authority': slot_authority, 'clock_us': clock}))
-        internal = InternalAuthorization(store=store, trust=comps['trust'],
-                                         slot_authority=slot_authority,
-                                         clock_us=clock, review_verifier=port('review_authority'))
-        add('registry', registry_component({
-            'skill_pins': port('skill_pins') or {}, 'skill_loader': port('skill_loader'),
-            'slot_authorizer': port('slot_authorizer'), 'fleet_observer': port('fleet_observer'), 'now_us': clock,
-        }))
-        add('source', source_component({
-            'store': store, 'source_reader': port('source_reader'),
-            'scheduler': refs['scheduler'], 'clock_us': clock,
-        }))
-        add('organization', organization_component({
-            'state': store, 'owner_principal_id': owner_principal_id,
-            'trusted_issuer_ids': trusted_issuer_ids, 'source': refs['source'],
-            'oversight': refs['oversight'], 'clock_us': clock,
-        }))
-        add('budget', budget_component({'store': store, 'clock_us': clock,
-                                        'billing_verifier': port('billing_verifier')}))
-        add('scheduler', scheduler_component({
-            'store': store, 'source': refs['source'], 'review': refs['review'],
-            'reconciliation': port('lease_reconciliation'), 'now_us': clock,
-            'config': settings.get('scheduler', {}),
-        }))
-        add('relay', relay_component({
-            'store': store, 'github': port('github_relay'),
-            'authorize_worker': internal.authorize_relay_worker,
-            'authorize_sender': internal.authorize_relay_sender,
-            'verify_processing_receipt': internal.verify_relay_receipt,
-            'clock_us': clock, 'webhook_secret': port('webhook_secret'),
-        }))
-        add('shift', shift_component({
-            'store': store, 'trust': internal, 'scheduler': refs['scheduler'],
-            'relay': refs['relay'], 'clock_us': clock,
-        }))
-        # The review authority epoch must come from a trusted live reader.
-        # Without an independent issuer the review component still fails closed.
-        epoch_reader = port('review_authority_epoch')
-        if epoch_reader is None:
-            epoch_reader = lambda: -1
-        if not callable(epoch_reader):
-            raise ValueError('review authority epoch must be callable')
-        add('review', review_component({
-            'store': store, 'source': refs['source'], 'trust': internal,
-            'authority_epoch': epoch_reader,
-            'assignment_epoch': internal.assignment_epoch,
-            'clock_us': clock,
-            'required_ci_checks': settings.get('required_ci_checks', ('unit-tests',)),
-            'required_owner_decisions': settings.get('required_owner_decisions', ('architecture', 'canon')),
-        }))
-        add('publication', publication_component({
-            'store': store, 'authorization': port('publication_authorization'),
-            'github_transport': port('github_publication'),
-            'drive_transport': port('drive_publication'),
-            'artifact_reader': port('artifact_reader'),
-            'clock_us': clock, 'quotas': settings.get('publication_quotas', {}),
-        }))
-        add('artifacts', artifacts_component({
-            'store': store, 'readback': port('artifact_readback'),
-            'authorize': port('artifact_authorize'),
-            'review': refs['review'], 'publication': refs['publication'],
-            'folder_registry': settings.get('folders', {}),
-            'format_tools': port('format_tools') or {}, 'now_us': clock,
-        }))
-        add('knowledge', knowledge_component({
-            'store': store, 'source': refs['source'], 'artifacts': refs['artifacts'],
-            'service_identity': port('knowledge_service_identity'),
-            'owner_principals': (owner_principal_id,),
-        }))
-        add('archive', archive_component({
-            'state': store, 'archive_root': port('archive_root'),
-            'authority': port('archive_authority'), 'approvals': port('archive_approvals'),
-            'snapshot': port('archive_snapshot'), 'evidence': port('archive_evidence'),
-            'cryptor': port('archive_cryptor'), 'witness_verifier': port('archive_witness'),
-            'encrypted': settings.get('archive_encrypted', False),
-        }))
-        add('oversight', oversight_component({
-            'store': store, 'oversight_backend': port('oversight_backend'),
-            'enforcement_port': port('oversight_enforcer'),
-            'trusted_issuer_ids': ports.get('oversight_issuer_ids', ()),
-            'trusted_key_ids': ports.get('oversight_key_ids', ()), 'clock_us': clock,
-        }))
-        add('operations', operations_component({
-            'store': store, 'observer': port('operations_observer'),
-            'effects': port('operations_effects'), 'alerts': port('operations_alerts'),
-        }))
-        add('console', console_component({
-            'store': store, 'scheduler': refs['scheduler'], 'operations': refs['operations'],
-            'verification': refs['verification'], 'organization': refs['organization'],
-            'registry': refs['registry'], 'trust': internal, 'shift': refs['shift'],
-            'source': refs['source'], 'review': refs['review'],
-            'slot_authority': slot_authority,
-            'clock_us': clock,
-        }))
-        add('deployment', deployment_component({
-            'config': settings.get('deployment'),
-            'connector_probe_port': port('connector_probe'),
-        }))
-        add('verification', verification_component({
-            'source_root': port('source_root') or str(Path(__file__).resolve().parents[2]),
-            'evidence_dir': port('verification_evidence_dir'),
-            'probes': port('verification_probes') or {},
-            'fault_adapters': port('verification_faults') or {},
-            'load_driver': port('verification_load_driver'),
-            'probe_mode': 'INTEGRATED' if port('verification_probes') else 'FAKE',
-            'external_verifier': port('verification_external_verifier'),
-        }))
-        assert tuple(comps) == DOMAIN_ORDER
-        # Only operator-supplied process-local dependency ports may enable an
-        # external capability. Missing ports stay absent and mutations fail
-        # closed; no authority is manufactured from prompt text or test mocks.
-        extension_ports = port('extension_ports') or {}
-        if not isinstance(extension_ports, Mapping) or set(extension_ports) - set(EXTENSION_ORDER):
-            raise ValueError('invalid extension port registry')
-        def extension_deps(name: str) -> dict[str, object]:
-            supplied = extension_ports.get(name, {})
-            if not isinstance(supplied, Mapping) or 'store' in supplied or 'clock_us' in supplied:
-                raise ValueError('extension dependencies may not override Studio state or clock')
-            return {**supplied, 'store': store, 'clock_us': clock}
-        def unavailable_authority_epoch() -> int:
-            raise RuntimeError('no independent authority epoch provider configured')
-        extensions: dict[str, object] = {}
-        extensions['persona'] = persona_component(extension_deps('persona'))
-        extensions['ownercontrol'] = ownercontrol_component(extension_deps('ownercontrol'))
-        convergence_deps = extension_deps('convergence')
-        convergence_deps.setdefault('authority_epoch', unavailable_authority_epoch)
-        extensions['convergence'] = convergence_component(convergence_deps)
-        extensions['capabilities'] = capabilities_component(extension_deps('capabilities'))
-        bridge_deps = extension_deps('hr_bridge')
-        bridge_deps.update({'trusted_issuer_ids': port('oversight_issuer_ids') or (),
-                            'trusted_key_ids': port('oversight_key_ids') or ()})
-        extensions['hr_bridge'] = hr_bridge_component(bridge_deps)
-        extensions['creative_policy'] = creative_policy_component(extension_deps('creative_policy'))
-        extensions['creative_impact'] = creative_impact_component(extension_deps('creative_impact'))
-        extensions['creative_console'] = creative_console_component(extension_deps('creative_console'))
-        extensions['creative_enforcement'] = creative_enforcement_component(extension_deps('creative_enforcement'))
-        binding_deps = extension_deps('artifact_bindings')
-        binding_deps.setdefault('registry', BindingRegistry(()))
-        extensions['artifact_bindings'] = artifact_bindings_component(binding_deps)
-        assert tuple(extensions) == EXTENSION_ORDER
-        return StudioRuntime(store=store, components=comps, extensions=extensions)
+        cas = FileCAS(cas_path if cas_path is not None else Path(sqlite_path).absolute().parent / 'cas')
+        owner = {name: state.capability(name) for name in (
+            'CAB-A','CAB-B','CAB-C','CAB-D','CAB-E','CAB-F','CAB-G','CAB-H','CAB-I','CAB-J')}
+        outbox = DurableOutbox(state, clock_us, readback=injected.get('native_outbox_readback'))
+        reader = injected.get('native_readback')
+        anchors = injected.get('trust_anchors') or {}
+        verifier = ProviderEvidenceVerifier(reader if callable(reader) else lambda _ref: None, anchors)
+        identity = IdentityService(verifier=verifier, store=owner['CAB-H'], clock_us=clock_us,
+            leases=native('native_task_authority'), permission_reader=native('native_permission_reader'))
+        bible = BibleRegistry(owner['CAB-D'], native('source_readback'), native('owner_gateway'))
+        authority = AuthorityService(owner['CAB-D'], native('compliance_verifier'),
+                                     native('owner_gateway'), clock_us)
+        projects = ProjectRegistry(owner['CAB-B'])
+        briefs = BriefService(owner['CAB-B'], clock_us)
+        workgraph = WorkGraphService(owner['CAB-C'], rework_guard=injected.get('rework_guard'),
+                                     plan_guard=injected.get('plan_guard'))
+        scheduling = SchedulingService(owner['CAB-C'], clock=clock_us,
+            allocation_guard=injected.get('allocation_guard'), placement_guard=injected.get('placement_guard'),
+            checkpoint_guard=injected.get('checkpoint_guard'), recovery_guard=injected.get('recovery_guard'),
+            completion_guard=injected.get('completion_guard'))
+        cabals = CabalService(owner['CAB-A'], bible, authority, clock_us=clock_us,
+            authenticated_worker=injected.get('authenticated_worker') or (lambda: None))
+        council = CouncilService(db=owner['CAB-F'], records=RecordCAS(cas), bible=bible,
+                                 authority=authority, clock_us=clock_us)
+        capabilities = CapabilityService({'reader':owner['CAB-G'], 'writer':owner['CAB-G'],
+            'clock_us': clock_us, 'installed_skill_reader':injected.get('installed_skill_reader'),
+            'worker_observer':injected.get('worker_observer'), 'active_bible_reader':bible,
+            'adapter_reader':injected.get('adapter_reader'),
+            'feature_budget_reader':injected.get('feature_budget_reader'),
+            'provider_billing_reader':injected.get('provider_billing_reader')})
+        host = WorkerHostService(store=owner['CAB-H'], verifier=verifier,
+            host=injected.get('native_worker_host'), journal=native('native_host_journal'),
+            task_authority=native('native_task_authority'), clock_us=clock_us)
+        agents = AgentExecutionService(host, authority=native('agent_authority'))
+        artifacts = ArtifactService(owner['CAB-I'], cas, native('artifact_author_identity'), clock_us)
+        repository = RepositoryService(owner['CAB-I'], cas, native('source_provider'),
+            native('source_scope'), native('source_reviewer'), clock_us)
+        adapter = ProjectAdapterService(owner['CAB-I'], cas, native('adapter_bible_verifier'),
+            native('source_provider'), native('adapter_registry'), native('runner'), clock_us)
+        quality = QualityService(store=owner['CAB-E'], artifacts=artifacts, repository=repository,
+            project_adapter=adapter, workgraph=workgraph, proofs=native('quality_proofs'),
+            result_type=Result, clock_us=clock_us)
+        context = ContextService(owner['CAB-I'], cas, bible, native('context_source'),
+            native('accepted_quality_outcomes'), clock_us)
+        feature_contracts = FeatureContractCompiler(owner['CAB-B'], bible, authority,
+            identity, extractor=injected.get('semantic_extractor'), context_port=context)
+        director = DirectorService(owner['CAB-J'], outbox=outbox,
+            observations=injected.get('director_observations') or {}, clock_us=clock_us)
+        effects = EffectService(owner['CAB-I'], cas, native('effect_provider'), native('effect_scope'),
+            native('effect_owner_auth'), clock_us)
+        status = ProductionStatusService(owner['CAB-J'])
+        payload_reader = native('immutable_request_reader')
+        workflow = ProductionWorkflow(director=director, brief_port=briefs, bible_port=bible,
+            contract_port=feature_contracts, context_port=context, graph_port=workgraph,
+            capability_port=capabilities, scheduling_port=scheduling, payload_reader=payload_reader)
+        commands = CommandService(owner['CAB-J'], outbox=outbox, status=status,
+            director=director, workflow=workflow, payload_reader=payload_reader,
+            delegates=injected.get('owner_command_delegates'), control=injected.get('command_control'),
+            clock_us=clock_us)
+        oversight = OversightNoticeService(verifier=verifier,
+            assignment_reader=native('oversight_assignment_reader'),
+            sink=native('oversight_notice_sink'), clock_us=clock_us)
+        instances = (identity, bible, authority, projects, briefs, feature_contracts,
+            director, workgraph, scheduling, cabals, council, capabilities,
+            host, agents, context, adapter, artifacts, repository, effects, quality,
+            commands, oversight)
+        services = MappingProxyType(dict(zip(PORT_NAMES, instances, strict=True)))
+        bound = MappingProxyType({name:injected.get(name) is not None for name in _NATIVE_DEPENDENCIES})
+        return StudioRuntime(state, cas, services, outbox,
+                             AuthenticatedIngress(identity, commands), bound)
     except BaseException:
-        store.close()
+        state.close()
         raise
+
+
+def _config(path: Path) -> dict[str, str]:
+    if path.is_symlink() or not path.is_file():
+        raise ValueError('R9 production config path must be an existing regular file')
+    raw = json.loads(path.read_text('utf-8'))
+    if not isinstance(raw, dict) or set(raw) != {'sqlite_path', 'cas_path'}:
+        raise ValueError('R9 config requires only sqlite_path and cas_path; provider bindings are supplied natively')
+    if not all(isinstance(raw[x], str) and raw[x] and Path(raw[x]).is_absolute() for x in raw):
+        raise ValueError('R9 config storage paths must be absolute')
+    return raw
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description='Nomad Studio R9 local authority and service readiness')
+    parser.add_argument('--config', default=os.environ.get('NOMAD_STUDIO_CONFIG'),
+                        help='path to private JSON config, or NOMAD_STUDIO_CONFIG')
+    parser.add_argument('--doctor', action='store_true', help='inspect local R9 readiness and exit')
+    args = parser.parse_args(argv)
+    if not args.config:
+        parser.error('an explicit --config or NOMAD_STUDIO_CONFIG is required')
+    try:
+        config = _config(Path(args.config))
+        with open_studio(**config) as runtime:
+            status = runtime.health()
+            print(json.dumps(status, sort_keys=True), flush=True)
+            if args.doctor:
+                return 0 if status['readiness'] == 'READY' else 2
+            if status['readiness'] != 'READY':
+                return 2  # never claim to serve authenticated ingress when absent
+            stop = threading.Event()
+            def terminate(_signum: int, _frame: Any) -> None:
+                stop.set()
+            signal.signal(signal.SIGTERM, terminate)
+            signal.signal(signal.SIGINT, terminate)
+            while not stop.wait(1.0):
+                if runtime.health()['readiness'] != 'READY':
+                    return 2
+            return 0
+    except (ValueError, OSError, RuntimeError) as exc:
+        print(json.dumps({'liveness':'STOPPED','readiness':'NOT_READY','reason':type(exc).__name__}), flush=True)
+        return 2
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

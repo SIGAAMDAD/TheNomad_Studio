@@ -4,10 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nomad-studio"
-version = "1.0.0"
-description = "The Nomad Studio V1 greenfield control plane"
+version = "1.9.0"
+description = "The Nomad Studio R9 feature-cabal production control plane"
 requires-python = ">=3.11"
 dependencies = []
+
+[project.scripts]
+nomad-studio = "nomad_studio.app:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10"]
@@ -15,7 +18,7 @@ dev = ["pytest>=8,<10"]
 [tool.setuptools.packages.find]
 where = ["src"]
 
-# Integrator-owned package data: Studio V1 initial schema, roster and verification matrix.
+# R9 digest-pinned initial schema and exact table ownership are mandatory wheel resources.
 [tool.setuptools.package-data]
 "nomad_studio" = ["**/*.sql", "**/*.json"]
 

@@ -110,7 +110,8 @@ class DirectorService:
                                     (brief['project_id'], brief['brief_id'], brief['feature_id'])).fetchone()
                 frozen = tx.execute('SELECT bible_pair_digest,original_brief_digest FROM v1_feature_contracts WHERE project_id=? AND feature_id=? AND contract_digest=?',
                                     (brief['project_id'], brief['feature_id'], contract)).fetchone()
-                if stored != (brief['original_digest'],) or frozen != (pair, brief['original_digest']):
+                if ((tuple(stored) if stored is not None else None) != (brief['original_digest'],)
+                    or (tuple(frozen) if frozen is not None else None) != (pair, brief['original_digest'])):
                     return fail('CONFLICT', 'SOURCE_CONFLICT')
                 prev = self._read(tx, brief['feature_id'])
                 if prev:

@@ -1,0 +1,4 @@
+{
+  "sqlite_path": "/var/lib/nomad-studio/state/studio-r9.sqlite3",
+  "cas_path": "/var/lib/nomad-studio/state/cas"
+}

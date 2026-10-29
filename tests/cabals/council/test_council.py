@@ -5,6 +5,7 @@ import sqlite3
 import threading
 import unittest
 from pathlib import Path
+from importlib.resources import files
 
 from nomad_studio.cabals.council import CouncilService
 from nomad_studio.contracts.runtime_ports_v1 import Decision, Result
@@ -23,9 +24,10 @@ class LocalDB:
         self.conn.row_factory=sqlite3.Row
         self.conn.execute('PRAGMA foreign_keys=ON')
         contract_dir=os.environ.get('NOMAD_R9_CONTRACTS_DIR')
-        if not contract_dir:
-            raise RuntimeError('must supply NOMAD_R9_CONTRACTS_DIR (frozen R8 DDL)')
-        self.conn.executescript((Path(contract_dir)/'initial_schema_v1.sql').read_text())
+        # Use the installed digest-pinned R9 schema when no source-tree override is supplied.
+        schema = ((Path(contract_dir)/'initial_schema_v1.sql').read_text() if contract_dir else
+                  files('nomad_studio.state').joinpath('r9_initial_schema.sql').read_text())
+        self.conn.executescript(schema)
         self.lock=threading.RLock()
     def read(self,fn):
         with self.lock: return fn(self.conn)

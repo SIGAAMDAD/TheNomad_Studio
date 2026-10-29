@@ -5,10 +5,11 @@ remote `main` tree is not a base for preserving old runtime behavior. There are
 no legacy facade or database migration obligations.
 
 Current scope: the ten CAB-A..J source submissions plus direct cross-cabal seam
-repairs, and a deterministic adversarial raw-unit acceptance campaign. The four
-separate P1 test/release worker submissions and final P2 22-port application
-composition are still outstanding. A passed unit campaign is **not** QA_READY,
-verified ChatGPT host activation, provider acceptance, CI success or deployment.
+repairs, the P2 exact-schema SQLite authority, the composed 22-port R9 runtime,
+and an expanded deterministic integration, fault and raw-unit campaign. Four
+separate original P1 test/release submissions were not included in this source.
+A passed local test campaign is **not** QA_READY, authenticated native host
+activation, provider acceptance, exact-commit CI success or deployment.
 
 ## Unit and fault simulation
 
@@ -19,10 +20,25 @@ python infra/greenfield/r9_raw_unit_gate.py . --mode raw-unit --out r9-unit-rece
 python infra/greenfield/r9_raw_unit_gate.py . --mode full --out r9-integrated-receipt.json --log r9-integrated-tests.log
 ```
 
-The first mode exercises the full source/contract/SQLite/fault-simulation unit
-matrix excluding the obsolete root composition test. The second mode is a
-mandatory full-suite gate, currently **RED** until P2 installs the R9 root
-runtime and replaces obsolete V1 integration tests with R9 system tests.
+The first mode exercises the original raw-unit and fault-simulation campaign,
+excluding integration tests. The second mode also runs real R9 P2 root tests,
+negative authorization/SQLite ownership tests, restart recovery and durable
+outbox readback checks. Neither mode supplies native external provider proof.
+
+Build and cold-test the installed package independently of the source tree:
+
+```bash
+python -m pip wheel . --no-deps --no-build-isolation -w dist
+python infra/greenfield/r9_wheel_smoke.py --wheel dist/nomad_studio-1.9.0-py3-none-any.whl
+```
+
+The systemd entrypoint uses `--config /etc/nomad-studio/r9-runtime.json`.
+Start from `infra/greenfield/r9-runtime.example.json`. The config only names
+absolute private storage paths; provider credentials and host attestations
+must be injected through trusted native integration, not accepted from a user
+command or inferred from the presence of a file. While native providers and
+TLS ingress are absent, the runtime responds `NOT_READY` and exits without
+exposing a public listener.
 
 `QA/R9_LOCAL_VERIFICATION.md` identifies the executed tests and remaining gates.
 Production release requires independent QA, exact-commit PR CI, authenticated

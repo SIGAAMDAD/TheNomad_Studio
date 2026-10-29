@@ -1,199 +1,297 @@
-"""Independent greenfield one-wave composition and interface regression tests.
+"""Integrated R9 production root and persistent authority acceptance.
 
-The configured skill contents and slot approval are local TEST fixtures only.
-Provider credentials, ChatGPT chats, GitHub/Drive effects and release attestation
-are not supplied or simulated as passing external gates.
+These tests execute the installed service classes and real SQLite schema, not
+mock V1 facades. Native provider/host and independent QA are intentionally
+NOT_VERIFIED by this local suite.
 """
 from __future__ import annotations
 
-import hashlib
+import inspect
+import json
+import os
 from pathlib import Path
-import tempfile
-import time
-import unittest
+import sqlite3
+import subprocess
+import sys
 
-from nomad_studio.app import ComponentRef, DOMAIN_ORDER, EXTENSION_ORDER, open_studio
-from nomad_studio.contracts.v1 import CommandEnvelope, QueryEnvelope, VerifiedIdentity
-from nomad_studio.integration_wire import gateway_facades
-from nomad_studio.registry.catalog import load_catalog
+import pytest
+
+from nomad_studio.app import PORT_NAMES, open_studio, ProviderUnavailable
+from nomad_studio.contracts import runtime_ports_v1 as contracts
+from nomad_studio.contracts.runtime_ports_v1 import Result
+from nomad_studio.state.r9_authority import (
+    AuthorityError, DurableOutbox, IdempotencyConflict, OwnerLocked,
+    R9Authority, WriterDenied,
+)
 
 SHA = 'a' * 64
-ROLE = 'rpg-build-engineer'
-WORKER = 'wg-demo'
-JOB = 'job12'
-OWNER = 'owner/local'
-OWNER_EPOCH = 4
-WORKER_EPOCH = 3
-CONN = 'conn1'
-SKILL_BYTES = b'# Controlled integration fixture: rpg-build-engineer\nlocal-only mock skill\n'
-WORKER_OPS = ['shift.start', 'shift.next', 'shift.record', 'shift.checkpoint',
-              'shift.finish', 'shift.yield', 'relay.poll', 'scheduler.claim']
+CLOCK = lambda: 1720000000000000
 
 
-def command(domain: str, operation: str, payload=None, *, key: str='idem1',
-            worker: str | None=None, shift: str | None=None, job: str | None=None,
-            epoch: int | None=None) -> CommandEnvelope:
-    return CommandEnvelope('NOMAD/CMD/1', 'request-'+key, domain, operation,
-                           key, worker_id=worker, shift_id=shift, job_id=job,
-                           assignment_epoch=epoch, payload=payload or {})
+@pytest.fixture
+def runtime(tmp_path):
+    with open_studio(sqlite_path=tmp_path/'authority'/'studio.sqlite3',
+                     cas_path=tmp_path/'cas', clock_us=CLOCK) as root:
+        yield root
 
 
-def query(domain: str, operation: str, payload=None, *,worker=None,shift=None,job=None) -> QueryEnvelope:
-    return QueryEnvelope('NOMAD/QUERY/1', 'qry1', domain, operation,
-                         worker_id=worker, shift_id=shift, job_id=job, payload=payload or {})
+def test_all_22_frozen_ports_are_callable_with_exact_parameter_signatures(runtime):
+    assert len(runtime.services) == 22
+    assert tuple(runtime.services) == PORT_NAMES
+    for port_name in PORT_NAMES:
+        proto = getattr(contracts, port_name)
+        service = runtime.port(port_name)
+        for method_name, method in inspect.getmembers(proto, predicate=inspect.isfunction):
+            if method_name.startswith('_'):
+                continue
+            candidate = getattr(service, method_name, None)
+            assert callable(candidate), f'{port_name}.{method_name} missing'
+            expected = inspect.signature(method)
+            signature = inspect.signature(candidate)
+            expected_fields = list(expected.parameters.values())[1:]
+            actual_fields = list(signature.parameters.values())
+            assert [(x.name, x.kind) for x in expected_fields] == [
+                (x.name, x.kind) for x in actual_fields
+            ], f'{port_name}.{method_name}: {expected} != {signature}'
 
 
-class IntegratedTests(unittest.TestCase):
-    def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory(prefix='nomad-onewave-')
-        p = Path(self.tmp.name)
-        root = p / 'sealed'
-        root.mkdir(mode=0o700)
-        role = load_catalog().roles[ROLE]
-        self.skill_pin = {ROLE: {'uri':role.skill_uri,'version':role.skill_version,
-                                 'sha256':hashlib.sha256(SKILL_BYTES).hexdigest()}}
-        self.skill_uri = role.skill_uri
-        self.skill_version = role.skill_version
-        self.clock = lambda: time.time_ns()//1000
-        self.slots = {WORKER: {'role_id': ROLE, 'jobs': [JOB], 'epoch':WORKER_EPOCH,
-                                'approved_paths': ['src/nomad/**'],
-                                'scope_digest': SHA,'source_ref':'repo@'+SHA,
-                                'scopes':WORKER_OPS,
-                                'connector_credential_ids':[CONN]}}
-        self.runtime = open_studio(sqlite_path=p/'studio.sqlite3',
-            owner_principal_id=OWNER, trusted_issuer_ids=('issuer/trusted',),
-            ports={'archive_root': str(root),
-                   'slot_authority': lambda worker: self.slots.get(worker),
-                   'slot_authorizer': lambda identity, worker, role_id, scope:
-                      identity.principal_id == OWNER and role_id == ROLE and
-                      worker == WORKER and scope.get('scope_sha256') == SHA and
-                      scope.get('assignment_epoch') == WORKER_EPOCH,
-                   'skill_pins':self.skill_pin,
-                   'skill_loader':lambda uri: {'uri':uri,'version':self.skill_version,'content':SKILL_BYTES},
-                   'clock_us':self.clock,
-                   })
-        self.runtime.store.set_actor_epoch(OWNER, OWNER_EPOCH,
-                                           issuer_principal_id='issuer/trusted')
-        self.owner = VerifiedIdentity(OWNER,'owner-cert','issuer/trusted','mtls',
-            frozenset({'owner','owner:console:read','owner:console:launch',
-                       'owner:console:control','trust:issue_launch',
-                       'registry:prompt','registry:read','state:read'}),
-            self.clock() + 300_000_000, OWNER_EPOCH)
-        self.connector = VerifiedIdentity('connector/test',CONN,'issuer/trusted','mtls',
-            frozenset({'trust:activate'}),self.clock()+300_000_000,OWNER_EPOCH)
-
-    def tearDown(self):
-        self.runtime.close()
-        self.tmp.cleanup()
-
-    def test_v1_initial_schema_and_all_19_base_components(self):
-        self.assertEqual(tuple(self.runtime.components), DOMAIN_ORDER)
-        schema = self.runtime.store.schema_identity()
-        self.assertEqual(schema['version'], 1)
-        self.assertEqual(len(schema['sha256']), 64)
-        self.assertIsNone(self.runtime.store.read(lambda r:r.fetch_one(
-            "SELECT name FROM sqlite_master WHERE name='state_migrations'")))
-        self.assertEqual(self.runtime.store.diagnostics()['journal_mode'], 'wal')
-        self.assertNotIn('authorize', gateway_facades(self.runtime.components))
-        self.assertEqual(self.runtime.component('state').name,'state')
-
-    def test_all_ten_studio_v1_extensions_are_internally_composed_not_publicly_exposed(self):
-        self.assertEqual(tuple(self.runtime.extensions), EXTENSION_ORDER)
-        self.assertTrue(all(self.runtime.extension(name) is not None for name in EXTENSION_ORDER))
-        # Separate private Oversight modules must never be composition-root imports.
-        self.assertFalse(any(name.startswith('oversight_') for name in self.runtime.extensions))
-        public = gateway_facades(self.runtime.components)
-        self.assertEqual(set(public), set(DOMAIN_ORDER))
-        self.assertFalse(set(EXTENSION_ORDER) & set(public))
-        # An owner prompt cannot enable the sensitive creative gate by itself.
-        creative = self.runtime.extension('creative_enforcement')
-        blocked = creative.query(query('creative', 'creative.inspect'), self.owner)
-        self.assertNotEqual(blocked.state, 'ACCEPTED')
-
-    def test_extension_port_registry_denies_untrusted_overrides(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            with self.assertRaises(ValueError):
-                open_studio(sqlite_path=Path(tmp) / 'bad-v1.sqlite3',
-                    owner_principal_id=OWNER, trusted_issuer_ids=('issuer/trusted',),
-                    ports={'extension_ports': {'persona': {'store': object()}}})
-
-    def test_wire_normalizes_only_closed_operations(self):
-        ports = gateway_facades(self.runtime.components)
-        result = ports['state'].query(query('state', 'state.health'),self.owner)
-        self.assertEqual((result.state,result.code),('ACCEPTED','OK'))
-        self.assertEqual(ports['state'].query(query('state','state.notreal'),self.owner).code,'NOT_SUPPORTED')
-        self.assertEqual(ports['state'].query(query('other','other.health'),self.owner).code,'MALFORMED_REQUEST')
-        # Public trust has no internal authorization oracle.
-        request = command('trust','trust.authorize',{'worker_id':WORKER})
-        self.assertEqual(ports['trust'].execute(request,self.owner).code,'NOT_SUPPORTED')
-        self.assertEqual(ports['scheduler'].query(query('scheduler','scheduler.ready'),self.owner).state, 'DENIED')
-        # Internal Studio V1 ports must use the closed, authorized wire vocabulary.
-        sibling = ComponentRef('state')
-        sibling.bind(self.runtime.component('state'))
-        self.assertEqual(sibling.query(query('state','state.health'),self.owner).state,'ACCEPTED')
-
-    def test_verification_release_stays_blocked_without_external_attestation(self):
-        ident = VerifiedIdentity('qa/operator','qa-cert','issuer/trusted','mtls',
-              frozenset({'verification:read'}),self.clock()+100_000_000,OWNER_EPOCH)
-        result = self.runtime.component('verification').query(
-            query('verification','acceptance_report'),ident)
-        self.assertFalse(result.payload.get('accepted',False))
-        self.assertIn(result.state,('BLOCKED','NOT_RUN','UNKNOWN'))
-
-    def test_real_launch_activate_shift_and_ticket_replay(self):
-        console = self.runtime.component('console')
-        preview = console.query(query('console','console.launch_prompt',
-                            {'worker_id':WORKER,'mode':'START'}),self.owner)
-        self.assertEqual((preview.state,preview.code), ('ACCEPTED','PREVIEW_ONLY'))
-        self.assertFalse(preview.payload['copyable'])
-        self.assertNotIn('nl1.',preview.payload['prompt_template'])
-        issued = console.execute(command('console','console.launch_prompt',
-                       {'worker_id':WORKER,'mode':'START','assignment_epoch':WORKER_EPOCH},
-                       key='owner-launch-1'),self.owner)
-        self.assertEqual((issued.state,issued.code),('ACCEPTED','MANUAL_LAUNCH_READY'))
-        self.assertEqual(issued.receipt_id is not None, True)
-        self.assertIn('nl1.', issued.payload['prompt_text'])
-        ticket = issued.payload['prompt_text'].split('ONE-TIME-LAUNCH-REFERENCE: ')[1].split('\n')[0]
-        self.assertTrue(ticket.startswith('nl1.'))
-        self.assertNotIn('{{ONE-TIME-LAUNCH-REFERENCE}}',issued.payload['prompt_text'])
-        activation = {'ticket':ticket,'worker_id':WORKER,'role_id':ROLE,
-                      'job_id':JOB,'epoch':WORKER_EPOCH}
-        trust = self.runtime.component('trust')
-        result = trust.execute(command('trust','trust.activate',activation,key='activate-1'),self.connector)
-        self.assertEqual((result.state,result.code),('ACCEPTED','SESSION_ACTIVATED'))
-        self.assertEqual(trust.execute(command('trust','trust.activate',activation,key='activate-2'),
-                                       self.connector).code,'REVOKED_GRANT')
-        auth = trust.authenticate_session(result.payload['session'],self.connector)
-        self.assertEqual((auth.outcome.state, auth.outcome.code),('ACCEPTED','SESSION_VALID'))
-        worker = auth.identity
-        self.assertIsNotNone(worker)
-        self.assertEqual(worker.scopes,frozenset(WORKER_OPS))
-        shift = result.payload['shift_id']
-        start = gateway_facades(self.runtime.components)['shift'].execute(
-            command('shift','shift.start',{'response_id':shift},key='start-1',
-                    worker=WORKER, shift=shift,job=JOB,epoch=WORKER_EPOCH),worker)
-        self.assertEqual((start.state,start.code),('ACCEPTED','STARTED'))
-        y = gateway_facades(self.runtime.components)['shift'].execute(
-            command('shift','shift.yield',{'response_id':shift},key='yield-1',
-                    worker=WORKER,shift=shift,job=JOB,epoch=WORKER_EPOCH),worker)
-        self.assertEqual((y.state,y.code),('ACCEPTED','RESPONSE_CLOSED'))
-        events = self.runtime.store.read(lambda r:r.fetch_all(
-            "SELECT kind FROM state_events WHERE domain IN ('trust','shift') ORDER BY sequence"))
-        kinds = [row['kind'] for row in events]
-        self.assertIn('LAUNCH_ISSUED',kinds)
-        self.assertIn('STARTED',kinds)
-        self.assertIn('YIELD',kinds)
-
-    def test_missing_external_proof_fails_closed(self):
-        missing = self.runtime.component('review')
-        self.assertIsNotNone(missing)
-        identity = VerifiedIdentity('qa/local','qa-cert','issuer/trusted','mtls',
-              frozenset({'review:verdict'}),self.clock()+100_000_000,OWNER_EPOCH)
-        # Review must rely on independently verified source and QA receipts.
-        response = missing.query(query('review','review.verdict'),identity)
-        self.assertNotEqual(response.state,'ACCEPTED')
-        self.assertFalse(hasattr(self.runtime,'automated_chat_launcher'))
+def test_new_only_56_table_authority_and_no_legacy_install(runtime):
+    tables = runtime.state.read(lambda tx: {
+        x['name'] for x in tx.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").fetchall()})
+    assert tables == set(runtime.state.table_owners)
+    assert len(tables) == 56
+    assert 'state_migrations' not in tables
+    assert not hasattr(runtime, 'components')
+    assert not hasattr(runtime, 'extensions')
+    assert not hasattr(runtime, 'store')
+    assert runtime.health()['database'] == 'R9_FRESH_SCHEMA_VERIFIED'
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_project_and_brief_use_real_cross_service_persistent_data(runtime):
+    owner = Result('OK', 'OK', {'principal_id':'owner-A'}, 'owner-fixture')
+    spec = {'project_id':'game-A', 'owner_principal_id':'owner-A',
+            'constitution_digest':SHA, 'initial_state':'ACTIVE'}
+    project = runtime.port('ProjectPort')
+    brief = runtime.port('BriefPort')
+    assert project.register_project(spec, owner).status == 'OK'
+    assert project.register_project(spec, owner).status == 'OK'
+    assert project.get_project('game-A').record['state'] == 'ACTIVE'
+    admission = brief.admit_brief({'brief_id':'brief-A', 'project_id':'game-A',
+                                   'feature_id':'feature-A','original_text':'Implement quest',
+                                   'owner_command_ref':'owner-fixture'}, owner)
+    assert admission.status == 'OK', (admission.status, admission.code)
+    assert brief.get_original_brief('brief-A', 'game-A').status == 'OK'
+    original = admission.record
+    assert original['original_digest'] == brief.get_original_brief('brief-A', 'game-A').record['original_digest']
+
+    # Freeze the CAB-B contract using the *actual* frozen SQL columns. This
+    # fixture bypasses the Bible/owner-provenance workflow only inside a test.
+    with runtime.state.capability('CAB-B').transaction() as tx:
+        tx.execute('INSERT INTO v1_feature_contracts VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+                   ('game-A','feature-A',1,'brief-A',original['original_digest'],
+                    'b'*64, 'c'*64, 'd'*64, 'e'*64, 'f'*64, 10, '{}'))
+    contract = {'project_id':'game-A','feature_id':'feature-A','brief_id':'brief-A',
+                'original_brief_digest':original['original_digest'],
+                'bible_pair_digest':'b'*64, 'contract_digest':'c'*64}
+    opened = runtime.port('DirectorPort').open_run(original, contract)
+    assert opened.status == 'OK', (opened.status,opened.code)
+    assert opened.record['status'] == 'RECEIVED'
+    assert runtime.port('DirectorPort').open_run(original, contract).status == 'OK'
+    # One atomic root event/outbox, not two, despite duplicate open_run.
+    assert len(runtime.state.outbox_rows('PENDING')) == 1
+    events = runtime.state.read(lambda tx: tx.fetch_all('SELECT * FROM v1_events'))
+    assert len(events) == 1 and events[0]['feature_id'] == 'feature-A'
+
+
+def test_closed_runtime_and_second_writer_lock(tmp_path):
+    path = tmp_path/'authority'/'db.sqlite'
+    with open_studio(sqlite_path=path) as root:
+        assert root.port('ProjectPort')
+        with pytest.raises(OwnerLocked):
+            open_studio(sqlite_path=path)
+    with open_studio(sqlite_path=path) as reopened:
+        assert reopened.port('ProjectPort')
+        assert reopened.health()['readiness'] == 'NOT_READY'
+    with pytest.raises(RuntimeError):
+        reopened.port('ProjectPort')
+
+
+def test_writer_capabilities_reject_cross_cab_sql_and_ddl(runtime):
+    cap = runtime.state.capability('CAB-B')
+    for sql in ('DELETE FROM v1_bible_editions',
+                'UPDATE v1_outbox SET state=\'ACKED\'',
+                'CREATE TABLE injected(x TEXT)',
+                'PRAGMA foreign_keys=OFF',
+                "ATTACH DATABASE ':memory:' AS other"):
+        with pytest.raises((WriterDenied, sqlite3.DatabaseError)):
+            cap.write(lambda tx: tx.execute(sql))
+    # PRAGMA is intentionally restricted to the authority, not the service.
+    with pytest.raises((WriterDenied, sqlite3.DatabaseError)):
+        cap.read('PRAGMA journal_mode')
+    with pytest.raises(WriterDenied):
+        runtime.state.capability('P2')
+    with pytest.raises(WriterDenied):
+        runtime.state.capability('CAB-Z')
+
+
+def test_leaked_view_and_cursor_cannot_outlive_ownership(runtime):
+    saved = {}
+    runtime.state.capability('CAB-B').write(
+        lambda view: saved.update(view=view, cursor=view.execute('SELECT * FROM v1_projects')))
+    with pytest.raises(AuthorityError):
+        saved['view'].execute('DELETE FROM v1_projects')
+    with pytest.raises(AuthorityError):
+        saved['cursor'].fetchall()
+    assert not hasattr(saved['cursor'], 'connection')
+
+
+def test_nested_owner_transaction_rollback_and_read_only(runtime):
+    cap = runtime.state.capability('CAB-B')
+    with pytest.raises(WriterDenied):
+        cap.write(lambda tx: cap.write(lambda nested: nested.execute('SELECT 1')))
+    with pytest.raises(RuntimeError, match='inject'):
+        def failure(tx):
+            tx.execute('INSERT INTO v1_projects VALUES (?,?,?,?,?)', ('rolled-back','owner-A', SHA,'ACTIVE',1))
+            raise RuntimeError('inject')
+        cap.write(failure)
+    assert cap.read(lambda tx: tx.fetch_one('SELECT * FROM v1_projects WHERE project_id=?', ('rolled-back',))) is None
+    with pytest.raises((WriterDenied, sqlite3.DatabaseError)):
+        cap.read(lambda tx: tx.execute('DELETE FROM v1_projects'))
+
+
+def test_frozen_state_refuses_existing_legacy_or_mutated_db(tmp_path):
+    path = tmp_path/'db'/'db.sqlite'
+    path.parent.mkdir(mode=0o700)
+    raw = sqlite3.connect(path)
+    raw.execute('CREATE TABLE old_legacy(id INTEGER)')
+    raw.close()
+    path.chmod(0o600)
+    with pytest.raises(AuthorityError, match='schema objects mismatch'):
+        R9Authority(path)
+
+
+def test_durable_root_outbox_is_atomic_deduplicated_and_restart_unknown(tmp_path):
+    path = tmp_path/'authority'/'db.sqlite'
+    message = {'project_id':None,'feature_id':None,'domain':'production.test',
+               'event_type':'REQUEST','idempotency_key':'job-A','payload':'abc'}
+    with R9Authority(path) as state:
+        queue = DurableOutbox(state, CLOCK)
+        with state.capability('CAB-B').transaction() as tx:
+            queue.append(tx, message)
+            queue.append(tx, message)
+        assert len(state.outbox_rows()) == 1
+        with pytest.raises(IdempotencyConflict):
+            with state.capability('CAB-B').transaction() as tx:
+                queue.append(tx, {**message,'payload':'DIFFERENT'})
+        assert len(state.outbox_rows()) == 1
+        assert queue.claim(state.outbox_rows()[0]['message_id'])
+        with pytest.raises(WriterDenied):
+            queue.acknowledge(state.outbox_rows()[0]['message_id'], provider_receipt_ref='native-receipt')
+    with R9Authority(path) as reopened:
+        assert [x['state'] for x in reopened.outbox_rows()] == ['UNKNOWN']
+        assert not DurableOutbox(reopened, CLOCK).claim(reopened.outbox_rows()[0]['message_id'])
+
+
+def test_outbox_append_is_rolled_back_with_source_mutation(runtime):
+    message = {'domain':'production.test','event_type':'REQUEST',
+               'idempotency_key':'rollback-1'}
+    count = len(runtime.state.outbox_rows())
+    with pytest.raises(RuntimeError, match='abort'):
+        with runtime.state.capability('CAB-B').transaction() as tx:
+            runtime.outbox.append(tx, message)
+            raise RuntimeError('abort')
+    assert len(runtime.state.outbox_rows()) == count
+
+
+def test_unverified_external_ingress_and_readiness_fail_closed(runtime):
+    health = runtime.health()
+    assert health['liveness'] == 'ALIVE'
+    assert health['readiness'] == 'NOT_READY'
+    assert health['registered_port_count'] == 22
+    assert health['missing_native_dependencies']
+    assert runtime.ingress.submit({'auth_proof_ref':'f', 'request_digest':SHA}, 'f').status != 'OK'
+    assert runtime.ingress.submit({'auth_proof_ref':'different'}, 'f').status == 'REJECTED'
+
+
+def test_native_bindings_are_not_self_certifying(tmp_path):
+    # Supplying stubs must not claim external host/protocol verification.
+    with open_studio(sqlite_path=tmp_path/'db'/'db.sqlite',
+                     bindings={'native_worker_host':object(), 'runner':object()}) as root:
+        assert root.health()['readiness'] == 'NOT_READY'
+
+
+def test_cli_doctor_reports_real_fail_closed_status(tmp_path):
+    path = tmp_path/'config.json'
+    path.write_text(json.dumps({'sqlite_path':str(tmp_path/'db'/'db.sqlite'),
+                                'cas_path':str(tmp_path/'cas')}), encoding='utf-8')
+    command = [sys.executable, '-m', 'nomad_studio.app', '--doctor', '--config', str(path)]
+    proc = subprocess.run(command, capture_output=True, text=True, timeout=30, check=False,
+                          env={**os.environ,'PYTHONPATH':str(Path(__file__).resolve().parents[2]/'src')})
+    assert proc.returncode == 2, proc.stderr
+    status = json.loads(proc.stdout)
+    assert status['database'] == 'R9_FRESH_SCHEMA_VERIFIED'
+    assert status['readiness'] == 'NOT_READY'
+    assert 'owner-fixture' not in proc.stdout
+
+
+def test_missing_config_cannot_boot_ready(tmp_path):
+    proc = subprocess.run([sys.executable, '-m', 'nomad_studio.app', '--doctor',
+                           '--config', str(tmp_path/'missing.json')],
+                          capture_output=True, text=True, timeout=20, check=False,
+                          env={**os.environ,'PYTHONPATH':str(Path(__file__).resolve().parents[2]/'src')})
+    assert proc.returncode == 2
+    assert json.loads(proc.stdout)['readiness'] == 'NOT_READY'
+
+
+def test_outbox_root_receipts_and_verified_native_callback(runtime):
+    message = {'domain':'test.provider', 'event_type':'REQUEST',
+               'idempotency_key':'key-A', 'body':'immutable'}
+    with runtime.state.capability('CAB-B').transaction() as tx:
+        runtime.outbox.append(tx, message)
+    event = runtime.state.outbox_rows()[0]
+    receipt_rows = runtime.state.read(lambda tx: tx.fetch_all('SELECT * FROM v1_transaction_receipts'))
+    idem_rows = runtime.state.read(lambda tx: tx.fetch_all('SELECT * FROM v1_idempotency'))
+    assert len(receipt_rows) == 1 and len(idem_rows) == 1
+    assert idem_rows[0]['request_digest'] == event['payload_digest']
+    assert runtime.outbox.claim(event['message_id'])
+    assert not runtime.outbox.claim(event['message_id'])
+    with pytest.raises(WriterDenied):
+        runtime.outbox.acknowledge(event['message_id'], provider_receipt_ref='proof-1')
+    # Negative receipt response cannot ACK and does not mutate state.
+    unverified = DurableOutbox(runtime.state, CLOCK,
+        readback=lambda mid,proof: {'status':'VERIFIED','message_id':mid,
+                                    'receipt_ref':proof,'payload_digest':'wrong'})
+    with pytest.raises(WriterDenied):
+        unverified.acknowledge(event['message_id'], provider_receipt_ref='proof-1')
+    assert runtime.state.outbox_rows()[0]['state'] == 'CLAIMED'
+    verified = DurableOutbox(runtime.state, CLOCK,
+        readback=lambda mid,proof: {'status':'VERIFIED','message_id':mid,
+                                    'receipt_ref':proof,'payload_digest':event['payload_digest']})
+    assert verified.acknowledge(event['message_id'], provider_receipt_ref='proof-1')
+    assert runtime.state.outbox_rows()[0]['state'] == 'ACKED'
+    assert not verified.acknowledge(event['message_id'], provider_receipt_ref='proof-1')
+
+
+def test_native_timeout_marks_external_effect_unknown(runtime):
+    with runtime.state.capability('CAB-B').transaction() as tx:
+        runtime.outbox.append(tx, {'domain':'test.provider','event_type':'ATTEMPT','idempotency_key':'timeout'})
+    event = runtime.state.outbox_rows()[0]
+    runtime.outbox.claim(event['message_id'])
+    def timed_out(_msg, _receipt):
+        raise TimeoutError('provider did not return a trustworthy result')
+    provider = DurableOutbox(runtime.state, CLOCK, readback=timed_out)
+    assert provider.acknowledge(event['message_id'], provider_receipt_ref='native-proof') is False
+    assert runtime.state.outbox_rows()[0]['state'] == 'UNKNOWN'
+    assert not runtime.outbox.claim(event['message_id'])
+
+
+def test_foreign_database_identity_cannot_be_repurposed(tmp_path):
+    path = tmp_path/'sealed'/'db.sqlite'
+    path.parent.mkdir(mode=0o700)
+    conn = sqlite3.connect(path)
+    conn.execute('PRAGMA application_id=123456')
+    conn.close()
+    path.chmod(0o600)
+    with pytest.raises(AuthorityError, match='foreign database identity'):
+        R9Authority(path)

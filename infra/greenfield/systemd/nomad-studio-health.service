@@ -1,5 +1,5 @@
 [Unit]
-Description=Nomad Studio host health preflight
+Description=Nomad Studio R9 readiness preflight
 After=nomad-studio.service
 
 [Service]
@@ -8,7 +8,7 @@ User=nomad-studio
 Group=nomad-studio
 UMask=0077
 Environment=PYTHONDONTWRITEBYTECODE=1
-ExecStart=/opt/nomad-studio/current/venv/bin/python /opt/nomad-studio/current/infra/greenfield/host_check.py --config /etc/nomad-studio/config.json
+ExecStart=/opt/nomad-studio/current/venv/bin/python -m nomad_studio.app --doctor --config /etc/nomad-studio/r9-runtime.json
 NoNewPrivileges=yes
 PrivateTmp=yes
 ProtectSystem=strict
