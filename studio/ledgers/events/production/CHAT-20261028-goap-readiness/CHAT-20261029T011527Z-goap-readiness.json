@@ -1,0 +1,79 @@
+{
+  "schema_version": 4,
+  "event_id": "CHAT-20261029T011527Z-goap-readiness",
+  "recorded_at_utc": "2026-10-29T01:15:27Z",
+  "request_id": "CHAT-20261028-goap-readiness",
+  "department_id": "production",
+  "role_id": "rpg-lead-producer",
+  "mode": "interactive",
+  "event_type": "CHECKPOINT",
+  "status": "SCOPING",
+  "summary": "Assessed A-S consolidated Studio and T-AV v3 plan for GOAP pilot and project-neutral design. Current A-S Python source ~14,575 lines; plans cover 48 workgroups and 144 subsystem scopes, not fully deployed. Identified fixed five-repository TARGET_KEYS in source/api.py, 19-domain static composition/CI gate, and missing real connector/provider verification. Recommend freeze expansion; generalize registered projects through owner-approved config/adapters and perform staged fail-closed GOAP pilot before full rollout. No game source, issue, or production state changed by this assessment.",
+  "issue": null,
+  "todo": [
+    {
+      "id": "PORTABILITY",
+      "description": "Replace fixed source TARGET_KEYS with owner-approved project registry, configured target IDs and per-project policy; add unrelated-project regression fixtures.",
+      "state": "OPEN"
+    },
+    {
+      "id": "PILOT_GATE",
+      "description": "Demonstrate real connector identity, limited branch permissions, exact-SHA CI/independent QA, replay/recovery, and owner-controlled merge for GOAP pilot.",
+      "state": "OPEN"
+    },
+    {
+      "id": "EXPANSION",
+      "description": "Defer further functional expansion until pilot bottlenecks and operational telemetry are measured.",
+      "state": "OPEN"
+    }
+  ],
+  "dependencies": [
+    {
+      "department_id": "engineering",
+      "state": "WAITING",
+      "reason": "Project-independent target registry and dynamic composition/CI contract need source changes before the portability claim."
+    },
+    {
+      "department_id": "qa",
+      "state": "WAITING",
+      "reason": "Live connector/provider negative tests and exact-SHA independent QA are not verified by planning artifacts."
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "source_baseline",
+      "uri": "sha256:43d6bc111a88287cacbedbed83d1be2b301dad0a095bc30065d3b5909aee4178",
+      "revision": "43d6bc111a88287cacbedbed83d1be2b301dad0a095bc30065d3b5909aee4178",
+      "verified": true
+    },
+    {
+      "kind": "implementation_packet",
+      "uri": "sha256:e04ca8cb5c7f9c1f03dd73718def997147de7105d860f6fe8a642c4f08abc5bb",
+      "revision": "e04ca8cb5c7f9c1f03dd73718def997147de7105d860f6fe8a642c4f08abc5bb",
+      "verified": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "A-S source ZIP SHA-256 measured locally",
+      "status": "PASS"
+    },
+    {
+      "name": "Static source-target portability review (fixed five-key allowlist)",
+      "status": "FAIL"
+    },
+    {
+      "name": "Dynamic domain registry in A-S app and original CI gate",
+      "status": "FAIL"
+    },
+    {
+      "name": "Live ChatGPT authenticated connector and GOAP pilot",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "New T-AV implementation integration",
+      "status": "NOT_RUN"
+    }
+  ],
+  "owner_decisions": []
+}
