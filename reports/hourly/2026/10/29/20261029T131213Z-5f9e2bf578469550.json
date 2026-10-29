@@ -1,0 +1,96 @@
+{
+  "chat_workers": [],
+  "data_gaps": [
+    "NO_CHAT_WORKERS_ENROLLED",
+    "NO_RECENT_MESSAGE_EVIDENCE",
+    "NO_VALIDATED_SOURCE_CI"
+  ],
+  "date_central": "2026-10-29",
+  "generated_at_utc": "2026-10-29T13:12:13Z",
+  "note": "Only GitHub-observed activity; cannot wake inactive chats or self-certify QA.",
+  "oversight_case_details_included": false,
+  "pending_ack_total": 0,
+  "recent_communications_events": 0,
+  "registered_chat_workers": 0,
+  "report_kind": "hourly",
+  "requires_exact_sha_qa_before_completion": true,
+  "runtime_job_state_counts": {
+    "BLOCKED": 1,
+    "READY": 1,
+    "VERIFIED": 2
+  },
+  "scheduled_slots": [
+    {
+      "enabled": true,
+      "id": "S00",
+      "job": null,
+      "last_execution": "NOT_VERIFIED"
+    },
+    {
+      "enabled": true,
+      "id": "S01",
+      "job": null,
+      "last_execution": "NOT_VERIFIED"
+    },
+    {
+      "enabled": false,
+      "id": "S02",
+      "job": null,
+      "last_execution": "NOT_VERIFIED"
+    },
+    {
+      "enabled": false,
+      "id": "S03",
+      "job": null,
+      "last_execution": "NOT_VERIFIED"
+    },
+    {
+      "enabled": false,
+      "id": "S04",
+      "job": null,
+      "last_execution": "NOT_VERIFIED"
+    },
+    {
+      "enabled": false,
+      "id": "S05",
+      "job": null,
+      "last_execution": "NOT_VERIFIED"
+    },
+    {
+      "enabled": false,
+      "id": "S06",
+      "job": null,
+      "last_execution": "NOT_VERIFIED"
+    },
+    {
+      "enabled": false,
+      "id": "S07",
+      "job": null,
+      "last_execution": "NOT_VERIFIED"
+    },
+    {
+      "enabled": true,
+      "id": "S08",
+      "job": null,
+      "last_execution": "NOT_VERIFIED"
+    },
+    {
+      "enabled": false,
+      "id": "S09",
+      "job": null,
+      "last_execution": "NOT_VERIFIED"
+    }
+  ],
+  "schema_version": 1,
+  "source_ci_jobs_with_evidence": 0,
+  "time_central": "2026-10-29T08:12:13-05:00",
+  "timezone": "America/Chicago",
+  "worker_alerts": {},
+  "worker_health": {
+    "alerts": {},
+    "registered": 0,
+    "schema_version": 1,
+    "source": "GitHub evidence only; does not observe dormant chats.",
+    "workers": []
+  }
+}
