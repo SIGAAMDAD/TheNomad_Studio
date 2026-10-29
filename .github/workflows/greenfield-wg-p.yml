@@ -1,0 +1,32 @@
+name: Greenfield WG-P isolated
+on:
+  push:
+    paths:
+      - 'src/nomad_studio/deployment/**'
+      - 'tests/deployment/**'
+      - 'infra/greenfield/**'
+      - '.github/workflows/greenfield-*.yml'
+      - 'src/nomad_studio/contracts/**'
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deployment-isolated:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cold install (frozen contracts and deployment module)
+        run: python -m pip install --no-deps -e .
+      - name: Seed contract regression
+        run: python -m unittest discover -s tests/contracts -p 'test_*.py' -v
+      - name: Deployment tests and host faults
+        run: python -m unittest discover -s tests/deployment -p 'test_*.py' -v
+      - name: Security source scan
+        run: python infra/greenfield/security_scan.py .

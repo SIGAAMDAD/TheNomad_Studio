@@ -1,0 +1,3 @@
+interface:
+  display_name: "Nomad Studio Commands"
+  short_description: "Owner commands, brief submission and verified production status"

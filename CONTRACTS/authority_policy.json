@@ -1,0 +1,66 @@
+{
+  "authority_model": "OWNER_ACTIVATED_DESIGN_AND_TECHNICAL_BIBLES",
+  "bible_clause_kinds": [
+    "REQUIREMENT",
+    "GUIDELINE",
+    "OPEN_AREA"
+  ],
+  "compatibility_mode": "NONE",
+  "council_forbidden": [
+    "ACTIVATE_BIBLE",
+    "MINT_OWNER_APPROVAL",
+    "PROTECTED_MAINLINE_MERGE",
+    "FORGE_QA",
+    "RELEASE_PUBLISH"
+  ],
+  "council_rights": [
+    "READ",
+    "PROPOSE",
+    "DEBATE",
+    "RESOLVE_IN_BIBLE",
+    "REQUEST_EVIDENCE"
+  ],
+  "default_in_bible_autonomy": "ALLOW_IN_SCOPE",
+  "delegated_feature_effects": [
+    "FEATURE_BRANCH_WRITE",
+    "FEATURE_BRANCH_COMMIT",
+    "LOCAL_ARTIFACT_WRITE",
+    "IN_BIBLE_CREATIVE_DECISION",
+    "IN_BIBLE_DESIGN_DECISION",
+    "IN_BIBLE_TECHNICAL_DECISION",
+    "IN_BIBLE_SHARED_INTERFACE_CHANGE_IF_LEASED",
+    "INTERNAL_QA_REWORK"
+  ],
+  "design_status": "OWNER_DIRECTED_LOCAL_IMPLEMENTATION_PLAN_NOT_RUNTIME_PROOF",
+  "external_host_proof_status": "NOT_VERIFIED",
+  "failure_scope": "AFFECTED_FEATURE_TASK_OR_EFFECT_ONLY",
+  "in_bible_major_creative_design_technical_decision_requires_owner_proof": false,
+  "integrated_runtime_status": "NOT_IMPLEMENTED",
+  "mandatory_bibles": [
+    "DESIGN",
+    "TECHNICAL"
+  ],
+  "owner_only_actions": [
+    "BIBLE_ACTIVATE",
+    "CONSTITUTION_AMEND",
+    "BUDGET_EXPAND",
+    "PROJECT_SCOPE_EXPAND",
+    "PROTECTED_MAINLINE_MERGE",
+    "RELEASE_PUBLISH",
+    "EXTERNAL_UNSCOPED_WRITE",
+    "RECOVERY_OVERRIDE"
+  ],
+  "policy_version": "R9_NEW_ONLY",
+  "qa_ready_requires": [
+    "ACTIVE_BIBLE_PAIR_PIN",
+    "FEATURE_CONTRACT",
+    "COMPLETE_DELIVERABLE_MANIFEST",
+    "VERIFIED_SOURCE_COMMIT",
+    "ACTUAL_BUILD_IMPORT_TESTS",
+    "BIBLE_COMPLIANCE",
+    "INDEPENDENT_PRODUCTION_REVIEW",
+    "ZERO_BLOCKING_ISSUES"
+  ],
+  "local_source_implementation_authority": "EXPLICIT_OWNER_DIRECTIVE",
+  "runtime_protected_effects_require_authenticated_owner_proof": true
+}

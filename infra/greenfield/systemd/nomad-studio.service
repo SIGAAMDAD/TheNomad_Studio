@@ -1,0 +1,45 @@
+[Unit]
+Description=Nomad Studio Greenfield private coordination service
+Documentation=man:systemd.service(5)
+After=network-online.target
+Wants=network-online.target
+RequiresMountsFor=/var/lib/nomad-studio/state /etc/nomad-studio/keys
+
+[Service]
+Type=exec
+User=nomad-studio
+Group=nomad-studio
+WorkingDirectory=/opt/nomad-studio/current
+Environment=PYTHONDONTWRITEBYTECODE=1
+EnvironmentFile=/etc/nomad-studio/service.env
+# Integration root (WG-A and WG-B compose this). Intentionally absent in WG-P-only seed.
+ExecStart=/opt/nomad-studio/current/venv/bin/python -m nomad_studio.app
+Restart=on-failure
+RestartSec=5s
+UMask=0077
+StateDirectory=nomad-studio
+StateDirectoryMode=0700
+RuntimeDirectory=nomad-studio
+RuntimeDirectoryMode=0700
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ReadWritePaths=/var/lib/nomad-studio
+ReadOnlyPaths=/etc/nomad-studio
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+AmbientCapabilities=
+LimitNOFILE=65536
+TimeoutStopSec=45s
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,48 @@
+name: Studio R9 exhaustive unit and integration gates
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  raw-unit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e '.[dev]'
+      - name: Reproducible adversarial raw-unit campaign
+        run: python infra/greenfield/r9_raw_unit_gate.py . --mode raw-unit --out r9-raw-unit-receipt.json --log r9-raw-unit-tests.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r9-raw-unit-evidence
+          path: |
+            r9-raw-unit-receipt.json
+            r9-raw-unit-tests.log
+  integrated-runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e '.[dev]'
+      - name: Integrated runtime and all tests (fail closed)
+        run: python infra/greenfield/r9_raw_unit_gate.py . --mode full --out r9-integrated-receipt.json --log r9-integrated-tests.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r9-integrated-evidence
+          path: |
+            r9-integrated-receipt.json
+            r9-integrated-tests.log

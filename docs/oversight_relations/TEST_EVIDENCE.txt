@@ -1,0 +1,58 @@
+WG-AO LOCAL SOURCE VERIFICATION TRANSCRIPT (isolated, synthetic)
+
+$ cd <extracted-owned-root>
+$ PYTHONPATH=. python -m unittest discover -s tests/oversight_relations -p 'test_*.py' -v
+test_access_port_fault_prevents_intake (test_relations.RelationsTests.test_access_port_fault_prevents_intake) ... ok
+test_actor_impersonation_denied_even_when_other_access_exists (test_relations.RelationsTests.test_actor_impersonation_denied_even_when_other_access_exists) ... ok
+test_appeal_by_unrelated_hr_actor_denied (test_relations.RelationsTests.test_appeal_by_unrelated_hr_actor_denied) ... ok
+test_appeal_replay_and_changed_payload_denied (test_relations.RelationsTests.test_appeal_replay_and_changed_payload_denied) ... ok
+test_appeal_requires_distinct_reviewer_and_preserves_prior_result (test_relations.RelationsTests.test_appeal_requires_distinct_reviewer_and_preserves_prior_result) ... ok
+test_appeal_without_independent_reviewer_blocks (test_relations.RelationsTests.test_appeal_without_independent_reviewer_blocks) ... ok
+test_case_revocation_blocks_read_and_updates (test_relations.RelationsTests.test_case_revocation_blocks_read_and_updates) ... ok
+test_claimed_repeat_friction_does_not_count_as_verified (test_relations.RelationsTests.test_claimed_repeat_friction_does_not_count_as_verified) ... ok
+test_conflicted_mediator_blocks_independent_assignment (test_relations.RelationsTests.test_conflicted_mediator_blocks_independent_assignment) ... ok
+test_disagreement_routes_to_head_without_sanction (test_relations.RelationsTests.test_disagreement_routes_to_head_without_sanction) ... ok
+test_draft_contract_requires_both_participants_and_mediator (test_relations.RelationsTests.test_draft_contract_requires_both_participants_and_mediator) ... ok
+test_fault_in_evidence_port_denies_verification (test_relations.RelationsTests.test_fault_in_evidence_port_denies_verification) ... ok
+test_forged_or_unverified_notice_denied (test_relations.RelationsTests.test_forged_or_unverified_notice_denied) ... ok
+test_invalid_evidence_hash_denied_before_write (test_relations.RelationsTests.test_invalid_evidence_hash_denied_before_write) ... ok
+test_mediator_registry_fault_is_unsupported (test_relations.RelationsTests.test_mediator_registry_fault_is_unsupported) ... ok
+test_missing_access_port_denies_confidential_creation (test_relations.RelationsTests.test_missing_access_port_denies_confidential_creation) ... ok
+test_missing_private_store_is_unsupported (test_relations.RelationsTests.test_missing_private_store_is_unsupported) ... ok
+test_missing_registry_returns_unsupported_not_fake_mediator (test_relations.RelationsTests.test_missing_registry_returns_unsupported_not_fake_mediator) ... ok
+test_no_evidence_port_never_promotes_claims (test_relations.RelationsTests.test_no_evidence_port_never_promotes_claims) ... ok
+test_no_host_or_file_io_on_synthetic_call (test_relations.RelationsTests.test_no_host_or_file_io_on_synthetic_call) ... ok
+test_notice_verifier_failure_does_not_mark_delivery (test_relations.RelationsTests.test_notice_verifier_failure_does_not_mark_delivery) ... ok
+test_optimistic_revision_prevents_lost_update (test_relations.RelationsTests.test_optimistic_revision_prevents_lost_update) ... ok
+test_outsider_cannot_respond_even_if_case_role_is_permitted (test_relations.RelationsTests.test_outsider_cannot_respond_even_if_case_role_is_permitted) ... ok
+test_participant_choice_dedupes_and_rejects_change (test_relations.RelationsTests.test_participant_choice_dedupes_and_rejects_change) ... ok
+test_private_read_must_have_case_access (test_relations.RelationsTests.test_private_read_must_have_case_access) ... ok
+test_recurring_verified_impacted_friction_routes_to_mediation (test_relations.RelationsTests.test_recurring_verified_impacted_friction_routes_to_mediation) ... ok
+test_resolve_requires_verified_notice_and_contract (test_relations.RelationsTests.test_resolve_requires_verified_notice_and_contract) ... ok
+test_response_only_stores_opaque_evidence_ref (test_relations.RelationsTests.test_response_only_stores_opaque_evidence_ref) ... ok
+test_same_request_is_idempotent_and_payload_change_is_rejected (test_relations.RelationsTests.test_same_request_is_idempotent_and_payload_change_is_rejected) ... ok
+test_security_validated_gate_only_routes_not_enforces (test_relations.RelationsTests.test_security_validated_gate_only_routes_not_enforces) ... ok
+test_security_without_validated_gate_stays_pending (test_relations.RelationsTests.test_security_without_validated_gate_stays_pending) ... ok
+test_single_friction_event_stays_with_head (test_relations.RelationsTests.test_single_friction_event_stays_with_head) ... ok
+test_skeptical_or_assertive_work_style_not_enough_for_hr (test_relations.RelationsTests.test_skeptical_or_assertive_work_style_not_enough_for_hr) ... ok
+test_source_is_project_neutral_and_no_privileged_import (test_relations.RelationsTests.test_source_is_project_neutral_and_no_privileged_import) ... ok
+test_studio_query_cannot_read_confidential_data (test_relations.RelationsTests.test_studio_query_cannot_read_confidential_data) ... ok
+test_targeted_conduct_is_triage_not_penalty (test_relations.RelationsTests.test_targeted_conduct_is_triage_not_penalty) ... ok
+test_unknown_and_unauthorized_session_indistinguishable (test_relations.RelationsTests.test_unknown_and_unauthorized_session_indistinguishable) ... ok
+test_unresolved_routes_to_hr_without_adverse_action (test_relations.RelationsTests.test_unresolved_routes_to_hr_without_adverse_action) ... ok
+test_unverified_impersonation_cannot_become_a_finding (test_relations.RelationsTests.test_unverified_impersonation_cannot_become_a_finding) ... ok
+test_verified_impersonation_incident_review (test_relations.RelationsTests.test_verified_impersonation_incident_review) ... ok
+test_working_terms_deny_arbitrary_sanctions (test_relations.RelationsTests.test_working_terms_deny_arbitrary_sanctions) ... ok
+
+----------------------------------------------------------------------
+Ran 41 tests in 0.004s
+
+OK
+EXIT_CODE=0
+DISCOVERED_TESTS=41
+
+$ python -m compileall -q oversight_relations tests/oversight_relations
+EXIT_CODE=0
+
+NO_PRIVATE_REPO_TESTS_EXECUTED
+NO_EXTERNAL_PROVIDER_TESTS_EXECUTED

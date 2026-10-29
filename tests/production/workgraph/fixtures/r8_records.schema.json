@@ -1,0 +1,1264 @@
+{
+  "$defs": {
+    "ArtifactManifest": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "SOURCE",
+                  "SCENE"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "source_parent_commit"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "artifact_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "bible_pair_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "byte_proof_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "feature_contract_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "SOURCE",
+            "ASSET",
+            "SCENE",
+            "QUEST_GRAPH",
+            "DIALOGUE",
+            "AUDIO",
+            "TEST_LOG",
+            "OTHER"
+          ],
+          "type": "string"
+        },
+        "producer_principal": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "resource_path": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_parent_commit": {
+          "pattern": "^[a-f0-9]{40}(?:[a-f0-9]{24})?$",
+          "type": "string"
+        },
+        "task_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "project_id",
+        "feature_id",
+        "task_id",
+        "kind",
+        "resource_path",
+        "content_sha256",
+        "producer_principal",
+        "bible_pair_digest",
+        "feature_contract_digest",
+        "byte_proof_ref"
+      ],
+      "type": "object"
+    },
+    "BibleClause": {
+      "additionalProperties": false,
+      "properties": {
+        "clause_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "REQUIREMENT",
+            "GUIDELINE",
+            "OPEN_AREA"
+          ],
+          "type": "string"
+        },
+        "precedence": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "scope": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_ref": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        },
+        "text_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "clause_id",
+        "kind",
+        "scope",
+        "text_digest",
+        "precedence",
+        "source_ref"
+      ],
+      "type": "object"
+    },
+    "BibleComplianceReceipt": {
+      "additionalProperties": false,
+      "properties": {
+        "bible_pair_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "clause_refs_checked": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "mechanical_check_refs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "result": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "NOT_VERIFIED"
+          ],
+          "type": "string"
+        },
+        "semantic_review_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "subject_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "violations": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_id",
+        "bible_pair_digest",
+        "subject_digest",
+        "clause_refs_checked",
+        "violations",
+        "semantic_review_ref",
+        "mechanical_check_refs",
+        "result"
+      ],
+      "type": "object"
+    },
+    "BibleEdition": {
+      "additionalProperties": false,
+      "properties": {
+        "annex_digests": {
+          "items": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "clauses": {
+          "items": {
+            "$ref": "#/$defs/BibleClause"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "edition_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "epoch": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "DESIGN",
+            "TECHNICAL"
+          ],
+          "type": "string"
+        },
+        "manifest_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "owner_activation_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "repo": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_commit": {
+          "pattern": "^[a-f0-9]{40}(?:[a-f0-9]{24})?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "kind",
+        "edition_id",
+        "epoch",
+        "manifest_digest",
+        "repo",
+        "source_commit",
+        "annex_digests",
+        "clauses"
+      ],
+      "type": "object"
+    },
+    "BiblePairSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "design_edition_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "design_epoch": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "design_manifest_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "pair_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "technical_edition_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "technical_epoch": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "technical_manifest_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "design_edition_id",
+        "technical_edition_id",
+        "design_manifest_digest",
+        "technical_manifest_digest",
+        "design_epoch",
+        "technical_epoch",
+        "pair_digest"
+      ],
+      "type": "object"
+    },
+    "CreativeDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "affected_resources": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "bible_pair_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "cabal_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "clause_refs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "decision_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "maxLength": 16384,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "record_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "selected_option": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision_id",
+        "project_id",
+        "feature_id",
+        "cabal_id",
+        "bible_pair_digest",
+        "clause_refs",
+        "options",
+        "selected_option",
+        "affected_resources",
+        "record_digest"
+      ],
+      "type": "object"
+    },
+    "DeliverableRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "deliverable_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "NARRATIVE",
+            "QUEST_GRAPH",
+            "DIALOGUE",
+            "SCENE",
+            "CODE",
+            "ASSET",
+            "AUDIO",
+            "ANIMATION",
+            "TEST",
+            "OTHER"
+          ],
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "requirement_refs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "deliverable_id",
+        "kind",
+        "description",
+        "requirement_refs",
+        "acceptance_ids",
+        "required"
+      ],
+      "type": "object"
+    },
+    "EffectIntent": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "enum": [
+                  "PROTECTED_MAINLINE_MERGE",
+                  "RELEASE_PUBLISH",
+                  "BIBLE_ACTIVATE",
+                  "BUDGET_EXPAND",
+                  "EXTERNAL_UNSCOPED_WRITE"
+                ]
+              }
+            },
+            "required": [
+              "action"
+            ]
+          },
+          "then": {
+            "required": [
+              "owner_proof_ref"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "FEATURE_BRANCH_WRITE",
+            "FEATURE_BRANCH_COMMIT",
+            "PROTECTED_MAINLINE_MERGE",
+            "RELEASE_PUBLISH",
+            "BIBLE_ACTIVATE",
+            "BUDGET_EXPAND",
+            "EXTERNAL_UNSCOPED_WRITE"
+          ],
+          "type": "string"
+        },
+        "bible_pair_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "effect_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "expected_source_commit": {
+          "pattern": "^[a-f0-9]{40}(?:[a-f0-9]{24})?$",
+          "type": "string"
+        },
+        "feature_contract_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "owner_proof_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "payload_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "scope_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "target_ref": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "effect_id",
+        "project_id",
+        "feature_id",
+        "action",
+        "target_ref",
+        "bible_pair_digest",
+        "feature_contract_digest",
+        "scope_digest",
+        "payload_digest",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "FeatureContract": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "bible_pair_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "brief_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "budget_limit_units": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "contract_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "deliverables": {
+          "items": {
+            "$ref": "#/$defs/DeliverableRequirement"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "feature_branch": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "original_brief_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "repository_ref": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        },
+        "required_capabilities": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "revision": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "scope_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "unresolved_boundary_refs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_id",
+        "brief_id",
+        "original_brief_digest",
+        "bible_pair_digest",
+        "revision",
+        "contract_digest",
+        "scope_digest",
+        "deliverables",
+        "acceptance_ids",
+        "budget_limit_units",
+        "required_capabilities",
+        "unresolved_boundary_refs"
+      ],
+      "type": "object"
+    },
+    "FeatureRun": {
+      "additionalProperties": false,
+      "properties": {
+        "bible_pair_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "branch_ref": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        },
+        "brief_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "feature_contract_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "graph_revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "RECEIVED",
+            "CONTEXT_PINNED",
+            "CONTRACT_READY",
+            "PLANNED",
+            "IN_PRODUCTION",
+            "INTEGRATING",
+            "VERIFYING",
+            "QA_READY",
+            "QA_IN_PROGRESS",
+            "QA_PASSED",
+            "REWORK_REQUIRED",
+            "PAUSED",
+            "CANCELLED",
+            "BLOCKED_LOCAL",
+            "HOST_UNSUPPORTED",
+            "EFFECT_UNKNOWN",
+            "MERGE_REQUESTED",
+            "MERGED"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_id",
+        "brief_id",
+        "feature_contract_digest",
+        "bible_pair_digest",
+        "graph_revision",
+        "revision",
+        "status"
+      ],
+      "type": "object"
+    },
+    "HostActivation": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_host_observed": {
+          "type": "boolean"
+        },
+        "authenticated_principal": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "checkpoint_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "host_native_receipt_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "job_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "provider_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "recorded_at_us": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "session_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_id",
+        "job_id",
+        "session_id",
+        "provider_id",
+        "host_native_receipt_ref",
+        "authenticated_principal",
+        "actual_host_observed",
+        "checkpoint_digest",
+        "recorded_at_us"
+      ],
+      "type": "object"
+    },
+    "OwnerCommand": {
+      "additionalProperties": false,
+      "properties": {
+        "auth_proof_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "command_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "issued_at_us": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "operation": {
+          "enum": [
+            "studio.project.register",
+            "studio.project.set_active",
+            "studio.set_budget",
+            "cabal.configure",
+            "cabal.inspect",
+            "production.submit_brief",
+            "production.status",
+            "production.inspect",
+            "production.request_changes",
+            "production.pause",
+            "production.resume",
+            "production.cancel",
+            "bible.propose",
+            "bible.approve",
+            "effects.approve_protected",
+            "studio.status"
+          ],
+          "type": "string"
+        },
+        "owner_principal_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "request_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "command_id",
+        "operation",
+        "owner_principal_id",
+        "request_digest",
+        "auth_proof_ref",
+        "idempotency_key",
+        "issued_at_us"
+      ],
+      "type": "object"
+    },
+    "ProductionBrief": {
+      "additionalProperties": false,
+      "properties": {
+        "brief_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "original_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "original_text": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        },
+        "owner_command_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "owner_principal_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "submitted_at_us": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "brief_id",
+        "project_id",
+        "owner_principal_id",
+        "original_text",
+        "original_digest",
+        "owner_command_ref",
+        "feature_id",
+        "submitted_at_us"
+      ],
+      "type": "object"
+    },
+    "ProjectSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "constitution_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "initial_state": {
+          "enum": [
+            "INCUBATING",
+            "ACTIVE",
+            "PAUSED"
+          ]
+        },
+        "owner_principal_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "repository_ref": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "owner_principal_id",
+        "constitution_digest",
+        "initial_state"
+      ],
+      "type": "object"
+    },
+    "QAReadyReceipt": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_manifest_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "bible_compliance_receipt_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "bible_pair_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "blocking_issues": {
+          "const": 0,
+          "type": "integer"
+        },
+        "feature_contract_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "independent_review_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "receipt_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "source_commit": {
+          "pattern": "^[a-f0-9]{40}(?:[a-f0-9]{24})?$",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "QA_READY"
+          ],
+          "type": "string"
+        },
+        "test_evidence": {
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/TestEvidence"
+              },
+              {
+                "properties": {
+                  "exit_code": {
+                    "const": 0
+                  }
+                },
+                "type": "object"
+              }
+            ]
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "tested_commit": {
+          "pattern": "^[a-f0-9]{40}(?:[a-f0-9]{24})?$",
+          "type": "string"
+        },
+        "trusted_quality_signer": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receipt_id",
+        "project_id",
+        "feature_id",
+        "bible_pair_digest",
+        "feature_contract_digest",
+        "source_commit",
+        "tested_commit",
+        "artifact_manifest_digest",
+        "bible_compliance_receipt_ref",
+        "test_evidence",
+        "blocking_issues",
+        "independent_review_ref",
+        "trusted_quality_signer",
+        "status"
+      ],
+      "type": "object"
+    },
+    "TaskSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "bible_pair_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "budget_limit_units": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "cabal_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "dependencies": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "feature_contract_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "graph_revision": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "input_digests": {
+          "items": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "outputs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "owned_resources": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "required_skills": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 4096,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "task_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "task_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "feature_id",
+        "task_id",
+        "graph_revision",
+        "cabal_id",
+        "bible_pair_digest",
+        "feature_contract_digest",
+        "dependencies",
+        "required_skills",
+        "owned_resources",
+        "input_digests",
+        "outputs",
+        "acceptance_ids",
+        "budget_limit_units",
+        "task_digest"
+      ],
+      "type": "object"
+    },
+    "TestEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "commit": {
+          "pattern": "^[a-f0-9]{40}(?:[a-f0-9]{24})?$",
+          "type": "string"
+        },
+        "exit_code": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "input_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "log_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "observed_at_us": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "test_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "toolchain_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "trusted_runner_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "test_id",
+        "commit",
+        "exit_code",
+        "log_digest",
+        "trusted_runner_ref",
+        "observed_at_us",
+        "adapter_digest",
+        "toolchain_digest",
+        "input_digest"
+      ],
+      "type": "object"
+    },
+    "WorkGraph": {
+      "additionalProperties": false,
+      "properties": {
+        "bible_pair_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "feature_contract_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "feature_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "graph_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "graph_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "tasks": {
+          "items": {
+            "$ref": "#/$defs/TaskSpec"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "graph_id",
+        "project_id",
+        "feature_id",
+        "revision",
+        "bible_pair_digest",
+        "feature_contract_digest",
+        "graph_digest",
+        "tasks"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:nomad-studio:r7:records:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "The Nomad Studio R7 new-only contracts"
+}

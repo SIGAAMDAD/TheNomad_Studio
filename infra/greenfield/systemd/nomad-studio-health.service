@@ -1,0 +1,16 @@
+[Unit]
+Description=Nomad Studio host health preflight
+After=nomad-studio.service
+
+[Service]
+Type=oneshot
+User=nomad-studio
+Group=nomad-studio
+UMask=0077
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/nomad-studio/current/venv/bin/python /opt/nomad-studio/current/infra/greenfield/host_check.py --config /etc/nomad-studio/config.json
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadOnlyPaths=/etc/nomad-studio

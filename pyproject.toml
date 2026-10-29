@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nomad-studio"
+version = "1.0.0"
+description = "The Nomad Studio V1 greenfield control plane"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# Integrator-owned package data: Studio V1 initial schema, roster and verification matrix.
+[tool.setuptools.package-data]
+"nomad_studio" = ["**/*.sql", "**/*.json"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "tests", ".", "tests/trust", "tests/creative_authority/impact", "tests/oversight_development"]
+addopts = "--import-mode=importlib"

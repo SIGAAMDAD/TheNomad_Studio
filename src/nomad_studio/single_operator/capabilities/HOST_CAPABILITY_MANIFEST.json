@@ -1,0 +1,25 @@
+{
+  "schema": "NOMAD/R9/HOST-CAPABILITY-MANIFEST/1",
+  "provider_id": null,
+  "provenance": "CAB-H local source-authoring environment; no native live provider configured",
+  "actual_host_observed": false,
+  "verified_state": "NOT_VERIFIED",
+  "observed_unsupported_capabilities": [],
+  "capabilities": {
+    "dispatch": "NOT_VERIFIED",
+    "checkpoint": "NOT_VERIFIED",
+    "same_session_reentry": "NOT_VERIFIED",
+    "fence": "NOT_VERIFIED",
+    "agent_execution": "NOT_VERIFIED",
+    "cancel": "NOT_VERIFIED"
+  },
+  "valid_observed_provider_states": ["SUPPORTED", "UNSUPPORTED", "NOT_VERIFIED"],
+  "required_live_evidence": [
+    "provider-native signed manifest",
+    "registered host session authenticated by verified worker principal",
+    "two distinct job activations in the identical session and epoch",
+    "signed idle marker between activations and matching native re-entry ref",
+    "durable trusted observation and exact provider readback"
+  ],
+  "release_eligible": false
+}

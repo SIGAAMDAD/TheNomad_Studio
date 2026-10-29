@@ -1,0 +1,28 @@
+# Template; substitute your verified DNS and certificate paths as an operator.
+# Public HTTPS is exclusively here, never on the Python gateway itself.
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name REPLACE_WITH_VERIFIED_PUBLIC_DNS;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_certificate /etc/nomad-studio/keys/server-fullchain.pem;
+    ssl_certificate_key /etc/nomad-studio/keys/server-key.pem;
+    ssl_client_certificate /etc/nomad-studio/keys/connector-client-ca.pem;
+    ssl_verify_client on;
+    ssl_verify_depth 2;
+    client_max_body_size 1m;
+    proxy_connect_timeout 5s;
+    proxy_read_timeout 30s;
+    proxy_send_timeout 30s;
+    add_header Strict-Transport-Security "max-age=31536000" always;
+    location / {
+        proxy_pass http://127.0.0.1:8765;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        # Never trust user-supplied identity headers; the gateway must verify
+        # a signed, proxy-authenticated identity on a protected hop.
+        proxy_set_header X-Forwarded-Client-Cert "";
+        proxy_set_header X-Principal-Id "";
+    }
+}

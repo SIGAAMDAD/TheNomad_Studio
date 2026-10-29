@@ -1,0 +1,1590 @@
+{
+  "heads": {
+    "animation": "rpg-animation-director",
+    "audio": "rpg-audio-director",
+    "design": "rpg-design-director",
+    "engineering": "rpg-lead-engineer",
+    "narrative": "rpg-narrative-director",
+    "production": "rpg-lead-producer",
+    "publishing": "rpg-release-manager",
+    "qa": "rpg-qa-lead",
+    "studio_ops": "rpg-studio-operations-manager",
+    "tech_art": "rpg-technical-art-director",
+    "ux": "rpg-ux-director",
+    "visual_art": "rpg-art-director"
+  },
+  "note": "Extracted role IDs and home mappings from installed data manifest; titles are display labels generated from IDs, skill content digests must be individually verified via trusted skill resolver.",
+  "roles": [
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-ability-framework-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-ability-framework-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Ability Framework Programmer"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-accessibility-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-accessibility-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Accessibility Designer"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-accessibility-tester",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-accessibility-tester.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Accessibility Tester"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-ai-behavior-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-ai-behavior-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Ai Behavior Designer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-ai-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-ai-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Ai Programmer"
+    },
+    {
+      "department": "animation",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-animation-director",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-animation-director.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Animation Director"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-animation-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-animation-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Animation Programmer"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-art-director",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-art-director.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Art Director"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-asset-import-pipeline-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-asset-import-pipeline-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Asset Import Pipeline Engineer"
+    },
+    {
+      "department": "audio",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-audio-director",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-audio-director.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Audio Director"
+    },
+    {
+      "department": "audio",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-audio-implementer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-audio-implementer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Audio Implementer"
+    },
+    {
+      "department": "audio",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-audio-mixer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-audio-mixer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Audio Mixer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-audio-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-audio-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Audio Programmer"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-automation-qa-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-automation-qa-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Automation Qa Engineer"
+    },
+    {
+      "department": "production",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-autonomous-workgroup-controller",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-autonomous-workgroup-controller.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Autonomous Workgroup Controller"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-balance-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-balance-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Balance Designer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-boss-behavior-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-boss-behavior-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Boss Behavior Programmer"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-boss-encounter-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-boss-encounter-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Boss Encounter Designer"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-branching-dialogue-writer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-branching-dialogue-writer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Branching Dialogue Writer"
+    },
+    {
+      "department": "publishing",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-brand-marketing-manager",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-brand-marketing-manager.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Brand Marketing Manager"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-build-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-build-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Build Engineer"
+    },
+    {
+      "department": "studio_ops",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-business-development-manager",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-business-development-manager.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Business Development Manager"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-canon-continuity-keeper",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-canon-continuity-keeper.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Canon Continuity Keeper"
+    },
+    {
+      "department": "publishing",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-certification-specialist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-certification-specialist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Certification Specialist"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-character-arc-writer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-character-arc-writer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Character Arc Writer"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-character-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-character-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Character Artist"
+    },
+    {
+      "department": "animation",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-character-rigger",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-character-rigger.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Character Rigger"
+    },
+    {
+      "department": "tech_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-character-technical-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-character-technical-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Character Technical Artist"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-ci-devops-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-ci-devops-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Ci Devops Engineer"
+    },
+    {
+      "department": "animation",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-cinematic-animator",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-cinematic-animator.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Cinematic Animator"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-cinematic-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-cinematic-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Cinematic Designer"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-cinematic-scriptwriter",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-cinematic-scriptwriter.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Cinematic Scriptwriter"
+    },
+    {
+      "department": "animation",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-combat-animator",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-combat-animator.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Combat Animator"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-combat-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-combat-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Combat Designer"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-combat-feedback-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-combat-feedback-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Combat Feedback Designer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-combat-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-combat-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Combat Programmer"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-combat-test-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-combat-test-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Combat Test Engineer"
+    },
+    {
+      "department": "publishing",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-community-manager",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-community-manager.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Community Manager"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-compatibility-tester",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-compatibility-tester.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Compatibility Tester"
+    },
+    {
+      "department": "audio",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-composer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-composer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Composer"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-concept-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-concept-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Concept Artist"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-content-validation-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-content-validation-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Content Validation Engineer"
+    },
+    {
+      "department": "production",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-creative-director",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-creative-director.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Creative Director"
+    },
+    {
+      "department": "animation",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-creature-animator",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-creature-animator.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Creature Animator"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-creature-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-creature-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Creature Artist"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-design-director",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-design-director.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Design Director"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-designer-workflow-tools-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-designer-workflow-tools-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Designer Workflow Tools Programmer"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-dialogue-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-dialogue-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Dialogue Designer"
+    },
+    {
+      "department": "audio",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-dialogue-editor",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-dialogue-editor.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Dialogue Editor"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-difficulty-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-difficulty-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Difficulty Designer"
+    },
+    {
+      "department": "studio_ops",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-documentation-manager",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-documentation-manager.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Documentation Manager"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-economy-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-economy-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Economy Designer"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-encounter-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-encounter-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Encounter Designer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-engine-profiler-tools-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-engine-profiler-tools-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Engine Profiler Tools Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-engine-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-engine-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Engine Programmer"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-environment-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-environment-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Environment Artist"
+    },
+    {
+      "department": "tech_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-environment-technical-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-environment-technical-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Environment Technical Artist"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-environmental-interaction-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-environmental-interaction-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Environmental Interaction Designer"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-environmental-storytelling-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-environmental-storytelling-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Environmental Storytelling Designer"
+    },
+    {
+      "department": "production",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-executive-producer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-executive-producer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Executive Producer"
+    },
+    {
+      "department": "production",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-external-development-producer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-external-development-producer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "External Development Producer"
+    },
+    {
+      "department": "animation",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-facial-animator",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-facial-animator.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Facial Animator"
+    },
+    {
+      "department": "studio_ops",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-finance-producer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-finance-producer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Finance Producer"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-functional-qa-tester",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-functional-qa-tester.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Functional Qa Tester"
+    },
+    {
+      "department": "production",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-game-director",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-game-director.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Game Director"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-game-writer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-game-writer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Game Writer"
+    },
+    {
+      "department": "animation",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-gameplay-animator",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-gameplay-animator.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Gameplay Animator"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-gameplay-data-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-gameplay-data-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Gameplay Data Designer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-gameplay-data-editor-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-gameplay-data-editor-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Gameplay Data Editor Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-gameplay-debugging-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-gameplay-debugging-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Gameplay Debugging Engineer"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-gameplay-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-gameplay-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Gameplay Designer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-gameplay-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-gameplay-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Gameplay Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-gameplay-scripting-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-gameplay-scripting-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Gameplay Scripting Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-godot-editor-extension-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-godot-editor-extension-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Godot Editor Extension Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-gpu-driven-rendering-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-gpu-driven-rendering-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Gpu Driven Rendering Engineer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-gpu-memory-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-gpu-memory-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Gpu Memory Engineer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-graphics-backend-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-graphics-backend-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Graphics Backend Engineer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-hlod-cook-tools-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-hlod-cook-tools-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Hlod Cook Tools Programmer"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-illustration-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-illustration-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Illustration Artist"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-integration-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-integration-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Integration Engineer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-interaction-systems-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-interaction-systems-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Interaction Systems Programmer"
+    },
+    {
+      "department": "audio",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-interactive-music-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-interactive-music-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Interactive Music Designer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-inventory-equipment-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-inventory-equipment-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Inventory Equipment Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-lead-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-lead-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Lead Engineer"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-lead-game-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-lead-game-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Lead Game Designer"
+    },
+    {
+      "department": "production",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-lead-producer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-lead-producer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Lead Producer"
+    },
+    {
+      "department": "studio_ops",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-legal-licensing-manager",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-legal-licensing-manager.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Legal Licensing Manager"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-level-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-level-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Level Artist"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-level-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-level-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Level Designer"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-lighting-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-lighting-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Lighting Artist"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-lighting-renderer-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-lighting-renderer-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Lighting Renderer Engineer"
+    },
+    {
+      "department": "publishing",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-localization-producer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-localization-producer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Localization Producer"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-localization-qa-tester",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-localization-qa-tester.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Localization Qa Tester"
+    },
+    {
+      "department": "publishing",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-localization-specialist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-localization-specialist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Localization Specialist"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-locomotion-physics-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-locomotion-physics-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Locomotion Physics Programmer"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-loot-itemization-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-loot-itemization-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Loot Itemization Designer"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-lore-writer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-lore-writer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Lore Writer"
+    },
+    {
+      "department": "publishing",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-marketing-capture-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-marketing-capture-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Marketing Capture Artist"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-material-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-material-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Material Artist"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-material-system-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-material-system-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Material System Engineer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-memory-systems-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-memory-systems-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Memory Systems Programmer"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-mission-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-mission-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Mission Designer"
+    },
+    {
+      "department": "animation",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-motion-capture-specialist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-motion-capture-specialist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Motion Capture Specialist"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-narrative-creator",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-narrative-creator.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Narrative Creator"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-narrative-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-narrative-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Narrative Designer"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-narrative-director",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-narrative-director.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Narrative Director"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-narrative-editor",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-narrative-editor.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Narrative Editor"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-narrative-systems-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-narrative-systems-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Narrative Systems Designer"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-narrative-validation-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-narrative-validation-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Narrative Validation Engineer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-navigation-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-navigation-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Navigation Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-network-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-network-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Network Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-performance-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-performance-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Performance Engineer"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-performance-qa-analyst",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-performance-qa-analyst.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Performance Qa Analyst"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-physics-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-physics-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Physics Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-platform-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-platform-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Platform Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-player-controller-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-player-controller-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Player Controller Programmer"
+    },
+    {
+      "department": "ux",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-player-insights-analyst",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-player-insights-analyst.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Player Insights Analyst"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-player-movement-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-player-movement-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Player Movement Designer"
+    },
+    {
+      "department": "publishing",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-player-support-specialist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-player-support-specialist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Player Support Specialist"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-playtest-coordinator",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-playtest-coordinator.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Playtest Coordinator"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-post-processing-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-post-processing-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Post Processing Engineer"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-procedural-environment-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-procedural-environment-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Procedural Environment Artist"
+    },
+    {
+      "department": "tech_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-procedural-tools-tech-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-procedural-tools-tech-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Procedural Tools Tech Artist"
+    },
+    {
+      "department": "publishing",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-product-manager",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-product-manager.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Product Manager"
+    },
+    {
+      "department": "production",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-production-coordinator",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-production-coordinator.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Production Coordinator"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-progression-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-progression-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Progression Designer"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-prop-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-prop-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Prop Artist"
+    },
+    {
+      "department": "publishing",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-public-relations-manager",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-public-relations-manager.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Public Relations Manager"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-qa-lead",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-qa-lead.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Qa Lead"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-quest-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-quest-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Quest Designer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-quest-runtime-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-quest-runtime-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Quest Runtime Programmer"
+    },
+    {
+      "department": "publishing",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-release-manager",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-release-manager.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Release Manager"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-render-graph-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-render-graph-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Render Graph Engineer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-rendering-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-rendering-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Rendering Programmer"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-rendering-regression-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-rendering-regression-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Rendering Regression Engineer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-save-systems-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-save-systems-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Save Systems Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-shader-build-tools-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-shader-build-tools-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Shader Build Tools Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-shader-compiler-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-shader-compiler-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Shader Compiler Engineer"
+    },
+    {
+      "department": "tech_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-shader-technical-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-shader-technical-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Shader Technical Artist"
+    },
+    {
+      "department": "audio",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-sound-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-sound-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Sound Designer"
+    },
+    {
+      "department": "narrative",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-storyboard-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-storyboard-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Storyboard Artist"
+    },
+    {
+      "department": "studio_ops",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-studio-operations-manager",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-studio-operations-manager.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Studio Operations Manager"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-systems-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-systems-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Systems Designer"
+    },
+    {
+      "department": "animation",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-technical-animator",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-technical-animator.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Technical Animator"
+    },
+    {
+      "department": "tech_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-technical-art-director",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-technical-art-director.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Technical Art Director"
+    },
+    {
+      "department": "tech_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-technical-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-technical-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Technical Artist"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-technical-director",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-technical-director.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Technical Director"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-technical-game-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-technical-game-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Technical Game Designer"
+    },
+    {
+      "department": "production",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-technical-producer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-technical-producer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Technical Producer"
+    },
+    {
+      "department": "qa",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-technical-qa-analyst",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-technical-qa-analyst.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Technical Qa Analyst"
+    },
+    {
+      "department": "audio",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-technical-sound-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-technical-sound-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Technical Sound Designer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-terrain-authoring-tools-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-terrain-authoring-tools-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Terrain Authoring Tools Programmer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-terrain-rendering-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-terrain-rendering-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Terrain Rendering Engineer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-tools-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-tools-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Tools Programmer"
+    },
+    {
+      "department": "publishing",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-trailer-editor",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-trailer-editor.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Trailer Editor"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-traversal-encounter-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-traversal-encounter-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Traversal Encounter Designer"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-tutorial-onboarding-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-tutorial-onboarding-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Tutorial Onboarding Designer"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-ui-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-ui-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Ui Artist"
+    },
+    {
+      "department": "ux",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-ui-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-ui-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Ui Designer"
+    },
+    {
+      "department": "animation",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-ui-motion-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-ui-motion-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Ui Motion Designer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-ui-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-ui-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Ui Programmer"
+    },
+    {
+      "department": "ux",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-user-researcher",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-user-researcher.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "User Researcher"
+    },
+    {
+      "department": "ux",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-ux-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-ux-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Ux Designer"
+    },
+    {
+      "department": "ux",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-ux-director",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-ux-director.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Ux Director"
+    },
+    {
+      "department": "studio_ops",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-vendor-outsourcing-manager",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-vendor-outsourcing-manager.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Vendor Outsourcing Manager"
+    },
+    {
+      "department": "tech_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-vfx-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-vfx-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Vfx Artist"
+    },
+    {
+      "department": "tech_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-vfx-technical-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-vfx-technical-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Vfx Technical Artist"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-visibility-occlusion-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-visibility-occlusion-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Visibility Occlusion Engineer"
+    },
+    {
+      "department": "audio",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-voice-director",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-voice-director.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Voice Director"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-volumetric-rendering-engineer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-volumetric-rendering-engineer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Volumetric Rendering Engineer"
+    },
+    {
+      "department": "visual_art",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-weapon-artist",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-weapon-artist.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Weapon Artist"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-weapons-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-weapons-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "Weapons Designer"
+    },
+    {
+      "department": "design",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-world-designer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-world-designer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "World Designer"
+    },
+    {
+      "department": "engineering",
+      "home_provenance": "skills://rpg-studio-all-roles/references/departments.v4.json",
+      "id": "rpg-world-streaming-programmer",
+      "provenance": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+      "skill_uri": "skills://rpg-studio-all-roles/references/rpg-world-streaming-programmer.md",
+      "skill_version": "studio-role-manual-v4",
+      "title": "World Streaming Programmer"
+    }
+  ],
+  "schema": "NOMAD/ROLE-CATALOG/1",
+  "source_department_map": "skills://rpg-studio-all-roles/references/departments.v4.json",
+  "source_manifest": "skills://rpg-studio-all-roles/references/roles_manifest.json",
+  "source_research_date": "2026-10-26",
+  "version": "studio-v4-2026-10-26"
+}

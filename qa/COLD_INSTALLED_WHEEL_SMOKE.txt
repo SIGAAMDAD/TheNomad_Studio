@@ -1,0 +1,1 @@
+PASS cold wheel, 19 base components, 10 internal extensions, 102 V1 app tables, identical V1 reopen, exactly one SQL file

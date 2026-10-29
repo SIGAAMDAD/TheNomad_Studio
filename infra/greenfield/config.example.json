@@ -1,0 +1,15 @@
+{
+  "gateway_host": "127.0.0.1",
+  "gateway_port": 8765,
+  "external_url": "",
+  "connector_mode": "NOT_CONFIGURED",
+  "sqlite_path": "/var/lib/nomad-studio/state/studio.sqlite3",
+  "secrets_dir": "/etc/nomad-studio/keys",
+  "tls_ca_file": "",
+  "tls_cert_file": "",
+  "tls_key_file": "",
+  "github_app_key_file": "",
+  "drive_credentials_file": "",
+  "launch_signing_key_file": "",
+  "provider_bridge_name": ""
+}
