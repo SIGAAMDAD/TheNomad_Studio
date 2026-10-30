@@ -28,11 +28,15 @@ outbox readback checks. Neither mode supplies native external provider proof.
 Build and cold-test the installed package independently of the source tree:
 
 ```bash
-python -m pip wheel . --no-deps --no-build-isolation -w dist
+python -m pip wheel . --no-deps -w dist
 python infra/greenfield/r9_wheel_smoke.py --wheel dist/nomad_studio-1.9.0-py3-none-any.whl
 ```
 
 The systemd entrypoint uses `--config /etc/nomad-studio/r9-runtime.json`.
+The systemd service blocks restart attempts for exit code 2 (native providers
+not configured). The previous periodic health timer was removed because it
+would continually fail without live native providers. `--doctor` is a
+**read-only SQLite diagnostic**, not an active-process/native-provider proof.
 Start from `infra/greenfield/r9-runtime.example.json`. The config only names
 absolute private storage paths; provider credentials and host attestations
 must be injected through trusted native integration, not accepted from a user

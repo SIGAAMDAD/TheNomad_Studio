@@ -41,7 +41,8 @@ jobs:
         run: python infra/greenfield/r9_raw_unit_gate.py . --mode full --out r9-integrated-receipt.json --log r9-integrated-tests.log
       - name: Build and cold-verify exact R9 wheel
         run: |
-          python -m pip wheel --no-build-isolation --no-deps . -w dist
+          rm -rf build
+          python -m pip wheel --no-deps . -w dist
           python infra/greenfield/r9_wheel_smoke.py --wheel "$(find dist -maxdepth 1 -name 'nomad_studio-*.whl' | head -n 1)"
       - uses: actions/upload-artifact@v4
         if: always()

@@ -15,6 +15,7 @@ EnvironmentFile=/etc/nomad-studio/service.env
 # Never start a public listener from unverified native adapter configuration.
 ExecStart=/opt/nomad-studio/current/venv/bin/python -m nomad_studio.app --config /etc/nomad-studio/r9-runtime.json
 Restart=on-failure
+RestartPreventExitStatus=2
 RestartSec=5s
 UMask=0077
 StateDirectory=nomad-studio

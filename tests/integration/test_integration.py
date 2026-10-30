@@ -226,6 +226,8 @@ def test_cli_doctor_reports_real_fail_closed_status(tmp_path):
     path.write_text(json.dumps({'sqlite_path':str(tmp_path/'db'/'db.sqlite'),
                                 'cas_path':str(tmp_path/'cas')}), encoding='utf-8')
     command = [sys.executable, '-m', 'nomad_studio.app', '--doctor', '--config', str(path)]
+    with open_studio(sqlite_path=tmp_path/'db'/'db.sqlite', cas_path=tmp_path/'cas'):
+        pass
     proc = subprocess.run(command, capture_output=True, text=True, timeout=30, check=False,
                           env={**os.environ,'PYTHONPATH':str(Path(__file__).resolve().parents[2]/'src')})
     assert proc.returncode == 2, proc.stderr
@@ -295,3 +297,84 @@ def test_foreign_database_identity_cannot_be_repurposed(tmp_path):
     path.chmod(0o600)
     with pytest.raises(AuthorityError, match='foreign database identity'):
         R9Authority(path)
+
+
+def test_doctor_observes_without_acquiring_second_writer(tmp_path):
+    path = tmp_path/'config.json'
+    db = tmp_path/'authority'/'db.sqlite'
+    path.write_text(json.dumps({'sqlite_path':str(db), 'cas_path':str(tmp_path/'cas')}))
+    with open_studio(sqlite_path=db) as runtime:
+        cmd = [sys.executable, '-m', 'nomad_studio.app', '--doctor', '--config',str(path)]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=20, check=False,
+            env={**os.environ, 'PYTHONPATH':str(Path(__file__).resolve().parents[2]/'src')})
+        assert result.returncode == 2
+        observed = json.loads(result.stdout)
+        assert observed['database'] == 'R9_FRESH_SCHEMA_VERIFIED'
+        assert observed['liveness'] == 'NOT_OBSERVED'
+        assert 'OwnerLocked' not in result.stdout
+        assert runtime.health()['liveness'] == 'ALIVE'
+
+
+def test_outbox_dispatch_never_delivers_without_native_receipt(tmp_path):
+    sent=[]
+    with open_studio(sqlite_path=tmp_path/'db'/'db.sqlite', clock_us=CLOCK,
+                     bindings={'native_event_delivery':lambda envelope: sent.append(envelope)}) as runtime:
+        with runtime.state.capability('CAB-B').transaction() as tx:
+            runtime.outbox.append(tx, {'domain':'production.director',
+                'event_type':'FEATURE_RUN_TRANSITION','idempotency_key':'event-1'})
+        msg_id=runtime.state.outbox_rows()[0]['message_id']
+        result=runtime.dispatch_once(msg_id)
+        assert result.status == 'NOT_VERIFIED'
+        assert sent == []
+        assert runtime.state.outbox_rows()[0]['state'] == 'PENDING'
+
+
+def test_outbox_dispatch_exact_verified_receipt_and_no_replay(tmp_path):
+    sends=[]
+    def delivery(payload):
+        sends.append(payload)
+        return Result('OK','OK',receipt_ref='provider-receipt-1')
+    with open_studio(sqlite_path=tmp_path/'db'/'db.sqlite', clock_us=CLOCK,
+        bindings={'native_event_delivery':delivery,
+                  'native_outbox_readback':lambda mid,ref: {
+                      'status':'VERIFIED','message_id':mid,'receipt_ref':ref,
+                      'payload_digest':runtime.state.outbox_rows()[0]['payload_digest']}}) as runtime:
+        with runtime.state.capability('CAB-B').transaction() as tx:
+            runtime.outbox.append(tx, {'domain':'production.director',
+                'event_type':'FEATURE_RUN_TRANSITION', 'idempotency_key':'event-2'})
+        msg_id=runtime.state.outbox_rows()[0]['message_id']
+        assert runtime.dispatch_once(msg_id).status == 'OK'
+        assert runtime.state.outbox_rows()[0]['state'] == 'ACKED'
+        assert runtime.dispatch_once(msg_id).status == 'CONFLICT'
+        assert len(sends)==1
+
+
+def test_outbox_dispatch_timeout_is_unknown_and_not_replayed(tmp_path):
+    calls=[]
+    def timeout(envelope):
+        calls.append(envelope)
+        raise TimeoutError('provider could have applied the effect')
+    with open_studio(sqlite_path=tmp_path/'db'/'db.sqlite', clock_us=CLOCK,
+        bindings={'native_event_delivery':timeout,
+                  'native_outbox_readback':lambda mid,ref: None}) as runtime:
+        with runtime.state.capability('CAB-B').transaction() as tx:
+            runtime.outbox.append(tx, {'domain':'production.director',
+                'event_type':'FEATURE_RUN_TRANSITION','idempotency_key':'event-3'})
+        msg_id=runtime.state.outbox_rows()[0]['message_id']
+        assert runtime.dispatch_once(msg_id).status == 'UNKNOWN_EXTERNAL'
+        assert runtime.state.outbox_rows()[0]['state'] == 'UNKNOWN'
+        assert runtime.dispatch_once(msg_id).status == 'CONFLICT'
+        assert len(calls)==1
+
+
+def test_no_v1_component_or_legacy_store_imports():
+    import importlib.util
+    for name in ('nomad_studio.contracts.v1','nomad_studio.state.api',
+                 'nomad_studio.state.store','nomad_studio.state.schema',
+                 'nomad_studio.archive','nomad_studio.source','nomad_studio.knowledge',
+                 'nomad_studio.publication.api','nomad_studio.artifacts.api'):
+        try:
+            found = importlib.util.find_spec(name)
+        except ModuleNotFoundError:
+            found = None
+        assert found is None, f'legacy module remains importable: {name}'

@@ -1,5 +1,5 @@
-"""WG-A state package: SQLite authority, event journal and one-shot V1 schema initializer."""
-from .api import build_component
-from .store import SQLiteStateStore, open_store
+"""R9 fresh-only scoped SQLite authority."""
+from .r9_authority import R9Authority, DurableOutbox, AuthorityError, OwnerLocked, WriterDenied
+from .r9_cas import FileCAS, RecordCAS
 
-__all__ = ['build_component', 'open_store', 'SQLiteStateStore']
+__all__ = ['R9Authority', 'DurableOutbox', 'AuthorityError', 'OwnerLocked', 'WriterDenied', 'FileCAS', 'RecordCAS']

@@ -157,6 +157,10 @@ class GatewayServer:
         self.gateway,self.context,self.host,self.port=gateway,tls_context,host,port
         self._server=None; self._thread=None
 
+    @property
+    def running(self) -> bool:
+        return self._server is not None and self._thread is not None and self._thread.is_alive()
+
     def serve(self) -> tuple[str,int]:
         if self._server is not None: raise RuntimeError('already running')
         gateway=self.gateway

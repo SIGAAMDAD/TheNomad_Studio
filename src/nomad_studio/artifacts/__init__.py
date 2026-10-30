@@ -1,3 +1,3 @@
-"""Verified binary and game-document artifact contracts (WG-K)."""
-from .api import build_component
-__all__ = ['build_component']
+"""R9 artifact validation and canonical artifact service."""
+from .runtime import ArtifactService
+__all__ = ['ArtifactService']

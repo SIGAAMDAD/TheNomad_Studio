@@ -1,34 +1,34 @@
-# R9 local raw-unit verification record — 2026-10-29
+# Nomad Studio R9 local verification — 2026-10-29
 
-Source authority: ten CAB-A..J submissions reconstructed on pinned local baseline
-`237ef363f4206df180b31f1ab8ff147916b9b3660f8f23756eeb31f733356d43`,
-then direct seam repairs and the unit campaign in this tree. This is **not** the
-remote GitHub `main` source, and its tree content must supersede the historical
-server baseline when the new PR is prepared.
+Source authority: R9 local-authoritative PR #34 head `7bd22971d0f49cc8c673b6ba693713ad64051fa1`,
+with in-place R9 repair and physical deletion of old V1 runtime modules/tests.
+No compatibility or migration layer was added. `CONTRACTS/initial_schema_v1.sql`
+and `CONTRACTS/runtime_ports_v1.py` are frozen *R9* contract resources.
 
-## Executed locally
+## Executed on the patch worktree
 
-- Exact source-presence / syntax / 56-table+owner-map gate: PASS.
-- Deterministic raw-unit sweep: 1,479 tests PASS and 67 subtests PASS; one
-  pre-existing pytest collection warning (nonfatal).
-- Newly added adversarial cases cover invalid command types; authentication
-  digest/proof binding; random DAGs and mutation; source leases and Windows
-  drive path injection; dependency and SQLite transaction behavior; and gate
-  false-green mutation probes.
-- Two code defects corrected from negative probes: unhashable command operation
-  no longer raises TypeError; workgraph path normalizer rejects drive roots.
-- Python syntax pass: 177 files in the first accepted raw-unit run.
-- Security literal scan: PASS (no matching credential literals).
-- Local wheel build with no build isolation: PASS.
+- R9 source contract / 56-table SQLite owner-map gate: PASS.
+- Python AST / bytecode compile pass: PASS.
+- Full retained R9 and oversight suite: **1,338 passed, 48 subtests passed**;
+  one pre-existing Pytest collection warning.
+- Included direct 22-port composition, real SQLite persistence, cross-CAB
+  ownership, idempotency, crash/recovery, second-owner lock, read-only doctor
+  with active writer, verified outbox ACK / UNKNOWN, no double dispatch, and
+  explicit no-old-module import tests.
+- Clean wheel built with installed `setuptools` using `--no-build-isolation`
+  because this execution environment has no internet for a build-isolated
+  dependency install; the GitHub workflow uses normal isolated wheel building.
+- Cold wheel install/entrypoint/56-table R9 schema: PASS.
+- Wheel inspection: no old V1 state, source, archive, knowledge, publication,
+  or artifact `build_component` modules.
+- No native provider, external TLS gateway acceptance, or independent QA
+  was represented as tested by the local suite.
 
-## Mandatory red gates
+## Remaining external verification
 
-- Full integrated runtime test: FAIL to collect because the current `app.py`
-  imports deleted V1 trust factory. The P2 R9 root implementation is outstanding.
-- Four original P1 TEST-STATE / TEST-FEATURE / TEST-FAULT / RELEASE-OPS
-  submissions were not supplied to this integration.
-- Trusted provider-native session continuation and host activation: NOT_RUN.
-- Independent P3 QA: NOT_RUN. PR exact-commit GitHub Actions: NOT_RUN until PR.
-- Live deploy, rollback and production pilot: NOT_RUN.
+- Exact new PR SHA remote CI: NOT_RUN on this *unpublished* patch until commit.
+- Verified native provider/host capability with external receipts: NOT_RUN.
+- Native TLS ingress, external effects and independent QA: NOT_RUN.
+- Deployment/production activation: NOT_RUN.
 
-A synthetic or model-supplied receipt cannot satisfy any of the red gates.
+Source-level tests and packaging cannot substitute for those external gates.

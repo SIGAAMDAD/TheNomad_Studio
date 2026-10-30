@@ -34,6 +34,17 @@ def main(argv: list[str] | None = None) -> int:
         env = dict(os.environ)
         env['PYTHONPATH'] = str(install)
         env['PYTHONDONTWRITEBYTECODE'] = '1'
+        # The read-only doctor must never initialize a database. Explicitly
+        # initialize it with the installed R9 application before inspection.
+        initialize = subprocess.run([sys.executable, '-c',
+            'from nomad_studio.app import open_studio; '
+            'r=open_studio(sqlite_path=' + repr(str(root/'private'/'studio.sqlite')) + ', '
+            'cas_path=' + repr(str(root/'private'/'cas')) + '); r.close()'],
+            cwd=root, capture_output=True, text=True, env=env, timeout=40, check=False)
+        if initialize.returncode:
+            print(json.dumps({'result':'FAIL','step':'COLD_INITIALIZE',
+                              'stderr_excerpt':initialize.stderr[:500]}))
+            return 1
         proc = subprocess.run([sys.executable, '-m', 'nomad_studio.app',
                                '--doctor', '--config', str(config)], cwd=root,
                               capture_output=True, text=True, env=env,
@@ -56,6 +67,19 @@ def main(argv: list[str] | None = None) -> int:
             cwd=root, env=env, capture_output=True, text=True, timeout=30, check=False)
         if check.returncode:
             print(json.dumps({'result':'FAIL','step':'PACKAGE_DATA','stderr_excerpt':check.stderr[:500]}))
+            return 1
+    import zipfile
+    with zipfile.ZipFile(wheel) as package:
+        names = set(package.namelist())
+        forbidden = ('nomad_studio/contracts/v1.py',
+                     'nomad_studio/state/store.py', 'nomad_studio/state/schema_v1.sql',
+                     'nomad_studio/state/api.py','nomad_studio/state/schema.py',
+                     'nomad_studio/source/','nomad_studio/archive/',
+                     'nomad_studio/knowledge/', 'nomad_studio/artifacts/api.py',
+                     'nomad_studio/publication/api.py')
+        legacy = [item for item in names if item.startswith(forbidden)]
+        if legacy:
+            print(json.dumps({'result':'FAIL','step':'LEGACY_PRESENT','paths':sorted(legacy)}))
             return 1
     print(json.dumps({'result':'PASS_LOCAL_WHEEL_ONLY','port_count':22,'native_acceptance':'NOT_VERIFIED'}, sort_keys=True))
     return 0

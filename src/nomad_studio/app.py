@@ -18,7 +18,7 @@ import threading
 import time
 
 from nomad_studio.contracts.runtime_ports_v1 import Result
-from nomad_studio.state.r9_authority import R9Authority, DurableOutbox
+from nomad_studio.state.r9_authority import R9Authority, DurableOutbox, inspect_database
 from nomad_studio.state.r9_cas import FileCAS, RecordCAS
 from nomad_studio.trust.evidence import ProviderEvidenceVerifier
 from nomad_studio.trust.api import IdentityService
@@ -44,6 +44,7 @@ from nomad_studio.production.repository.service import RepositoryService
 from nomad_studio.publication.runtime import EffectService
 from nomad_studio.production.quality.api import QualityService
 from nomad_studio.oversight.api import OversightNoticeService
+from nomad_studio.relay.dispatcher import OwnerCommandOutboxHandler
 
 PORT_NAMES = (
     'IdentityPort', 'BiblePort', 'AuthorityPort', 'ProjectPort', 'BriefPort',
@@ -62,7 +63,7 @@ _NATIVE_DEPENDENCIES = (
     'runner', 'quality_proofs', 'native_permission_reader',
     'context_source', 'adapter_registry', 'effect_provider',
     'effect_scope', 'effect_owner_auth', 'immutable_request_reader',
-    'oversight_assignment_reader', 'oversight_notice_sink',
+    'oversight_assignment_reader', 'oversight_notice_sink', 'native_event_delivery',
 )
 
 
@@ -115,6 +116,11 @@ class StudioRuntime:
     ingress: AuthenticatedIngress
     bound_native: Mapping[str, bool]
     closed: bool = False
+    owner_command_handler: Any = None
+    native_event_delivery: Any = None
+    gateway: Any = None
+    readiness: Any = None
+    provider_id: str | None = None
 
     def port(self, name: str) -> Any:
         if self.closed:
@@ -127,22 +133,121 @@ class StudioRuntime:
         unbound = sorted(name for name, present in self.bound_native.items() if not present)
         pending = self.state.outbox_rows('PENDING')
         unknown = self.state.outbox_rows('UNKNOWN')
-        # Wire configuration is not a native credential, observed host
-        # capability, TLS ingress, or independent provider proof.
-        return {'liveness': 'ALIVE', 'readiness': 'NOT_READY',
-                'readiness_reason': 'LIVE_PROVIDER_AND_TLS_ACCEPTANCE_NOT_VERIFIED',
-                'database': 'R9_FRESH_SCHEMA_VERIFIED',
-                'registered_port_count': len(self.services),
-                'missing_native_dependencies': unbound,
-                'pending_outbox_count': len(pending),
-                'unknown_external_count': len(unknown),
-                'recovered_unknown_count': self.state.recovered_unknown_count,
-                'fenced_lease_count': self.state.fenced_lease_count}
+        status = {'liveness': 'ALIVE', 'readiness': 'NOT_READY',
+                  'readiness_reason': 'LIVE_PROVIDER_AND_TLS_ACCEPTANCE_NOT_VERIFIED',
+                  'database': 'R9_FRESH_SCHEMA_VERIFIED',
+                  'registered_port_count': len(self.services),
+                  'missing_native_dependencies': unbound,
+                  'pending_outbox_count': len(pending),
+                  'unknown_external_count': len(unknown),
+                  'recovered_unknown_count': self.state.recovered_unknown_count,
+                  'fenced_lease_count': self.state.fenced_lease_count}
+        # Provider presence, configuration and local unit tests are not live proof.
+        # The existing CAB-H DeploymentReadiness must verify the native host,
+        # and the actual mTLS gateway must be running before declaring READY.
+        if not unbound and self.gateway is not None and self.readiness is not None and self.provider_id:
+            from nomad_studio.gateway.api import GatewayServer
+            if isinstance(self.gateway, GatewayServer) and self.gateway.running:
+                try:
+                    observation = self.readiness.check(self.provider_id)
+                    if (observation.status == 'OK' and observation.code == 'OK'
+                            and observation.record is not None
+                            and observation.record.get('ready') is True
+                            and isinstance(observation.receipt_ref, str)
+                            and observation.receipt_ref):
+                        status['readiness'] = 'READY'
+                        status.pop('readiness_reason')
+                except (OSError, TimeoutError, RuntimeError):
+                    pass
+        return status
+
+    def start_gateway(self, *, tls_context: Any,
+                      certificate_identities: Mapping[str, Mapping[str, str]],
+                      audit: Callable[[Mapping[str, Any]], None],
+                      host: str = '127.0.0.1', port: int = 8765) -> tuple[str, int]:
+        """Expose existing R9 mTLS ingress; certificates never grant owner rights."""
+        if self.closed or self.gateway is not None:
+            raise RuntimeError('runtime closed or gateway already started')
+        from nomad_studio.gateway.api import OwnerGateway, GatewayServer
+        gate = OwnerGateway(identity=self.services['IdentityPort'],
+                            commands=self.services['CommandPort'],
+                            certificate_identities=certificate_identities, audit=audit)
+        server = GatewayServer(gate, tls_context=tls_context, host=host, port=port)
+        address = server.serve()
+        self.gateway = server
+        return address
+
+    def run(self, stop: threading.Event, poll_seconds: float = 0.5) -> None:
+        """Process only verified R9 runtime work; never replay UNKNOWN effects."""
+        if not isinstance(stop, threading.Event) or not 0.05 <= poll_seconds <= 10:
+            raise ValueError('invalid runtime stop event/poll interval')
+        while not stop.is_set():
+            if self.health()['readiness'] != 'READY':
+                raise ProviderUnavailable('native readiness or authenticated mTLS ingress lost')
+            for item in self.state.outbox_rows('PENDING')[:64]:
+                result = self.dispatch_once(item['message_id'])
+                if result.status == 'NOT_VERIFIED':
+                    raise ProviderUnavailable('outbox native provider unavailable')
+            stop.wait(poll_seconds)
+
+    def dispatch_once(self, message_id: str) -> Result:
+        """One durable R9 outbox delivery; no replay of ambiguous effects.
+
+        Native event delivery and exact native receipt readback must be
+        installed before claiming. The CAB-J command handler reauthenticates
+        the owner on every attempt. Uncertain deliveries stay UNKNOWN.
+        """
+        if self.closed:
+            return Result('BLOCKED_LOCAL', 'LOCAL_RECOVERY_REQUIRED')
+        if not callable(self.outbox._readback):
+            return Result('NOT_VERIFIED', 'PROVIDER_NOT_VERIFIED')
+        rows = self.state.read(lambda tx: tx.fetch_all(
+            'SELECT * FROM v1_outbox WHERE message_id=? AND state=?',
+            (message_id, 'PENDING')))
+        if len(rows) != 1:
+            return Result('CONFLICT', 'REVISION_CONFLICT')
+        row = rows[0]
+        if row['domain'] == 'production.commands' and row['event_type'] == 'EXECUTE_OWNER_COMMAND':
+            sender = self.owner_command_handler.handle if self.owner_command_handler else None
+        elif row['domain'] == 'production.director' and row['event_type'] == 'FEATURE_RUN_TRANSITION':
+            sender = self.native_event_delivery
+        else:
+            return Result('REJECTED', 'INVALID_INPUT')
+        if not callable(sender):
+            return Result('NOT_VERIFIED', 'PROVIDER_NOT_VERIFIED')
+        import hashlib
+        body = row['payload_json']
+        if hashlib.sha256(body.encode('utf-8')).hexdigest() != row['payload_digest']:
+            return Result('BLOCKED_LOCAL', 'EVIDENCE_INVALID')
+        try:
+            envelope = json.loads(body)
+        except (ValueError, TypeError):
+            return Result('BLOCKED_LOCAL', 'EVIDENCE_INVALID')
+        if (not isinstance(envelope, dict) or envelope.get('domain') != row['domain']
+                or envelope.get('event_type') != row['event_type']):
+            return Result('BLOCKED_LOCAL', 'EVIDENCE_INVALID')
+        if not self.outbox.claim(message_id):
+            return Result('CONFLICT', 'REVISION_CONFLICT')
+        try:
+            result = sender(envelope)
+            if (not isinstance(result, Result) or result.status != 'OK'
+                    or result.code != 'OK' or not result.receipt_ref):
+                self.outbox.mark_unknown(message_id)
+                return Result('UNKNOWN_EXTERNAL', 'PROVIDER_UNKNOWN')
+            if self.outbox.acknowledge(message_id, provider_receipt_ref=result.receipt_ref):
+                return Result('OK', 'OK', {'message_id': message_id}, result.receipt_ref)
+        except (OSError, TimeoutError, RuntimeError, ValueError):
+            self.outbox.mark_unknown(message_id)
+        return Result('UNKNOWN_EXTERNAL', 'PROVIDER_UNKNOWN')
 
     def close(self) -> None:
         if not self.closed:
             self.closed = True
-            self.state.close()
+            try:
+                if self.gateway is not None:
+                    self.gateway.close()
+            finally:
+                self.state.close()
 
     def __enter__(self) -> 'StudioRuntime':
         if self.closed:
@@ -243,7 +348,12 @@ def open_studio(*, sqlite_path: str | Path, cas_path: str | Path | None = None,
         services = MappingProxyType(dict(zip(PORT_NAMES, instances, strict=True)))
         bound = MappingProxyType({name:injected.get(name) is not None for name in _NATIVE_DEPENDENCIES})
         return StudioRuntime(state, cas, services, outbox,
-                             AuthenticatedIngress(identity, commands), bound)
+                             AuthenticatedIngress(identity, commands), bound,
+                             owner_command_handler=OwnerCommandOutboxHandler(
+                                 command_port=commands, identity_port=identity),
+                             native_event_delivery=injected.get('native_event_delivery'),
+                             readiness=injected.get('deployment_readiness'),
+                             provider_id=injected.get('provider_id'))
     except BaseException:
         state.close()
         raise
@@ -270,6 +380,13 @@ def main(argv: list[str] | None = None) -> int:
         parser.error('an explicit --config or NOMAD_STUDIO_CONFIG is required')
     try:
         config = _config(Path(args.config))
+        if args.doctor:
+            status = inspect_database(config['sqlite_path'])
+            status['registered_port_count'] = len(PORT_NAMES)
+            status['readiness'] = 'NOT_READY'
+            status['readiness_reason'] = 'NATIVE_RUNTIME_NOT_OBSERVED'
+            print(json.dumps(status, sort_keys=True), flush=True)
+            return 2
         with open_studio(**config) as runtime:
             status = runtime.health()
             print(json.dumps(status, sort_keys=True), flush=True)
@@ -282,9 +399,7 @@ def main(argv: list[str] | None = None) -> int:
                 stop.set()
             signal.signal(signal.SIGTERM, terminate)
             signal.signal(signal.SIGINT, terminate)
-            while not stop.wait(1.0):
-                if runtime.health()['readiness'] != 'READY':
-                    return 2
+            runtime.run(stop)
             return 0
     except (ValueError, OSError, RuntimeError) as exc:
         print(json.dumps({'liveness':'STOPPED','readiness':'NOT_READY','reason':type(exc).__name__}), flush=True)

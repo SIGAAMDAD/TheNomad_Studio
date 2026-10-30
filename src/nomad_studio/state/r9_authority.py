@@ -18,6 +18,7 @@ import sqlite3
 import stat
 import threading
 import time
+from urllib.parse import quote
 
 SQL_SHA256 = 'f2a76f51fef851fe972500c906f31cde84bf63e446a4a149ab6ac08c9fe410f5'
 # The external contract fixes the owner manifest independently of package data.
@@ -531,3 +532,30 @@ class DurableOutbox:
             return bool(tx.execute("UPDATE v1_outbox SET state='ACKED' "
                 "WHERE message_id=? AND payload_digest=? AND state IN ('CLAIMED','UNKNOWN')",
                 (message_id, row['payload_digest'])).rowcount)
+
+
+def inspect_database(path: str | Path) -> dict[str, Any]:
+    """Read-only diagnosis. Never acquires the authority's exclusive writer lock.
+
+    This is a database inspection, not a process liveness or native provider
+    readiness proof. An absent/foreign database is never initialized here.
+    """
+    source = Path(path).absolute()
+    if not source.is_file() or source.is_symlink():
+        raise AuthorityError('R9 authority DB unavailable')
+    if os.name == 'posix' and stat.S_IMODE(source.stat().st_mode) & 0o077:
+        raise AuthorityError('SQLite DB permissions must be private')
+    uri = 'file:' + quote(str(source), safe='/') + '?mode=ro'
+    conn = sqlite3.connect(uri, uri=True, timeout=1.0)
+    try:
+        conn.execute('PRAGMA query_only=ON')
+        ddl, owners = _resources()
+        if not _objects(conn):
+            raise AuthorityError('R9 schema absent')
+        _verify_install(conn, ddl, owners)
+        counts = dict(conn.execute('SELECT state,COUNT(*) FROM v1_outbox GROUP BY state').fetchall())
+        return {'liveness':'NOT_OBSERVED', 'database':'R9_FRESH_SCHEMA_VERIFIED',
+                'pending_outbox_count':counts.get('PENDING',0),
+                'unknown_external_count':counts.get('UNKNOWN',0)}
+    finally:
+        conn.close()
