@@ -259,6 +259,9 @@ export interface dispatchTaskRequest {
 export interface dispatchTaskResponse {
   "task_id": string;
   "lease_generation": number;
+  "command_id": string;
+  "shift_id": string;
+  "delivery_state": "queued";
 }
 export interface enablePackRequest {
   "request_id": string;

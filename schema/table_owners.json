@@ -17,6 +17,8 @@
   "canon_snapshots": "WG-A",
   "checkpoints": "WG-I",
   "ci_runs": "WG-G",
+  "command_outbox": "WG-D",
+  "command_receipts": "WG-I",
   "decision_proposals": "WG-A",
   "deliberations": "WG-B",
   "departments": "WG-B",
@@ -55,6 +57,7 @@
   "reservations": "WG-F",
   "session_lineages": "WG-I",
   "sessions": "WG-I",
+  "shift_assignments": "WG-D",
   "source_revisions": "WG-G",
   "specialist_roles": "WG-B",
   "submission_artifacts": "WG-E",
@@ -64,5 +67,7 @@
   "tool_entrypoints": "WG-B",
   "tool_grants": "WG-B",
   "tool_operations": "WG-H",
-  "usage_receipts": "WG-F"
+  "usage_receipts": "WG-F",
+  "worker_conversations": "WG-I",
+  "worker_shifts": "WG-I"
 }

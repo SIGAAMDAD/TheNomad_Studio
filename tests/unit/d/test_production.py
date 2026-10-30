@@ -150,6 +150,15 @@ def fixture_db(db):
         db.execute('INSERT INTO source_revisions VALUES (?,?,?,?,?,?)', (project,'rev1','repo','sha','tree','canonical'))
         db.execute('INSERT INTO specialist_roles(role_id,role_revision,role_manifest_digest,state) VALUES (?,?,?,?)',
                    (f'role-{project}','1','roledigest','ready'))
+        db.execute('INSERT INTO relay_channels VALUES (?,?,?,?,?,?)',
+                   (project,'channel','repo','studio/comms',f'.nomad/relays/{project}',1))
+        for member in ('w1','w2'):
+            db.execute("""INSERT INTO worker_conversations(project_id,worker_id,principal_id,role_id,browser_chat_ref,state)
+                         VALUES (?,?,?,?,?,'registered')""",
+                       (project,member,'owner',f'role-{project}',f'chat-{project}-{member}'))
+            db.execute("""INSERT INTO worker_shifts(project_id,shift_id,worker_id,state,created_at,observed_at,hello_commit_sha,hello_digest)
+                         VALUES (?,?,?,'active','now','now',?,?)""",
+                       (project,f'shift-{project}-{member}',member,'a'*40,'b'*64))
         for cabal in (f'{project}-cabal', f'{project}-reserve'):
             db.execute('INSERT INTO cabals VALUES (?,?,?,?,?)', (project,cabal,cabal,'charter','active'))
             for member in ('w1', 'w2'):
@@ -409,6 +418,93 @@ class ProductionTests(unittest.TestCase):
         self.assertEqual(graph.critical_path({'a':3,'b':5,'c':2,'d':4}), (12,('a','b','d')))
         with self.assertRaises(GraphFault): TaskGraph({'a':frozenset({'b'}),'b':frozenset({'a'})})
         with self.assertRaises(GraphFault): TaskGraph({'a':frozenset({'missing'})})
+
+
+    def test_dispatch_persists_addressed_git_command_atomically(self):
+        from studio.workforce import command_id
+        task=self.plan(self.submit())[0]
+        result=self.svc.dispatchTask(self.actor,'p1',task,{'request_id':'dispatch','expected_revision':1,'worker_id':'w1'})
+        assert result['command_id']==command_id('p1',task,1,'shift-p1-w1')
+        assert result['shift_id']=='shift-p1-w1' and result['delivery_state']=='queued'
+        row=self.storage.db.execute('SELECT * FROM command_outbox WHERE project_id=? AND command_id=?',
+                                    ('p1',result['command_id'])).fetchone()
+        assert row is not None
+        assert hashlib.sha256(row['envelope_json'].encode()).hexdigest()==row['envelope_digest']
+        assert row['remote_path']==f'.nomad/relays/p1/mail/w1/{result["command_id"]}.json'
+        assert json.loads(row['envelope_json'])['shift_id']=='shift-p1-w1'
+        assert self.storage.db.execute('SELECT COUNT(*) FROM shift_assignments').fetchone()[0]==1
+        assert self.storage.db.execute('SELECT COUNT(*) FROM sessions').fetchone()[0]==0
+        assert self.svc.dispatchTask(self.actor,'p1',task,{'request_id':'dispatch','expected_revision':1,'worker_id':'w1'})==result
+        assert self.storage.db.execute('SELECT COUNT(*) FROM command_outbox').fetchone()[0]==1
+
+    def test_one_active_response_can_receive_two_separate_assignments(self):
+        inputs=brief(tasks=[{**brief()['tasks'][0],'key':'one','resources':{}},
+                             {**brief()['tasks'][0],'key':'two','resources':{}}])
+        one,two=self.plan(self.submit(inputs))
+        a=self.svc.dispatchTask(self.actor,'p1',one,{'request_id':'a','expected_revision':1,'worker_id':'w1'})
+        b=self.svc.dispatchTask(self.actor,'p1',two,{'request_id':'b','expected_revision':1,'worker_id':'w1'})
+        assert a['shift_id']==b['shift_id']=='shift-p1-w1'
+        assert a['command_id']!=b['command_id']
+        assert self.storage.db.execute('SELECT COUNT(*) FROM shift_assignments').fetchone()[0]==2
+        assert self.storage.db.execute("SELECT COUNT(*) FROM worker_shifts WHERE project_id='p1' AND worker_id='w1'").fetchone()[0]==1
+
+    def test_unobserved_shift_prevents_dispatch_and_reservations(self):
+        task=self.plan(self.submit())[0]
+        self.storage.db.execute("UPDATE worker_shifts SET state='interrupted' WHERE project_id='p1' AND worker_id='w1'")
+        self.assertFault('conflict', lambda:self.svc.dispatchTask(self.actor,'p1',task,
+                         {'request_id':'no-run','expected_revision':1,'worker_id':'w1'}))
+        assert self.storage.db.execute('SELECT COUNT(*) FROM leases').fetchone()[0]==0
+        assert self.storage.db.execute('SELECT COUNT(*) FROM command_outbox').fetchone()[0]==0
+        assert self.storage.db.execute('SELECT reserved_amount FROM budgets WHERE project_id=?',('p1',)).fetchone()[0]==0
+
+    def test_github_outbox_publication_reconciles_ambiguous_write(self):
+        from studio.workforce import Workforce
+        from types import SimpleNamespace
+        task=self.plan(self.submit())[0]
+        self.svc.dispatchTask(self.actor,'p1',task,{'request_id':'one','expected_revision':1,'worker_id':'w1'})
+        workflow=Workforce(self.storage,require_action=lambda *a: None)
+        class Remote:
+            def __init__(self):self.files={};self.publish_attempts=0
+            def observe_exact(self,path):return self.files.get(path)
+            def publish(self,path,body,*,expected_digest,effect_intent_recorded):
+                self.publish_attempts+=1
+                assert effect_intent_recorded
+                assert hashlib.sha256(body).hexdigest()==expected_digest
+                self.files[path]=SimpleNamespace(verified=True,path=path,body_sha256=expected_digest,
+                                                  commit_sha='c'*40,body=body)
+                raise OSError('simulated timeout after successful provider write')
+        remote=Remote()
+        assert workflow.publish_pending(self.actor,'p1',provider=remote)=={'published':0,'unknown':1,'rejected':0}
+        assert workflow.publish_pending(self.actor,'p1',provider=remote)=={'published':1,'unknown':0,'rejected':0}
+        assert remote.publish_attempts==1
+        assert self.storage.db.execute("SELECT state FROM command_outbox").fetchone()[0]=='published'
+        assert workflow.publish_pending(self.actor,'p1',provider=remote)=={'published':0,'unknown':0,'rejected':0}
+
+    def test_receipt_requires_verified_command_worker_and_shift(self):
+        from studio.workforce import Workforce,WorkforceFault
+        task=self.plan(self.submit())[0]
+        out=self.svc.dispatchTask(self.actor,'p1',task,{'request_id':'one','expected_revision':1,'worker_id':'w1'})
+        workflow=Workforce(self.storage,require_action=lambda *a: None)
+        class Remote:
+            def observe_exact(self,path):return None
+            def publish(self,path,body,*,expected_digest,effect_intent_recorded):
+                from types import SimpleNamespace
+                return SimpleNamespace(verified=True,path=path,body_sha256=expected_digest,
+                                       commit_sha='c'*40,body=body)
+        assert workflow.publish_pending(self.actor,'p1',provider=Remote())['published']==1
+        req={'request_id':'receipt','receipt_id':'r1','command_id':out['command_id'],
+             'worker_id':'w1','shift_id':out['shift_id'],'kind':'completed',
+             'result_digest':'b'*64,'receipt_commit_sha':'d'*40}
+        with self.assertRaises(WorkforceFault):workflow.observe_command_receipt(self.actor,'p1',req,verify=lambda _:False)
+        with self.assertRaises(WorkforceFault):workflow.observe_command_receipt(self.actor,'p1',dict(req,worker_id='w2'),verify=lambda _:True)
+        done=workflow.observe_command_receipt(self.actor,'p1',req,verify=lambda _:True)
+        assert done['state']=='completed'
+        assert self.storage.db.execute('SELECT COUNT(*) FROM command_receipts').fetchone()[0]==1
+        assert self.storage.db.execute('SELECT state FROM shift_assignments').fetchone()[0]=='submitted'
+        assert workflow.observe_command_receipt(self.actor,'p1',req,verify=lambda _:True)==done
+        finished=workflow.end_shift(self.actor,'p1',dict(request_id='end',shift_id=out['shift_id'],
+                  receipt_digest='e'*64,receipt_commit_sha='f'*40),verify=lambda _:True)
+        assert finished['state']=='finished'
 
 
 if __name__=='__main__': unittest.main()

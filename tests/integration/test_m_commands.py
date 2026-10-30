@@ -9,7 +9,7 @@ from studio.app.integration_commands import (Submission, IntegrationRecord, Inte
 from studio.app.projects import Actor
 from studio.app.verification import IndependentReceiptGate, RemoteTreeReadbackGate, QARecord
 
-PACKET=Path(__import__('os').environ.get('NOMAD_R5_PACKET', Path(__file__).resolve().parents[2]))
+PACKET=Path(__import__('os').environ.get('STUDIO_CONTRIBUTION_PLAN', Path(__file__).resolve().parents[2] / 'tests/fixtures/source_contributions'))
 ACTOR=Actor('operator','cockpit',frozenset({'P'}),'trusted')
 
 class State:

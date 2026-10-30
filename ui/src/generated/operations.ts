@@ -1145,7 +1145,10 @@ export const operations: Record<StudioOperationId, OperationMeta> = {
       "type": "object",
       "required": [
         "task_id",
-        "lease_generation"
+        "lease_generation",
+        "command_id",
+        "shift_id",
+        "delivery_state"
       ],
       "properties": {
         "task_id": {
@@ -1153,6 +1156,18 @@ export const operations: Record<StudioOperationId, OperationMeta> = {
         },
         "lease_generation": {
           "type": "integer"
+        },
+        "command_id": {
+          "type": "string"
+        },
+        "shift_id": {
+          "type": "string"
+        },
+        "delivery_state": {
+          "type": "string",
+          "enum": [
+            "queued"
+          ]
         }
       }
     }

@@ -6,7 +6,7 @@ export const sections = {
   'Canon & bibles': ['getCanon', 'listBibles', 'createBible', 'stageBible', 'diffBible', 'publishBible', 'listDecisions', 'requestDecision', 'resolveDecision'],
   'Organization': ['listCabals', 'createCabal', 'staffCabal', 'listDepartments', 'listRoles', 'importRoles', 'listDeliberations', 'createDeliberation'],
   'Work planning': ['listFeatures', 'submitFeature', 'planFeature', 'listTasks', 'assignTask', 'dispatchTask', 'cancelTask'],
-  'Browser sessions': ['listWorkers', 'startWorker', 'resumeWorker', 'cancelWorker', 'sendRelay', 'ackRelay'],
+  'Worker shifts': ['listWorkers', 'startWorker', 'resumeWorker', 'cancelWorker', 'sendRelay', 'ackRelay'],
   'QA & oversight': ['listReviews', 'requestReview', 'submitReview', 'listOversightCases', 'openOversightCase', 'resolveOversightCase'],
   'Source & releases': ['listArtifacts', 'getArtifact', 'runBuild', 'stageIntegration', 'inspectIntegration', 'promoteIntegration', 'prepareRelease', 'listReleases', 'publishRelease', 'attachConnector'],
   'Operations': ['getBudgets', 'configureBudget', 'listNotifications', 'ackNotification', 'listReports', 'requestReport', 'listEvents', 'observeEffect', 'reconcileEffect', 'requestRestore', 'observeRecovery'],

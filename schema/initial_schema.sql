@@ -1,4 +1,4 @@
--- NEW Studio v1 schema, from empty database. Never a migration of an earlier Studio.
+-- Initial greenfield Studio schema, from empty database. No historical migration.
 -- Production Python driver: APSW only. The validation script uses stdlib sqlite3 for offline SQL proof.
 PRAGMA foreign_keys=ON;
 PRAGMA journal_mode=WAL;
@@ -35,6 +35,62 @@ CREATE TABLE features(project_id TEXT NOT NULL,feature_id TEXT NOT NULL,brief_di
 CREATE TABLE tasks(project_id TEXT NOT NULL,task_id TEXT NOT NULL,feature_id TEXT NOT NULL,cabal_id TEXT NOT NULL,snapshot_id TEXT NOT NULL,role_id TEXT,acceptance_digest TEXT NOT NULL,priority INTEGER NOT NULL DEFAULT 0,revision INTEGER NOT NULL DEFAULT 1 CHECK(revision>0),state TEXT NOT NULL CHECK(state IN ('pending','ready','leased','running','submitted','review','accepted','failed','blocked','canceled')),PRIMARY KEY(project_id,task_id),FOREIGN KEY(project_id,feature_id,snapshot_id) REFERENCES features(project_id,feature_id,snapshot_id),FOREIGN KEY(project_id,cabal_id) REFERENCES cabals(project_id,cabal_id),FOREIGN KEY(project_id,snapshot_id) REFERENCES canon_snapshots(project_id,snapshot_id),FOREIGN KEY(role_id) REFERENCES specialist_roles(role_id)) STRICT;
 CREATE TABLE task_dependencies(project_id TEXT NOT NULL,task_id TEXT NOT NULL,depends_on_task_id TEXT NOT NULL,PRIMARY KEY(project_id,task_id,depends_on_task_id),CHECK(task_id<>depends_on_task_id),FOREIGN KEY(project_id,task_id) REFERENCES tasks(project_id,task_id),FOREIGN KEY(project_id,depends_on_task_id) REFERENCES tasks(project_id,task_id)) STRICT;
 CREATE TABLE leases(project_id TEXT NOT NULL,task_id TEXT NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),worker_id TEXT NOT NULL,expires_at TEXT NOT NULL,status TEXT NOT NULL CHECK(status IN ('active','expired','released')),PRIMARY KEY(project_id,task_id,generation),FOREIGN KEY(project_id,task_id) REFERENCES tasks(project_id,task_id)) STRICT;
+-- Stable browser conversation / response-shift identities. A lease belongs to an assignment,
+-- never to the durable conversation. A prepared shift is not presumed executing.
+CREATE TABLE worker_conversations(
+ project_id TEXT NOT NULL,worker_id TEXT NOT NULL,principal_id TEXT NOT NULL,
+ role_id TEXT NOT NULL,browser_chat_ref TEXT NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('registered','disabled','retired')),
+ PRIMARY KEY(project_id,worker_id),UNIQUE(project_id,browser_chat_ref),
+ FOREIGN KEY(project_id) REFERENCES projects(project_id),
+ FOREIGN KEY(principal_id) REFERENCES principals(principal_id),
+ FOREIGN KEY(role_id) REFERENCES specialist_roles(role_id)) STRICT;
+CREATE TABLE worker_shifts(
+ project_id TEXT NOT NULL,shift_id TEXT NOT NULL,worker_id TEXT NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('awaiting_hello','active','stopping','finished','interrupted','unknown')),
+ created_at TEXT NOT NULL,observed_at TEXT,hello_commit_sha TEXT,hello_digest TEXT,
+ finished_at TEXT,final_commit_sha TEXT,final_digest TEXT,
+ PRIMARY KEY(project_id,shift_id),UNIQUE(project_id,shift_id,worker_id),
+ FOREIGN KEY(project_id,worker_id) REFERENCES worker_conversations(project_id,worker_id),
+ CHECK((state <> 'active') OR (hello_commit_sha IS NOT NULL AND hello_digest IS NOT NULL))) STRICT;
+CREATE UNIQUE INDEX one_open_shift_per_worker ON worker_shifts(project_id,worker_id)
+ WHERE state IN ('awaiting_hello','active','stopping');
+CREATE TABLE shift_assignments(
+ project_id TEXT NOT NULL,assignment_id TEXT NOT NULL,shift_id TEXT NOT NULL,worker_id TEXT NOT NULL,
+ task_id TEXT NOT NULL,lease_generation INTEGER NOT NULL CHECK(lease_generation>0),
+ state TEXT NOT NULL CHECK(state IN ('assigned','observed','submitted','accepted','failed','canceled')),
+ PRIMARY KEY(project_id,assignment_id),UNIQUE(project_id,task_id,lease_generation),
+ FOREIGN KEY(project_id,shift_id,worker_id) REFERENCES worker_shifts(project_id,shift_id,worker_id),
+ FOREIGN KEY(project_id,task_id,lease_generation) REFERENCES leases(project_id,task_id,generation)) STRICT;
+CREATE TABLE command_outbox(
+ project_id TEXT NOT NULL,command_id TEXT NOT NULL,worker_id TEXT NOT NULL,shift_id TEXT NOT NULL,
+ assignment_id TEXT NOT NULL,kind TEXT NOT NULL CHECK(kind IN ('ASSIGN','STOP')),
+ envelope_digest TEXT NOT NULL,envelope_json TEXT NOT NULL,remote_path TEXT NOT NULL,
+ remote_commit_sha TEXT,created_at TEXT NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('queued','published','unknown','observed','completed','canceled')),
+ PRIMARY KEY(project_id,command_id),UNIQUE(project_id,remote_path),
+ FOREIGN KEY(project_id,shift_id,worker_id) REFERENCES worker_shifts(project_id,shift_id,worker_id),
+ FOREIGN KEY(project_id,assignment_id) REFERENCES shift_assignments(project_id,assignment_id),
+ CHECK(state NOT IN ('published','observed','completed') OR remote_commit_sha IS NOT NULL)) STRICT;
+CREATE TABLE command_receipts(
+ project_id TEXT NOT NULL,receipt_id TEXT NOT NULL,command_id TEXT NOT NULL,
+ worker_id TEXT NOT NULL,shift_id TEXT NOT NULL,kind TEXT NOT NULL,
+ result_digest TEXT NOT NULL,remote_commit_sha TEXT NOT NULL,
+ observed_at TEXT NOT NULL,PRIMARY KEY(project_id,receipt_id),
+ FOREIGN KEY(project_id,command_id) REFERENCES command_outbox(project_id,command_id),
+ FOREIGN KEY(project_id,shift_id,worker_id) REFERENCES worker_shifts(project_id,shift_id,worker_id)) STRICT;
+CREATE INDEX idx_command_outbox_ready ON command_outbox(project_id,state,created_at);
+CREATE TRIGGER command_envelope_immutable BEFORE UPDATE OF
+ project_id,command_id,worker_id,shift_id,assignment_id,kind,envelope_digest,envelope_json,remote_path,created_at ON command_outbox
+ BEGIN SELECT RAISE(ABORT,'command envelope immutable'); END;
+CREATE TRIGGER command_receipt_matches_shift BEFORE INSERT ON command_receipts
+ BEGIN SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM command_outbox c WHERE c.project_id=NEW.project_id
+ AND c.command_id=NEW.command_id AND c.worker_id=NEW.worker_id AND c.shift_id=NEW.shift_id
+ AND c.state IN ('published','observed','completed')) THEN RAISE(ABORT,'receipt not bound to published command') END; END;
+CREATE TRIGGER shift_assignment_matches_lease BEFORE INSERT ON shift_assignments
+ BEGIN SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM leases l WHERE l.project_id=NEW.project_id
+ AND l.task_id=NEW.task_id AND l.generation=NEW.lease_generation AND l.worker_id=NEW.worker_id)
+ THEN RAISE(ABORT,'shift assignment worker differs from lease') END; END;
 CREATE TABLE sessions(project_id TEXT NOT NULL,session_id TEXT NOT NULL,author_principal_id TEXT NOT NULL,task_id TEXT NOT NULL,lease_generation INTEGER NOT NULL,session_mode TEXT NOT NULL DEFAULT 'manual_chatgpt_browser' CHECK(session_mode='manual_chatgpt_browser'),browser_chat_ref TEXT,package_digest TEXT NOT NULL,snapshot_id TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN ('prepared','awaiting_manual_start','active_observed','quiet','stop_requested','completed_verified','failed_verified','unknown')),PRIMARY KEY(project_id,session_id),FOREIGN KEY(project_id,task_id,lease_generation) REFERENCES leases(project_id,task_id,generation),FOREIGN KEY(author_principal_id) REFERENCES principals(principal_id),FOREIGN KEY(project_id,snapshot_id) REFERENCES canon_snapshots(project_id,snapshot_id),FOREIGN KEY(package_digest) REFERENCES package_revisions(package_digest)) STRICT;
 CREATE TABLE checkpoints(project_id TEXT NOT NULL,checkpoint_id TEXT NOT NULL,session_id TEXT NOT NULL,context_digest TEXT NOT NULL,relay_cursor TEXT,recorded_at TEXT NOT NULL,PRIMARY KEY(project_id,checkpoint_id),FOREIGN KEY(project_id,session_id) REFERENCES sessions(project_id,session_id)) STRICT;
 CREATE TABLE relay_messages(

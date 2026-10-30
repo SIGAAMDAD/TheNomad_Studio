@@ -11,7 +11,7 @@ import pytest
 from studio.app.errors import StudioError
 from studio.app.intake import Roster, GROUPS, digest, normalized
 
-PACKET = Path(__import__('os').environ.get('NOMAD_R5_PACKET', Path(__file__).resolve().parents[3]))
+PACKET = Path(__import__('os').environ.get('STUDIO_CONTRIBUTION_PLAN', Path(__file__).resolve().parents[3] / 'tests/fixtures/source_contributions'))
 
 
 def roster() -> Roster:
@@ -42,11 +42,11 @@ def validate(r, tmp_path, metadata, archive_content):
     return r.verify_handoff(z, metadata)
 
 
-def test_r5_frozen_baseline_is_exact():
+def test_contribution_ownership_is_explicit():
     r = roster()
     assert len(r.paths) == 13
     assert set(r.paths) == set(GROUPS)
-    assert r.plan_sha256 == '8d68e255008369a299c66ca1a0c253e60faecb2ef46415ad09cbb9b38b41d09b'
+    assert r.plan_sha256 == digest((PACKET / 'plan.json').read_bytes())
 
 
 def test_real_intake_allows_owned_source(tmp_path):
@@ -69,7 +69,7 @@ def test_reject_path_traversal(tmp_path, badpath):
 
 @pytest.mark.parametrize('forbidden', ['src/studio/governance/pwn.py',
                                        'src/studio/app_evil/sneak.py',
-                                       'tests/unit/l/pwn.py', 'CONTRACTS/openapi.json'])
+                                       'tests/unit/l/pwn.py', 'src/studio/api/server.py'])
 def test_reject_foreign_worker_source(tmp_path, forbidden):
     r = roster()
     with pytest.raises(StudioError) as e:

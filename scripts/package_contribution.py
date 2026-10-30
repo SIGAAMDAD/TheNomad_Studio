@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproducible changed-owned-files-only WG-M handoff with SHA-256 manifest."""
+"""Reproducible, scoped source contribution with SHA-256 manifest."""
 from __future__ import annotations
 
 import argparse

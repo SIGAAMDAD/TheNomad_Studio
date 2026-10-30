@@ -12,6 +12,7 @@ import json
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Mapping
 
+from studio.workforce import canonical, command_id, digest as command_digest
 from .graph import GraphFault, TaskGraph
 from .models import FeatureBrief, PreparedAssignment, TaskSpec
 from .ports import (AdvisoryStopPort, AtomicResourceReservations, Authorization,
@@ -350,9 +351,19 @@ class ProductionService:
             if tx.one('''SELECT 1 FROM leases WHERE project_id=? AND task_id=?
                          AND status='active' AND expires_at>? LIMIT 1''', (project_id, task_id, now_str)):
                 raise ProductionFault('conflict', 'task already actively leased')
-            if tx.one('''SELECT 1 FROM leases WHERE project_id=? AND worker_id=?
-                         AND status='active' AND expires_at>? LIMIT 1''', (project_id, worker, now_str)):
-                raise ProductionFault('conflict', 'worker already has active lease')
+
+            # The existing browser conversation is durable; one active response
+            # can take successive leases without task-specific chat recreation.
+            shift = tx.one('''SELECT s.shift_id FROM worker_shifts s JOIN worker_conversations w
+                  ON w.project_id=s.project_id AND w.worker_id=s.worker_id
+                  WHERE s.project_id=? AND s.worker_id=? AND s.state='active'
+                  AND w.state='registered' LIMIT 1''',(project_id,worker))
+            if shift is None:
+                raise ProductionFault('conflict', 'no observed active shift for worker')
+            channel = tx.one('''SELECT root_path FROM relay_channels
+                  WHERE project_id=? AND enabled=1 ORDER BY channel_id LIMIT 1''',(project_id,))
+            if channel is None:
+                raise ProductionFault('capability_unavailable','no enabled GitHub relay channel')
             capacity = tx.one('SELECT COUNT(*) AS n FROM cabal_members WHERE project_id=? AND cabal_id=? AND role_id=?',
                               (project_id, task['cabal_id'], task['role_id']))['n']
             active = tx.one('''SELECT COUNT(*) AS n FROM leases l JOIN tasks t
@@ -380,11 +391,33 @@ class ProductionService:
             if tx.change('UPDATE tasks SET state=?,revision=revision+1 WHERE project_id=? AND task_id=? AND revision=? AND state=?',
                          ('leased', project_id, task_id, expected, 'ready')) != 1:
                 raise ProductionFault('stale_revision', 'concurrent dispatch')
+            assignment_id = _digest('assignment',project_id,task_id,gen,shift['shift_id'])
+            command = command_id(project_id, task_id, gen, shift['shift_id'])
+            envelope = {
+                'project_id':project_id,'worker_id':worker,'shift_id':shift['shift_id'],
+                'assignment_id':assignment_id,'command_id':command,'kind':'ASSIGN',
+                'payload_digest':task['acceptance_digest'],
+                'source_revision':str(feature['source_revision_id']),
+            }
+            # This queue entry is committed atomically with the lease and
+            # reservation. GitHub publication occurs in an independent readback-
+            # checked worker; a queued command never constitutes browser execution.
+            body = canonical(envelope).decode('utf-8')
+            path = f"{channel['root_path']}/mail/{worker}/{command}.json"
+            tx.change('''INSERT INTO shift_assignments(project_id,assignment_id,shift_id,worker_id,
+                         task_id,lease_generation,state) VALUES (?,?,?,?,?,?,'assigned')''',
+                      (project_id,assignment_id,shift['shift_id'],worker,task_id,gen))
+            tx.change('''INSERT INTO command_outbox(project_id,command_id,worker_id,shift_id,assignment_id,
+                         kind,envelope_digest,envelope_json,remote_path,created_at,state)
+                         VALUES (?,?,?,?,?,'ASSIGN',?,?,?,?,'queued')''',
+                      (project_id,command,worker,shift['shift_id'],assignment_id,
+                       command_digest(envelope),body,path,now_str))
             # Preserve frozen feature state machine, with no inferred acceptance.
             if feature['state'] in ('planned','blocked'):
                 tx.change("UPDATE features SET state='running',revision=revision+1 WHERE project_id=? AND feature_id=? AND state IN ('planned','blocked')",
                           (project_id, task['feature_id']))
-            return {'task_id': task_id, 'lease_generation': gen}
+            return {'task_id': task_id, 'lease_generation': gen, 'command_id': command,
+                    'shift_id': shift['shift_id'], 'delivery_state': 'queued'}
 
         return self.storage.command(project_id, 'D.dispatchTask', rid, body_hash, commit)
 

@@ -559,7 +559,10 @@
       },
       "response_fields": {
         "task_id": "string",
-        "lease_generation": "integer"
+        "lease_generation": "integer",
+        "command_id": "string",
+        "shift_id": "string",
+        "delivery_state": "string"
       }
     },
     {

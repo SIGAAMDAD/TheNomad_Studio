@@ -54,6 +54,7 @@ class ShiftInbox:
     transport: ShiftTransport
     cursor: str | None = None
     processed: set[str] = field(default_factory=set)
+    fingerprints: dict[str, str] = field(default_factory=dict)
     stopping: bool = False
 
     def poll(self) -> list[ShiftCommand]:
@@ -62,16 +63,23 @@ class ShiftInbox:
         batch = self.transport.read_messages(project_id=self.project_id,
                                             worker_id=self.worker_id, after=self.cursor)
         unseen: list[ShiftCommand] = []
-        seen_in_batch: set[str] = set()
+        seen_in_batch: dict[str, str] = {}
         for record in batch:
             cmd = ShiftCommand.parse(record)
             if (cmd.project_id,cmd.worker_id,cmd.shift_id) != (self.project_id,self.worker_id,self.shift_id):
                 raise ShiftProtocolError("message is not addressed to active worker shift")
             if cmd.source_revision != self.source_revision:
                 raise ShiftProtocolError("stale or foreign source revision")
+            fingerprint = sha256(json.dumps(dict(record), sort_keys=True,
+                              separators=(',', ':')).encode('utf-8')).hexdigest()
+            if cmd.command_id in seen_in_batch and seen_in_batch[cmd.command_id] != fingerprint:
+                raise ShiftProtocolError('duplicate command ID has divergent immutable envelope')
+            if cmd.command_id in self.fingerprints and self.fingerprints[cmd.command_id] != fingerprint:
+                raise ShiftProtocolError('previously received command bytes have changed')
             if cmd.command_id in seen_in_batch:
                 continue
-            seen_in_batch.add(cmd.command_id)
+            seen_in_batch[cmd.command_id] = fingerprint
+            self.fingerprints[cmd.command_id] = fingerprint
             if cmd.command_id not in self.processed:
                 unseen.append(cmd)
         return unseen
@@ -94,7 +102,8 @@ class ShiftInbox:
         self.cursor=command.command_id
         self.transport.checkpoint(project_id=self.project_id, worker_id=self.worker_id,
                                   shift_id=self.shift_id, cursor=self.cursor,
-                                  processed=tuple(sorted(self.processed)))
+                                  processed=tuple(sorted(self.processed)),
+                                  fingerprints=dict(sorted(self.fingerprints.items())))
         if command.kind == 'STOP' and status == 'stopped':
             self.stopping=True
         return evidence

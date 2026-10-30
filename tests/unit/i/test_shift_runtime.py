@@ -50,3 +50,16 @@ def test_receipt_unverified_keeps_pending():
     inbox=ShiftInbox('p','w','s','sha1',relay)
     with pytest.raises(ShiftProtocolError):inbox.record_result(inbox.poll()[0],result={},status='completed')
     assert not inbox.processed
+
+def test_duplicate_command_with_different_content_is_rejected():
+    relay=Relay();relay.messages=[msg(1),msg(1,payload_digest='b'*64)]
+    with pytest.raises(ShiftProtocolError, match='divergent'):
+        ShiftInbox('p','w','s','sha1',relay).poll()
+
+def test_command_mutation_after_checkpoint_is_rejected():
+    relay=Relay();relay.messages=[msg(1)]
+    inbox=ShiftInbox('p','w','s','sha1',relay)
+    inbox.record_result(inbox.poll()[0],result={'ok':True},status='completed')
+    relay.messages=[msg(1,payload_digest='b'*64)]
+    with pytest.raises(ShiftProtocolError, match='changed'):
+        inbox.poll()

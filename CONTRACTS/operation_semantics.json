@@ -414,10 +414,12 @@
       "records": [
         "tasks",
         "leases",
-        "reservations"
+        "reservations",
+        "shift_assignments",
+        "command_outbox"
       ],
       "required_auth": "project",
-      "success_postcondition": "Prepare claim and GitHub inbox assignment; operator manually starts the ChatGPT browser session using pinned prompt.",
+      "success_postcondition": "Atomically persist lease, reservation and addressed GitHub command outbox for the observed active worker shift. Never auto-create a ChatGPT browser conversation.",
       "transaction_owner": "D"
     },
     {
@@ -434,7 +436,7 @@
         "checkpoints"
       ],
       "required_auth": "project",
-      "success_postcondition": "Prepare a manual ChatGPT browser session assignment and pinned launch context. Record awaiting_manual_start. Return enrollment/session_id and launch artifact; never invoke any model API or create a browser chat.",
+      "success_postcondition": "Enroll an existing human-created ChatGPT browser conversation and optionally prepare a new response shift without binding its identity to a task; never invoke an AI API.",
       "transaction_owner": "I"
     },
     {

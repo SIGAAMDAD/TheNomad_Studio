@@ -1,0 +1,92 @@
+{
+  "authoring_waves": 1,
+  "extra_workgroup_git_branches": 0,
+  "groups": [
+    {
+      "id": "A",
+      "source_paths": [
+        "src/studio/governance/**"
+      ]
+    },
+    {
+      "id": "B",
+      "source_paths": [
+        "src/studio/organization/**"
+      ]
+    },
+    {
+      "id": "C",
+      "source_paths": [
+        "src/studio/storage/**",
+        "schema/**"
+      ]
+    },
+    {
+      "id": "D",
+      "source_paths": [
+        "src/studio/production/**"
+      ]
+    },
+    {
+      "id": "E",
+      "source_paths": [
+        "src/studio/assurance/**"
+      ]
+    },
+    {
+      "id": "F",
+      "source_paths": [
+        "src/studio/operations/**"
+      ]
+    },
+    {
+      "id": "G",
+      "source_paths": [
+        "src/studio/integrations/**"
+      ]
+    },
+    {
+      "id": "H",
+      "source_paths": [
+        "host/**"
+      ]
+    },
+    {
+      "id": "I",
+      "source_paths": [
+        "src/studio/agents/**",
+        "src/studio/workforce.py"
+      ]
+    },
+    {
+      "id": "J",
+      "source_paths": [
+        "src/studio/api/**"
+      ]
+    },
+    {
+      "id": "K",
+      "source_paths": [
+        "ui/**"
+      ]
+    },
+    {
+      "id": "L",
+      "source_paths": [
+        "qa/**"
+      ]
+    },
+    {
+      "id": "M",
+      "source_paths": [
+        "src/studio/app/**",
+        "scripts/**",
+        "CONTRACTS/**",
+        "deploy/**",
+        ".github/**"
+      ]
+    }
+  ],
+  "integration_tree_count": 1,
+  "workers": 13
+}

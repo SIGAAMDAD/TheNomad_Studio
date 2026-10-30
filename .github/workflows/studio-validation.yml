@@ -1,4 +1,4 @@
-name: R5R Studio cross-component verification
+name: Studio cross-component verification
 on:
   pull_request:
     paths:
@@ -8,12 +8,12 @@ on:
       - 'CONTRACTS/**'
       - 'ui/**'
       - 'host/**'
-      - '.github/workflows/r5r-studio-validation.yml'
+      - '.github/workflows/studio-validation.yml'
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: r5r-verify-${{ github.ref }}
+  group: studio-verify-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   python-reference:
@@ -21,17 +21,15 @@ jobs:
     timeout-minutes: 15
     env:
       PYTHONPATH: src
-      R5_SCHEMA_PATH: ${{ github.workspace }}/schema/initial_schema.sql
-      R5_CONTRACT_DIR: ${{ github.workspace }}/CONTRACTS
-      R5_FROZEN_CONTRACTS: ${{ github.workspace }}/CONTRACTS
-      NOMAD_R5_PACKET: ${{ github.workspace }}/CONTRACTS
+      STUDIO_SCHEMA_PATH: ${{ github.workspace }}/schema/initial_schema.sql
+      STUDIO_CONTRACT_DIR: ${{ github.workspace }}/CONTRACTS
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: pip
-      - run: python -m pip install -e '.[dev]'
+      - run: python -m pip install -e '.[dev,coordinator]'
       - name: Reference and integrated python checks
         run: python -m pytest -q tests/unit tests/integration tests/acceptance --ignore=tests/unit/h/test_contract_static.py
   typescript:

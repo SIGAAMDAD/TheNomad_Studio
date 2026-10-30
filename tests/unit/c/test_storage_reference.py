@@ -96,9 +96,9 @@ class TestStorageOracle(unittest.TestCase):
     def tx(self, binding, project="p1", req="test", who=None):
         return self.store.begin(actor=actor((project,)), project_id=project, request_id=req, domain_owner=binding)
 
-    def test_schema_digest_frozen_66_tables(self):
+    def test_schema_digest_and_table_ownership(self):
         self.assertEqual(hashlib.sha256(schema_bytes()).hexdigest(), (SCHEMA_DIR/"schema.sha256").read_text().split()[0])
-        self.assertEqual(len(table_owners()), 66)
+        self.assertEqual(len(table_owners()), len({r[0] for r in self.store._conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")}))
         self.assertEqual(self.store._conn.execute("PRAGMA foreign_keys").fetchone(), (1,))
         self.assertEqual(self.store._conn.execute("PRAGMA integrity_check").fetchone(), ("ok",))
         self.assertGreater(self.store._conn.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='trigger'").fetchone()[0], 50)

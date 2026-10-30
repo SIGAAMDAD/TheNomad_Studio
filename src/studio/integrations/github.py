@@ -186,9 +186,24 @@ class GitHub:
             session, file_id = rel[1], rel[2]
             if not file_id.endswith(".json"):
                 raise IntegrationError("invalid", "invalid mail suffix")
-            obj, _ = validate_relay(body, project_id=self.channel.project_id, recipient=identifier(session))
-            if file_id != obj["message_id"] + ".json":
-                raise IntegrationError("invalid", "message/path ID mismatch")
+            # A durable assignment addresses the persistent conversation and
+            # the currently observed shift; it is not a new browser session.
+            from .common import parse_canonical
+            raw = parse_canonical(body)
+            if "worker_id" in raw:
+                from studio.agents.shift_runtime import ShiftCommand, ShiftProtocolError
+                try:
+                    cmd = ShiftCommand.parse(raw)
+                except ShiftProtocolError as exc:
+                    raise IntegrationError("invalid", str(exc)) from exc
+                if (cmd.project_id != self.channel.project_id or
+                        cmd.worker_id != identifier(session) or
+                        file_id != cmd.command_id + ".json"):
+                    raise IntegrationError("forbidden", "worker shift command misaddressed")
+            else:
+                obj, _ = validate_relay(body, project_id=self.channel.project_id, recipient=identifier(session))
+                if file_id != obj["message_id"] + ".json":
+                    raise IntegrationError("invalid", "message/path ID mismatch")
         elif len(rel) == 4 and rel[0] == "receipts":
             if not rel[-1].endswith(".json"):
                 raise IntegrationError("invalid", "invalid receipt suffix")

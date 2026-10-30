@@ -10,7 +10,7 @@ through the established GitHub communications branch.
   account-scoped optional resources. `src/studio/operations/capacity.py`
   rejects unknown, stale, expired, wrong-account and insufficient credits.
   It is a prerequisite, **not** a budget reservation or a purchase approval.
-- The `.github/workflows/r5r-studio-validation.yml` workflow performs bounded
+- The `.github/workflows/studio-validation.yml` workflow performs bounded
   Python, TypeScript and .NET verification. It does not infer browser activity.
 - `.devcontainer/devcontainer.json` is a disposable Codespaces development
   environment; it must never store canonical SQLite state or be an always-on
