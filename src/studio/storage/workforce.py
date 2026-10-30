@@ -63,10 +63,17 @@ class WorkforceTransaction:
             return []
         return [dict(zip(columns, row)) for row in cursor]
 
+    def _total_changes(self) -> int:
+        # sqlite3 exposes an integer property; APSW exposes a method.
+        current = getattr(self._connection, 'total_changes', None)
+        if current is None:
+            current = self._connection.totalchanges
+        return current() if callable(current) else current
+
     def change(self, sql: str, params: tuple = ()) -> int:
-        before = self._connection.total_changes if hasattr(self._connection, 'total_changes') else self._connection.totalchanges()
+        before = self._total_changes()
         self._connection.execute(sql, params)
-        after = self._connection.total_changes if hasattr(self._connection, 'total_changes') else self._connection.totalchanges()
+        after = self._total_changes()
         return after - before
 
 
