@@ -29,6 +29,15 @@ class StudioComposition:
     integrations: IntegrationService | None = None
     operator_service: StudioOperatorService | None = None
 
+    # All M mutations use their own C-backed atomic state ports. J must not
+    # open an unrelated outer transaction around project, release, recovery or
+    # canonical integration commands; in particular, publication is an
+    # independently journaled remote effect after its state intent.
+    atomic_operations = frozenset({
+        'createProject', 'configureProject', 'prepareRelease', 'publishRelease',
+        'requestRestore', 'stageIntegration', 'promoteIntegration',
+    })
+
     @property
     def operation_ids(self) -> tuple[str, ...]:
         return (
