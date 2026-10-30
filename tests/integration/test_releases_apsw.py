@@ -27,6 +27,8 @@ def test_release_requires_exact_artifacts_and_durable_replay(tmp_path):
         _fixture(c)
         for blob in ("artifact-content","artifact-manifest"):
             c.execute("INSERT INTO blobs VALUES (?,?,?,?)",(blob,3,"store/"+blob,"verified"))
+        c.execute("INSERT INTO project_blobs VALUES('p1','artifact-content','artifact-content')")
+        c.execute("INSERT INTO project_blobs VALUES('p1','artifact-manifest','artifact-manifest')")
         c.execute("INSERT INTO artifacts(project_id,artifact_id,kind,content_digest,manifest_digest,"
                   "source_revision_id,snapshot_id) VALUES(?,?,?,?,?,?,?)",
                   ("p1","artifact","source","artifact-content","artifact-manifest","rev1","s1"))
@@ -60,6 +62,8 @@ def test_release_observation_requires_actual_owner_decision(tmp_path):
         _fixture(c)
         for blob in ("artifact-content","artifact-manifest"):
             c.execute("INSERT INTO blobs VALUES (?,?,?,?)",(blob,3,"store/"+blob,"verified"))
+        c.execute("INSERT INTO project_blobs VALUES('p1','artifact-content','artifact-content')")
+        c.execute("INSERT INTO project_blobs VALUES('p1','artifact-manifest','artifact-manifest')")
         c.execute("INSERT INTO artifacts(project_id,artifact_id,kind,content_digest,manifest_digest,"
                   "source_revision_id,snapshot_id) VALUES(?,?,?,?,?,?,?)",
                   ("p1","artifact","source","artifact-content","artifact-manifest","rev1","s1"))
