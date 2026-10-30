@@ -110,4 +110,6 @@ def authenticated_actor(
         'issuer': principal.issuer,
         'allowed_project_ids': sorted(allowed),
         'trusted_proof_ref': principal.trusted_proof_ref,
+        # Owner status comes from verified bearer identity, never request data.
+        'owner_verified': principal.owner,
     }, principal)

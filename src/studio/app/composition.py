@@ -6,9 +6,11 @@ loading worker modules that have not been supplied, or auto-launching chats.
 """
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from studio.api.errors import ApiError
 from studio.api.service import StudioOperatorService
 
 from .errors import StudioError
@@ -45,20 +47,24 @@ class StudioComposition:
         if operation_id not in self.operation_ids:
             raise AttributeError(operation_id)
 
-        def handler(actor: Actor, **kwargs: Any) -> dict:
+        def handler(actor: Actor | Mapping[str, Any], **kwargs: Any) -> dict:
             permitted = {'project_id', 'release_id', 'intent_id', 'request'}
             unexpected = set(kwargs) - permitted
             if unexpected:
-                raise StudioError('invalid', 'unknown Studio operation parameters')
-            return self.invoke(operation_id, actor, **kwargs)
+                raise ApiError('invalid', 'unknown Studio operation parameters')
+            try:
+                return self.invoke(operation_id, actor, **kwargs)
+            except StudioError as error:
+                raise ApiError(error.code, error.message) from error
         return handler
 
-    def invoke(self, operation_id: str, actor: Actor,
+    def invoke(self, operation_id: str, actor: Actor | Mapping[str, Any],
                *, project_id: str | None = None,
                release_id: str | None = None,
                intent_id: str | None = None,
                request: dict[str, Any] | None = None) -> dict:
-        """Binds owned operations; J validates the frozen OpenAPI request schema."""
+        """Bind M operations after converting J's authenticated identity."""
+        actor = self._verified_actor(actor)
         targets = {
             "createProject": lambda: self.projects.createProject(actor, self._require_request(request)),
             "listProjects": lambda: self.projects.listProjects(actor),
@@ -77,6 +83,30 @@ class StudioComposition:
         if operation_id not in targets:
             raise StudioError("invalid", "unknown Studio operation")
         return targets[operation_id]()
+
+    @staticmethod
+    def _verified_actor(actor: Actor | Mapping[str, Any]) -> Actor:
+        """Bridge trusted J claims to the M domain's Actor contract.
+
+        J creates these claims from an authenticated bearer and a live grants
+        read. Missing/invalid proof cannot be inferred from a worker role.
+        """
+        if isinstance(actor, Actor):
+            return actor
+        if not isinstance(actor, Mapping):
+            raise ApiError('forbidden', 'verified operator identity required')
+        principal = actor.get('principal_id')
+        issuer = actor.get('issuer')
+        proof = actor.get('trusted_proof_ref')
+        grants = actor.get('allowed_project_ids')
+        owner = actor.get('owner_verified')
+        if (any(not isinstance(value, str) or not value
+                for value in (principal, issuer, proof))
+                or type(owner) is not bool
+                or not isinstance(grants, (list, tuple, set, frozenset))
+                or any(not isinstance(project, str) or not project for project in grants)):
+            raise ApiError('forbidden', 'incomplete authenticated actor')
+        return Actor(principal, issuer, frozenset(grants), proof, owner)
 
     @staticmethod
     def _require_request(request: dict | None) -> dict:
