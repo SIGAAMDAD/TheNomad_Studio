@@ -38,10 +38,6 @@ class TestActualAPSW(unittest.TestCase):
             reopened.close()
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
     def test_empty_apsw_selects_do_not_fail_description_lookup(self):
         from studio.storage.workforce import WorkforceTransaction
         connection = apsw.Connection(':memory:')
@@ -57,3 +53,7 @@ if __name__ == "__main__":
                              [{'key':'one','value':3}])
         finally:
             connection.close()
+
+
+if __name__ == "__main__":
+    unittest.main()
