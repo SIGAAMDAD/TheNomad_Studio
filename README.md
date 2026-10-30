@@ -33,6 +33,20 @@ python infra/greenfield/r9_wheel_smoke.py --wheel dist/nomad_studio-1.9.0-py3-no
 ```
 
 The systemd entrypoint uses `--config /etc/nomad-studio/r9-runtime.json`.
+For operational startup, the **trusted operator** installs a provider-specific Python
+module and sets `NOMAD_STUDIO_RUNTIME_FACTORY=module:function` in the private
+`/etc/nomad-studio/service.env` (or uses `--runtime-factory` directly). The
+factory is called with keyword arguments `sqlite_path` and `cas_path`, must
+construct the existing `StudioRuntime` using `open_studio(..., bindings=...)`,
+start the existing mTLS gateway with `runtime.start_gateway(...)`, and return
+that runtime. It is an executable native integration provided by the operator,
+not a config-supplied mock, dynamic provider discovery, or legacy shim.
+The process verifies that the resulting runtime owns exactly the configured
+storage paths and has genuinely passed its existing provider/host readiness
+checks before entering the outbox execution loop. Absent or failed native
+readiness exits `2` without accepting owner commands. The checked-in source
+contains no native external provider implementation or its credentials, so it
+cannot activate a live Studio merely by setting a factory name.
 The systemd service blocks restart attempts for exit code 2 (native providers
 not configured). The previous periodic health timer was removed because it
 would continually fail without live native providers. `--doctor` is a

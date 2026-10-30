@@ -12,6 +12,7 @@ Group=nomad-studio
 WorkingDirectory=/opt/nomad-studio/current
 Environment=PYTHONDONTWRITEBYTECODE=1
 EnvironmentFile=/etc/nomad-studio/service.env
+# service.env must provide NOMAD_STUDIO_RUNTIME_FACTORY=installed.module:factory
 # Never start a public listener from unverified native adapter configuration.
 ExecStart=/opt/nomad-studio/current/venv/bin/python -m nomad_studio.app --config /etc/nomad-studio/r9-runtime.json
 Restart=on-failure

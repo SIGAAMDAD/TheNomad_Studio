@@ -11,8 +11,10 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Callable, Mapping
 import argparse
+import importlib
 import json
 import os
+import re
 import signal
 import threading
 import time
@@ -64,6 +66,8 @@ _NATIVE_DEPENDENCIES = (
     'context_source', 'adapter_registry', 'effect_provider',
     'effect_scope', 'effect_owner_auth', 'immutable_request_reader',
     'oversight_assignment_reader', 'oversight_notice_sink', 'native_event_delivery',
+    'compliance_verifier', 'native_host_journal', 'artifact_author_identity',
+    'adapter_bible_verifier', 'accepted_quality_outcomes',
 )
 
 
@@ -186,8 +190,8 @@ class StudioRuntime:
                 raise ProviderUnavailable('native readiness or authenticated mTLS ingress lost')
             for item in self.state.outbox_rows('PENDING')[:64]:
                 result = self.dispatch_once(item['message_id'])
-                if result.status == 'NOT_VERIFIED':
-                    raise ProviderUnavailable('outbox native provider unavailable')
+                if result.status not in ('OK', 'CONFLICT', 'UNKNOWN_EXTERNAL'):
+                    raise ProviderUnavailable('outbox delivery blocked: ' + result.code)
             stop.wait(poll_seconds)
 
     def dispatch_once(self, message_id: str) -> Result:
@@ -370,11 +374,57 @@ def _config(path: Path) -> dict[str, str]:
     return raw
 
 
+# Executable startup is an operator-selected native integration, not a writable
+# runtime config field. The operator's installed Python module must construct
+# the existing R9 runtime with genuine provider bindings and start its mTLS
+# gateway. The root then verifies readiness before processing any work.
+_FACTORY_NAME = re.compile(r'^[A-Za-z_][A-Za-z_0-9]*(?:\.[A-Za-z_][A-Za-z_0-9]*)*:[A-Za-z_][A-Za-z_0-9]*$')
+
+
+def _load_runtime_factory(name: str) -> Callable[..., StudioRuntime]:
+    if not isinstance(name, str) or not _FACTORY_NAME.fullmatch(name):
+        raise ValueError('runtime factory must be an installed module:function')
+    module, symbol = name.split(':', 1)
+    factory = getattr(importlib.import_module(module), symbol, None)
+    if not callable(factory):
+        raise ValueError('operator runtime factory is not callable')
+    return factory
+
+
+def _run_configured_runtime(factory: Callable[..., StudioRuntime],
+                            config: Mapping[str, str]) -> int:
+    runtime = factory(sqlite_path=config['sqlite_path'], cas_path=config['cas_path'])
+    # `python -m nomad_studio.app` loads this module as __main__; native
+    # factories import nomad_studio.app by its installed canonical name.
+    canonical_runtime = importlib.import_module('nomad_studio.app').StudioRuntime
+    if not isinstance(runtime, canonical_runtime):
+        raise ValueError('operator runtime factory must return StudioRuntime')
+    with runtime:
+        if (runtime.state.path != Path(config['sqlite_path']).absolute()
+                or runtime.cas.root != Path(config['cas_path']).absolute()):
+            raise ValueError('operator runtime factory returned a different authority')
+        status = runtime.health()
+        print(json.dumps(status, sort_keys=True), flush=True)
+        if status['readiness'] != 'READY':
+            return 2
+        stop = threading.Event()
+
+        def terminate(_signum: int, _frame: Any) -> None:
+            stop.set()
+
+        signal.signal(signal.SIGTERM, terminate)
+        signal.signal(signal.SIGINT, terminate)
+        runtime.run(stop)
+        return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description='Nomad Studio R9 local authority and service readiness')
     parser.add_argument('--config', default=os.environ.get('NOMAD_STUDIO_CONFIG'),
                         help='path to private JSON config, or NOMAD_STUDIO_CONFIG')
     parser.add_argument('--doctor', action='store_true', help='inspect local R9 readiness and exit')
+    parser.add_argument('--runtime-factory', default=os.environ.get('NOMAD_STUDIO_RUNTIME_FACTORY'),
+                        help='operator-installed module:function that starts R9 with native providers and mTLS')
     args = parser.parse_args(argv)
     if not args.config:
         parser.error('an explicit --config or NOMAD_STUDIO_CONFIG is required')
@@ -387,21 +437,13 @@ def main(argv: list[str] | None = None) -> int:
             status['readiness_reason'] = 'NATIVE_RUNTIME_NOT_OBSERVED'
             print(json.dumps(status, sort_keys=True), flush=True)
             return 2
-        with open_studio(**config) as runtime:
-            status = runtime.health()
-            print(json.dumps(status, sort_keys=True), flush=True)
-            if args.doctor:
-                return 0 if status['readiness'] == 'READY' else 2
-            if status['readiness'] != 'READY':
-                return 2  # never claim to serve authenticated ingress when absent
-            stop = threading.Event()
-            def terminate(_signum: int, _frame: Any) -> None:
-                stop.set()
-            signal.signal(signal.SIGTERM, terminate)
-            signal.signal(signal.SIGINT, terminate)
-            runtime.run(stop)
-            return 0
-    except (ValueError, OSError, RuntimeError) as exc:
+        if not args.runtime_factory:
+            print(json.dumps({'liveness':'STOPPED','readiness':'NOT_READY',
+                              'reason':'NATIVE_RUNTIME_FACTORY_NOT_CONFIGURED'}), flush=True)
+            return 2
+        return _run_configured_runtime(_load_runtime_factory(args.runtime_factory), config)
+    except Exception as exc:
+        # Do not leak provider credentials, filesystem paths or transport details.
         print(json.dumps({'liveness':'STOPPED','readiness':'NOT_READY','reason':type(exc).__name__}), flush=True)
         return 2
 
