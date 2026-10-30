@@ -11,19 +11,23 @@ def test_d_owned_transaction_is_durable_and_no_cross_project_writes(tmp_path):
     writer=WorkforceStorage.open(tmp_path/"d.sqlite",fresh=True)
     try:
         conn=writer._connection
-        conn.execute("INSERT INTO principals VALUES('owner','configured','owner','human')")
-        for project in ("p1","p2"):
-            conn.execute("INSERT INTO projects(project_id,name,charter_digest,state) VALUES(?,?,?,'active')",
-                         (project,project,"digest"))
-            conn.execute("INSERT INTO cabals(project_id,cabal_id,name,charter_digest,state) VALUES(?,?,?,'digest','active')",
-                         (project,"cabal",project))
+        # Reuse D's complete validated canonical fixture, including both
+        # published Bibles, owner decisions, source pin, and cabal staffing.
+        # A bare feature without a verified snapshot violates frozen FK rules.
+        from importlib.util import module_from_spec, spec_from_file_location
+        from pathlib import Path
+        fixture_path = Path(__file__).resolve().parents[1] / "unit/d/test_production.py"
+        spec = spec_from_file_location("_production_fixture", fixture_path)
+        module = module_from_spec(spec)
+        spec.loader.exec_module(module)
+        module.fixture_db(conn)
         store=ProductionAPSWStorage(writer)
         def insert(tx):
             assert tx.one("SELECT 1 AS n FROM cabals WHERE project_id=? AND cabal_id=?",
-                          ("p1","cabal")) == {"n":1}
+                          ("p1","p1-cabal")) == {"n":1}
             tx.change("INSERT INTO features(project_id,feature_id,brief_digest,snapshot_id,"
                       "source_revision_id,revision,state) VALUES(?,?,?,?,?,1,'proposed')",
-                      ("p1","feature","d"*64,"snap","source"))
+                      ("p1","feature","d"*64,"s1","rev1"))
             return {"feature_id":"feature", "state":"proposed"}
         first=store.command("p1","D.submitFeature","r1","a"*64,insert)
         assert first["state"]=="proposed"

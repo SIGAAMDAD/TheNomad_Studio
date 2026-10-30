@@ -48,7 +48,7 @@ def test_qa_transaction_event_replay_and_isolation(tmp_path):
         with pytest.raises(AssuranceError, match="project"):
             store.read(project_id="p1", query=lambda tx: tx.all(
                 "SELECT case_id FROM oversight_cases WHERE project_id=?", ("p2",)))
-        with pytest.raises(AssuranceError, match="domain"):
+        with pytest.raises(AssuranceError, match="authority"):
             store.run(project_id="p1", domain="G", operation="openOversightCase",
                       principal_id="person", request_id="two", request_digest="a"*64,
                       command=lambda _: {})
