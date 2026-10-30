@@ -1,0 +1,44 @@
+name: Studio R9 performance measurements
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Workload depth
+        required: true
+        type: choice
+        default: standard
+        options: [smoke, standard, scale]
+      trials:
+        description: Repeated samples per benchmark
+        required: true
+        type: choice
+        default: '5'
+        options: ['3', '5', '7', '10']
+permissions:
+  contents: read
+jobs:
+  benchmarks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install R9 package
+        run: python -m pip install --no-deps -e .
+      - name: Measure R9 performance only
+        env:
+          PROFILE: ${{ inputs.profile }}
+          TRIALS: ${{ inputs.trials }}
+        run: |
+          python benchmarks/r9_performance.py --profile "$PROFILE" --trials "$TRIALS" --output r9-performance.json 2>&1 | tee r9-performance.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r9-performance-${{ inputs.profile }}
+          path: |
+            r9-performance.json
+            r9-performance.log
