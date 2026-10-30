@@ -63,6 +63,8 @@ def test_stage_and_promote_approved_source_across_restart(tmp_path):
         c.execute("INSERT INTO principals VALUES('reviewer','test','reviewer','human')")
         c.execute("INSERT INTO project_grants VALUES('p1','reviewer','member')")
         blob="p1-design-blob"
+        c.execute("INSERT OR IGNORE INTO project_blobs(project_id,content_digest,purpose) "
+                  "VALUES('p1',?,'source-artifact')",(blob,))
         c.execute("INSERT INTO artifacts(project_id,artifact_id,kind,content_digest,"
                   "manifest_digest,producer_session_id,source_revision_id,snapshot_id) "
                   "VALUES('p1','artifact','source',? ,?,'session','rev1','s1')",(blob,blob))
