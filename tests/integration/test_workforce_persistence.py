@@ -93,3 +93,28 @@ def test_cross_project_and_bad_foreign_keys_do_not_write(tmp_path):
     with pytest.raises(WorkforceFault, match='project ID required'):
         store.read('', lambda _tx: [])
     store.close()
+
+
+def test_same_owner_request_id_cannot_be_reused_for_another_command(tmp_path):
+    store = WorkforceStorage(populated(tmp_path / 'owner-scope.sqlite'))
+    try:
+        expected=store.command('p','workers.register','shared','a'*64,
+                               lambda _tx:{'worker_id':'one','state':'registered'})
+        assert store.command('p','workers.register','shared','a'*64,
+                             lambda _tx:pytest.fail('duplicate execution'))==expected
+        with pytest.raises(WorkforceFault, match='different content'):
+            store.command('p','workers.begin_shift','shared','a'*64,
+                          lambda _tx:pytest.fail('cross-operation replay accepted'))
+        owner=store.read('p',lambda tx:tx.one(
+            'SELECT action_owner FROM idempotency WHERE project_id=? AND request_id=?',
+            ('p','shared')))
+        assert owner['action_owner']=='WG-I'
+        assert store.command('p','D.submitFeature','shared','a'*64,
+                             lambda _tx:{'feature_id':'new'})=={'feature_id':'new'}
+        with pytest.raises(WorkforceFault, match='different content'):
+            store.command('p','D.planFeature','shared','a'*64,
+                          lambda _tx:pytest.fail('cross-operation replay accepted'))
+        assert store.command('p','B.createCabal','shared','a'*64,
+                             lambda _tx:{'cabal_id':'new'})=={'cabal_id':'new'}
+    finally:
+        store.close()

@@ -125,37 +125,43 @@ class WorkforceStorage:
 
     def command(self, project_id: str, operation: str, request_id: str,
                 payload_sha256: str, fn: Callable[[WorkforceTransaction], dict]) -> dict:
-        if (not all(isinstance(x, str) and x for x in (project_id, operation, request_id)) or
+        if (not all(isinstance(x, str) and x for x in (project_id, owner, request_id)) or
                 not isinstance(payload_sha256, str) or len(payload_sha256) != 64 or
                 any(x not in '0123456789abcdef' for x in payload_sha256)):
             raise WorkforceFault('invalid', 'invalid idempotency command identity')
+        # A request ID belongs to its domain owner, not to each operation.
+        # Bind operation identity to the digest to reject cross-operation replay.
+        owner = {'workers': 'WG-I', 'D': 'WG-D', 'B': 'WG-B'}.get(operation.split('.', 1)[0])
+        if owner is None:
+            raise WorkforceFault('invalid', 'unregistered command owner')
+        bound_digest = hashlib.sha256((operation + '\\x00' + payload_sha256).encode('utf-8')).hexdigest()
         with self._transaction(write=True) as tx:
             previous = tx.one('''SELECT payload_digest,status,result_digest FROM idempotency
                 WHERE project_id=? AND action_owner=? AND request_id=?''',
-                (project_id, operation, request_id))
+                (project_id, owner, request_id))
             if previous is not None:
-                if previous['payload_digest'] != payload_sha256:
+                if previous['payload_digest'] != bound_digest:
                     raise WorkforceFault('conflict', 'request ID reused with different content')
                 if previous['status'] != 'finished':
                     raise WorkforceFault('unknown', 'prior command not conclusively committed')
                 result = tx.one('''SELECT result_json FROM workforce_command_results
                     WHERE project_id=? AND action_owner=? AND request_id=?''',
-                    (project_id, operation, request_id))
+                    (project_id, owner, request_id))
                 if result is None or hashlib.sha256(result['result_json'].encode('utf-8')).hexdigest() != previous['result_digest']:
                     raise WorkforceFault('unknown', 'idempotency result bytes unavailable or altered')
                 return json.loads(result['result_json'])
             tx.change('''INSERT INTO idempotency(project_id,action_owner,request_id,payload_digest,status)
-                VALUES (?,?,?,?,'started')''', (project_id, operation, request_id, payload_sha256))
+                VALUES (?,?,?,?,'started')''', (project_id, owner, request_id, bound_digest))
             result = fn(tx)
             if not isinstance(result, dict):
                 raise WorkforceFault('invalid', 'workforce transaction must return an object')
             encoded = _canonical(result)
             result_digest = hashlib.sha256(encoded.encode('utf-8')).hexdigest()
             tx.change('''INSERT INTO workforce_command_results(project_id,action_owner,request_id,result_json)
-                VALUES (?,?,?,?)''', (project_id, operation, request_id, encoded))
+                VALUES (?,?,?,?)''', (project_id, owner, request_id, encoded))
             tx.change('''UPDATE idempotency SET status='finished',result_digest=?
                 WHERE project_id=? AND action_owner=? AND request_id=?''',
-                (result_digest, project_id, operation, request_id))
+                (result_digest, project_id, owner, request_id))
             return result
 
     def close(self) -> None:
