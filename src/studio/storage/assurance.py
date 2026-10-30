@@ -31,9 +31,16 @@ class AssuranceTx:
     def _check_query(self, sql: str, params: Sequence[Any]) -> None:
         # E's SQL is authored by trusted source; no request can supply SQL.
         # Refuse a statement without an explicit project fence.
-        if not isinstance(sql, str) or "project_id" not in sql.lower():
-            raise AssuranceError("forbidden", "E query lacks project fence")
-        if self.project_id not in params:
+        if not isinstance(sql, str):
+            raise AssuranceError("forbidden", "E query must be verified SQL")
+        if "project_id" not in sql.lower():
+            # E's independent-reviewer gate reads the global J principal kind,
+            # then separately verifies current A project grants and lineage.
+            # No other unscoped source query is authorized here.
+            normalized = " ".join(sql.split()).lower()
+            if normalized != "select kind from principals where principal_id=?":
+                raise AssuranceError("forbidden", "E query lacks project fence")
+        elif self.project_id not in params:
             raise AssuranceError("forbidden", "E query does not bind its project")
 
     def one(self, sql: str, params: Sequence[Any] = ()):
