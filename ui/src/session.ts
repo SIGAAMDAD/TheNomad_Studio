@@ -20,8 +20,10 @@ export function handoffComplete(packet: SessionHandoff): boolean {
 export function makeHandoff(packet: SessionHandoff): string {
   if (!handoffComplete(packet)) throw new Error('Complete the verified session, lease, Canon, contract, and GitHub relay values first.');
   return [
-    `The Nomad Studio — manually initiated ${packet.mode} packet`,
-    'This browser conversation was manually opened by the human owner. A GitHub file cannot wake or stop this chat.',
+    `The Nomad Studio — existing conversation work-shift ${packet.mode} packet`,
+    'This is a shift of an already manually enrolled ChatGPT conversation, not a new worker or new chat for every assignment.',
+    'Keep this one response executing while receiving and completing multiple GitHub assignments. Publish individual task receipts and then one final shift receipt before returning the human-facing response.',
+    'A GitHub message is received only when this active response reads it; do not claim an idle chat was activated.',
     `Project ID: ${packet.projectId}`,
     `Session ID: ${packet.sessionId}`,
     `Task ID: ${packet.taskId}`,
@@ -32,7 +34,7 @@ export function makeHandoff(packet: SessionHandoff): string {
     `GitHub relay path (verify in connected GitHub): ${packet.githubRelayPath}`,
     ...(packet.mode === 'RESUME' ? [`Verified checkpoint ID: ${packet.checkpointId}`] : []),
     'Read the exact GitHub relay and governing instructions; do not infer approval or delivery from local HTTP success.',
-    'Publish your GitHub HELLO/CHECKPOINT/HANDOFF receipts only while this browser response is active. Verify write/readback through the connected GitHub app.',
+    'During this single active response: check the addressed GitHub inbox, verify assignments and authority, execute tasks, publish checkpoints and receipts, then check for additional commands without finalizing between assignments. Publish the final shift receipt before returning one ChatGPT response.',
     packet.additionalInstructions.trim(),
   ].filter(Boolean).join('\n');
 }

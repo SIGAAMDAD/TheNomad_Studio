@@ -84,12 +84,13 @@ test('field casting rejects invalid numbers, enum values and array JSON',()=>{
   assert.deepEqual(validateRequired({a:'',b:'ok'},['a','b']),['a']);
 });
 
-test('manual launch / resume demands verified packet and human-started chat',()=>{
+test('existing-chat shift start / continuation requires verified packet',()=>{
   const p={mode:'START',projectId:'p',sessionId:'s',taskId:'t',generation:'2',packageDigest:'pkg',canonSnapshotId:'can',contractDigest:'contract',githubRelayPath:'mailbox/immutable.json',checkpointId:'',additionalInstructions:''};
   assert.equal(handoffComplete(p),true);
   const text=makeHandoff(p);
-  assert.match(text,/manually opened/);
-  assert.match(text,/GitHub file cannot wake or stop/);
+  assert.match(text,/already manually enrolled ChatGPT conversation/);
+  assert.match(text,/multiple GitHub assignments/);
+  assert.match(text,/active response reads it/);
   assert.equal(handoffComplete({...p,mode:'RESUME'}),false);
   assert.equal(handoffComplete({...p,githubRelayPath:''}),false);
   assert.match(makeHandoff({...p,mode:'RESUME',checkpointId:'chk'}),/Verified checkpoint ID: chk/);
