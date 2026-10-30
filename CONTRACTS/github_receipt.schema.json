@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "channel_id": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+      "type": "string"
+    },
+    "checkpoint_digest": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "contract_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "issued_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "SEEN",
+        "CHECKPOINT",
+        "SUBMITTED",
+        "STOP_SEEN"
+      ]
+    },
+    "message_id": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+      "type": "string"
+    },
+    "observed_message_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1"
+    },
+    "receipt_id": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+      "type": "string"
+    },
+    "recipient_session_id": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "protocol_version",
+    "receipt_id",
+    "project_id",
+    "channel_id",
+    "message_id",
+    "recipient_session_id",
+    "kind",
+    "observed_message_sha256",
+    "checkpoint_digest",
+    "issued_at",
+    "contract_digest"
+  ],
+  "title": "GitHubRelayReceiptV1",
+  "type": "object"
+}

@@ -1,0 +1,8 @@
+$ /opt/pyvenv/bin/python /mnt/data/wg_l_packet/tests/test_dispatch_invariants.py
+EXIT: 0
+STDOUT:
+REJECTED modified launcher start
+REJECTED paid API worker substitution
+PASS all 13 owner-started launchers, topology, frozen ownership constraints, digest binding, anti-block checks
+
+STDERR:

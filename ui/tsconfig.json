@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext", "moduleResolution": "Bundler", "jsx": "react-jsx", "strict": true,
+    "skipLibCheck": true, "allowSyntheticDefaultImports": true, "noEmit": true,
+    "isolatedModules": true, "noUncheckedIndexedAccess": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "../CONTRACTS/api.types.ts"]
+}

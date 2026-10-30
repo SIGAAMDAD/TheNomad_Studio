@@ -1,0 +1,28 @@
+test_future_body_comparison_invalid (test_blackbox_and_recovery.Probes.test_future_body_comparison_invalid) ... ok
+test_http_byte_equivalence (test_blackbox_and_recovery.Probes.test_http_byte_equivalence) ... ok
+test_same_scoped_token_invalid_fixture (test_blackbox_and_recovery.Probes.test_same_scoped_token_invalid_fixture) ... ok
+test_two_project_fixture_positive (test_blackbox_and_recovery.Probes.test_two_project_fixture_positive) ... ok
+test_unauthorized_project_id_traversal (test_blackbox_and_recovery.Probes.test_unauthorized_project_id_traversal) ... ok
+test_l_ownership (test_contract_and_scan.ContractTests.test_l_ownership) ... ok
+test_missing_evidence_cannot_pass (test_contract_and_scan.ContractTests.test_missing_evidence_cannot_pass) ... ok
+test_safe_relative (test_contract_and_scan.ContractTests.test_safe_relative) ... ok
+test_symlink_rejected (test_contract_and_scan.ContractTests.test_symlink_rejected) ... ok
+test_tree_digest_immutable_to_timestamp (test_contract_and_scan.ContractTests.test_tree_digest_immutable_to_timestamp) ... ok
+test_detects_prohibited_api_and_legacy (test_contract_and_scan.StaticSourceTests.test_detects_prohibited_api_and_legacy) ... ok
+test_thirteen_distinct_archives_match_exact_merge (test_handoff_and_roles.CompleteMergeTests.test_thirteen_distinct_archives_match_exact_merge) ... ok
+test_independent_byte_bound_review (test_handoff_and_roles.ReviewerReceiptTests.test_independent_byte_bound_review) ... ok
+test_real_bytes_and_smoke_logs (test_handoff_and_roles.RoleTests.test_real_bytes_and_smoke_logs) ... ok
+test_duplicate_entries_rejected (test_handoff_and_roles.SubmissionTests.test_duplicate_entries_rejected) ... ok
+test_log_tampering_rejected (test_handoff_and_roles.SubmissionTests.test_log_tampering_rejected) ... ok
+test_traversal_rejected (test_handoff_and_roles.SubmissionTests.test_traversal_rejected) ... ok
+test_wrong_worker_rejected_even_with_good_content (test_handoff_and_roles.SubmissionTests.test_wrong_worker_rejected_even_with_good_content) ... ok
+test_artifact_byte_evidence (test_scenario.ScenarioTests.test_artifact_byte_evidence) ... ok
+test_empty_scenario_denied (test_scenario.ScenarioTests.test_empty_scenario_denied) ... ok
+test_failing_step_blocks_following_steps (test_scenario.ScenarioTests.test_failing_step_blocks_following_steps) ... ok
+test_process_requires_opt_in (test_scenario.ScenarioTests.test_process_requires_opt_in) ... ok
+test_real_local_http_expectation (test_scenario.ScenarioTests.test_real_local_http_expectation) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 1.039s
+
+OK

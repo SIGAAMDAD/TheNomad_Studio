@@ -1,0 +1,63 @@
+$ /opt/pyvenv/bin/python /mnt/data/wg_l_packet/AUDIT/test_sql_reference.py
+EXIT: 0
+STDOUT:
+REJECTED foreign project Bible active edition : Bible bytes not durable
+REJECTED wrong Bible kind : UNIQUE constraint failed: active_bible_editions.project_id, active_bible_ed
+REJECTED cross project cabal in task : FOREIGN KEY constraint failed
+REJECTED cross project source Canon : FOREIGN KEY constraint failed
+REJECTED owner resolution without proposal : owner decision lacks exact pending proposal
+REJECTED changed decision effect after proposal : owner decision lacks exact pending proposal
+REJECTED worker cannot verify as owner : verified principal is not project owner
+REJECTED nonowner cannot approve : verified principal is not project owner
+REJECTED phantom task subject : invalid owner subject
+REJECTED effect dispatch before approval consumption : approval not consumed
+REJECTED one approval for second effect : UNIQUE constraint failed: approval_consumptions.project_id, approval_consum
+REJECTED wrong project approval effect : FOREIGN KEY constraint failed
+REJECTED mutate immutable Canon : Canon snapshot immutable
+REJECTED mutate immutable Bible edition : published edition immutable
+REJECTED two canonical source revisions : UNIQUE constraint failed: source_revisions.project_id, source_revisions.rep
+REJECTED mutable source commit SHA : source revision identity immutable
+REJECTED direct release publish bypassing approval : release not exactly approved and observed
+REJECTED insert already published release : release must be prepared first
+REJECTED release unobserved external effect : release not exactly approved and observed
+REJECTED revert published release : published release state immutable
+REJECTED restore before verified backup : restore requires verified backup
+REJECTED cross-project recovery job : FOREIGN KEY constraint failed
+REJECTED budget reservation over limit : CHECK constraint failed: spent_amount+reserved_amount<=limit_amount
+REJECTED budget overspend with active reservations : CHECK constraint failed: spent_amount+reserved_amount<=limit_amount
+REJECTED double-charge same provider receipt : UNIQUE constraint failed: usage_receipts.project_id, usage_receipts.provide
+REJECTED claim report delivered without provider proof : report delivery not observed
+REJECTED active session without GitHub observation : invalid sessions transition
+REJECTED invalid session mode : CHECK constraint failed: session_mode='manual_chatgpt_browser'
+REJECTED relay channel foreign project repo : FOREIGN KEY constraint failed
+REJECTED relay cross-project recipient : relay sender task/lease/snapshot mismatch
+REJECTED relay wrong project observation : verified observation differs from pinned relay envelope
+REJECTED wrong channel observation : verified observation differs from pinned relay envelope
+REJECTED ordinary NOTE cannot enroll browser session : no exact verified HELLO for active lease and snapshot
+REJECTED HELLO sent to another session cannot enroll : HELLO must be self-addressed by registered browser session
+REJECTED receipt wrong recipient : relay receipt does not match a verified original message
+REJECTED wrong observed original hash in receipt : relay receipt does not match a verified original message
+REJECTED receipt of not-yet-verified relay : relay receipt does not match a verified original message
+REJECTED receipt with wrong contract digest : relay receipt does not match a verified original message
+REJECTED duplicate receipt path : UNIQUE constraint failed: relay_receipts.project_id, relay_receipts.message
+REJECTED completion without independent accepted submission : cannot complete session without exact independently reviewed submission
+REJECTED QA PASS without lineage evidence : QA receipt not linked to original submission artifact
+REJECTED QA proof from same root lineage : reviewer shares author lineage
+REJECTED QA PASS without original validator receipt : QA receipt not linked to original submission artifact
+REJECTED cannot insert already accepted submission : submission cannot begin QA-accepted
+REJECTED invalid direct relay observed transition : invalid relay_messages transition
+REJECTED cannot convert pending relay observation to verified : relay observations append-only
+REJECTED unreviewed submission cannot self-mark qa_passed : independent exact QA PASS and evidence required for submission state
+REJECTED mismatching verified relay hash : verified observation differs from pinned relay envelope
+REJECTED mismatching verified relay path : verified observation differs from pinned relay envelope
+REJECTED cannot delete verified receipt : verified relay receipt immutable
+REJECTED QA PASS with a validator receipt not on submitted artifact : QA receipt not linked to original submission artifact
+REJECTED QA PASS wrong source revision : QA review does not match submitted source and acceptance profile
+REJECTED alter accepted review verdict : accepted QA review immutable; create new review to invalidate
+REJECTED delete accepted review receipt : accepted QA receipt immutable
+REJECTED alter accepted submission source : submission identity immutable
+REJECTED remove accepted submission artifact : accepted submission attachments immutable
+REJECTED delete accepted independence proof : accepted QA independence proof immutable
+PASS: 66-table R5 fresh schema, scoped references, decisions, effects, immutable Canon/source, exact release, restore
+
+STDERR:

@@ -1,0 +1,335 @@
+{
+  "enforcement": "C ScopedTransaction checks machine; critical cross-record invariants additionally protected by SQL triggers",
+  "idempotent_noop_rule": "same state update allowed only for exact duplicate request_id; no events emitted on replays",
+  "schema_version": "1.0.0",
+  "transitions": {
+    "backup_sets": {
+      "failed": [],
+      "staging": [
+        "verified",
+        "failed"
+      ],
+      "verified": []
+    },
+    "bible_publication_intents": {
+      "committed": [],
+      "failed": [],
+      "staging": [
+        "verified",
+        "failed",
+        "unknown"
+      ],
+      "unknown": [
+        "verified",
+        "committed",
+        "failed"
+      ],
+      "verified": [
+        "committed",
+        "failed",
+        "unknown"
+      ]
+    },
+    "cabals": {
+      "active": [
+        "paused",
+        "closed"
+      ],
+      "closed": [],
+      "paused": [
+        "active",
+        "closed"
+      ]
+    },
+    "decision_proposals": {
+      "approved": [],
+      "pending": [
+        "approved",
+        "rejected"
+      ],
+      "rejected": []
+    },
+    "deliberations": {
+      "escalated": [
+        "resolved"
+      ],
+      "open": [
+        "resolved",
+        "escalated"
+      ],
+      "resolved": []
+    },
+    "effect_intents": {
+      "dispatched": [
+        "observed",
+        "unknown",
+        "failed"
+      ],
+      "failed": [],
+      "observed": [],
+      "prepared": [
+        "dispatched",
+        "failed"
+      ],
+      "unknown": [
+        "observed",
+        "failed"
+      ]
+    },
+    "features": {
+      "blocked": [
+        "planned",
+        "running",
+        "canceled"
+      ],
+      "canceled": [],
+      "completed": [],
+      "planned": [
+        "running",
+        "blocked",
+        "canceled"
+      ],
+      "proposed": [
+        "planned",
+        "blocked",
+        "canceled"
+      ],
+      "review": [
+        "completed",
+        "running",
+        "blocked"
+      ],
+      "running": [
+        "review",
+        "blocked",
+        "canceled"
+      ]
+    },
+    "integration_intents": {
+      "conflict": [],
+      "failed": [],
+      "prepared": [
+        "staged",
+        "conflict",
+        "failed"
+      ],
+      "promoted": [],
+      "qa_checked": [
+        "promoted",
+        "conflict",
+        "failed",
+        "unknown"
+      ],
+      "staged": [
+        "qa_checked",
+        "conflict",
+        "failed",
+        "unknown"
+      ],
+      "unknown": [
+        "qa_checked",
+        "promoted",
+        "conflict",
+        "failed"
+      ]
+    },
+    "oversight_cases": {
+      "investigating": [
+        "resolved"
+      ],
+      "open": [
+        "investigating",
+        "resolved"
+      ],
+      "resolved": []
+    },
+    "projects": {
+      "active": [
+        "archived"
+      ],
+      "archived": [],
+      "draft": [
+        "active",
+        "archived"
+      ]
+    },
+    "recovery_jobs": {
+      "committed": [],
+      "failed": [],
+      "requested": [
+        "verifying",
+        "failed"
+      ],
+      "staged": [
+        "committed",
+        "unknown",
+        "failed"
+      ],
+      "unknown": [
+        "staged",
+        "committed",
+        "failed"
+      ],
+      "verifying": [
+        "staged",
+        "unknown",
+        "failed"
+      ]
+    },
+    "relay_messages": {
+      "observed": [],
+      "published": [
+        "observed",
+        "unknown",
+        "rejected"
+      ],
+      "queued": [
+        "published",
+        "unknown",
+        "rejected"
+      ],
+      "rejected": [],
+      "unknown": [
+        "published",
+        "observed",
+        "rejected"
+      ]
+    },
+    "releases": {
+      "failed": [],
+      "prepared": [
+        "published",
+        "failed",
+        "unknown"
+      ],
+      "published": [],
+      "unknown": [
+        "published",
+        "failed"
+      ]
+    },
+    "sessions": {
+      "active_observed": [
+        "quiet",
+        "stop_requested",
+        "completed_verified",
+        "failed_verified",
+        "unknown"
+      ],
+      "awaiting_manual_start": [
+        "active_observed",
+        "stop_requested",
+        "unknown"
+      ],
+      "completed_verified": [],
+      "failed_verified": [
+        "awaiting_manual_start"
+      ],
+      "prepared": [
+        "awaiting_manual_start",
+        "unknown"
+      ],
+      "quiet": [
+        "active_observed",
+        "stop_requested",
+        "unknown"
+      ],
+      "stop_requested": [
+        "quiet",
+        "completed_verified",
+        "failed_verified",
+        "unknown"
+      ],
+      "unknown": [
+        "active_observed",
+        "quiet",
+        "stop_requested",
+        "failed_verified"
+      ]
+    },
+    "submissions": {
+      "integrated": [],
+      "qa_failed": [
+        "rejected"
+      ],
+      "qa_passed": [
+        "integrated",
+        "rejected"
+      ],
+      "rejected": [],
+      "staged": [
+        "submitted",
+        "rejected"
+      ],
+      "submitted": [
+        "qa_passed",
+        "qa_failed",
+        "rejected"
+      ]
+    },
+    "tasks": {
+      "accepted": [],
+      "blocked": [
+        "ready",
+        "canceled"
+      ],
+      "canceled": [],
+      "failed": [
+        "ready",
+        "canceled"
+      ],
+      "leased": [
+        "running",
+        "ready",
+        "blocked",
+        "canceled"
+      ],
+      "pending": [
+        "ready",
+        "blocked",
+        "canceled"
+      ],
+      "ready": [
+        "leased",
+        "blocked",
+        "canceled"
+      ],
+      "review": [
+        "accepted",
+        "failed",
+        "blocked"
+      ],
+      "running": [
+        "submitted",
+        "blocked",
+        "failed",
+        "canceled"
+      ],
+      "submitted": [
+        "review",
+        "failed"
+      ]
+    },
+    "tool_operations": {
+      "canceled": [],
+      "failed": [],
+      "observed": [],
+      "prepared": [
+        "running",
+        "failed",
+        "canceled"
+      ],
+      "running": [
+        "observed",
+        "unknown",
+        "failed",
+        "canceled"
+      ],
+      "unknown": [
+        "observed",
+        "failed",
+        "canceled"
+      ]
+    }
+  }
+}

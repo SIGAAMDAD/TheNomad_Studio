@@ -1,0 +1,38 @@
+{
+  "changed_owned_files_sha256": {
+    "schema/initial_schema.sql": "3fd131472f90b1fefc51a3db2d7eb93cbfc952b1de4c2527715692ea8843f535",
+    "schema/schema.sha256": "f1648209bc3e92cfc422c1a0bf76e9c8c955c39518cbfa94e0d5ee7599ca3904",
+    "schema/state_machines.json": "cbfb344b446d763495fb59946b3ffc30eb06d4a716a6aaead2e8b7a7ba56ed78",
+    "schema/state_machines.sha256": "6999386a6808744aecb80bd9a711e349797fb7a059584038b83d7c1c4d5f9615",
+    "schema/table_owners.json": "27e910faaad7bb0223d2a9a17cf011692ec3fbc11221660d888a85dcd773dd66",
+    "src/studio/storage/__init__.py": "9e9b2ee2450afcfd5c331894fe0d559b871f6649edb23f16121bb1580107f2cd",
+    "src/studio/storage/backup.py": "4bc25c6a2e2b616b6051320e110b712de7e38dcd9298ff36da24a5e4a0be8b97",
+    "src/studio/storage/blobs.py": "9239e7ac3986867f961bdde68b1628f9d8921907224aea38e4396d46cd86f669",
+    "src/studio/storage/cursors.py": "689c7bfdccff19a2c8962c9d10ed6f18f1be583678d545fd02a64508bca8cd9a",
+    "src/studio/storage/effects.py": "f00c4867b4cf1ae72be3319b8456a0ad48d8061a0b203ae7654a1936290e794b",
+    "src/studio/storage/engine.py": "fbd67de980d27e2484b3d3d5a6e5993c9fe385824d209987e04163c2bc02069e",
+    "src/studio/storage/errors.py": "eab24f409cc3271d2661dd41175dad1f1d85cb6fd4c974a498cee2be4539ff36",
+    "src/studio/storage/idempotency.py": "ce55502447e34141cf7d9f62189ab8675561eeb2db53c769716502f7458dd29c",
+    "src/studio/storage/queries.py": "718f6be7980f45194e585c386a13d9465f17fbadbf6796d30b49812baa3d5417",
+    "src/studio/storage/registry.py": "61613bb4753e52fb54a1145268083cf5b6c53ce6d49ff1f09a1787836cf0c2ef",
+    "src/studio/storage/schema.py": "9f203d59eae9b42701fc39f7e9923282627bdbc1ccfc304d967abff61d6c7007",
+    "src/studio/storage/states.py": "0b7bcad350220750985e72baee2a2a1cd2409446837d747a3eb3eafbaf8d67b2",
+    "tests/unit/c/HANDOFF.md": "846ac89387903e725307c4c9d1f56296ad97b1dce8f9b60d43748af725657469",
+    "tests/unit/c/TEST_RUN_LOG.txt": "85b21695d435bd7141b3fbb5bc9d26ecc93c60bf00e3b795b2b9712d0676d808",
+    "tests/unit/c/test_apsw_runtime.py": "a004ef6606b6b1f8158d8a498cc138bc26045b0536261b677e428320bacf194a",
+    "tests/unit/c/test_storage_reference.py": "e88d527acf7d6f8bc347c16107a6ee3679bb17ba73168c8ce39704042dd3631c"
+  },
+  "input_archive_sha256": "84ba2f2a7fc038e656684f16aa4f9d75ffc398593703462205369889230e5a4b",
+  "no_remote_commit": true,
+  "plan_json_sha256": "8d68e255008369a299c66ca1a0c253e60faecb2ef46415ad09cbb9b38b41d09b",
+  "source_baseline": "greenfield empty Studio tree",
+  "test_summary": {
+    "apws_runtime_not_run": 1,
+    "forge_alignment": "PASS",
+    "independent_qa": "NOT_RUN",
+    "offline_unit_pass": 15,
+    "reference_sql": "PASS",
+    "remote_integration": "NOT_RUN"
+  },
+  "worker": "WG-C"
+}

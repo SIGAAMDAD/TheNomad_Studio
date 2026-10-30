@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nomad-studio-r5"
+version = "0.1.0"
+description = "Manually initiated ChatGPT / GitHub relay Studio control plane"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+coordinator = ["apsw>=3.46", "fastapi>=0.110", "uvicorn>=0.29"]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit/m", "tests/integration"]
+addopts = "-ra"
+pythonpath = ["src"]

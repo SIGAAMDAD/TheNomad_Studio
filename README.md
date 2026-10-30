@@ -1,17 +1,35 @@
-# The Nomad Studio V1 — Operational Control Plane
+# The Nomad Studio R5 — WG-M integration implementation
 
-[Version and compatibility](studio/VERSION.json) · [Execution protocol](studio/v1/OPERATING_CONTRACT.md) · [Launch checklist](studio/v1/LAUNCH_CHECKLIST.md) · [Worker prompts](studio/v1/prompts/INDEX.md) · [Merge authorization](studio/v1/MERGE_AUTHORITY.md)
+This is the **Workgroup M changed-files-only source** for the greenfield, manually initiated ChatGPT browser/GitHub relay Studio. It is not a release of the entire Studio. The authoritative R5 packet stays read-only.
 
-**Lead Director → Studio Production Director (S00) → 12 accountable department heads → 174 specialized roles → independent QA → head-authorized merges.** Every substantive worker response commits a department ledger event and mirrors its attempt metadata through the GitHub Issue communication relay. Heads retain parent ownership across executions; junior engineers must checkpoint/yield rather than declaring unfinished work complete.
+## Code and behavior
 
-- `main`: reviewed source and policies. `studio/runtime`: approved jobs, worker registry, ledger, receipts and leases. `studio/comms`: immutable transport events, inbox projections and hourly/23:00 Central reports. The branches are intentionally different histories.
-- GitHub Actions is the deterministic broker, not an AI runner. Active/manual chats fetch the inbox when executing. Each logical CW worker is registered explicitly; a GitHub commit does not awaken an inactive chat.
-- Source execution W01–W05 targets the authorized *source repository*, not this Studio hub. Source merge requires a separately authenticated department head with exact-SHA QA/CI and Lead Director gates.
-- Worker-health auditor cross-checks STARTED/HEARTBEAT/YIELDED/SUBMITTED events against immutable per-response ledger attempts and flags missing checkpoints, overdue progress and unacknowledged handoffs.
-- Live runtime gates: source_writes_enabled=false; auto_ai_enabled=false; auto_dispatch_enabled=true (owner-enabled non-spending pilot dispatch). Existing runtime jobs and features are not erased by the V1 product version reset. Current live chat-worker registry is empty.
+- `studio.app.intake`: 13 exclusive ownership domains, frozen R5 plan digest, changed-file ZIP SHA-256, path traversal/symlink/case collision/size checks and exact baseline identity.
+- `studio.app.integration`: one per-project canonical local tree, content-addressed snapshots, multi-worker nonoverlapping integration, stale base rejection, durable staging, locked CAS pointer and injected independent QA / authenticated source readback.
+- `studio.app.verification`: exact source and independent review checks; no claims based on a chat-authored status or tests reported in handoff metadata.
+- `studio.app.projects`: project create/list/get/configure/preflight through C's authoritative scoped transaction interface.
+- `studio.app.releases`: source/CANON/CI/artifact gating, prepared release records, exact owner effect approval, observe-before-publish and unknown outcome handling; recovery intent with backup verification and project CAS.
+- `studio.app.lifecycle`: deterministic recover-before-start and reverse-order shutdown; never creates browser chats.
+- `studio.app.composition`: explicit dispatch of M domain API operations without creating an alternate API owned by J.
 
-**Validation:** `python -m unittest discover -s tests -q`, `python scripts/studio.py validate`, `python scripts/production.py validate` and reviewed GitHub Actions checks. These prove code invariants; cross-chat runtime, Gmail delivery, source CI publisher credentials and head merge permissions need their own witnessed acceptance runs.
+**Boundary:** Integrating local source bytes does not prove GitHub commit, independently executed WG-L QA, C's APSW transaction, owner authorization or live deployment. Those adapters are injected from A/C/E/G/I/J/L when delivered. M cannot truthfully report Tier C success before they exist and actually run.
 
-## Historic documentation
+## Repeatable local checks
 
-Files with V2/V3/V4 in their names remain as compatibility and prior design records, not authoritative V1 launch instructions. Original 174 specialist manuals are retained. The stale GOAP control-plane draft is addressed in [GOAP cleanup](studio/v1/GOAP_CLEANUP.md); actual GOAP source remains its own repository.
+```sh
+NOMAD_R5_PACKET=/path/to/extracted/R5-packet PYTHONPATH=src python -m pytest tests/unit/m tests/integration -q
+PYTHONPATH=src python scripts/verify_r5_contracts.py /path/to/extracted/R5-packet
+PYTHONPATH=src python scripts/stage_handoff.py --help
+```
+
+## Handoff metadata format
+
+The ZIP itself contains only changed **owned** source paths. Outside the ZIP, provide a JSON object:
+
+```json
+{"group":"M","plan_sha256":"<64 hex>","base_revision_id":"<canonical tree revision>",
+ "files":{"src/studio/app/example.py":{"before":null,"after":"<sha256>"}},
+ "tests":[{"command":"python -m pytest ...", "exit_code":0, "tier":"B"}]}
+```
+
+`before` is the canonical path digest when replacing/removing, otherwise `null`. `after` is the new file digest or `null` for deletion. The canonical tree begins empty; obtain its revision id from `CanonicalTree.current_revision()` before staging. A stage does **not** promote: promotion requires exact remote source readback and independent QA for the candidate bytes.

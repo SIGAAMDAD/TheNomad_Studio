@@ -1,0 +1,32 @@
+test_dispatch_and_pinned_run (test_integrations.TestCI.test_dispatch_and_pinned_run) ... ok
+test_attachment_auth_identity_preflight (test_integrations.TestDrive.test_attachment_auth_identity_preflight) ... ok
+test_upload_readback_timeout_and_no_duplicate (test_integrations.TestDrive.test_upload_readback_timeout_and_no_duplicate) ... ok
+test_unknown_conflict_verified_and_project_boundary (test_integrations.TestEffects.test_unknown_conflict_verified_and_project_boundary) ... ok
+test_ambiguous_after_write_recovers_with_exact_readback (test_integrations.TestGitHub.test_ambiguous_after_write_recovers_with_exact_readback) ... ok
+test_conflicting_duplicate (test_integrations.TestGitHub.test_conflicting_duplicate) ... ok
+test_delayed_write_preserves_unknown (test_integrations.TestGitHub.test_delayed_write_preserves_unknown) ... ok
+test_exact_source_commit_readback (test_integrations.TestGitHub.test_exact_source_commit_readback) ... ok
+test_existing_relay_mutation_detected (test_integrations.TestGitHub.test_existing_relay_mutation_detected) ... ok
+test_invalid_poll_offset_never_advances_cursor (test_integrations.TestGitHub.test_invalid_poll_offset_never_advances_cursor) ... ok
+test_path_traversal_and_wrong_recipient (test_integrations.TestGitHub.test_path_traversal_and_wrong_recipient) ... ok
+test_poll_pagination_cursor_and_replay (test_integrations.TestGitHub.test_poll_pagination_cursor_and_replay) ... ok
+test_publish_readback_and_immutable_duplicate (test_integrations.TestGitHub.test_publish_readback_and_immutable_duplicate) ... ok
+test_receipt_published_with_path_binding (test_integrations.TestGitHub.test_receipt_published_with_path_binding) ... ok
+test_reject_missing_intent_and_noncanonical_payload (test_integrations.TestGitHub.test_reject_missing_intent_and_noncanonical_payload) ... ok
+test_rewrite_detected (test_integrations.TestGitHub.test_rewrite_detected) ... ok
+test_truncated_tree_and_remote_partial (test_integrations.TestGitHub.test_truncated_tree_and_remote_partial) ... ok
+test_six_frozen_operation_shapes_and_no_double_ci_dispatch (test_integrations.TestPorts.test_six_frozen_operation_shapes_and_no_double_ci_dispatch) ... ok
+test_canonical_and_duplicate_keys (test_integrations.TestRelay.test_canonical_and_duplicate_keys) ... ok
+test_cross_project_and_recipient (test_integrations.TestRelay.test_cross_project_and_recipient) ... ok
+test_envelope_exact_digest (test_integrations.TestRelay.test_envelope_exact_digest) ... ok
+test_hello_cannot_enroll_other_session (test_integrations.TestRelay.test_hello_cannot_enroll_other_session) ... ok
+test_lowercase_receipt_forbidden (test_integrations.TestRelay.test_lowercase_receipt_forbidden) ... ok
+test_receipt_exact_digest (test_integrations.TestRelay.test_receipt_exact_digest) ... ok
+test_backoff_deterministic_capped_and_retry_after (test_integrations.TestRetry.test_backoff_deterministic_capped_and_retry_after) ... ok
+test_project_blob_register_list_and_readback (test_integrations.TestStorage.test_project_blob_register_list_and_readback) ... ok
+test_resource_manifest_pin_and_escapes (test_integrations.TestStorage.test_resource_manifest_pin_and_escapes) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.014s
+
+OK
