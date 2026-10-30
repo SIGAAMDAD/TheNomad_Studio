@@ -63,18 +63,14 @@ class WorkforceTransaction:
             return []
         return [dict(zip(columns, row)) for row in cursor]
 
-    def _total_changes(self) -> int:
-        # sqlite3 exposes an integer property; APSW exposes a method.
-        current = getattr(self._connection, 'total_changes', None)
-        if current is None:
-            current = self._connection.totalchanges
-        return current() if callable(current) else current
-
     def change(self, sql: str, params: tuple = ()) -> int:
-        before = self._total_changes()
-        self._connection.execute(sql, params)
-        after = self._total_changes()
-        return after - before
+        cursor = self._connection.execute(sql, params)
+        # sqlite3_changes() counts only the direct statement. total_changes()
+        # also includes trigger side effects, so it is not a valid CAS/rowcount
+        # result for operations with audit and policy triggers.
+        if hasattr(self._connection, 'changes'):
+            return self._connection.changes()
+        return cursor.rowcount
 
 
 class WorkforceStorage:

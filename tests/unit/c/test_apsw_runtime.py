@@ -46,7 +46,11 @@ class TestActualAPSW(unittest.TestCase):
             tx = WorkforceTransaction(connection)
             self.assertIsNone(tx.one('SELECT key,value FROM sample WHERE key=?',('missing',)))
             self.assertEqual(tx.all('SELECT key,value FROM sample WHERE key=?',('missing',)),[])
-            tx.change('INSERT INTO sample(key,value) VALUES (?,?)',('one',3))
+            connection.execute('CREATE TABLE audit_events(n INTEGER)')
+            connection.execute("CREATE TRIGGER sample_audit AFTER INSERT ON sample "
+                               "BEGIN INSERT INTO audit_events(n) VALUES(1); END")
+            self.assertEqual(tx.change('INSERT INTO sample(key,value) VALUES (?,?)',('one',3)),1)
+            self.assertEqual(connection.execute('SELECT COUNT(*) FROM audit_events').fetchone(),(1,))
             self.assertEqual(tx.one('SELECT key,value FROM sample WHERE key=?',('one',)),
                              {'key':'one','value':3})
             self.assertEqual(tx.all('SELECT key,value FROM sample ORDER BY key'),
