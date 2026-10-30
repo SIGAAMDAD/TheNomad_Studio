@@ -464,8 +464,10 @@ class ProductionTests(unittest.TestCase):
         self.svc.dispatchTask(self.actor,'p1',task,{'request_id':'one','expected_revision':1,'worker_id':'w1'})
         workflow=Workforce(self.storage,require_action=lambda *a: None)
         class Remote:
-            def __init__(self):self.files={};self.publish_attempts=0
-            def observe_exact(self,path):return self.files.get(path)
+            def __init__(self):self.files={};self.publish_attempts=0;self.reads=0
+            def observe_exact(self,path):
+                self.reads+=1
+                return self.files.get(path)
             def publish(self,path,body,*,expected_digest,effect_intent_recorded):
                 self.publish_attempts+=1
                 assert effect_intent_recorded
@@ -475,8 +477,9 @@ class ProductionTests(unittest.TestCase):
                 raise OSError('simulated timeout after successful provider write')
         remote=Remote()
         assert workflow.publish_pending(self.actor,'p1',provider=remote)=={'published':0,'unknown':1,'rejected':0}
+        assert remote.reads==0  # no redundant preflight check for a new command
         assert workflow.publish_pending(self.actor,'p1',provider=remote)=={'published':1,'unknown':0,'rejected':0}
-        assert remote.publish_attempts==1
+        assert remote.publish_attempts==1 and remote.reads==1  # exactly one reconciliation read
         assert self.storage.db.execute("SELECT state FROM command_outbox").fetchone()[0]=='published'
         assert workflow.publish_pending(self.actor,'p1',provider=remote)=={'published':0,'unknown':0,'rejected':0}
 

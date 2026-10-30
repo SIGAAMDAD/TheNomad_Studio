@@ -1,6 +1,6 @@
-"""Explicit composition root for WG-M command adapters and runtime services.
+"""Explicit composition root for project, release, recovery and integration commands.
 
-WG-J owns HTTP routes and authenticated actor conversion. WG-C owns APSW
+The HTTP adapter owns authenticated actor conversion. Storage owns APSW
 transactions. This module wires already constructed domain ports without
 loading worker modules that have not been supplied, or auto-launching chats.
 """
@@ -17,7 +17,7 @@ from .releases import RecoveryCoordinator, ReleaseCoordinator
 
 
 @dataclass(frozen=True)
-class MComposition:
+class StudioComposition:
     projects: ProjectService
     releases: ReleaseCoordinator
     recovery: RecoveryCoordinator
@@ -34,7 +34,7 @@ class MComposition:
         )
 
     def __getattr__(self, operation_id: str):
-        """Expose the frozen 13 WG-M operations to J's callable registry.
+        """Expose the defined Studio operations to the API callable registry.
 
         No dynamic operation is created outside the explicit M operation catalog.
         Request validation and actor identity remain owned by J.
@@ -46,7 +46,7 @@ class MComposition:
             permitted = {'project_id', 'release_id', 'intent_id', 'request'}
             unexpected = set(kwargs) - permitted
             if unexpected:
-                raise StudioError('invalid', 'unknown M route parameters')
+                raise StudioError('invalid', 'unknown Studio operation parameters')
             return self.invoke(operation_id, actor, **kwargs)
         return handler
 
@@ -72,7 +72,7 @@ class MComposition:
             "promoteIntegration": lambda: self._require_integrations().promoteIntegration(actor, self._require_project(project_id), self._require_intent(intent_id), self._require_request(request)),
         }
         if operation_id not in targets:
-            raise StudioError("invalid", "unknown WG-M command")
+            raise StudioError("invalid", "unknown Studio operation")
         return targets[operation_id]()
 
     @staticmethod

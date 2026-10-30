@@ -162,8 +162,16 @@ class Workforce:
                 continue
             remote=None
             try:
-                remote=provider.observe_exact(record['remote_path'])
-                if remote is None:
+                # GitHub.publish already checks the existing immutable path and
+                # reconciles ambiguous writes by exact readback. Rechecking here
+                # doubles the read cost for every new message at 100-worker scale.
+                if record['state'] == 'unknown':
+                    # Reconcile the prior potentially successful remote write.
+                    # Do not issue a second write while its outcome is unknown.
+                    remote=provider.observe_exact(record['remote_path'])
+                    if remote is None:
+                        raise WorkforceFault('unknown','prior publication has no readback')
+                else:
                     remote=provider.publish(record['remote_path'], body,
                                             expected_digest=record['envelope_digest'],
                                             effect_intent_recorded=True)

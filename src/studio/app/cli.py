@@ -1,7 +1,7 @@
 """Service process entrypoint; starts *configured* Studio services, not AI chats.
 
 The factory is a trusted deployment setting supplied by integration. It must
-construct WG-C/G/I/J-backed services and return MComposition. No fallback
+construct project, persistence, transport and API services. No fallback
 fake production backend is available.
 """
 from __future__ import annotations
@@ -13,11 +13,11 @@ import sys
 import threading
 from collections.abc import Callable
 
-from .composition import MComposition
+from .composition import StudioComposition
 from .errors import StudioError
 
 
-def load_composition(factory_path: str) -> MComposition:
+def load_composition(factory_path: str) -> StudioComposition:
     if not factory_path or ":" not in factory_path:
         raise StudioError("capability_unavailable", "STUDIO_COMPOSITION_FACTORY must be configured")
     module_name, func_name = factory_path.split(":", 1)
@@ -26,7 +26,7 @@ def load_composition(factory_path: str) -> MComposition:
     module = importlib.import_module(module_name)
     factory: Callable[[], object] = getattr(module, func_name)
     result = factory()
-    if not isinstance(result, MComposition):
+    if not isinstance(result, StudioComposition):
         raise StudioError("invalid", "configured composition factory returned wrong type")
     return result
 

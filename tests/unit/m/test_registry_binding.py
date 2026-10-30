@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 from unittest.mock import Mock
 
-from studio.app.composition import MComposition
+from studio.app.composition import StudioComposition
 from studio.api.service import DomainRegistry
 
 
@@ -9,8 +9,8 @@ def _service(*names):
     return SimpleNamespace(**{name: Mock(return_value={"ok": True}) for name in names})
 
 
-def test_m_exposes_every_frozen_operation_as_registry_callable():
-    m = MComposition(
+def test_studio_exposes_every_frozen_operation_as_registry_callable():
+    m = StudioComposition(
         projects=_service('createProject','listProjects','getProject','configureProject','preflightProject'),
         releases=_service('prepareRelease','publishRelease','listReleases'),
         recovery=_service('requestRestore','observeRecovery'),
@@ -26,8 +26,8 @@ def test_m_exposes_every_frozen_operation_as_registry_callable():
     assert registry.get(SimpleNamespace(owner='M', name='listProjects'))({'principal_id':'test'}) == {'ok':True}
 
 
-def test_m_refuses_undefined_operation_and_unexpected_parameters():
-    m = MComposition(projects=_service('listProjects'), releases=object(), recovery=object(), runtime=object())
+def test_studio_refuses_undefined_operation_and_unexpected_parameters():
+    m = StudioComposition(projects=_service('listProjects'), releases=object(), recovery=object(), runtime=object())
     assert not hasattr(m, 'unapprovedAction')
     h = m.listProjects
     from studio.app.errors import StudioError
