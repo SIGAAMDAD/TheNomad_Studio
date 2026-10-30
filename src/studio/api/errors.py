@@ -16,7 +16,7 @@ STATUS_CODES = {
 }
 
 
-@dataclass(frozen=True)
+@dataclass
 class ApiError(Exception):
     code: str
     message: str
@@ -26,6 +26,9 @@ class ApiError(Exception):
     def __post_init__(self) -> None:
         if self.code not in ERROR_CODES:
             raise ValueError('unsupported OpenAPI error code')
+        # Exceptions must allow Python to attach traceback/cause/context when
+        # unwinding generators and context-managed APSW transactions.
+        super().__init__(self.message)
 
     def envelope(self, request_id: str | None) -> dict:
         return {
