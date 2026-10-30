@@ -104,8 +104,10 @@ class ProjectService:
         record = self.store.get_project(project_id=project_id, principal_id=actor.principal_id)
         if record is None:
             raise StudioError("missing", "project unavailable")
+        # The frozen getProjectResponse contains exactly these three fields.
+        # Project state remains available in listProjects' ProjectSummary.
         return {"project_id": record.project_id, "name": record.name,
-                "revision": record.revision, "state": record.state}
+                "revision": record.revision}
 
     def configureProject(self, actor: Actor, project_id: str, request: dict) -> dict:
         actor.require_scope(project_id)
