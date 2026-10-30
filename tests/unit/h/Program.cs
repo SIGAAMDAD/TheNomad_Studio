@@ -131,7 +131,7 @@ static class Checks
         });
         await runtime.RunAsync(run, frame);
         ToolReceipt finished = await Terminal(journal, "project-a", "op-a");
-        Assert(finished.State == "completed" && finished.ExitCode == 0, "unit-injected process finished with receipt");
+        Assert(finished.State == "completed" && finished.ExitCode == 0, "unit-injected process finished with receipt: " + finished.State + " / " + finished.Reason);
         Assert(finished.LogDigests.Length == 2, "stdout and stderr sha256 receipts recorded");
         int count = seen.Count;
         await runtime.RunAsync(run, frame);

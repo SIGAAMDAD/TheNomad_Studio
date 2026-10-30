@@ -146,7 +146,9 @@ public sealed class HostRuntime
                 if (cancel.IsCancellationRequested) throw new OperationCanceledException();
                 if (!process.Start()) throw new InvalidOperationException("Unable to start sandboxed tool");
                 startedProcess = true;
-                journal.Persist(new JournalEntry(hash, receipt, process.Id, process.StartTime.ToUniversalTime().ToString("O")));
+                // The child may exit before Process.StartTime can be queried from /proc.
+                // The host recorded the UTC launch attempt before Process.Start.
+                journal.Persist(new JournalEntry(hash, receipt, process.Id, started));
                 active.AddOrUpdate(key, new Running(hash, receipt, cancel), (_, _) => new Running(hash, receipt, cancel));
                 await emit(receipt);
                 using var stdoutFile = new FileStream(journal.LogPath(run.ProjectId, run.OperationId, "stdout"),

@@ -1,15 +1,13 @@
 """Offline source/contract checks. These are NOT a .NET compile or sandbox test."""
-import os
 import pathlib
 import re
 import json
 import hashlib
-import pytest
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
 HOST = ROOT / 'host' / 'Nomad.ToolHost'
 CS = {p.name: p.read_text() for p in HOST.glob('*.cs')}
-FROZEN_PATH = pathlib.Path(os.getenv('R5_PACKET_ROOT', '/absent')) / 'CONTRACTS'
+FROZEN_PATH = ROOT / 'CONTRACTS'
 
 
 def test_host_project_is_bound_to_the_supported_dotnet_runtime():
@@ -20,8 +18,6 @@ def test_host_project_is_bound_to_the_supported_dotnet_runtime():
 
 
 def test_generated_dto_is_frozen_copy():
-    if not FROZEN_PATH.is_dir():
-        pytest.skip('frozen contract packet unavailable')
     a = (HOST / 'Contracts' / 'HostTypes.cs').read_bytes()
     b = (FROZEN_PATH / 'host.types.cs').read_bytes()
     assert a == b
@@ -29,8 +25,6 @@ def test_generated_dto_is_frozen_copy():
 
 
 def test_all_protocol_frame_types_supported():
-    if not FROZEN_PATH.is_dir():
-        pytest.skip('frozen contract packet unavailable')
     contract = json.loads((FROZEN_PATH / 'host_protocol.schema.json').read_text())
     schemas = contract['$defs']
     assert set(schemas) == {'Handshake', 'ToolRun', 'ToolObserve', 'ToolCancel', 'ToolReceipt'}
