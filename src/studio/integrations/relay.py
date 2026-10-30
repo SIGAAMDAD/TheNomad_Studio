@@ -48,3 +48,25 @@ def validate_receipt(raw: bytes, *, project_id: str, recipient: str | None = Non
     if obj["project_id"] != project_id or (recipient is not None and obj["recipient_session_id"] != recipient):
         raise IntegrationError("forbidden", "receipt project/recipient mismatch")
     return obj, sha256(raw)
+
+_SHIFT_RECEIPT = frozenset({
+    'protocol_version', 'receipt_id', 'project_id', 'worker_id', 'shift_id',
+    'command_id', 'command_digest', 'status', 'result_digest',
+})
+_SHIFT_RESULTS = frozenset({'accepted', 'completed', 'blocked', 'failed', 'stopped'})
+
+
+def validate_shift_receipt(raw: bytes, *, project_id: str, recipient: str) -> tuple[dict[str, Any], str]:
+    """A shift receipt is tied to one worker, shift and immutable command hash."""
+    doc = parse_canonical(raw)
+    if set(doc) != _SHIFT_RECEIPT or doc['protocol_version'] != '2':
+        raise IntegrationError('invalid', 'worker shift receipt fields/version mismatch')
+    for field in ('receipt_id', 'project_id', 'worker_id', 'shift_id', 'command_id'):
+        identifier(doc[field])
+    for field in ('command_digest', 'result_digest'):
+        digest(doc[field])
+    if doc['status'] not in _SHIFT_RESULTS:
+        raise IntegrationError('invalid', 'unrecognized worker shift receipt outcome')
+    if doc['project_id'] != project_id or doc['worker_id'] != recipient:
+        raise IntegrationError('forbidden', 'receipt recipient or project mismatch')
+    return doc, sha256(raw)

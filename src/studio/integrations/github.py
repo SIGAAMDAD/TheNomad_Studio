@@ -14,7 +14,7 @@ from urllib.parse import quote
 
 from .common import IntegrationError, ProviderFailure, RemoteUnknown, ProjectBinding, identifier, git_sha, sha256, parse_canonical
 from .http import HttpPort, JsonProvider
-from .relay import validate_relay, validate_receipt
+from .relay import validate_relay, validate_receipt, validate_shift_receipt
 
 _PART = re.compile(r"[A-Za-z0-9_.-]{1,100}\Z")
 _REF = re.compile(r"[A-Za-z0-9][A-Za-z0-9_./-]{0,240}\Z")
@@ -188,7 +188,6 @@ class GitHub:
                 raise IntegrationError("invalid", "invalid mail suffix")
             # A durable assignment addresses the persistent conversation and
             # the currently observed shift; it is not a new browser session.
-            from .common import parse_canonical
             raw = parse_canonical(body)
             if "worker_id" in raw:
                 from studio.agents.shift_runtime import ShiftCommand, ShiftProtocolError
@@ -207,8 +206,16 @@ class GitHub:
         elif len(rel) == 4 and rel[0] == "receipts":
             if not rel[-1].endswith(".json"):
                 raise IntegrationError("invalid", "invalid receipt suffix")
-            obj, _ = validate_receipt(body, project_id=self.channel.project_id, recipient=identifier(rel[1]))
-            if rel[2] != obj["message_id"] or rel[3] != obj["receipt_id"] + ".json":
+            parsed = parse_canonical(body)
+            if 'shift_id' in parsed:
+                obj, _ = validate_shift_receipt(body, project_id=self.channel.project_id,
+                                                recipient=identifier(rel[1]))
+                message_id = obj['command_id']
+            else:
+                obj, _ = validate_receipt(body, project_id=self.channel.project_id,
+                                          recipient=identifier(rel[1]))
+                message_id = obj['message_id']
+            if rel[2] != message_id or rel[3] != obj["receipt_id"] + ".json":
                 raise IntegrationError("invalid", "receipt/path ID mismatch")
         elif len(rel) == 3 and rel[0] in ("handoffs", "reports"):
             identifier(rel[1])
