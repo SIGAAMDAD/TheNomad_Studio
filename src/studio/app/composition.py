@@ -9,6 +9,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from studio.api.service import StudioOperatorService
+
 from .errors import StudioError
 from .lifecycle import StudioRuntime
 from .integration_commands import IntegrationService
@@ -23,6 +25,7 @@ class StudioComposition:
     recovery: RecoveryCoordinator
     runtime: StudioRuntime
     integrations: IntegrationService | None = None
+    operator_service: StudioOperatorService | None = None
 
     @property
     def operation_ids(self) -> tuple[str, ...]:

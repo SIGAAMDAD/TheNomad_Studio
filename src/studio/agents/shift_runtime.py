@@ -62,6 +62,11 @@ class ShiftCommand:
             raise ShiftProtocolError('invalid payload hash')
         if doc['kind'] not in {'ASSIGN', 'NOTE', 'QUESTION', 'ANSWER', 'REVIEW', 'STOP'}:
             raise ShiftProtocolError('unsupported command kind')
+        if doc['kind'] == 'STOP':
+            # STOP has no task assignment in persistent storage. The wire
+            # envelope binds its assignment slot to the shift identity instead.
+            if doc['assignment_id'] != doc['shift_id'] or doc['source_revision'] != 'shift_stop':
+                raise ShiftProtocolError('STOP envelope must be bound to its shift')
         return cls(**dict(doc))
 
 
@@ -106,8 +111,12 @@ class ShiftInbox:
             if self.verify_assignment is not None:
                 if not self.verify_assignment(cmd):
                     raise ShiftProtocolError('command source revision or assignment not authorized')
-            elif not self.source_revision or cmd.source_revision != self.source_revision:
+            elif cmd.kind != 'STOP' and (not self.source_revision or cmd.source_revision != self.source_revision):
                 raise ShiftProtocolError('stale or foreign source revision')
+            # STOP must be shift-bound, not compared to a task's pinned source
+            # revision. The GitHub transport verifies immutable branch bytes and
+            # the addressed recipient; a supplied authorization callback must
+            # independently approve STOP in the current shift as well.
             fingerprint = sha256(json.dumps(dict(record), sort_keys=True,
                               separators=(',', ':'), ensure_ascii=True).encode('utf-8')).hexdigest()
             if cmd.command_id in seen_in_batch and seen_in_batch[cmd.command_id] != fingerprint:

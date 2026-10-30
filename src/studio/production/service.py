@@ -455,7 +455,7 @@ class ProductionService:
 
         result = self.storage.command(project_id, 'D.cancelTask', rid, body_hash, commit)
         # No claim that the browser stopped. I owns GitHub STOP; if notification
-        # fails, I can reconcile canceled tasks against enrolled sessions.
+        # fails, I can reconcile canceled tasks against the observed active shifts.
         if self.stop is not None:
             for generation in affected:
                 try:
@@ -662,18 +662,22 @@ class ProductionService:
 
     def pending_stop_requests(self, actor: Mapping[str, Any], project_id: str,
                               *, limit: int = 128) -> list[dict[str, Any]]:
-        """I's recovery scan for canceled tasks with enrolled sessions still un-stopped.
+        """Find canceled assignments owned by live, observed response shifts.
 
-        This read cannot claim GitHub publication or actual browser termination.
-        I must publish its own STOP through G and record a verified GitHub receipt.
+        One browser conversation can process multiple task assignments. The
+        workforce service decides when to publish and verify a cooperative STOP.
+        This database read never claims actual browser termination.
         """
         self._authorize(actor, project_id, 'cancelTask')
         _int(limit, 'limit', positive=True)
         if limit > MAX_PAGE:
             raise ProductionFault('invalid', 'stop reconciliation batch too large')
-        return self.storage.read(project_id, lambda tx: [dict(r) for r in tx.all('''
-            SELECT s.session_id,s.task_id,s.lease_generation
-            FROM sessions s JOIN tasks t ON t.project_id=s.project_id AND t.task_id=s.task_id
-            WHERE s.project_id=? AND t.state='canceled'
-              AND s.state NOT IN ('stop_requested','completed_verified','failed_verified')
-            ORDER BY s.session_id LIMIT ?''', (project_id, limit))])
+        return self.storage.read(project_id, lambda tx: [dict(r) for r in tx.all("""
+            SELECT a.worker_id,a.shift_id,a.task_id,a.lease_generation
+              FROM shift_assignments a
+              JOIN worker_shifts s ON s.project_id=a.project_id
+                 AND s.shift_id=a.shift_id AND s.worker_id=a.worker_id
+              JOIN tasks t ON t.project_id=a.project_id AND t.task_id=a.task_id
+             WHERE a.project_id=? AND t.state='canceled'
+               AND s.state='active' AND a.state IN ('assigned','observed')
+             ORDER BY a.shift_id,a.task_id LIMIT ?""", (project_id, limit))])

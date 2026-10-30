@@ -67,10 +67,10 @@ public static class Protocol
         var seen = new HashSet<string>(StringComparer.Ordinal);
         foreach (JsonProperty field in root.EnumerateObject())
         {
-            if (!seen.Add(field.Name) || !required.TryGetValue(field.Name, out var type))
+            if (!seen.Add(field.Name) || !required.TryGetValue(field.Name, out var expectedKind))
                 throw new InvalidDataException("Unknown/duplicate property: " + field.Name);
-            if (field.Value.ValueKind != type) throw new InvalidDataException("Bad property type: " + field.Name);
-            if (type == JsonValueKind.String && field.Value.GetString()!.Length == 0)
+            if (field.Value.ValueKind != expectedKind) throw new InvalidDataException("Bad property type: " + field.Name);
+            if (expectedKind == JsonValueKind.String && field.Value.GetString()!.Length == 0)
                 throw new InvalidDataException("Empty string property: " + field.Name);
         }
         if (seen.Count != required.Count) throw new InvalidDataException("Missing required frame properties");

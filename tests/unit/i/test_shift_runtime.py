@@ -68,7 +68,7 @@ def test_duplicate_does_not_execute_twice():
 
 
 def test_stop_cooperative():
-    relay=Relay();relay.messages=[msg(3,kind='STOP')]
+    relay=Relay();relay.messages=[msg(3,kind='STOP',assignment_id='s',source_revision='shift_stop')]
     inbox=ShiftInbox('p','w','s','sha1',relay)
     inbox.record_result(inbox.poll()[0],result={'stop':True},status='stopped')
     relay.messages.append(msg(4))
@@ -122,5 +122,32 @@ def test_distinct_authorized_source_revisions_in_one_shift():
     inbox.record_result(second,result={},status='completed')
     assert inbox.processed=={'c1','c2'}
     relay.head='3'*40;relay.messages=[msg(3,source_revision='third-source')]
+    with pytest.raises(ShiftProtocolError,match='not authorized'):
+        inbox.poll()
+
+
+def test_coordinator_stop_envelope_accepted_even_with_pinned_task_revision():
+    relay=Relay();relay.messages=[msg(3,kind='STOP',assignment_id='s',source_revision='shift_stop')]
+    inbox=ShiftInbox('p','w','s','sha1',relay)
+    stop=inbox.poll()[0]
+    assert stop.kind=='STOP' and stop.assignment_id==inbox.shift_id
+    inbox.record_result(stop,result={'stopped': True},status='stopped')
+    assert inbox.stopping is True
+
+
+def test_stop_envelope_requires_correct_shift_identity_and_source_marker():
+    for malformed in [
+        msg(3,kind='STOP'),
+        msg(3,kind='STOP',assignment_id='s',source_revision='sha1'),
+        msg(3,kind='STOP',assignment_id='different-shift',source_revision='shift_stop'),
+    ]:
+        relay=Relay();relay.messages=[malformed]
+        with pytest.raises(ShiftProtocolError,match='STOP envelope'):
+            ShiftInbox('p','w','s','sha1',relay).poll()
+
+
+def test_stop_authorization_callback_must_approve_command():
+    relay=Relay();relay.messages=[msg(3,kind='STOP',assignment_id='s',source_revision='shift_stop')]
+    inbox=ShiftInbox('p','w','s',None,relay,verify_assignment=lambda cmd: False)
     with pytest.raises(ShiftProtocolError,match='not authorized'):
         inbox.poll()

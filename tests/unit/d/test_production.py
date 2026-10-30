@@ -275,6 +275,15 @@ class ProductionTests(unittest.TestCase):
         self.assertEqual(self.storage.db.execute('SELECT reserved_amount FROM budgets').fetchone()[0],0)
         self.assertEqual(self.storage.db.execute('SELECT status FROM leases').fetchone()[0],'released')
         self.assertEqual(self.stop.notified[0]['lease_generation'],1)
+        pending=self.svc.pending_stop_requests(self.actor,'p1')
+        self.assertEqual(pending,[{'worker_id':'w1','shift_id':'shift-p1-w1',
+                                  'task_id':task,'lease_generation':1}])
+        # Mark the same executing response as STOP-pending; it is no longer
+        # eligible for duplicate coordinator stop reconciliation.
+        self.storage.db.execute("UPDATE worker_shifts SET state='stopping' WHERE project_id=? AND shift_id=?",
+                                ('p1','shift-p1-w1'))
+        self.assertEqual(self.svc.pending_stop_requests(self.actor,'p1'),[])
+
         self.assertFault('conflict',lambda:self.svc.dispatchTask(self.actor,'p1',task,
                     {'request_id':'new','expected_revision':3,'worker_id':'w2'}))
     def test_verify_acceptance_rejects_forged_evidence(self):

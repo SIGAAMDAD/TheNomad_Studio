@@ -81,3 +81,29 @@ def test_github_incomplete_scan_preserves_cursor():
     inbox=ShiftInbox('p1','worker-one','shift-one','source-main',transport)
     with pytest.raises(Exception):inbox.poll()
     assert inbox.cursor is None and not checkpoints
+
+
+def test_coordinator_stop_is_processed_from_verified_github_mailbox():
+    fake, channel, transport, intents, checkpoints = rig()
+    stop = command(command_id='stop-command')
+    stop.update(kind='STOP', assignment_id='shift-one', source_revision='shift_stop')
+    fake.inject(channel.path('mail', 'worker-one', stop['command_id']), canonical(stop), SHA1)
+    inbox = ShiftInbox('p1', 'worker-one', 'shift-one', 'source-main', transport)
+    pending = inbox.poll()
+    assert [item.kind for item in pending] == ['STOP']
+    receipt = inbox.record_result(pending[0], result={'stopped': True}, status='stopped')
+    assert receipt == SHA2
+    assert inbox.stopping and inbox.poll() == []
+    assert checkpoints[-1]['cursor'] == SHA1
+    assert len(intents) == 1
+
+
+def test_wrong_shift_stop_envelope_is_rejected_before_receipt():
+    fake, channel, transport, intents, checkpoints = rig()
+    stop = command(command_id='stop-command')
+    stop.update(kind='STOP', assignment_id='foreign-shift', source_revision='shift_stop')
+    fake.inject(channel.path('mail', 'worker-one', stop['command_id']), canonical(stop), SHA1)
+    inbox = ShiftInbox('p1', 'worker-one', 'shift-one', 'source-main', transport)
+    with pytest.raises((ShiftProtocolError, IntegrationError), match='STOP envelope'):
+        inbox.poll()
+    assert not intents and not checkpoints

@@ -59,9 +59,10 @@ public static class Sandbox
 
     public static ProcessStartInfo Create(ResolvedRun resolved, int deadlineMs)
     {
-        if (resolved.Entrypoint.Isolation != LinuxCapability || !LinuxPreflight(out string reason))
-            throw new InvalidOperationException("capability_unavailable: " +
-                (resolved.Entrypoint.Isolation == LinuxCapability ? reason : "unrecognized/unverified isolation requirement"));
+        if (resolved.Entrypoint.Isolation != LinuxCapability)
+            throw new InvalidOperationException("capability_unavailable: unrecognized/unverified isolation requirement");
+        if (!LinuxPreflight(out string reason))
+            throw new InvalidOperationException("capability_unavailable: " + reason);
 
         EntryPoint entry = resolved.Entrypoint;
         // RLIMITs are inherited by the sandbox and its descendants. CPU, address space,
