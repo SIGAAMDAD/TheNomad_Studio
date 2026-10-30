@@ -17,6 +17,11 @@ def test_qa_transaction_event_replay_and_isolation(tmp_path):
                          (project, project, "digest"))
             conn.execute("INSERT INTO project_grants VALUES(?,?,'member')", (project, "person"))
         store = AssuranceAPSWStore(writer)
+        assert store.read(project_id="p1", query=lambda tx: tx.one(
+            "SELECT kind FROM principals WHERE principal_id=?", ("person",))) == {"kind": "human"}
+        with pytest.raises(AssuranceError, match="project fence"):
+            store.read(project_id="p1", query=lambda tx: tx.one(
+                "SELECT auth_issuer FROM principals WHERE principal_id=?", ("person",)))
 
         def create(tx):
             assert tx.one("SELECT 1 AS allowed FROM project_grants WHERE project_id=? AND principal_id=?",
