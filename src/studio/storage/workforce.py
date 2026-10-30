@@ -131,7 +131,7 @@ class WorkforceStorage:
             raise WorkforceFault('invalid', 'invalid idempotency command identity')
         # A request ID belongs to its domain owner, not to each operation.
         # Bind operation identity to the digest to reject cross-operation replay.
-        owner = {'workers': 'WG-I', 'D': 'WG-D', 'B': 'WG-B'}.get(operation.split('.', 1)[0])
+        owner = {'workers': 'WG-I', 'D': 'WG-D', 'B': 'WG-B', 'M': 'WG-M'}.get(operation.split('.', 1)[0])
         if owner is None:
             raise WorkforceFault('invalid', 'unregistered command owner')
         bound_digest = hashlib.sha256((operation + '\\x00' + payload_sha256).encode('utf-8')).hexdigest()
