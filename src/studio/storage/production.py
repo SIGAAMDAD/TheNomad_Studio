@@ -12,6 +12,7 @@ from typing import Any, Callable, TypeVar
 from studio.production.service import ProductionFault
 from studio.workforce import WorkforceFault
 from .schema import table_owners
+from .registry import GLOBAL_CATALOG
 from .workforce import WorkforceStorage, WorkforceTransaction
 
 T = TypeVar("T")
@@ -27,9 +28,16 @@ class ProductionTx:
         self._owners = owners
 
     def _check(self, sql: str, params: tuple[Any, ...], *, write: bool = False) -> None:
-        if not isinstance(sql, str) or "project_id" not in sql.lower():
-            raise ProductionFault("forbidden", "D operation requires project-scoped SQL")
-        if self._project not in params:
+        if not isinstance(sql, str):
+            raise ProductionFault("forbidden", "invalid D SQL")
+        if "project_id" not in sql.lower():
+            # The frozen schema contains global specialist/tool catalogs used
+            # during task eligibility checks. Reads may reference those only.
+            referenced = re.findall(r"\\b(?:FROM|JOIN)\\s+([a-z_]+)\\b", sql, re.I)
+            if (write or not sql.lstrip().upper().startswith("SELECT ")
+                    or not referenced or any(t.lower() not in GLOBAL_CATALOG for t in referenced)):
+                raise ProductionFault("forbidden", "D operation requires project-scoped SQL")
+        elif self._project not in params:
             raise ProductionFault("forbidden", "D statement missing bound project")
         match = _DML.match(sql)
         if write:
