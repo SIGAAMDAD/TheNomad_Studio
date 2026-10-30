@@ -122,10 +122,6 @@ class RoleSummary(TypedDict):
     role_revision: Required[str]
     state: Required[str]
 
-class SessionSummary(TypedDict):
-    session_id: Required[str]
-    task_id: Required[str]
-    state: Required[str]
 
 class TaskSummary(TypedDict):
     task_id: Required[str]
@@ -148,13 +144,18 @@ class ackNotificationResponse(TypedDict):
     notification_id: Required[str]
     acknowledged: Required[bool]
 
-class ackRelayRequest(TypedDict):
+class observeCommandReceiptRequest(TypedDict):
     request_id: Required[str]
-    session_id: Required[str]
+    receipt_id: Required[str]
+    worker_id: Required[str]
+    shift_id: Required[str]
+    kind: Required[str]
+    result_digest: Required[str]
+    receipt_commit_sha: Required[str]
 
-class ackRelayResponse(TypedDict):
-    message_id: Required[str]
-    acknowledged: Required[bool]
+class observeCommandReceiptResponse(TypedDict):
+    command_id: Required[str]
+    state: Required[str]
 
 class assignTaskRequest(TypedDict):
     request_id: Required[str]
@@ -184,12 +185,12 @@ class cancelTaskResponse(TypedDict):
     task_id: Required[str]
     state: Required[str]
 
-class cancelWorkerRequest(TypedDict):
+class stopShiftRequest(TypedDict):
     request_id: Required[str]
     reason: Required[str]
 
-class cancelWorkerResponse(TypedDict):
-    session_id: Required[str]
+class stopShiftResponse(TypedDict):
+    shift_id: Required[str]
     state: Required[str]
 
 class configureBudgetRequest(TypedDict):
@@ -379,8 +380,13 @@ class listTasksResponse(TypedDict):
 class listToolGrantsResponse(TypedDict):
     grants: Required[list[GrantedToolSummary]]
 
+class WorkerSummary(TypedDict):
+    worker_id: Required[str]
+    role_id: Required[str]
+    state: Required[str]
+
 class listWorkersResponse(TypedDict):
-    sessions: Required[list[SessionSummary]]
+    items: Required[list[WorkerSummary]]
 
 class observeEffectResponse(TypedDict):
     effect_id: Required[str]
@@ -519,12 +525,13 @@ class resolveOversightCaseResponse(TypedDict):
     case_id: Required[str]
     state: Required[str]
 
-class resumeWorkerRequest(TypedDict):
+class beginShiftRequest(TypedDict):
     request_id: Required[str]
-    checkpoint_id: Required[str]
+    shift_id: Required[str]
 
-class resumeWorkerResponse(TypedDict):
-    session_id: Required[str]
+class beginShiftResponse(TypedDict):
+    worker_id: Required[str]
+    shift_id: Required[str]
     state: Required[str]
 
 class revokeProjectAccessRequest(TypedDict):
@@ -553,14 +560,13 @@ class runBuildResponse(TypedDict):
     ci_id: Required[str]
     state: Required[str]
 
-class sendRelayRequest(TypedDict):
+class endShiftRequest(TypedDict):
     request_id: Required[str]
-    from_session_id: Required[str]
-    to_session_id: Required[str]
-    payload_digest: Required[str]
+    receipt_commit_sha: Required[str]
+    receipt_digest: Required[str]
 
-class sendRelayResponse(TypedDict):
-    message_id: Required[str]
+class endShiftResponse(TypedDict):
+    shift_id: Required[str]
     state: Required[str]
 
 class setProjectPolicyRequest(TypedDict):
@@ -603,14 +609,14 @@ class stageIntegrationResponse(TypedDict):
     intent_id: Required[str]
     state: Required[str]
 
-class startWorkerRequest(TypedDict):
+class registerWorkerRequest(TypedDict):
     request_id: Required[str]
-    task_id: Required[str]
-    lease_generation: Required[int]
-    package_digest: Required[str]
+    worker_id: Required[str]
+    browser_chat_ref: Required[str]
+    role_id: Required[str]
 
-class startWorkerResponse(TypedDict):
-    session_id: Required[str]
+class registerWorkerResponse(TypedDict):
+    worker_id: Required[str]
     state: Required[str]
 
 class submitFeatureRequest(TypedDict):
@@ -660,9 +666,9 @@ class StudioApiPort(Protocol):
     def listTasks(self, actor: ActorContext, project_id: str) -> listTasksResponse: ...
     def cancelTask(self, actor: ActorContext, project_id: str, task_id: str, request: cancelTaskRequest) -> cancelTaskResponse: ...
     def dispatchTask(self, actor: ActorContext, project_id: str, task_id: str, request: dispatchTaskRequest) -> dispatchTaskResponse: ...
-    def startWorker(self, actor: ActorContext, project_id: str, request: startWorkerRequest) -> startWorkerResponse: ...
-    def resumeWorker(self, actor: ActorContext, project_id: str, session_id: str, request: resumeWorkerRequest) -> resumeWorkerResponse: ...
-    def cancelWorker(self, actor: ActorContext, project_id: str, session_id: str, request: cancelWorkerRequest) -> cancelWorkerResponse: ...
+    def registerWorker(self, actor: ActorContext, project_id: str, request: registerWorkerRequest) -> registerWorkerResponse: ...
+    def beginShift(self, actor: ActorContext, project_id: str, worker_id: str, request: beginShiftRequest) -> beginShiftResponse: ...
+    def stopShift(self, actor: ActorContext, project_id: str, worker_id: str, shift_id: str, request: stopShiftRequest) -> stopShiftResponse: ...
     def listWorkers(self, actor: ActorContext, project_id: str) -> listWorkersResponse: ...
     def requestReview(self, actor: ActorContext, project_id: str, request: requestReviewRequest) -> requestReviewResponse: ...
     def submitReview(self, actor: ActorContext, project_id: str, review_id: str, request: submitReviewRequest) -> submitReviewResponse: ...
@@ -688,8 +694,8 @@ class StudioApiPort(Protocol):
     def createDeliberation(self, actor: ActorContext, project_id: str, cabal_id: str, request: createDeliberationRequest) -> createDeliberationResponse: ...
     def listDeliberations(self, actor: ActorContext, project_id: str, cabal_id: str) -> listDeliberationsResponse: ...
     def assignTask(self, actor: ActorContext, project_id: str, task_id: str, request: assignTaskRequest) -> assignTaskResponse: ...
-    def sendRelay(self, actor: ActorContext, project_id: str, request: sendRelayRequest) -> sendRelayResponse: ...
-    def ackRelay(self, actor: ActorContext, project_id: str, message_id: str, request: ackRelayRequest) -> ackRelayResponse: ...
+    def endShift(self, actor: ActorContext, project_id: str, shift_id: str, request: endShiftRequest) -> endShiftResponse: ...
+    def observeCommandReceipt(self, actor: ActorContext, project_id: str, command_id: str, request: observeCommandReceiptRequest) -> observeCommandReceiptResponse: ...
     def openOversightCase(self, actor: ActorContext, project_id: str, request: openOversightCaseRequest) -> openOversightCaseResponse: ...
     def resolveOversightCase(self, actor: ActorContext, project_id: str, case_id: str, request: resolveOversightCaseRequest) -> resolveOversightCaseResponse: ...
     def listOversightCases(self, actor: ActorContext, project_id: str) -> listOversightCasesResponse: ...

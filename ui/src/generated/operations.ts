@@ -1172,137 +1172,6 @@ export const operations: Record<StudioOperationId, OperationMeta> = {
       }
     }
   },
-  "startWorker": {
-    "method": "POST",
-    "path": "/v1/projects/{project_id}/workers/start",
-    "pathParams": [
-      "project_id"
-    ],
-    "query": [],
-    "body": {
-      "type": "object",
-      "required": [
-        "request_id",
-        "task_id",
-        "lease_generation",
-        "package_digest"
-      ],
-      "properties": {
-        "request_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "task_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "lease_generation": {
-          "type": "integer"
-        },
-        "package_digest": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
-    },
-    "response": {
-      "type": "object",
-      "required": [
-        "session_id",
-        "state"
-      ],
-      "properties": {
-        "session_id": {
-          "type": "string"
-        },
-        "state": {
-          "type": "string"
-        }
-      }
-    }
-  },
-  "resumeWorker": {
-    "method": "POST",
-    "path": "/v1/projects/{project_id}/workers/{session_id}/resume",
-    "pathParams": [
-      "project_id",
-      "session_id"
-    ],
-    "query": [],
-    "body": {
-      "type": "object",
-      "required": [
-        "request_id",
-        "checkpoint_id"
-      ],
-      "properties": {
-        "request_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "checkpoint_id": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
-    },
-    "response": {
-      "type": "object",
-      "required": [
-        "session_id",
-        "state"
-      ],
-      "properties": {
-        "session_id": {
-          "type": "string"
-        },
-        "state": {
-          "type": "string"
-        }
-      }
-    }
-  },
-  "cancelWorker": {
-    "method": "POST",
-    "path": "/v1/projects/{project_id}/workers/{session_id}/cancel",
-    "pathParams": [
-      "project_id",
-      "session_id"
-    ],
-    "query": [],
-    "body": {
-      "type": "object",
-      "required": [
-        "request_id",
-        "reason"
-      ],
-      "properties": {
-        "request_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "reason": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
-    },
-    "response": {
-      "type": "object",
-      "required": [
-        "session_id",
-        "state"
-      ],
-      "properties": {
-        "session_id": {
-          "type": "string"
-        },
-        "state": {
-          "type": "string"
-        }
-      }
-    }
-  },
   "listWorkers": {
     "method": "GET",
     "path": "/v1/projects/{project_id}/workers",
@@ -1314,23 +1183,23 @@ export const operations: Record<StudioOperationId, OperationMeta> = {
     "response": {
       "type": "object",
       "required": [
-        "sessions"
+        "items"
       ],
       "properties": {
-        "sessions": {
+        "items": {
           "type": "array",
           "items": {
             "type": "object",
             "required": [
-              "session_id",
-              "task_id",
+              "worker_id",
+              "role_id",
               "state"
             ],
             "properties": {
-              "session_id": {
+              "worker_id": {
                 "type": "string"
               },
-              "task_id": {
+              "role_id": {
                 "type": "string"
               },
               "state": {
@@ -1338,6 +1207,56 @@ export const operations: Record<StudioOperationId, OperationMeta> = {
               }
             }
           }
+        }
+      }
+    }
+  },
+  "registerWorker": {
+    "method": "POST",
+    "path": "/v1/projects/{project_id}/workers",
+    "pathParams": [
+      "project_id"
+    ],
+    "query": [],
+    "body": {
+      "type": "object",
+      "required": [
+        "request_id",
+        "worker_id",
+        "browser_chat_ref",
+        "role_id"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "worker_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "browser_chat_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "required": [
+        "worker_id",
+        "state"
+      ],
+      "properties": {
+        "worker_id": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
         }
       }
     }
@@ -2471,91 +2390,6 @@ export const operations: Record<StudioOperationId, OperationMeta> = {
       }
     }
   },
-  "sendRelay": {
-    "method": "POST",
-    "path": "/v1/projects/{project_id}/relays",
-    "pathParams": [
-      "project_id"
-    ],
-    "query": [],
-    "body": {
-      "type": "object",
-      "required": [
-        "request_id",
-        "from_session_id",
-        "to_session_id",
-        "payload_digest"
-      ],
-      "properties": {
-        "request_id": {
-          "type": "string"
-        },
-        "from_session_id": {
-          "type": "string"
-        },
-        "to_session_id": {
-          "type": "string"
-        },
-        "payload_digest": {
-          "type": "string"
-        }
-      }
-    },
-    "response": {
-      "type": "object",
-      "required": [
-        "message_id",
-        "state"
-      ],
-      "properties": {
-        "message_id": {
-          "type": "string"
-        },
-        "state": {
-          "type": "string"
-        }
-      }
-    }
-  },
-  "ackRelay": {
-    "method": "POST",
-    "path": "/v1/projects/{project_id}/relays/{message_id}/ack",
-    "pathParams": [
-      "project_id",
-      "message_id"
-    ],
-    "query": [],
-    "body": {
-      "type": "object",
-      "required": [
-        "request_id",
-        "session_id"
-      ],
-      "properties": {
-        "request_id": {
-          "type": "string"
-        },
-        "session_id": {
-          "type": "string"
-        }
-      }
-    },
-    "response": {
-      "type": "object",
-      "required": [
-        "message_id",
-        "acknowledged"
-      ],
-      "properties": {
-        "message_id": {
-          "type": "string"
-        },
-        "acknowledged": {
-          "type": "boolean"
-        }
-      }
-    }
-  },
   "openOversightCase": {
     "method": "POST",
     "path": "/v1/projects/{project_id}/oversight",
@@ -3111,6 +2945,205 @@ export const operations: Record<StudioOperationId, OperationMeta> = {
         },
         "revoked": {
           "type": "boolean"
+        }
+      }
+    }
+  },
+  "beginShift": {
+    "method": "POST",
+    "path": "/v1/projects/{project_id}/workers/{worker_id}/shifts",
+    "pathParams": [
+      "project_id",
+      "worker_id"
+    ],
+    "query": [],
+    "body": {
+      "type": "object",
+      "required": [
+        "request_id",
+        "shift_id"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shift_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "required": [
+        "worker_id",
+        "shift_id",
+        "state"
+      ],
+      "properties": {
+        "worker_id": {
+          "type": "string"
+        },
+        "shift_id": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "stopShift": {
+    "method": "POST",
+    "path": "/v1/projects/{project_id}/workers/{worker_id}/shifts/{shift_id}/stop",
+    "pathParams": [
+      "project_id",
+      "worker_id",
+      "shift_id"
+    ],
+    "query": [],
+    "body": {
+      "type": "object",
+      "required": [
+        "request_id",
+        "reason"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "required": [
+        "shift_id",
+        "state"
+      ],
+      "properties": {
+        "shift_id": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "endShift": {
+    "method": "POST",
+    "path": "/v1/projects/{project_id}/shifts/{shift_id}/end",
+    "pathParams": [
+      "project_id",
+      "shift_id"
+    ],
+    "query": [],
+    "body": {
+      "type": "object",
+      "required": [
+        "request_id",
+        "receipt_commit_sha",
+        "receipt_digest"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_commit_sha": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_digest": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "required": [
+        "shift_id",
+        "state"
+      ],
+      "properties": {
+        "shift_id": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "observeCommandReceipt": {
+    "method": "POST",
+    "path": "/v1/projects/{project_id}/commands/{command_id}/receipts",
+    "pathParams": [
+      "project_id",
+      "command_id"
+    ],
+    "query": [],
+    "body": {
+      "type": "object",
+      "required": [
+        "request_id",
+        "receipt_id",
+        "worker_id",
+        "shift_id",
+        "kind",
+        "result_digest",
+        "receipt_commit_sha"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "worker_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shift_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result_digest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_commit_sha": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "required": [
+        "command_id",
+        "state"
+      ],
+      "properties": {
+        "command_id": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
         }
       }
     }

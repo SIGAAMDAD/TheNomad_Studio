@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { StudioOperationId } from '../../../CONTRACTS/api.types';
 import { StudioClient, StudioApiError } from '../client';
-import { displayName, manualSessionOperation, requiresConfirmation } from '../catalog';
+import { displayName, manualShiftOperation, requiresConfirmation } from '../catalog';
 import { defaults, validateRequired, type Fields } from '../form';
 import { operations } from '../generated/operations';
 import { schemaFailure } from '../schema';
@@ -59,7 +59,7 @@ export function CommandForm({ operation, projectId, client, seed, onDone, onClos
   }
   return <div className="modal-backdrop" role="presentation"><section className="modal" role="dialog" aria-modal="true" aria-label={displayName(operation)}>
     <div className="modal-head"><div><p className="eyebrow">{meta.method} · {operation}</p><h2>{displayName(operation)}</h2></div><button className="icon-button" onClick={onClose} aria-label="Close">×</button></div>
-    {manualSessionOperation(operation) ? <div className="notice">This operation updates Studio coordination state. Human enrollment and work-shift starts are separate; subsequent GitHub assignments are processed inside the already executing response.</div> : null}
+    {manualShiftOperation(operation) ? <div className="notice">This operation updates Studio coordination state. Human enrollment and work-shift starts are separate; subsequent GitHub assignments are processed inside the already executing response.</div> : null}
     {result ? <div className="result"><h3>Server response</h3><pre>{JSON.stringify(result, null, 2)}</pre><p>Inspect subsequent observed state separately; a prepared operation is not a verified remote effect.</p><button onClick={onClose}>Close</button></div> :
     reviewing ? <div className="form-grid">
       <p className="notice">Verify the exact subject, revision, and effect digest before submitting. No mutation is retried automatically.</p>

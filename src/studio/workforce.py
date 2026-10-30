@@ -144,6 +144,48 @@ class Workforce:
             return {'shift_id': request['shift_id'], 'state':'finished'}
         return self.storage.command(project_id, 'workers.end_shift', request['request_id'], digest(request), apply)
 
+    def request_stop(self, actor: Mapping[str, Any], project_id: str,
+                     request: Mapping[str, Any]) -> dict:
+        """Advisory STOP to an executing shift; never claims to terminate a browser response."""
+        self.require_action(actor, project_id, 'stopShift')
+        if set(request) != {'request_id', 'worker_id', 'shift_id', 'reason'}:
+            raise WorkforceFault('invalid', 'unexpected STOP fields')
+        for field in request:
+            _nonempty(request[field], field)
+        def apply(tx: Transaction) -> dict:
+            shift = tx.one('''SELECT state FROM worker_shifts WHERE project_id=? AND worker_id=?
+                             AND shift_id=?''',
+                           (project_id, request['worker_id'], request['shift_id']))
+            if shift is None or shift['state'] not in ('awaiting_hello', 'active'):
+                raise WorkforceFault('conflict', 'shift not eligible for STOP')
+            if shift['state'] == 'awaiting_hello':
+                tx.change('''UPDATE worker_shifts SET state='interrupted',finished_at=?
+                                 WHERE project_id=? AND worker_id=? AND shift_id=?''',
+                          (_utc(), project_id, request['worker_id'], request['shift_id']))
+                return {'shift_id': request['shift_id'], 'state': 'interrupted'}
+            # STOP is delivered to the *existing conversation* during its response.
+            # A STOP command has no task assignment; that FK is nullable by design.
+            cid = 'stop_' + hashlib.sha256(canonical({'project': project_id,
+                       'worker': request['worker_id'], 'shift': request['shift_id']})).hexdigest()
+            envelope = dict(project_id=project_id, worker_id=request['worker_id'],
+                            shift_id=request['shift_id'], assignment_id=request['shift_id'],
+                            command_id=cid, kind='STOP',
+                            payload_digest=hashlib.sha256(request['reason'].encode('utf-8')).hexdigest(),
+                            source_revision='shift_stop')
+            encoded = canonical(envelope)
+            path = f'.nomad/relays/{project_id}/mail/{request["worker_id"]}/{cid}.json'
+            tx.change('''INSERT INTO command_outbox(project_id,command_id,worker_id,shift_id,
+                assignment_id,kind,envelope_digest,envelope_json,remote_path,created_at,state)
+                VALUES(?,?,?,?,NULL,'STOP',?,?,?,?,'queued')''',
+                (project_id,cid,request['worker_id'],request['shift_id'],
+                 hashlib.sha256(encoded).hexdigest(),encoded.decode(),path,_utc()))
+            tx.change('''UPDATE worker_shifts SET state='stopping' WHERE project_id=?
+                AND worker_id=? AND shift_id=? AND state='active' ''',
+                (project_id,request['worker_id'],request['shift_id']))
+            return {'shift_id': request['shift_id'], 'state': 'stopping'}
+        return self.storage.command(project_id, 'workers.stop_shift',
+                                    request['request_id'], digest(request), apply)
+
     def pending(self, actor: Mapping[str, Any], project_id: str) -> list[dict]:
         self.require_action(actor, project_id, 'publishCommands')
         return self.storage.read(project_id, lambda tx: [dict(r) for r in tx.all("""
@@ -212,6 +254,8 @@ class Workforce:
         if set(request)!=required:
             raise WorkforceFault('invalid','unexpected command receipt fields')
         for field in required: _nonempty(request[field],field)
+        if request['kind'] not in {'accepted', 'completed', 'blocked', 'failed', 'stopped'}:
+            raise WorkforceFault('invalid', 'unsupported command receipt status')
         if (len(request['result_digest'])!=64 or
                 len(request['receipt_commit_sha'])!=40 or
                 not verify(request)):
@@ -228,12 +272,21 @@ class Workforce:
                       (project_id,request['receipt_id'],request['command_id'],request['worker_id'],
                        request['shift_id'],request['kind'],request['result_digest'],
                        request['receipt_commit_sha'],_utc()))
-            state='completed' if request['kind']=='completed' else 'observed'
+            terminal = request['kind'] in ('completed', 'blocked', 'failed', 'stopped')
+            state = 'completed' if terminal else 'observed'
             tx.change('''UPDATE command_outbox SET state=? WHERE project_id=? AND command_id=?''',
                       (state,project_id,request['command_id']))
-            if state=='completed':
-                tx.change("""UPDATE shift_assignments SET state='submitted' WHERE project_id=?
-                             AND assignment_id=? AND state IN ('assigned','observed')""",
+            if cmd['assignment_id'] is None:
+                if request['kind'] != 'stopped':
+                    raise WorkforceFault('invalid', 'STOP requires stopped evidence')
+            elif terminal:
+                assignment_state = 'submitted' if request['kind'] == 'completed' else 'failed'
+                tx.change('''UPDATE shift_assignments SET state=? WHERE project_id=?
+                             AND assignment_id=? AND state IN ('assigned','observed')''',
+                          (assignment_state,project_id,cmd['assignment_id']))
+            elif cmd['state'] == 'published':
+                tx.change('''UPDATE shift_assignments SET state='observed' WHERE project_id=?
+                             AND assignment_id=? AND state='assigned' ''',
                           (project_id,cmd['assignment_id']))
             return {'command_id':request['command_id'],'state':state}
         return self.storage.command(project_id,'workers.observe_receipt',request['request_id'],digest(request),apply)

@@ -11,13 +11,13 @@ dependencies = []
 
 [project.optional-dependencies]
 coordinator = ["apsw>=3.46", "fastapi>=0.110", "uvicorn>=0.29"]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "pytest-cov>=5.0"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 namespaces = true
 
 [tool.pytest.ini_options]
-testpaths = ["tests/unit/m", "tests/integration"]
+testpaths = ["tests/unit", "tests/integration", "tests/acceptance"]
 addopts = "-ra"
-pythonpath = ["src"]
+pythonpath = ["src", "."]

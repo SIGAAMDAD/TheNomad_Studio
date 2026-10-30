@@ -70,7 +70,7 @@ static class Checks
         File.WriteAllBytes(Path.Combine(install, "package.json"), packageManifestBytes);
         string digest = Hash(packageManifestBytes);
         const string grant = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
-        var auth = new AuthorizedOperation("op-a", "req-a", "project-a", "task-a", "session-a", 2,
+        var auth = new AuthorizedOperation("op-a", "req-a", "project-a", "task-a", "worker-a", "shift-a", 2,
             "revision-a", "canon-a", digest, "unit-test", grant, "work-a", Array.Empty<string>());
         var registry = new Registry(1,
             new[] { new Package(digest, install, "package.json", new[] { entry }) },
@@ -88,7 +88,7 @@ static class Checks
 
         using JsonDocument args = JsonDocument.Parse("{}");
         var run = new ToolRun("run", Protocol.Version, auth.OperationId, auth.RequestId, auth.ProjectId,
-            auth.TaskId, auth.SessionId, auth.LeaseGeneration, auth.SourceRevisionId, auth.CanonSnapshotId,
+            auth.TaskId, auth.WorkerId, auth.ShiftId, auth.LeaseGeneration, auth.SourceRevisionId, auth.CanonSnapshotId,
             auth.PackageDigest, auth.EntrypointId, auth.GrantDigest, auth.WorkspaceId, args.RootElement.Clone(),
             2000, auth.InputArtifactDigests);
         string frame = Protocol.Serialize(run);
@@ -105,6 +105,8 @@ static class Checks
         File.WriteAllText(Path.Combine(install, "args.json"), "{\"type\":\"object\",\"additionalProperties\":false}");
         Reject(() => Config.Authorize(loaded, run with { ProjectId = "other" }), "cross-project request denied");
         Reject(() => Config.Authorize(loaded, run with { LeaseGeneration = 1 }), "stale task lease denied");
+        Reject(() => Config.Authorize(loaded, run with { WorkerId = "another" }), "wrong persistent worker denied");
+        Reject(() => Config.Authorize(loaded, run with { ShiftId = "another" }), "wrong executing shift denied");
         Reject(() => Config.Authorize(loaded, run with { SourceRevisionId = "other" }), "unpinned source revision denied");
         Reject(() => Config.Authorize(loaded, run with { CanonSnapshotId = "other" }), "unpinned Canon denied");
         Reject(() => Config.Authorize(loaded, run with { GrantDigest = digest }), "wrong grant denied");

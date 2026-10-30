@@ -58,7 +58,8 @@ public sealed record AuthorizedOperation(
     [property: JsonPropertyName("request_id")] string RequestId,
     [property: JsonPropertyName("project_id")] string ProjectId,
     [property: JsonPropertyName("task_id")] string TaskId,
-    [property: JsonPropertyName("session_id")] string SessionId,
+    [property: JsonPropertyName("worker_id")] string WorkerId,
+    [property: JsonPropertyName("shift_id")] string ShiftId,
     [property: JsonPropertyName("lease_generation")] int LeaseGeneration,
     [property: JsonPropertyName("source_revision_id")] string SourceRevisionId,
     [property: JsonPropertyName("canon_snapshot_id")] string CanonSnapshotId,
@@ -104,7 +105,7 @@ public static class Config
     {
         AuthorizedOperation auth = ExactlyOne(registry.Operations.Where(x => x.OperationId == run.OperationId), "operation");
         if (auth.RequestId != run.RequestId || auth.ProjectId != run.ProjectId || auth.TaskId != run.TaskId ||
-            auth.SessionId != run.SessionId || auth.LeaseGeneration != run.LeaseGeneration ||
+            auth.WorkerId != run.WorkerId || auth.ShiftId != run.ShiftId || auth.LeaseGeneration != run.LeaseGeneration ||
             auth.SourceRevisionId != run.SourceRevisionId || auth.CanonSnapshotId != run.CanonSnapshotId ||
             auth.PackageDigest != run.PackageDigest || auth.EntrypointId != run.EntrypointId ||
             auth.GrantDigest != run.GrantDigest || auth.WorkspaceId != run.WorkspaceId ||

@@ -1,6 +1,6 @@
-# WG-K: The Nomad Studio browser cockpit
+# The Nomad Studio operator cockpit
 
-This is an implementation of the **72 frozen operator operations** in `CONTRACTS/openapi.json`. It is a React/TypeScript Vite app. It does not implement or simulate the API or GitHub connector. The typed backend is owned by J, the real GitHub effects are owned by G, and manual session projection is owned by I.
+This is an implementation of the **72 frozen operator operations** in `CONTRACTS/openapi.json`. It is a React/TypeScript Vite app. It does not implement or simulate the API or GitHub connector. The typed backend, GitHub effects and worker lifecycle remain separate trusted services.
 
 ## Run
 
@@ -25,8 +25,10 @@ Configure `VITE_STUDIO_API_URL` to override the default same-origin `/v1` servic
 - Each project switch clears query caches, local handoff values and Bible draft buffers. All reads use project-scoped query keys. The authentication token is never sent to GitHub and is not stored persistently.
 - All 72 operations have UI access through the nine sections, with generated field editors for path IDs, request body, and available query parameters. Edits are reviewable before submission; owner-gated operations require explicit typed confirmation and an exact digest match when the submitted body carries one.
 - Transport/network ambiguity on POST/PUT means **UNKNOWN effect**. There is no automatic mutation retry. The operator can inspect an exact effect ID and invoke reconcileEffect; only the backend may resolve the intent.
-- Browser session operations only produce/query coordinator state. The Manual Session Handoff workbench copies a human-supplied, verified packet for the owner to paste into an **ordinary new ChatGPT browser conversation**. No API operation launches, awakens or stops a ChatGPT browser conversation.
-- The frozen `startWorkerResponse` contains only `session_id` and `state`: it does **not** contain the full browser launch packet, lease generation, Canon digest, exact relay paths or GitHub receipts. The UI therefore requires those fields to be supplied from independently verified artifacts; it never guesses them. Similarly no listRelayInbox/readRelayReceipt endpoint exists; operators can open a verified GitHub repository/ref for the immutable relay and inspect observations via listWorkers/listEvents.
+- Worker operator commands manage durable conversation enrollment and shift state. `registerWorker` enrolls an already manually created browser conversation and `beginShift` records a separate human-started continuous-response shift. Neither launches a chat.
+- The work-shift handoff panel uses separately verified `worker_id`, `shift_id`, Canon digest, contract digest and GitHub mailbox path. It does not require a task ID or lease at shift initiation; the active response processes successive assignments through GitHub.
+- STOP is a cooperative relay command, and `endShift` requires independently verified final receipt evidence. A GitHub API write is not proof of ChatGPT browser execution.
+- The API exposes 72 operations, but full production deployment requires actual service binding and APSW/CI checks for every operation. UI contract tests alone do not establish backend readiness.
 - The Bible draft workbench offers **ephemeral local text and UTF-8 SHA256**. The frozen API supports stage-by-existing-digest but not raw blob upload, so editing a Bible does not persist the text automatically. Actual blob delivery must be performed via the separately authorized immutable artifact path before staging.
 - Client-side confirmation is not server authority: J/A/M must independently verify actor grants, revisions, owner decisions, and subject/effect digests.
 
@@ -34,4 +36,4 @@ Configure `VITE_STUDIO_API_URL` to override the default same-origin `/v1` servic
 
 Selected packages: React + React DOM 19.1.1 (MIT), Vite 6.3.5 (MIT), `@vitejs/plugin-react` 4.7.0 (MIT), `@tanstack/react-query` 5.83.0 (MIT), TypeScript 5.8.3 (Apache-2.0), `@types/react`/`@types/react-dom` (MIT). React Query was chosen to scope and invalidate server projections; no second browser persistence layer is added. Actual resolved package hashes, CVE audit and OS clean-install remain **NOT_RUN** where registry access is unavailable. A lockfile must be produced with `npm install --package-lock-only` in a network-enabled environment, retained in the canonical integration tree, and verified with `npm ci` before a reproducible production build can be certified. Pinning exact package.json versions is not proof of a reproducible dependency install.
 
-The offline contract-generator unit tests use only the Node built-in test runner and verify 72/72 coverage, route identity, no invented inference/worker invocation, path encoding, error envelopes, mutable-request UNKNOWN handling, project separation and manual handoff constraints. Real React build and browser interaction require installed dependencies and the actual J backend; report them separately as NOT_RUN if unavailable.
+The offline contract-generator unit tests use only the Node built-in test runner and verify 72/72 coverage, route identity, no invented inference/worker invocation, path encoding, error envelopes, mutable-request UNKNOWN handling, project separation and continuous shift handoff constraints. Real React build and browser interaction require installed dependencies and the actual J backend; report them separately as NOT_RUN if unavailable.

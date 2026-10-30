@@ -48,6 +48,11 @@ class DomainRegistry:
             raise ApiError('capability_unavailable', f'domain {op.owner} not connected')
         return handler
 
+    def manages_atomic_mutation(self, op: Operation) -> bool:
+        service = self._services.get(op.owner)
+        operations = getattr(service, 'atomic_operations', frozenset())
+        return op.name in operations if isinstance(operations, (set, frozenset)) else False
+
     def missing(self, contracts: FrozenContracts) -> list[str]:
         return [op.name for op in contracts.operations.values()
                 if not callable(getattr(self._services.get(op.owner), op.name, None))]
@@ -78,9 +83,16 @@ class StudioOperatorService:
             result = {'items': [item for item in result['items']
                                 if isinstance(item, dict) and item.get('project_id') in allowed]}
         elif op.mutation:
+            assert body is not None
+            if self.domains.manages_atomic_mutation(op):
+                # The domain's own durable command store atomically binds its
+                # request ID, payload digest, mutations and replay result.
+                # Never nest an unrelated API mutation transaction around it.
+                result = handler(actor, **path_args, request=body)
+                self._validate_response(op, result)
+                return result
             if self.transactions is None:
                 raise ApiError('capability_unavailable', 'transactional mutation store not connected')
-            assert body is not None
             # Principal and full route context are included to avoid interpreting
             # one actor/operation's replay key as another's authorization.
             payload_digest = hashlib.sha256(json.dumps({

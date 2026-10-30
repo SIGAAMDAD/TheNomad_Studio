@@ -1527,207 +1527,6 @@
         }
       }
     },
-    "/v1/projects/{project_id}/workers/start": {
-      "post": {
-        "operationId": "startWorker",
-        "tags": [
-          "I"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/startWorkerResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          },
-          "403": {
-            "$ref": "#/components/responses/Error"
-          },
-          "409": {
-            "$ref": "#/components/responses/Error"
-          },
-          "503": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "parameters": [
-          {
-            "in": "path",
-            "name": "project_id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/startWorkerRequest"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/projects/{project_id}/workers/{session_id}/resume": {
-      "post": {
-        "operationId": "resumeWorker",
-        "tags": [
-          "I"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/resumeWorkerResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          },
-          "403": {
-            "$ref": "#/components/responses/Error"
-          },
-          "409": {
-            "$ref": "#/components/responses/Error"
-          },
-          "503": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "parameters": [
-          {
-            "in": "path",
-            "name": "project_id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1
-            }
-          },
-          {
-            "in": "path",
-            "name": "session_id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/resumeWorkerRequest"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/projects/{project_id}/workers/{session_id}/cancel": {
-      "post": {
-        "operationId": "cancelWorker",
-        "tags": [
-          "I"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/cancelWorkerResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          },
-          "403": {
-            "$ref": "#/components/responses/Error"
-          },
-          "409": {
-            "$ref": "#/components/responses/Error"
-          },
-          "503": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "parameters": [
-          {
-            "in": "path",
-            "name": "project_id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1
-            }
-          },
-          {
-            "in": "path",
-            "name": "session_id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/cancelWorkerRequest"
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/projects/{project_id}/workers": {
       "get": {
         "operationId": "listWorkers",
@@ -1777,6 +1576,65 @@
             }
           }
         ]
+      },
+      "post": {
+        "operationId": "registerWorker",
+        "tags": [
+          "I"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/registerWorkerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/registerWorkerRequest"
+              }
+            }
+          }
+        }
       }
     },
     "/v1/projects/{project_id}/reviews": {
@@ -3347,137 +3205,6 @@
         }
       }
     },
-    "/v1/projects/{project_id}/relays": {
-      "post": {
-        "operationId": "sendRelay",
-        "tags": [
-          "I"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/sendRelayResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          },
-          "403": {
-            "$ref": "#/components/responses/Error"
-          },
-          "409": {
-            "$ref": "#/components/responses/Error"
-          },
-          "503": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "parameters": [
-          {
-            "in": "path",
-            "name": "project_id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/sendRelayRequest"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/projects/{project_id}/relays/{message_id}/ack": {
-      "post": {
-        "operationId": "ackRelay",
-        "tags": [
-          "I"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ackRelayResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          },
-          "403": {
-            "$ref": "#/components/responses/Error"
-          },
-          "409": {
-            "$ref": "#/components/responses/Error"
-          },
-          "503": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "parameters": [
-          {
-            "in": "path",
-            "name": "project_id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1
-            }
-          },
-          {
-            "in": "path",
-            "name": "message_id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ackRelayRequest"
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/projects/{project_id}/oversight": {
       "post": {
         "operationId": "openOversightCase",
@@ -4297,6 +4024,295 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/revokeToolGrantRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/projects/{project_id}/workers/{worker_id}/shifts": {
+      "post": {
+        "operationId": "beginShift",
+        "tags": [
+          "I"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/beginShiftResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "in": "path",
+            "name": "worker_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/beginShiftRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/projects/{project_id}/workers/{worker_id}/shifts/{shift_id}/stop": {
+      "post": {
+        "operationId": "stopShift",
+        "tags": [
+          "I"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stopShiftResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "in": "path",
+            "name": "worker_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "in": "path",
+            "name": "shift_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stopShiftRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/projects/{project_id}/shifts/{shift_id}/end": {
+      "post": {
+        "operationId": "endShift",
+        "tags": [
+          "I"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/endShiftResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "in": "path",
+            "name": "shift_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/endShiftRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/projects/{project_id}/commands/{command_id}/receipts": {
+      "post": {
+        "operationId": "observeCommandReceipt",
+        "tags": [
+          "I"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/observeCommandReceiptResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "in": "path",
+            "name": "command_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/observeCommandReceiptRequest"
               }
             }
           }
@@ -5156,130 +5172,19 @@
           "delivery_state"
         ]
       },
-      "startWorkerRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "request_id": {
-            "type": "string",
-            "minLength": 1
-          },
-          "task_id": {
-            "type": "string",
-            "minLength": 1
-          },
-          "lease_generation": {
-            "type": "integer"
-          },
-          "package_digest": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "required": [
-          "request_id",
-          "task_id",
-          "lease_generation",
-          "package_digest"
-        ]
-      },
-      "startWorkerResponse": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "session_id": {
-            "type": "string"
-          },
-          "state": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "session_id",
-          "state"
-        ]
-      },
-      "resumeWorkerRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "request_id": {
-            "type": "string",
-            "minLength": 1
-          },
-          "checkpoint_id": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "required": [
-          "request_id",
-          "checkpoint_id"
-        ]
-      },
-      "resumeWorkerResponse": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "session_id": {
-            "type": "string"
-          },
-          "state": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "session_id",
-          "state"
-        ]
-      },
-      "cancelWorkerRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "request_id": {
-            "type": "string",
-            "minLength": 1
-          },
-          "reason": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "required": [
-          "request_id",
-          "reason"
-        ]
-      },
-      "cancelWorkerResponse": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "session_id": {
-            "type": "string"
-          },
-          "state": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "session_id",
-          "state"
-        ]
-      },
       "listWorkersResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "sessions": {
+          "items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SessionSummary"
+              "$ref": "#/components/schemas/WorkerSummary"
             }
           }
         },
         "required": [
-          "sessions"
+          "items"
         ]
       },
       "requestReviewRequest": {
@@ -6034,26 +5939,6 @@
           "revision"
         ]
       },
-      "SessionSummary": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "session_id": {
-            "type": "string"
-          },
-          "task_id": {
-            "type": "string"
-          },
-          "state": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "session_id",
-          "task_id",
-          "state"
-        ]
-      },
       "ReviewSummary": {
         "type": "object",
         "additionalProperties": false,
@@ -6483,78 +6368,6 @@
           "task_id",
           "cabal_id",
           "revision"
-        ]
-      },
-      "sendRelayRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "request_id": {
-            "type": "string"
-          },
-          "from_session_id": {
-            "type": "string"
-          },
-          "to_session_id": {
-            "type": "string"
-          },
-          "payload_digest": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "request_id",
-          "from_session_id",
-          "to_session_id",
-          "payload_digest"
-        ]
-      },
-      "sendRelayResponse": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "message_id": {
-            "type": "string"
-          },
-          "state": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "message_id",
-          "state"
-        ]
-      },
-      "ackRelayRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "request_id": {
-            "type": "string"
-          },
-          "session_id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "request_id",
-          "session_id"
-        ]
-      },
-      "ackRelayResponse": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "message_id": {
-            "type": "string"
-          },
-          "acknowledged": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "message_id",
-          "acknowledged"
         ]
       },
       "openOversightCaseRequest": {
@@ -7042,6 +6855,240 @@
           "action",
           "scope_digest",
           "disposition"
+        ]
+      },
+      "registerWorkerRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "worker_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "browser_chat_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "request_id",
+          "worker_id",
+          "browser_chat_ref",
+          "role_id"
+        ]
+      },
+      "registerWorkerResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "worker_id": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "worker_id",
+          "state"
+        ]
+      },
+      "beginShiftRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "shift_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "request_id",
+          "shift_id"
+        ]
+      },
+      "beginShiftResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "worker_id": {
+            "type": "string"
+          },
+          "shift_id": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "worker_id",
+          "shift_id",
+          "state"
+        ]
+      },
+      "stopShiftRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "request_id",
+          "reason"
+        ]
+      },
+      "stopShiftResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "shift_id": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "shift_id",
+          "state"
+        ]
+      },
+      "endShiftRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "receipt_commit_sha": {
+            "type": "string",
+            "minLength": 1
+          },
+          "receipt_digest": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "request_id",
+          "receipt_commit_sha",
+          "receipt_digest"
+        ]
+      },
+      "endShiftResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "shift_id": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "shift_id",
+          "state"
+        ]
+      },
+      "observeCommandReceiptRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "receipt_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "worker_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "shift_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "result_digest": {
+            "type": "string",
+            "minLength": 1
+          },
+          "receipt_commit_sha": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "request_id",
+          "receipt_id",
+          "worker_id",
+          "shift_id",
+          "kind",
+          "result_digest",
+          "receipt_commit_sha"
+        ]
+      },
+      "observeCommandReceiptResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "command_id": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "command_id",
+          "state"
+        ]
+      },
+      "WorkerSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "worker_id": {
+            "type": "string"
+          },
+          "role_id": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "worker_id",
+          "role_id",
+          "state"
         ]
       }
     }

@@ -43,7 +43,7 @@ test('all commands are displayed in exactly one cockpit section',()=>{
 });
 
 test('UI does not claim to run browser workers automatically or call paid inference',()=>{
-  const paths=['ui/src/client.ts','ui/src/App.tsx','ui/src/components/HandoffPanel.tsx','ui/src/session.ts'];
+  const paths=['ui/src/client.ts','ui/src/App.tsx','ui/src/components/HandoffPanel.tsx','ui/src/shift.ts'];
   const content=paths.map(p=>readFileSync(resolve(root,p),'utf8')).join('\n');
   assert.doesNotMatch(content,/chat\.completions|responses\.create|api\.openai\.com|anthropic\.com\/v1/);
   assert.match(content,/manually enrolled|human begins|manually initiated/i);

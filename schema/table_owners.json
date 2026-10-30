@@ -69,5 +69,6 @@
   "tool_operations": "WG-H",
   "usage_receipts": "WG-F",
   "worker_conversations": "WG-I",
-  "worker_shifts": "WG-I"
+  "worker_shifts": "WG-I",
+  "workforce_command_results": "WG-I"
 }

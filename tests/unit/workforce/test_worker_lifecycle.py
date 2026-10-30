@@ -11,45 +11,20 @@ from studio.workforce import Workforce, WorkforceFault
 SCHEMA=Path(__file__).resolve().parents[3]/'schema/initial_schema.sql'
 
 
-class Transaction:
-    def __init__(self, db):self.db=db
-    def one(self, sql, params=()):
-        row=self.db.execute(sql,params).fetchone()
-        return dict(row) if row else None
-    def all(self, sql, params=()):
-        return [dict(row) for row in self.db.execute(sql,params)]
-    def change(self, sql, params=()):
-        return self.db.execute(sql,params).rowcount
+from studio.storage.workforce import WorkforceStorage
 
 
-class ReferenceStorage:
+class ReferenceStorage(WorkforceStorage):
+    """Run the production writer against sqlite3 for offline contract tests."""
     def __init__(self):
-        self.db=sqlite3.connect(':memory:',isolation_level=None)
-        self.db.row_factory=sqlite3.Row
+        self.db = sqlite3.connect(':memory:', isolation_level=None, check_same_thread=False)
+        self.db.row_factory = sqlite3.Row
         self.db.executescript(SCHEMA.read_text())
         self.db.execute('PRAGMA foreign_keys=ON')
         self.db.execute("INSERT INTO principals VALUES ('owner','trusted','owner','human')")
         self.db.execute("INSERT INTO projects(project_id,name,charter_digest,state) VALUES ('p','project','charter','active')")
         self.db.execute("INSERT INTO specialist_roles(role_id,role_revision,role_manifest_digest,state) VALUES ('role','1','digest','ready')")
-    def read(self, project_id, fn):return fn(Transaction(self.db))
-    def command(self, project_id, operation, request_id, payload_sha256, fn):
-        self.db.execute('BEGIN IMMEDIATE')
-        try:
-            row=self.db.execute('SELECT payload_digest,status,result_digest FROM idempotency WHERE project_id=? AND action_owner=? AND request_id=?',
-                                 (project_id,operation,request_id)).fetchone()
-            if row:
-                if row['payload_digest'] != payload_sha256 or row['status'] != 'finished':
-                    raise WorkforceFault('conflict','idempotency conflict')
-                result=json.loads(row['result_digest'])
-            else:
-                self.db.execute("INSERT INTO idempotency VALUES (?,?,?,?,'started',NULL)",
-                                (project_id,operation,request_id,payload_sha256))
-                result=fn(Transaction(self.db))
-                self.db.execute("UPDATE idempotency SET status='finished',result_digest=? WHERE project_id=? AND action_owner=? AND request_id=?",
-                                (json.dumps(result,sort_keys=True),project_id,operation,request_id))
-            self.db.execute('COMMIT');return result
-        except BaseException:
-            self.db.execute('ROLLBACK');raise
+        super().__init__(self.db)
 
 
 @pytest.fixture
@@ -123,3 +98,49 @@ def test_git_relay_validates_shift_and_recipient(rig):
         github._validate_path(path,canonical(dict(command,source_revision='')))
     with pytest.raises(IntegrationError):
         github._validate_path(path,canonical(dict(command,command_id='other')))
+
+
+def test_stop_is_an_addressed_command_not_browser_termination(rig):
+    store, worker, actor = rig
+    worker.register(actor, 'p', dict(request_id='enroll-stop', worker_id='w',
+                                    browser_chat_ref='chat-stop', role_id='role'))
+    worker.begin_shift(actor, 'p', dict(request_id='shift-stop', worker_id='w', shift_id='shift-stop'))
+    worker.observe_hello(actor, 'p', dict(request_id='hello-stop', worker_id='w',shift_id='shift-stop',
+                             receipt_commit_sha='a'*40, receipt_digest='b'*64), verify=lambda _: True)
+    args = dict(request_id='stop1', worker_id='w', shift_id='shift-stop', reason='Owner STOP')
+    assert worker.request_stop(actor, 'p', args) == {'shift_id': 'shift-stop', 'state': 'stopping'}
+    row = store.db.execute('SELECT command_id,assignment_id,kind,state FROM command_outbox').fetchone()
+    assert row['kind'] == 'STOP' and row['assignment_id'] is None and row['state'] == 'queued'
+    assert worker.request_stop(actor, 'p', args)['state'] == 'stopping'
+    with pytest.raises(WorkforceFault, match='not eligible'):
+        worker.request_stop(actor, 'p', dict(args, request_id='stop2'))
+    # Same observed STOP command, no new conversation or human-created task turn.
+    class Remote:
+        def __init__(self, path, body, digest):
+            self.path, self.body, self.body_sha256 = path, body, digest
+            self.commit_sha, self.verified = 'c'*40, True
+    class Gateway:
+        def publish(self, path, body, *, expected_digest, effect_intent_recorded):
+            assert effect_intent_recorded
+            return Remote(path, body, expected_digest)
+        def observe_exact(self, path):
+            return None
+    assert worker.publish_pending(actor, 'p', provider=Gateway())['published'] == 1
+    receipt = dict(request_id='stop-receipt', receipt_id='r1', command_id=row['command_id'],
+                   worker_id='w', shift_id='shift-stop', kind='stopped',
+                   result_digest='d'*64, receipt_commit_sha='e'*40)
+    assert worker.observe_command_receipt(actor, 'p', receipt, verify=lambda _: True)['state'] == 'completed'
+    assert worker.end_shift(actor, 'p', dict(request_id='end-stop', shift_id='shift-stop',
+                              receipt_commit_sha='f'*40, receipt_digest='0'*64),
+                            verify=lambda _: True)['state'] == 'finished'
+
+
+def test_unstarted_shift_stop_does_not_publish_redundant_command(rig):
+    store, worker, actor = rig
+    worker.register(actor, 'p', dict(request_id='enroll2',worker_id='w',
+                                    browser_chat_ref='chat2',role_id='role'))
+    worker.begin_shift(actor, 'p', dict(request_id='begin2',worker_id='w',shift_id='pending'))
+    assert worker.request_stop(actor, 'p', dict(request_id='stop-unstarted',worker_id='w',
+                 shift_id='pending',reason='No response started'))['state'] == 'interrupted'
+    assert store.db.execute('SELECT COUNT(*) FROM command_outbox').fetchone()[0] == 0
+    assert worker.begin_shift(actor, 'p', dict(request_id='begin3',worker_id='w',shift_id='later'))['state'] == 'awaiting_hello'

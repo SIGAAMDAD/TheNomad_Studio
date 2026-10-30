@@ -64,14 +64,15 @@ CREATE TABLE shift_assignments(
  FOREIGN KEY(project_id,task_id,lease_generation) REFERENCES leases(project_id,task_id,generation)) STRICT;
 CREATE TABLE command_outbox(
  project_id TEXT NOT NULL,command_id TEXT NOT NULL,worker_id TEXT NOT NULL,shift_id TEXT NOT NULL,
- assignment_id TEXT NOT NULL,kind TEXT NOT NULL CHECK(kind IN ('ASSIGN','STOP')),
+ assignment_id TEXT,kind TEXT NOT NULL CHECK(kind IN ('ASSIGN','STOP')),
  envelope_digest TEXT NOT NULL,envelope_json TEXT NOT NULL,remote_path TEXT NOT NULL,
  remote_commit_sha TEXT,created_at TEXT NOT NULL,
  state TEXT NOT NULL CHECK(state IN ('queued','published','unknown','observed','completed','canceled')),
  PRIMARY KEY(project_id,command_id),UNIQUE(project_id,remote_path),
  FOREIGN KEY(project_id,shift_id,worker_id) REFERENCES worker_shifts(project_id,shift_id,worker_id),
  FOREIGN KEY(project_id,assignment_id) REFERENCES shift_assignments(project_id,assignment_id),
- CHECK(state NOT IN ('published','observed','completed') OR remote_commit_sha IS NOT NULL)) STRICT;
+ CHECK(state NOT IN ('published','observed','completed') OR remote_commit_sha IS NOT NULL),
+ CHECK((kind='ASSIGN' AND assignment_id IS NOT NULL) OR (kind='STOP' AND assignment_id IS NULL))) STRICT;
 CREATE TABLE command_receipts(
  project_id TEXT NOT NULL,receipt_id TEXT NOT NULL,command_id TEXT NOT NULL,
  worker_id TEXT NOT NULL,shift_id TEXT NOT NULL,kind TEXT NOT NULL,
@@ -128,6 +129,22 @@ CREATE TABLE effect_intents(project_id TEXT NOT NULL,effect_id TEXT NOT NULL,sub
 CREATE TABLE approval_consumptions(project_id TEXT NOT NULL,decision_id TEXT NOT NULL,effect_id TEXT NOT NULL,consumed_at TEXT NOT NULL,PRIMARY KEY(project_id,decision_id),UNIQUE(project_id,effect_id),FOREIGN KEY(project_id,decision_id) REFERENCES owner_decisions(project_id,decision_id),FOREIGN KEY(project_id,effect_id) REFERENCES effect_intents(project_id,effect_id)) STRICT;
 CREATE TABLE bootstrap_idempotency(principal_id TEXT NOT NULL,request_id TEXT NOT NULL,payload_digest TEXT NOT NULL,result_project_id TEXT,status TEXT NOT NULL CHECK(status IN ('started','finished','unknown')),PRIMARY KEY(principal_id,request_id),FOREIGN KEY(principal_id) REFERENCES principals(principal_id),FOREIGN KEY(result_project_id) REFERENCES projects(project_id)) STRICT;
 CREATE TABLE idempotency(project_id TEXT NOT NULL,action_owner TEXT NOT NULL,request_id TEXT NOT NULL,payload_digest TEXT NOT NULL,status TEXT NOT NULL CHECK(status IN ('started','finished','unknown')),result_digest TEXT,PRIMARY KEY(project_id,action_owner,request_id),FOREIGN KEY(project_id) REFERENCES projects(project_id)) STRICT;
+CREATE TABLE workforce_command_results(
+ project_id TEXT NOT NULL,action_owner TEXT NOT NULL,request_id TEXT NOT NULL,
+ result_json TEXT NOT NULL,PRIMARY KEY(project_id,action_owner,request_id),
+ FOREIGN KEY(project_id,action_owner,request_id)
+ REFERENCES idempotency(project_id,action_owner,request_id)) STRICT;
+CREATE TRIGGER workforce_result_cannot_update BEFORE UPDATE ON workforce_command_results
+BEGIN SELECT RAISE(ABORT,'workforce result immutable'); END;
+CREATE TRIGGER workforce_result_cannot_delete BEFORE DELETE ON workforce_command_results
+BEGIN SELECT RAISE(ABORT,'workforce result immutable'); END;
+CREATE TRIGGER idempotency_finished_immutable BEFORE UPDATE ON idempotency
+WHEN OLD.status='finished'
+BEGIN SELECT RAISE(ABORT,'finished idempotency immutable'); END;
+CREATE TRIGGER idempotency_finished_cannot_delete BEFORE DELETE ON idempotency
+WHEN OLD.status='finished'
+BEGIN SELECT RAISE(ABORT,'finished idempotency immutable'); END;
+
 CREATE TABLE audit_events(project_id TEXT NOT NULL,event_seq INTEGER NOT NULL,event_type TEXT NOT NULL,subject_type TEXT,subject_id TEXT,payload_digest TEXT NOT NULL,actor_principal_id TEXT NOT NULL,PRIMARY KEY(project_id,event_seq),FOREIGN KEY(project_id) REFERENCES projects(project_id),FOREIGN KEY(actor_principal_id) REFERENCES principals(principal_id)) STRICT;
 CREATE TABLE external_accounts(project_id TEXT NOT NULL,account_id TEXT NOT NULL,provider_key TEXT NOT NULL,credential_ref TEXT NOT NULL,enabled INTEGER NOT NULL CHECK(enabled IN (0,1)),PRIMARY KEY(project_id,account_id),FOREIGN KEY(project_id) REFERENCES projects(project_id)) STRICT;
 CREATE TABLE releases(project_id TEXT NOT NULL,release_id TEXT NOT NULL,source_revision_id TEXT NOT NULL,snapshot_id TEXT NOT NULL,release_digest TEXT NOT NULL,decision_id TEXT,state TEXT NOT NULL CHECK(state IN ('prepared','published','failed','unknown')),PRIMARY KEY(project_id,release_id),FOREIGN KEY(project_id,source_revision_id) REFERENCES source_revisions(project_id,revision_id),FOREIGN KEY(project_id,snapshot_id) REFERENCES canon_snapshots(project_id,snapshot_id),FOREIGN KEY(project_id,decision_id) REFERENCES owner_decisions(project_id,decision_id)) STRICT;

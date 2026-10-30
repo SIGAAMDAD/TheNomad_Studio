@@ -12,10 +12,11 @@ CS = {p.name: p.read_text() for p in HOST.glob('*.cs')}
 FROZEN_PATH = pathlib.Path(os.getenv('R5_PACKET_ROOT', '/absent')) / 'CONTRACTS'
 
 
-def test_owned_paths_only():
-    paths = [p.relative_to(ROOT).as_posix() for p in ROOT.rglob('*') if p.is_file()]
-    assert paths, 'empty source tree'
-    assert all(p.startswith('host/') or p.startswith('tests/unit/h/') for p in paths), paths
+def test_host_project_is_bound_to_the_supported_dotnet_runtime():
+    project = (HOST / 'Nomad.ToolHost.csproj').read_text()
+    assert '<TargetFramework>net10.0</TargetFramework>' in project
+    assert '<TreatWarningsAsErrors>true</TreatWarningsAsErrors>' in project
+    assert '<Nullable>enable</Nullable>' in project
 
 
 def test_generated_dto_is_frozen_copy():
@@ -70,7 +71,6 @@ def test_operation_binding_and_idempotency():
     assert 'ReconcileInterrupted' in CS['ToolJournal.cs']
 
 
-def test_no_unowned_ddl_or_external_api():
-    for p in ROOT.rglob('*.sql'):
-        raise AssertionError(f'WG-H wrote SQL outside ownership: {p}')
+def test_tool_host_has_no_embedded_source_sql_or_model_client():
+    assert not list(HOST.rglob('*.sql'))
     assert 'namespace Nomad.Studio.ToolHost' in CS['HostRuntime.cs']

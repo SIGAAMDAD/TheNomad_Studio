@@ -1,4 +1,4 @@
-# WG-H — C#/.NET 10 deterministic tool host
+# C#/.NET deterministic tool host
 
 Scope: `host/**`, with self-contained tests under `tests/unit/h/**`. This is a **greenfield** source contribution. It is not the Studio orchestration API, GitHub transport, Python APSW authority, browser-chat worker runtime, or a model inference agent.
 
@@ -14,7 +14,7 @@ Target framework is `net10.0`, using only .NET base libraries; no NuGet runtime 
 
 ## Broker/host boundary
 
-A trusted local Studio broker prepares a **private stdin/stdout** child process and a version-1 *registry snapshot* whose bytes are pinned by SHA-256 at child startup. Each authorized operation is pinned to one `operation_id`, `request_id`, `project_id`, `task_id`, `session_id`, generation, source revision, Canon snapshot, installed package digest, entrypoint ID, grant digest, workspace ID, and ordered input artifact digests. Multiple operations can appear in one registry snapshot. **No run is accepted without an exact matching installed authorization.** Broker-provided text is not an executable path or shell command. Grant revocation requires terminating/restarting affected children with a new registry snapshot; the broker is responsible for such enforcement.
+A trusted local Studio broker prepares a **private stdin/stdout** child process and a version-1 *registry snapshot* whose bytes are pinned by SHA-256 at child startup. Each authorized operation is pinned to one `operation_id`, `request_id`, `project_id`, `task_id`, `worker_id`, `shift_id`, generation, source revision, Canon snapshot, installed package digest, entrypoint ID, grant digest, workspace ID, and ordered input artifact digests. Multiple operations can appear in one registry snapshot. **No run is accepted without an exact matching installed authorization.** Broker-provided text is not an executable path or shell command. Grant revocation requires terminating/restarting affected children with a new registry snapshot; the broker is responsible for such enforcement.
 
 The registry is prepared from the verified immutable package installed by WG-B, current project grants/leases and source/Canon context verified by A/B/D, using C's scoped transaction services. WG-G/I relay messages have to be validated by their domain owners before the broker creates an operation entry. WG-H never reads raw GitHub relay files as executable tool jobs. WG-C's authoritative `tool_operations` table is updated through WG-C's named scoped commands by the integrating broker/service, not through direct host SQLite access. The host-local journal is **recovery evidence**, not authoritative domain state.
 

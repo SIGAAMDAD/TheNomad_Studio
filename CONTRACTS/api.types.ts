@@ -115,11 +115,6 @@ export interface RoleSummary {
   "role_revision": string;
   "state": string;
 }
-export interface SessionSummary {
-  "session_id": string;
-  "task_id": string;
-  "state": string;
-}
 export interface TaskSummary {
   "task_id": string;
   "feature_id": string;
@@ -141,13 +136,18 @@ export interface ackNotificationResponse {
   "notification_id": string;
   "acknowledged": boolean;
 }
-export interface ackRelayRequest {
+export interface observeCommandReceiptRequest {
   "request_id": string;
-  "session_id": string;
+  "receipt_id": string;
+  "worker_id": string;
+  "shift_id": string;
+  "kind": string;
+  "result_digest": string;
+  "receipt_commit_sha": string;
 }
-export interface ackRelayResponse {
-  "message_id": string;
-  "acknowledged": boolean;
+export interface observeCommandReceiptResponse {
+  "command_id": string;
+  "state": string;
 }
 export interface assignTaskRequest {
   "request_id": string;
@@ -177,12 +177,12 @@ export interface cancelTaskResponse {
   "task_id": string;
   "state": string;
 }
-export interface cancelWorkerRequest {
+export interface stopShiftRequest {
   "request_id": string;
   "reason": string;
 }
-export interface cancelWorkerResponse {
-  "session_id": string;
+export interface stopShiftResponse {
+  "shift_id": string;
   "state": string;
 }
 export interface configureBudgetRequest {
@@ -375,8 +375,13 @@ export interface listTasksResponse {
 export interface listToolGrantsResponse {
   "grants": Array<GrantedToolSummary>;
 }
+export interface WorkerSummary {
+  "worker_id": string;
+  "role_id": string;
+  "state": string;
+}
 export interface listWorkersResponse {
-  "sessions": Array<SessionSummary>;
+  "items": Array<WorkerSummary>;
 }
 export interface observeEffectResponse {
   "effect_id": string;
@@ -515,12 +520,13 @@ export interface resolveOversightCaseResponse {
   "case_id": string;
   "state": string;
 }
-export interface resumeWorkerRequest {
+export interface beginShiftRequest {
   "request_id": string;
-  "checkpoint_id": string;
+  "shift_id": string;
 }
-export interface resumeWorkerResponse {
-  "session_id": string;
+export interface beginShiftResponse {
+  "worker_id": string;
+  "shift_id": string;
   "state": string;
 }
 export interface revokeProjectAccessRequest {
@@ -549,14 +555,13 @@ export interface runBuildResponse {
   "ci_id": string;
   "state": string;
 }
-export interface sendRelayRequest {
+export interface endShiftRequest {
   "request_id": string;
-  "from_session_id": string;
-  "to_session_id": string;
-  "payload_digest": string;
+  "receipt_commit_sha": string;
+  "receipt_digest": string;
 }
-export interface sendRelayResponse {
-  "message_id": string;
+export interface endShiftResponse {
+  "shift_id": string;
   "state": string;
 }
 export interface setProjectPolicyRequest {
@@ -599,14 +604,14 @@ export interface stageIntegrationResponse {
   "intent_id": string;
   "state": string;
 }
-export interface startWorkerRequest {
+export interface registerWorkerRequest {
   "request_id": string;
-  "task_id": string;
-  "lease_generation": number;
-  "package_digest": string;
+  "worker_id": string;
+  "browser_chat_ref": string;
+  "role_id": string;
 }
-export interface startWorkerResponse {
-  "session_id": string;
+export interface registerWorkerResponse {
+  "worker_id": string;
   "state": string;
 }
 export interface submitFeatureRequest {
@@ -656,9 +661,9 @@ export interface StudioApiOperations {
   "listTasks": { method: "GET"; path: "/v1/projects/{project_id}/tasks"; params: { project_id: string }; query: Record<string, never>; body: never; response: listTasksResponse; };
   "cancelTask": { method: "POST"; path: "/v1/projects/{project_id}/tasks/{task_id}/cancel"; params: { project_id: string; task_id: string }; query: Record<string, never>; body: cancelTaskRequest; response: cancelTaskResponse; };
   "dispatchTask": { method: "POST"; path: "/v1/projects/{project_id}/tasks/{task_id}/dispatch"; params: { project_id: string; task_id: string }; query: Record<string, never>; body: dispatchTaskRequest; response: dispatchTaskResponse; };
-  "startWorker": { method: "POST"; path: "/v1/projects/{project_id}/workers/start"; params: { project_id: string }; query: Record<string, never>; body: startWorkerRequest; response: startWorkerResponse; };
-  "resumeWorker": { method: "POST"; path: "/v1/projects/{project_id}/workers/{session_id}/resume"; params: { project_id: string; session_id: string }; query: Record<string, never>; body: resumeWorkerRequest; response: resumeWorkerResponse; };
-  "cancelWorker": { method: "POST"; path: "/v1/projects/{project_id}/workers/{session_id}/cancel"; params: { project_id: string; session_id: string }; query: Record<string, never>; body: cancelWorkerRequest; response: cancelWorkerResponse; };
+  "registerWorker": { method: "POST"; path: "/v1/projects/{project_id}/workers"; params: { project_id: string }; query: Record<string, never>; body: registerWorkerRequest; response: registerWorkerResponse; };
+  "beginShift": { method: "POST"; path: "/v1/projects/{project_id}/workers/{worker_id}/shifts"; params: { project_id: string; worker_id: string }; query: Record<string, never>; body: beginShiftRequest; response: beginShiftResponse; };
+  "stopShift": { method: "POST"; path: "/v1/projects/{project_id}/workers/{worker_id}/shifts/{shift_id}/stop"; params: { project_id: string; worker_id: string; shift_id: string }; query: Record<string, never>; body: stopShiftRequest; response: stopShiftResponse; };
   "listWorkers": { method: "GET"; path: "/v1/projects/{project_id}/workers"; params: { project_id: string }; query: Record<string, never>; body: never; response: listWorkersResponse; };
   "requestReview": { method: "POST"; path: "/v1/projects/{project_id}/reviews"; params: { project_id: string }; query: Record<string, never>; body: requestReviewRequest; response: requestReviewResponse; };
   "submitReview": { method: "POST"; path: "/v1/projects/{project_id}/reviews/{review_id}/verdict"; params: { project_id: string; review_id: string }; query: Record<string, never>; body: submitReviewRequest; response: submitReviewResponse; };
@@ -684,8 +689,8 @@ export interface StudioApiOperations {
   "createDeliberation": { method: "POST"; path: "/v1/projects/{project_id}/cabals/{cabal_id}/deliberations"; params: { project_id: string; cabal_id: string }; query: Record<string, never>; body: createDeliberationRequest; response: createDeliberationResponse; };
   "listDeliberations": { method: "GET"; path: "/v1/projects/{project_id}/cabals/{cabal_id}/deliberations"; params: { project_id: string; cabal_id: string }; query: Record<string, never>; body: never; response: listDeliberationsResponse; };
   "assignTask": { method: "POST"; path: "/v1/projects/{project_id}/tasks/{task_id}/assign"; params: { project_id: string; task_id: string }; query: Record<string, never>; body: assignTaskRequest; response: assignTaskResponse; };
-  "sendRelay": { method: "POST"; path: "/v1/projects/{project_id}/relays"; params: { project_id: string }; query: Record<string, never>; body: sendRelayRequest; response: sendRelayResponse; };
-  "ackRelay": { method: "POST"; path: "/v1/projects/{project_id}/relays/{message_id}/ack"; params: { project_id: string; message_id: string }; query: Record<string, never>; body: ackRelayRequest; response: ackRelayResponse; };
+  "endShift": { method: "POST"; path: "/v1/projects/{project_id}/shifts/{shift_id}/end"; params: { project_id: string; shift_id: string }; query: Record<string, never>; body: endShiftRequest; response: endShiftResponse; };
+  "observeCommandReceipt": { method: "POST"; path: "/v1/projects/{project_id}/commands/{command_id}/receipts"; params: { project_id: string; command_id: string }; query: Record<string, never>; body: observeCommandReceiptRequest; response: observeCommandReceiptResponse; };
   "openOversightCase": { method: "POST"; path: "/v1/projects/{project_id}/oversight"; params: { project_id: string }; query: Record<string, never>; body: openOversightCaseRequest; response: openOversightCaseResponse; };
   "resolveOversightCase": { method: "POST"; path: "/v1/projects/{project_id}/oversight/{case_id}/resolve"; params: { project_id: string; case_id: string }; query: Record<string, never>; body: resolveOversightCaseRequest; response: resolveOversightCaseResponse; };
   "listOversightCases": { method: "GET"; path: "/v1/projects/{project_id}/oversight"; params: { project_id: string }; query: Record<string, never>; body: never; response: listOversightCasesResponse; };

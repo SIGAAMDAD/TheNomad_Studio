@@ -9,10 +9,10 @@ import {createRequire} from 'node:module';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../../..');
 const scratch=mkdtempSync(join(tmpdir(),'wgk-client-'));
 execFileSync('tsc',['--strict','--target','ES2022','--module','commonjs','--moduleResolution','node','--lib','es2022,dom','--outDir',scratch,
-  resolve(root,'ui/src/client.ts'),resolve(root,'ui/src/catalog.ts'),resolve(root,'ui/src/form.ts'),resolve(root,'ui/src/session.ts')], {stdio:'pipe'});
+  resolve(root,'ui/src/client.ts'),resolve(root,'ui/src/catalog.ts'),resolve(root,'ui/src/form.ts'),resolve(root,'ui/src/shift.ts')], {stdio:'pipe'});
 const require=createRequire(import.meta.url);
 const {StudioClient,StudioApiError}=require(join(scratch,'ui/src/client.js'));
-const {handoffComplete,makeHandoff}=require(join(scratch,'ui/src/session.js'));
+const {handoffComplete,makeHandoff}=require(join(scratch,'ui/src/shift.js'));
 const {requiresConfirmation}=require(join(scratch,'ui/src/catalog.js'));
 const {castValue,validateRequired}=require(join(scratch,'ui/src/form.js'));
 process.on('exit',()=>rmSync(scratch,{recursive:true,force:true}));
@@ -48,7 +48,7 @@ test('server error retains exact code, request ID and evidence refs',async()=>{
 
 test('network failure on a mutation becomes UNKNOWN, never retried',async()=>{
   let count=0;const c=new StudioClient(()=> 'x','',async()=>{count++;throw new Error('timeout');});
-  await assert.rejects(c.call('sendRelay',{params:{project_id:'p'},body:{request_id:'a',from_session_id:'b',to_session_id:'c',payload_digest:'d'}}),(e)=>e.code==='unknown_effect');
+  await assert.rejects(c.call('endShift',{params:{project_id:'p',shift_id:'s'},body:{request_id:'a',receipt_commit_sha:'c',receipt_digest:'d'}}),(e)=>e.code==='unknown_effect');
   assert.equal(count,1);
 });
 
@@ -85,12 +85,12 @@ test('field casting rejects invalid numbers, enum values and array JSON',()=>{
 });
 
 test('existing-chat shift start / continuation requires verified packet',()=>{
-  const p={mode:'START',projectId:'p',sessionId:'s',taskId:'t',generation:'2',packageDigest:'pkg',canonSnapshotId:'can',contractDigest:'contract',githubRelayPath:'mailbox/immutable.json',checkpointId:'',additionalInstructions:''};
+  const p={mode:'START',projectId:'p',workerId:'w',shiftId:'shift',canonSnapshotId:'can',contractDigest:'contract',githubRelayPath:'mailbox/immutable.json',checkpointId:'',additionalInstructions:''};
   assert.equal(handoffComplete(p),true);
   const text=makeHandoff(p);
   assert.match(text,/already manually enrolled ChatGPT conversation/);
-  assert.match(text,/multiple GitHub assignments/);
-  assert.match(text,/active response reads it/);
+  assert.match(text,/successive GitHub assignments/);
+  assert.match(text,/single human-facing response/);
   assert.equal(handoffComplete({...p,mode:'RESUME'}),false);
   assert.equal(handoffComplete({...p,githubRelayPath:''}),false);
   assert.match(makeHandoff({...p,mode:'RESUME',checkpointId:'chk'}),/Verified checkpoint ID: chk/);

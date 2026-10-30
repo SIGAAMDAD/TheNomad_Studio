@@ -37,8 +37,8 @@ export default function App() {
     if (action?.operation === 'createProject' && value && typeof value === 'object' && 'project_id' in value && typeof value.project_id === 'string') {
       isolatedSelect(value.project_id);
     }
-    if (value && typeof value === 'object' && 'session_id' in value && typeof value.session_id === 'string') {
-      setHints((prior) => ({...prior, sessionId: value.session_id as string}));
+    if (value && typeof value === 'object' && 'worker_id' in value && typeof value.worker_id === 'string') {
+      setHints((prior) => ({...prior, workerId: value.worker_id as string}));
     }
   };
   const launch = (operation: StudioOperationId, seed?: Record<string, unknown>) => setAction({operation, seed});

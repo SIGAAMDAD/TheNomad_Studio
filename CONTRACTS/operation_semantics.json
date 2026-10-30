@@ -424,52 +424,48 @@
     },
     {
       "external_effect": false,
-      "failure_boundary": "Reject stale lease or missing role/Canon. Prepared does not mean running; activation requires exact verified HELLO envelope.",
+      "failure_boundary": "Require authenticated scope and independent verified GitHub readback; never infer browser execution from an API call.",
       "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
       "method": "POST",
-      "operation_id": "startWorker",
+      "operation_id": "registerWorker",
       "owner": "I",
-      "path": "/v1/projects/{project_id}/workers/start",
+      "path": "/v1/projects/{project_id}/workers",
       "records": [
-        "sessions",
-        "leases",
-        "checkpoints"
+        "worker_conversations"
       ],
       "required_auth": "project",
-      "success_postcondition": "Enroll an existing human-created ChatGPT browser conversation and optionally prepare a new response shift without binding its identity to a task; never invoke an AI API.",
+      "success_postcondition": "Enroll the existing browser conversation once, independently of any task or lease.",
       "transaction_owner": "I"
     },
     {
       "external_effect": false,
-      "failure_boundary": "Reject stale generation; unavailable previous browser context is not recoverable; create a replacement manually initiated session as needed.",
+      "failure_boundary": "Require authenticated scope and independent verified GitHub readback; never infer browser execution from an API call.",
       "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
       "method": "POST",
-      "operation_id": "resumeWorker",
+      "operation_id": "beginShift",
       "owner": "I",
-      "path": "/v1/projects/{project_id}/workers/{session_id}/resume",
+      "path": "/v1/projects/{project_id}/workers/{worker_id}/shifts",
       "records": [
-        "sessions",
-        "checkpoints",
-        "relay_receipts"
+        "worker_shifts"
       ],
       "required_auth": "project",
-      "success_postcondition": "Prepare a new manual resume prompt tied to previous verified GitHub relay cursor and checkpoint. Do not wake or continue a browser session automatically.",
+      "success_postcondition": "Record one human-initiated response shift; only verified GitHub HELLO establishes active execution.",
       "transaction_owner": "I"
     },
     {
       "external_effect": true,
-      "failure_boundary": "Do not claim session canceled merely by publishing a STOP relay or by lease expiration.",
+      "failure_boundary": "Require authenticated scope and independent verified GitHub readback; never infer browser execution from an API call.",
       "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
       "method": "POST",
-      "operation_id": "cancelWorker",
+      "operation_id": "stopShift",
       "owner": "I",
-      "path": "/v1/projects/{project_id}/workers/{session_id}/cancel",
+      "path": "/v1/projects/{project_id}/workers/{worker_id}/shifts/{shift_id}/stop",
       "records": [
-        "sessions",
-        "relay_messages"
+        "worker_shifts",
+        "command_outbox"
       ],
       "required_auth": "project",
-      "success_postcondition": "Queue a STOP_REQUESTED relay on configured GitHub channel, then await observed receipt. Browser execution cannot be forcibly stopped by Studio.",
+      "success_postcondition": "Publish an advisory STOP command for an active response; no forced browser shutdown.",
       "transaction_owner": "I"
     },
     {
@@ -481,9 +477,8 @@
       "owner": "I",
       "path": "/v1/projects/{project_id}/workers",
       "records": [
-        "sessions",
-        "relay_observations",
-        "relay_receipts"
+        "worker_conversations",
+        "worker_shifts"
       ],
       "required_auth": "project",
       "success_postcondition": "Read manually enrolled sessions and observed GitHub last activity; distinguish pending, active_observed, quiet, stop_requested and unknown.",
@@ -871,36 +866,34 @@
     },
     {
       "external_effect": true,
-      "failure_boundary": "GitHub is an external effect; record durable intent before remote write, verify commit and exact bytes, reconcile timeout as UNKNOWN without duplicate publication.",
+      "failure_boundary": "Require authenticated scope and independent verified GitHub readback; never infer browser execution from an API call.",
       "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
       "method": "POST",
-      "operation_id": "sendRelay",
+      "operation_id": "endShift",
       "owner": "I",
-      "path": "/v1/projects/{project_id}/relays",
+      "path": "/v1/projects/{project_id}/shifts/{shift_id}/end",
       "records": [
-        "relay_messages",
-        "relay_channels",
-        "effect_intents"
+        "worker_shifts",
+        "command_receipts"
       ],
       "required_auth": "project",
-      "success_postcondition": "Stage immutable GitHub relay envelope with unique path and stable message ID. G publishes and verifies exact GitHub commit before I marks delivery observed.",
+      "success_postcondition": "Finish a shift only after verified final GitHub receipt and no outstanding commands.",
       "transaction_owner": "I"
     },
     {
       "external_effect": false,
-      "failure_boundary": "Reject API-only self-asserted ack and a different recipient. Shared GitHub credential does not prove browser-chat identity.",
+      "failure_boundary": "Require authenticated scope and independent verified GitHub readback; never infer browser execution from an API call.",
       "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
       "method": "POST",
-      "operation_id": "ackRelay",
+      "operation_id": "observeCommandReceipt",
       "owner": "I",
-      "path": "/v1/projects/{project_id}/relays/{message_id}/ack",
+      "path": "/v1/projects/{project_id}/commands/{command_id}/receipts",
       "records": [
-        "relay_messages",
-        "relay_receipts",
-        "relay_observations"
+        "command_outbox",
+        "command_receipts"
       ],
       "required_auth": "project",
-      "success_postcondition": "Verify GitHub acknowledgement against exact original envelope digest/contract and matching recipient; independently read back immutable receipt before recording accepted ACK. Shared GitHub account is not strong chat identity.",
+      "success_postcondition": "Project an independently read-back, recipient-matching GitHub command receipt.",
       "transaction_owner": "I"
     },
     {

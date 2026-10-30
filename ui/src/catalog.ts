@@ -6,7 +6,7 @@ export const sections = {
   'Canon & bibles': ['getCanon', 'listBibles', 'createBible', 'stageBible', 'diffBible', 'publishBible', 'listDecisions', 'requestDecision', 'resolveDecision'],
   'Organization': ['listCabals', 'createCabal', 'staffCabal', 'listDepartments', 'listRoles', 'importRoles', 'listDeliberations', 'createDeliberation'],
   'Work planning': ['listFeatures', 'submitFeature', 'planFeature', 'listTasks', 'assignTask', 'dispatchTask', 'cancelTask'],
-  'Worker shifts': ['listWorkers', 'startWorker', 'resumeWorker', 'cancelWorker', 'sendRelay', 'ackRelay'],
+  'Worker shifts': ['listWorkers', 'registerWorker', 'beginShift', 'stopShift', 'endShift', 'observeCommandReceipt'],
   'QA & oversight': ['listReviews', 'requestReview', 'submitReview', 'listOversightCases', 'openOversightCase', 'resolveOversightCase'],
   'Source & releases': ['listArtifacts', 'getArtifact', 'runBuild', 'stageIntegration', 'inspectIntegration', 'promoteIntegration', 'prepareRelease', 'listReleases', 'publishRelease', 'attachConnector'],
   'Operations': ['getBudgets', 'configureBudget', 'listNotifications', 'ackNotification', 'listReports', 'requestReport', 'listEvents', 'observeEffect', 'reconcileEffect', 'requestRestore', 'observeRecovery'],
@@ -19,9 +19,9 @@ const OWNER_GATED = new Set<StudioOperationId>([
   'grantProjectAccess', 'revokeProjectAccess', 'revokeToolGrant', 'configureBudget',
   'requestRestore', 'enablePack', 'disablePack', 'attachConnector', 'resolveOversightCase',
 ]);
-const HUMAN_MANUAL = new Set<StudioOperationId>(['startWorker', 'resumeWorker', 'cancelWorker']);
+const HUMAN_MANUAL = new Set<StudioOperationId>(['registerWorker', 'beginShift']);
 export function requiresConfirmation(id: StudioOperationId): boolean { return OWNER_GATED.has(id); }
-export function manualSessionOperation(id: StudioOperationId): boolean { return HUMAN_MANUAL.has(id); }
+export function manualShiftOperation(id: StudioOperationId): boolean { return HUMAN_MANUAL.has(id); }
 export function displayName(name: string): string {
   return name.replace(/([a-z\d])([A-Z])/g, '$1 $2').replace(/[_-]/g, ' ').replace(/^./, (x) => x.toUpperCase());
 }

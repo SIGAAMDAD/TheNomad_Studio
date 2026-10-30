@@ -8,7 +8,7 @@ A registered worker is one persistent browser conversation. A **shift** is one h
 
 `studio.workforce` implements worker enrollment, shift lifecycle, verified HELLO handling, durable outbox reconciliation, exact command receipt processing and final shift receipts. `studio.production.service` atomically issues a GitHub-addressed command outbox record with each lease and resource reservation. `studio.integrations.github` verifies immutable remote bytes and recognizes shift-addressed command envelopes.
 
-The existing task-bound `studio.agents.service` paths and unbound production composition remain pending replacement. The current branch is therefore an **implementation in progress**, not a production-ready Studio or a validated live ChatGPT/GitHub execution loop.
+The worker-facing HTTP contract and agent service now use persistent conversation/shift identities. Other production domains still reference the old task-bound SQL `sessions` records, and the complete 72-operation composition is not yet wired. The branch is therefore an **implementation in progress**, not a validated production Studio or live ChatGPT/GitHub execution loop.
 
 ## Technology boundaries
 
@@ -24,7 +24,8 @@ The optional Student Developer Pack deployment profile adds bounded CI and devel
 
 ```sh
 python -m pip install -e '.[dev,coordinator]'
-python -m pytest -q tests/unit tests/integration tests/acceptance --ignore=tests/unit/h/test_contract_static.py
+python scripts/verify_workforce_schema.py
+python -m pytest -q tests/unit tests/integration tests/acceptance
 node --test tests/unit/k/*.test.mjs
 (cd ui && npm install --ignore-scripts --no-audit --no-fund && npm run build)
 dotnet build host/Nomad.ToolHost/Nomad.ToolHost.csproj -c Release

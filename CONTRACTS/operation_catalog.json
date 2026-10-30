@@ -566,9 +566,9 @@
       }
     },
     {
-      "id": "startWorker",
+      "id": "registerWorker",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/workers/start",
+      "path": "/v1/projects/{project_id}/workers",
       "owner": "I",
       "auth": "project",
       "mutation": true,
@@ -577,28 +577,28 @@
           "type": "string",
           "required": true
         },
-        "task_id": {
+        "worker_id": {
           "type": "string",
           "required": true
         },
-        "lease_generation": {
-          "type": "integer",
+        "browser_chat_ref": {
+          "type": "string",
           "required": true
         },
-        "package_digest": {
+        "role_id": {
           "type": "string",
           "required": true
         }
       },
       "response_fields": {
-        "session_id": "string",
+        "worker_id": "string",
         "state": "string"
       }
     },
     {
-      "id": "resumeWorker",
+      "id": "beginShift",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/workers/{session_id}/resume",
+      "path": "/v1/projects/{project_id}/workers/{worker_id}/shifts",
       "owner": "I",
       "auth": "project",
       "mutation": true,
@@ -607,20 +607,21 @@
           "type": "string",
           "required": true
         },
-        "checkpoint_id": {
+        "shift_id": {
           "type": "string",
           "required": true
         }
       },
       "response_fields": {
-        "session_id": "string",
+        "worker_id": "string",
+        "shift_id": "string",
         "state": "string"
       }
     },
     {
-      "id": "cancelWorker",
+      "id": "stopShift",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/workers/{session_id}/cancel",
+      "path": "/v1/projects/{project_id}/workers/{worker_id}/shifts/{shift_id}/stop",
       "owner": "I",
       "auth": "project",
       "mutation": true,
@@ -635,7 +636,7 @@
         }
       },
       "response_fields": {
-        "session_id": "string",
+        "shift_id": "string",
         "state": "string"
       }
     },
@@ -648,7 +649,7 @@
       "mutation": false,
       "request_fields": {},
       "response_fields": {
-        "sessions": "array"
+        "items": "array"
       }
     },
     {
@@ -1156,9 +1157,9 @@
       }
     },
     {
-      "id": "sendRelay",
+      "id": "endShift",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/relays",
+      "path": "/v1/projects/{project_id}/shifts/{shift_id}/end",
       "owner": "I",
       "auth": "project",
       "mutation": true,
@@ -1167,28 +1168,24 @@
           "type": "string",
           "required": true
         },
-        "from_session_id": {
+        "receipt_commit_sha": {
           "type": "string",
           "required": true
         },
-        "to_session_id": {
-          "type": "string",
-          "required": true
-        },
-        "payload_digest": {
+        "receipt_digest": {
           "type": "string",
           "required": true
         }
       },
       "response_fields": {
-        "message_id": "string",
+        "shift_id": "string",
         "state": "string"
       }
     },
     {
-      "id": "ackRelay",
+      "id": "observeCommandReceipt",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/relays/{message_id}/ack",
+      "path": "/v1/projects/{project_id}/commands/{command_id}/receipts",
       "owner": "I",
       "auth": "project",
       "mutation": true,
@@ -1197,14 +1194,34 @@
           "type": "string",
           "required": true
         },
-        "session_id": {
+        "receipt_id": {
+          "type": "string",
+          "required": true
+        },
+        "worker_id": {
+          "type": "string",
+          "required": true
+        },
+        "shift_id": {
+          "type": "string",
+          "required": true
+        },
+        "kind": {
+          "type": "string",
+          "required": true
+        },
+        "result_digest": {
+          "type": "string",
+          "required": true
+        },
+        "receipt_commit_sha": {
           "type": "string",
           "required": true
         }
       },
       "response_fields": {
-        "message_id": "string",
-        "acknowledged": "boolean"
+        "command_id": "string",
+        "state": "string"
       }
     },
     {

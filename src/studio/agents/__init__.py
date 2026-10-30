@@ -1,5 +1,9 @@
-"""The Nomad Studio R5 manually initiated ChatGPT browser-worker lifecycle."""
-from .service import ManualSessionService, AuthorizationError, StateError, ExternalEffectUnknown
-from .contracts import ContractError
+"""Persistent browser-worker and continuous-response shift operations."""
+from .shift_runtime import ShiftBatch, ShiftCommand, ShiftInbox, ShiftProtocolError
+from .github_transport import GitHubShiftTransport
+from .operations import WorkerOperations
 
-__all__ = ("ManualSessionService", "AuthorizationError", "StateError", "ExternalEffectUnknown", "ContractError")
+__all__ = (
+    'ShiftBatch', 'ShiftCommand', 'ShiftInbox', 'ShiftProtocolError',
+    'GitHubShiftTransport', 'WorkerOperations',
+)

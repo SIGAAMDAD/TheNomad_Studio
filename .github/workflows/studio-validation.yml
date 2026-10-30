@@ -1,61 +1,110 @@
-name: Studio cross-component verification
+name: Studio source, integration and security verification
 on:
+  push:
+    branches:
+      - 'implementation/**'
   pull_request:
-    paths:
-      - 'src/studio/**'
-      - 'tests/**'
-      - 'schema/**'
-      - 'CONTRACTS/**'
-      - 'ui/**'
-      - 'host/**'
-      - '.github/workflows/studio-validation.yml'
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: studio-verify-${{ github.ref }}
+  group: studio-verification-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  python-reference:
+  python:
+    name: Python, persistence, contracts and failure recovery
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
-      PYTHONPATH: src
+      PYTHONPATH: src:.
       STUDIO_SCHEMA_PATH: ${{ github.workspace }}/schema/initial_schema.sql
       STUDIO_CONTRACT_DIR: ${{ github.workspace }}/CONTRACTS
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
           cache: pip
-      - run: python -m pip install -e '.[dev,coordinator]'
-      - name: Reference and integrated python checks
-        run: python -m pytest -q tests/unit tests/integration tests/acceptance --ignore=tests/unit/h/test_contract_static.py
-  typescript:
+      - name: Install production and test dependencies
+        run: python -m pip install -e '.[coordinator,dev]'
+      - name: Python syntax, SQL integrity and immutability
+        run: |
+          python -m compileall -q src tests qa scripts
+          python scripts/verify_workforce_schema.py
+      - name: Integrated regression, isolation, adversarial and acceptance tests
+        run: python -m pytest -q tests/unit tests/integration tests/acceptance --cov=studio --cov-report=xml:python-coverage.xml --junitxml=python-results.xml
+      - name: Verify APSW is actually installed
+        run: python -c 'import apsw; print("APSW", apsw.apswversion())'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: python-tests-${{ github.sha }}
+          path: |
+            python-results.xml
+            python-coverage.xml
+          retention-days: 7
+  cockpit:
+    name: TypeScript contract, tests and production build
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: ui
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: JavaScript source-independent contracts
-        run: node --test ../tests/unit/k/*.test.mjs
-      - name: Build user interface
-        run: |
-          npm install --ignore-scripts --no-audit --no-fund
-          npm run build
-  dotnet:
+          # Direct dependencies are version-pinned; an npm lockfile has not yet been
+          # generated from the authenticated package registry in this runtime.
+      - name: Install declared pinned dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: cockpit-${{ github.sha }}
+          path: ui/dist
+          retention-days: 7
+  tool-host:
+    name: .NET host and authorization regression
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
-      - run: dotnet build host/Nomad.ToolHost/Nomad.ToolHost.csproj -c Release
-      - run: dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj -c Release
+          dotnet-version: 10.0.x
+      - run: dotnet build host/Nomad.ToolHost/Nomad.ToolHost.csproj --configuration Release --nologo
+      - run: dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Release
+  packaging:
+    name: Deterministic artifact and source provenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e '.[dev]'
+      - run: python -m pytest -q tests/unit/m/test_packaging.py tests/acceptance/test_system_contracts.py
+      - name: Verify no executable AI API worker was introduced
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          source = '\n'.join(p.read_text(errors='replace') for p in Path('src').rglob('*.py'))
+          forbidden = ['OpenAIClient(', 'ChatCompletion(', 'AnthropicClient(']
+          for pattern in forbidden:
+              if pattern in source:
+                  raise SystemExit(f'Forbidden paid model worker client: {pattern}')
+          PY

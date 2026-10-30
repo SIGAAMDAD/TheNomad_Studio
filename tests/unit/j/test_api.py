@@ -60,8 +60,8 @@ class Domain:
                 return self.result
             if name == 'createProject':
                 return {'project_id': 'p1', 'revision': 1}
-            if name == 'startWorker':
-                return {'session_id': 's1', 'state': 'prepared'}
+            if name == 'registerWorker':
+                return {'worker_id': 'w1', 'state': 'registered'}
             if name == 'listProjects':
                 return {'items': [
                     {'project_id': x, 'name': x, 'revision': 1, 'state': 'active'}
@@ -129,7 +129,7 @@ class HttpTests(unittest.TestCase):
         for name, op in self.contracts.operations.items():
             example = op.path
             for part in ('project_id','cabal_id','bible_id','decision_id','feature_id',
-                         'task_id','session_id','review_id','artifact_id','intent_id',
+                         'task_id','session_id','worker_id','shift_id','command_id','review_id','artifact_id','intent_id',
                          'release_id','effect_id','budget_id','message_id','case_id',
                          'notification_id','grant_id'):
                 example = example.replace('{'+part+'}', part+'-1')
@@ -170,22 +170,22 @@ class HttpTests(unittest.TestCase):
         self.assertEqual(status,500)  # fake domain's response mismatches policy schema
 
     def test_mutation_replay_conflict_and_scope(self):
-        req={'request_id':'t1','task_id':'t','lease_generation':1,'package_digest':'sha'}
-        status,data,_=self.call('POST','/v1/projects/p1/workers/start',body=req,token=self.worker_token)
+        req={'request_id':'t1','worker_id':'w1','browser_chat_ref':'browser-session','role_id':'coder'}
+        status,data,_=self.call('POST','/v1/projects/p1/workers',body=req,token=self.worker_token)
         self.assertEqual(status,200)
-        self.assertEqual(data['state'],'prepared')
-        self.assertEqual(self.call('POST','/v1/projects/p1/workers/start',body=req,token=self.worker_token)[0],200)
-        self.assertEqual(len([x for x in self.domain.calls if x[0]=='startWorker']),1)
-        self.assertEqual(self.call('POST','/v1/projects/p1/workers/start',body={**req,'lease_generation':2},token=self.worker_token)[1]['code'],'conflict')
-        self.assertEqual(self.call('POST','/v1/projects/p2/workers/start',body=req,token=self.worker_token)[0],403)
+        self.assertEqual(data['state'],'registered')
+        self.assertEqual(self.call('POST','/v1/projects/p1/workers',body=req,token=self.worker_token)[0],200)
+        self.assertEqual(len([x for x in self.domain.calls if x[0]=='registerWorker']),1)
+        self.assertEqual(self.call('POST','/v1/projects/p1/workers',body={**req,'role_id':'reviewer'},token=self.worker_token)[1]['code'],'conflict')
+        self.assertEqual(self.call('POST','/v1/projects/p2/workers',body=req,token=self.worker_token)[0],403)
 
     def test_reject_unknown_fields_wrong_types_duplicate_json(self):
-        req={'request_id':'r','task_id':'t','lease_generation':True,'package_digest':'hash'}
-        self.assertEqual(self.call('POST','/v1/projects/p1/workers/start',body=req,token=self.worker_token)[0],400)
-        req['lease_generation']=2
+        req={'request_id':'r','worker_id':42,'browser_chat_ref':'browser-session','role_id':'coder'}
+        self.assertEqual(self.call('POST','/v1/projects/p1/workers',body=req,token=self.worker_token)[0],400)
+        req['worker_id']='w1'
         req['actor']={'is_owner':True}
-        self.assertEqual(self.call('POST','/v1/projects/p1/workers/start',body=req,token=self.worker_token)[0],400)
-        status,_,_=self.call('POST','/v1/projects/p1/workers/start',raw=b'{"request_id":"a","request_id":"b"}',token=self.worker_token)
+        self.assertEqual(self.call('POST','/v1/projects/p1/workers',body=req,token=self.worker_token)[0],400)
+        status,_,_=self.call('POST','/v1/projects/p1/workers',raw=b'{"request_id":"a","request_id":"b"}',token=self.worker_token)
         self.assertEqual(status,400)
         self.assertEqual(len(self.domain.calls),0)
 
@@ -213,7 +213,7 @@ class HttpTests(unittest.TestCase):
             with self.subTest(operation=name):
                 path = op.path
                 for segment in ('project_id','cabal_id','bible_id','decision_id',
-                                'feature_id','task_id','session_id','review_id',
+                                'feature_id','task_id','session_id','worker_id','shift_id','command_id','review_id',
                                 'artifact_id','intent_id','release_id','effect_id',
                                 'budget_id','message_id','case_id','notification_id',
                                 'grant_id'):
@@ -253,16 +253,16 @@ class HttpTests(unittest.TestCase):
 
     def test_external_effects_are_not_claimed_on_missing_domain(self):
         self.registry._services.pop('I')
-        req = {'request_id':'r','from_session_id':'a','to_session_id':'b','payload_digest':'abc'}
-        status,data,_ = self.call('POST','/v1/projects/p1/relays',token=self.owner_token,body=req)
+        req = {'request_id':'r','receipt_commit_sha':'a'*40,'receipt_digest':'b'*64}
+        status,data,_ = self.call('POST','/v1/projects/p1/shifts/s1/end',token=self.owner_token,body=req)
         self.assertEqual((status,data['code']), (503,'capability_unavailable'))
         self.assertEqual(self.tx.called, [])
 
     def test_project_and_request_id_bound_to_replay(self):
-        req = {'request_id':'req','task_id':'t','lease_generation':1,'package_digest':'sha'}
-        self.assertEqual(self.call('POST','/v1/projects/p1/workers/start',token=self.owner_token,body=req)[0],200)
-        self.assertEqual(self.call('POST','/v1/projects/p1/workers/start',token=self.worker_token,body=req)[1]['code'],'conflict')
-        self.assertEqual(len([x for x in self.domain.calls if x[0]=='startWorker']),1)
+        req = {'request_id':'req','worker_id':'w1','browser_chat_ref':'browser-session','role_id':'coder'}
+        self.assertEqual(self.call('POST','/v1/projects/p1/workers',token=self.owner_token,body=req)[0],200)
+        self.assertEqual(self.call('POST','/v1/projects/p1/workers',token=self.worker_token,body=req)[1]['code'],'conflict')
+        self.assertEqual(len([x for x in self.domain.calls if x[0]=='registerWorker']),1)
 
     def test_bad_identity_and_bearer_header(self):
         self.assertEqual(self.call('GET','/v1/projects/p1')[0],401)
@@ -299,8 +299,8 @@ class HttpTests(unittest.TestCase):
     def test_path_and_nonfinite_json_defenses(self):
         self.assertEqual(self.call('GET','/v1/projects/..',token=self.worker_token)[0],400)
         self.assertEqual(self.call('GET','/v1/projects/%2f',token=self.worker_token)[0],400)
-        malformed = b'{"request_id":"r","task_id":"x","lease_generation":NaN,"package_digest":"x"}'
-        self.assertEqual(self.call('POST','/v1/projects/p1/workers/start',token=self.worker_token,raw=malformed)[0],400)
+        malformed = b'{"request_id":"r","worker_id":NaN,"browser_chat_ref":"x","role_id":"coder"}'
+        self.assertEqual(self.call('POST','/v1/projects/p1/workers',token=self.worker_token,raw=malformed)[0],400)
         self.assertEqual(self.call('GET','/v1/projects/p1',token=self.worker_token,query='owner=true')[0],400)
 
     def test_transport_security_headers(self):

@@ -1,6 +1,283 @@
 {
+  "$defs": {
+    "Handshake": {
+      "additionalProperties": false,
+      "properties": {
+        "host_nonce": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "const": "handshake"
+        },
+        "protocol_version": {
+          "const": "1.0.0"
+        },
+        "supported_isolation": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "protocol_version",
+        "host_nonce",
+        "supported_isolation"
+      ],
+      "type": "object"
+    },
+    "ToolCancel": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "cancel"
+        },
+        "lease_generation": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "operation_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0.0"
+        },
+        "request_id": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "protocol_version",
+        "operation_id",
+        "project_id",
+        "lease_generation",
+        "request_id"
+      ],
+      "type": "object"
+    },
+    "ToolObserve": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "observe"
+        },
+        "operation_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0.0"
+        }
+      },
+      "required": [
+        "kind",
+        "protocol_version",
+        "operation_id",
+        "project_id"
+      ],
+      "type": "object"
+    },
+    "ToolReceipt": {
+      "additionalProperties": false,
+      "properties": {
+        "ended_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "exit_code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "host_identity": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "const": "receipt"
+        },
+        "lease_generation": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "log_digests": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "operation_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "output_artifact_digests": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "project_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0.0"
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "started_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "running",
+            "completed",
+            "failed",
+            "canceled",
+            "unknown"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "protocol_version",
+        "operation_id",
+        "project_id",
+        "state",
+        "lease_generation",
+        "host_identity",
+        "log_digests",
+        "output_artifact_digests"
+      ],
+      "type": "object"
+    },
+    "ToolRun": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "type": "object"
+        },
+        "canon_snapshot_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "deadline_ms": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "entrypoint_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "grant_digest": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "input_artifact_digests": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "kind": {
+          "const": "run"
+        },
+        "lease_generation": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "operation_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "package_digest": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0.0"
+        },
+        "request_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "shift_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_revision_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "task_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "worker_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "protocol_version",
+        "operation_id",
+        "request_id",
+        "project_id",
+        "task_id",
+        "worker_id",
+        "lease_generation",
+        "source_revision_id",
+        "canon_snapshot_id",
+        "package_digest",
+        "entrypoint_id",
+        "grant_digest",
+        "workspace_id",
+        "args",
+        "deadline_ms",
+        "input_artifact_digests",
+        "shift_id"
+      ],
+      "type": "object"
+    }
+  },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Nomad Tool Host v1 NDJSON frames",
   "description": "Transport: newline-delimited UTF-8 JSON over private parent/child stdio; no model direct access. One frame per line, maximum frame size configurable per host; no unauthenticated network listener. Exactly one kind discriminator per frame. State errors are receipts, never silent success.",
   "oneOf": [
     {
@@ -19,277 +296,5 @@
       "$ref": "#/$defs/ToolReceipt"
     }
   ],
-  "$defs": {
-    "Handshake": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "kind",
-        "protocol_version",
-        "host_nonce",
-        "supported_isolation"
-      ],
-      "properties": {
-        "kind": {
-          "const": "handshake"
-        },
-        "protocol_version": {
-          "const": "1.0.0"
-        },
-        "host_nonce": {
-          "type": "string",
-          "minLength": 1
-        },
-        "supported_isolation": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "ToolRun": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "kind",
-        "protocol_version",
-        "operation_id",
-        "request_id",
-        "project_id",
-        "task_id",
-        "session_id",
-        "lease_generation",
-        "source_revision_id",
-        "canon_snapshot_id",
-        "package_digest",
-        "entrypoint_id",
-        "grant_digest",
-        "workspace_id",
-        "args",
-        "deadline_ms",
-        "input_artifact_digests"
-      ],
-      "properties": {
-        "kind": {
-          "const": "run"
-        },
-        "protocol_version": {
-          "const": "1.0.0"
-        },
-        "operation_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "request_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "project_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "task_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "session_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "lease_generation": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "source_revision_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "canon_snapshot_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "package_digest": {
-          "type": "string",
-          "minLength": 1
-        },
-        "entrypoint_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "grant_digest": {
-          "type": "string",
-          "minLength": 1
-        },
-        "workspace_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "args": {
-          "type": "object"
-        },
-        "deadline_ms": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "input_artifact_digests": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
-        }
-      }
-    },
-    "ToolObserve": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "kind",
-        "protocol_version",
-        "operation_id",
-        "project_id"
-      ],
-      "properties": {
-        "kind": {
-          "const": "observe"
-        },
-        "protocol_version": {
-          "const": "1.0.0"
-        },
-        "operation_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "project_id": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
-    },
-    "ToolCancel": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "kind",
-        "protocol_version",
-        "operation_id",
-        "project_id",
-        "lease_generation",
-        "request_id"
-      ],
-      "properties": {
-        "kind": {
-          "const": "cancel"
-        },
-        "protocol_version": {
-          "const": "1.0.0"
-        },
-        "operation_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "project_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "lease_generation": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "request_id": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
-    },
-    "ToolReceipt": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "kind",
-        "protocol_version",
-        "operation_id",
-        "project_id",
-        "state",
-        "lease_generation",
-        "host_identity",
-        "log_digests",
-        "output_artifact_digests"
-      ],
-      "properties": {
-        "kind": {
-          "const": "receipt"
-        },
-        "protocol_version": {
-          "const": "1.0.0"
-        },
-        "operation_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "project_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "state": {
-          "type": "string",
-          "enum": [
-            "queued",
-            "running",
-            "completed",
-            "failed",
-            "canceled",
-            "unknown"
-          ]
-        },
-        "lease_generation": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "host_identity": {
-          "type": "string",
-          "minLength": 1
-        },
-        "exit_code": {
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "started_at": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "ended_at": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "log_digests": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "output_artifact_digests": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "reason": {
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      }
-    }
-  }
+  "title": "Nomad Tool Host v1 NDJSON frames"
 }

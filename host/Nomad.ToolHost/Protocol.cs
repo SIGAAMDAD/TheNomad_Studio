@@ -18,7 +18,7 @@ public static class Protocol
         ["run"] = new() { ["kind"] = JsonValueKind.String, ["protocol_version"] = JsonValueKind.String,
             ["operation_id"] = JsonValueKind.String, ["request_id"] = JsonValueKind.String,
             ["project_id"] = JsonValueKind.String, ["task_id"] = JsonValueKind.String,
-            ["session_id"] = JsonValueKind.String, ["lease_generation"] = JsonValueKind.Number,
+            ["worker_id"] = JsonValueKind.String, ["shift_id"] = JsonValueKind.String, ["lease_generation"] = JsonValueKind.Number,
             ["source_revision_id"] = JsonValueKind.String, ["canon_snapshot_id"] = JsonValueKind.String,
             ["package_digest"] = JsonValueKind.String, ["entrypoint_id"] = JsonValueKind.String,
             ["grant_digest"] = JsonValueKind.String, ["workspace_id"] = JsonValueKind.String,
