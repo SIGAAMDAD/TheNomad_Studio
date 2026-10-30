@@ -125,7 +125,7 @@ class WorkforceStorage:
 
     def command(self, project_id: str, operation: str, request_id: str,
                 payload_sha256: str, fn: Callable[[WorkforceTransaction], dict]) -> dict:
-        if (not all(isinstance(x, str) and x for x in (project_id, owner, request_id)) or
+        if (not all(isinstance(x, str) and x for x in (project_id, operation, request_id)) or
                 not isinstance(payload_sha256, str) or len(payload_sha256) != 64 or
                 any(x not in '0123456789abcdef' for x in payload_sha256)):
             raise WorkforceFault('invalid', 'invalid idempotency command identity')
