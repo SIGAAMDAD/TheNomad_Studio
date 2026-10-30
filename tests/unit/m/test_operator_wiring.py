@@ -73,7 +73,7 @@ def test_missing_real_domain_or_auth_port_refuses_assembly():
         assemble_operator_service(**args)
     args=_fixture()
     args['governance'].service.createBible=None
-    with pytest.raises(ApiError,match='contracts missing'):
+    with pytest.raises(ApiError,match='missing implementation methods'):
         assemble_operator_service(**args)
 
 
