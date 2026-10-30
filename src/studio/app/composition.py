@@ -33,6 +33,23 @@ class MComposition:
             "stageIntegration", "promoteIntegration", "inspectIntegration",
         )
 
+    def __getattr__(self, operation_id: str):
+        """Expose the frozen 13 WG-M operations to J's callable registry.
+
+        No dynamic operation is created outside the explicit M operation catalog.
+        Request validation and actor identity remain owned by J.
+        """
+        if operation_id not in self.operation_ids:
+            raise AttributeError(operation_id)
+
+        def handler(actor: Actor, **kwargs: Any) -> dict:
+            permitted = {'project_id', 'release_id', 'intent_id', 'request'}
+            unexpected = set(kwargs) - permitted
+            if unexpected:
+                raise StudioError('invalid', 'unknown M route parameters')
+            return self.invoke(operation_id, actor, **kwargs)
+        return handler
+
     def invoke(self, operation_id: str, actor: Actor,
                *, project_id: str | None = None,
                release_id: str | None = None,
