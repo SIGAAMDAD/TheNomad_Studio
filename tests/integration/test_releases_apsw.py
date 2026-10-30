@@ -76,9 +76,9 @@ def test_release_observation_requires_actual_owner_decision(tmp_path):
                 decision_id="missing",effect_digest="b"*64,request_id="publish",
                 request_body_sha256="c"*64)
         c.execute("INSERT INTO decision_proposals(project_id,proposal_id,subject_type,"
-                  "subject_id,action,effect_digest,requester_principal_id,state,created_at) "
-                  "VALUES(?,?, 'release',?,'release.publish',?,'owner','pending','now')",
-                  ("p1","owner-approved",r.release_id,"b"*64))
+                  "subject_id,action,effect_digest,snapshot_id,requester_principal_id,state,created_at) "
+                  "VALUES(?,?, 'release',?,'release.publish',?,?,'owner','pending','now')",
+                  ("p1","owner-approved",r.release_id,"b"*64,"s1"))
         c.execute("INSERT INTO owner_decisions(project_id,decision_id,subject_type,subject_id,"
                   "action,effect_digest,snapshot_id,verified_owner_principal_id,proof_digest,state) "
                   "VALUES(?,?,'release',?,'release.publish',?,?,'owner','proof','approved')",

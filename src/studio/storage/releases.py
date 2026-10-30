@@ -6,6 +6,7 @@ A remote write is never treated as successful until verified readback is recorde
 from __future__ import annotations
 
 import hashlib
+import json
 
 from studio.app.errors import StudioError
 from studio.app.releases import EffectRecord, ReleaseRecord
@@ -72,9 +73,14 @@ class ReleaseAPSWStore:
                     "source_revision_id":source_revision_id,
                     "snapshot_id":snapshot_id,"release_digest":release_digest,"state":"prepared"}
 
+        # Bind every immutable command field to durable replay identity, even
+        # when a trusted caller accidentally reuses a precomputed request hash.
+        guard = hashlib.sha256(json.dumps(
+            (request_body_sha256,principal_id,source_revision_id,snapshot_id,
+             artifact_ids,release_digest),separators=(",",":")).encode()).hexdigest()
         try:
             return ReleaseRecord(**self.writer.command(
-                project_id,"M.prepareRelease",request_id,request_body_sha256,action))
+                project_id,"M.prepareRelease",request_id,guard,action))
         except WorkforceFault as error:
             raise self._raise_fault(error) from error
 
@@ -128,9 +134,12 @@ class ReleaseAPSWStore:
             return {"effect_id":effect_id,"project_id":project_id,
                     "release_id":release_id,"effect_digest":effect_digest,"state":"prepared"}
 
+        guard = hashlib.sha256(json.dumps(
+            (request_body_sha256,release_id,decision_id,effect_digest),
+            separators=(",",":")).encode()).hexdigest()
         try:
             return EffectRecord(**self.writer.command(
-                project_id,"M.publishRelease",request_id,request_body_sha256,action))
+                project_id,"M.publishRelease",request_id,guard,action))
         except WorkforceFault as error:
             raise self._raise_fault(error) from error
 
