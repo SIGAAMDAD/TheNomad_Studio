@@ -33,6 +33,8 @@ from nomad_studio.app import open_studio
 from nomad_studio.contracts.runtime_ports_v1 import Result
 from nomad_studio.gateway.api import GatewayServer, OwnerGateway
 from nomad_studio.production.workgraph.core import critical_path
+from nomad_studio.production.context.core import normalize_path, overlapping
+from nomad_studio.registry.skills import verify_adapter_manifest
 from nomad_studio.state.r9_authority import R9Authority, inspect_database
 from nomad_studio.state.r9_cas import FileCAS
 
@@ -380,6 +382,76 @@ def bench_graph(b: Bench) -> None:
                 detail={'tasks':n,'shape':shape},warmup=calc)
 
 
+
+def bench_service_ports(b: Bench, temp: Path) -> None:
+    """Measure real CAB-B APIs and CAB-I/G validation hot paths with local fixtures."""
+    batch={'smoke':32,'standard':128,'scale':512}[b.profile]
+    with open_studio(sqlite_path=open_path(temp,'cab-b-services')) as runtime:
+        projects=runtime.port('ProjectPort')
+        briefs=runtime.port('BriefPort')
+        synthetic_owner=Result('OK','OK',{'principal_id':'benchmark-owner'},'synthetic-owner-proof')
+        seq=0
+        def register() -> int:
+            nonlocal seq
+            for _ in range(batch):
+                seq+=1
+                result=projects.register_project({
+                    'project_id':f'perf-project-{seq}',
+                    'owner_principal_id':'benchmark-owner',
+                    'constitution_digest':'a'*64,
+                    'initial_state':'ACTIVE'},synthetic_owner)
+                if result.status!='OK':
+                    raise RuntimeError(f'project registration refused: {result.code}')
+            return batch
+        b.measure('project.register_persistent',register,
+            detail={'projects_per_trial':batch,'authority':'SIMULATED owner proof'})
+        root=projects.register_project({'project_id':'perf-brief-root',
+            'owner_principal_id':'benchmark-owner','constitution_digest':'a'*64,
+            'initial_state':'ACTIVE'},synthetic_owner)
+        if root.status!='OK':
+            raise RuntimeError('benchmark project fixture unavailable')
+        seq=0
+        def admit() -> int:
+            nonlocal seq
+            for _ in range(batch):
+                seq+=1
+                receipt=f'synthetic-command-{seq}'
+                result=briefs.admit_brief({'brief_id':f'brief-{seq}',
+                    'project_id':'perf-brief-root','feature_id':f'feature-{seq}',
+                    'original_text':'Synthetic benchmark input',
+                    'owner_command_ref':receipt},
+                    Result('OK','OK',{'principal_id':'benchmark-owner'},receipt))
+                if result.status!='OK':
+                    raise RuntimeError(f'brief admission refused: {result.code}')
+            return batch
+        b.measure('brief.admit_persistent',admit,
+            detail={'briefs_per_trial':batch,'authority':'SIMULATED owner proof'})
+
+    paths=[f'assets/region-{i}/hero/collision.mesh' for i in range(2000)]
+    def normalize() -> int:
+        for path in paths:
+            normalize_path(path)
+        return len(paths)
+    b.measure('context.resource_path_normalize',normalize,
+        detail={'synthetic_paths':len(paths)},warmup=normalize)
+    def overlap() -> int:
+        for path in paths:
+            overlapping(path,'assets/region-1')
+        return len(paths)
+    b.measure('context.resource_overlap',overlap,
+        detail={'synthetic_paths':len(paths)},warmup=overlap)
+    manifest={'adapter_id':'synthetic-benchmark-adapter','source_digest':'a'*64,
+        'capabilities':[f'capability-{i}' for i in range(64)],
+        'evidence_ref':'synthetic-observation','observed':True}
+    def verify() -> int:
+        for _ in range(200):
+            verify_adapter_manifest(manifest)
+        return 200
+    b.measure('registry.adapter_manifest_validate',verify,
+        detail={'capability_entries':64, 'manifests_per_trial':200,
+                'authority':'SIMULATED manifest fixture'},warmup=verify)
+
+
 def bench_gateway(b: Bench, temp: Path) -> None:
     openssl=os.environ.get('OPENSSL', 'openssl')
     cert=temp/'perf-cert.pem'; key=temp/'perf-key.pem'
@@ -457,6 +529,7 @@ def main(argv: list[str] | None = None) -> int:
         bench_recovery(b,temp)
         bench_cas(b,temp)
         bench_graph(b)
+        bench_service_ports(b,temp)
         bench_gateway(b,temp)
     payload={'schema':'r9-performance-results-v1','profile':args.profile,
         'seed':args.seed,'trials':args.trials,'environment':environment(),

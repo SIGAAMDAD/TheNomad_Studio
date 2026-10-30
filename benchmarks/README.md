@@ -26,6 +26,8 @@ python benchmarks/r9_performance.py --profile scale --trials 7 --output r9-perf-
 | Outbox delivery | End-to-end append/poll/dispatch/ACK; separate individual dispatch calls | messages/s, individual p50/p95/p99 |
 | Restart/recovery | 300/3k/10k CLAIMED records | time to recover as UNKNOWN at restart |
 | CAS | 4KiB, 64KiB, 1MiB immutable blobs | durable put/read+SHA verification bytes/s |
+| CAB-B services | Authenticated-project fixture registration, immutable brief admission | persistent API throughput with synthetic owner receipts |
+| CAB-I/CAB-G helpers | Resource path normalization/overlap and 64-capability adapter manifest | calls/s and measured latency |
 | WorkGraph | Chain, wide, fan-in DAGs, 128-16,384 tasks | critical-path traversal time and tasks/s |
 | Gateway | Loopback mutual-TLS handshake + malformed HTTP request | request round-trip latency including handshake |
 
