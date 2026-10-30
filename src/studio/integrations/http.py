@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 import urllib.error
 import urllib.request
-from typing import Callable, Protocol
+from typing import Callable, Protocol, Mapping
 from .common import ProviderFailure, RemoteUnknown
 
 
@@ -28,12 +28,14 @@ class UrllibHttp:
 
 
 class JsonProvider:
-    def __init__(self, http: HttpPort, token_supplier: Callable[[], str], base_url: str):
+    def __init__(self, http: HttpPort, token_supplier: Callable[[], str], base_url: str,
+                 quota_observer: Callable[[Mapping[str, str], int], None] | None = None):
         if not base_url.startswith("https://"):
             raise ValueError("HTTPS API URL required")
         self.http = http
         self.token_supplier = token_supplier
         self.base_url = base_url.rstrip("/")
+        self.quota_observer = quota_observer
 
     def request(self, method: str, path: str, data: dict | None = None, *, expect: tuple[int, ...] = (200,)) -> dict | list | None:
         token = self.token_supplier()
@@ -45,9 +47,13 @@ class JsonProvider:
             payload = json.dumps(data, separators=(",", ":")).encode("utf-8")
             headers["Content-Type"] = "application/json"
         status, response_headers, body = self.http.request(method, self.base_url + path, headers, payload)
+        if self.quota_observer is not None:
+            # Observation is local and non-authoritative; never grants spending.
+            self.quota_observer(response_headers, status)
+        lowered = {key.lower(): value for key, value in response_headers.items()}
         if status not in expect:
-            if status in (403, 429) and (response_headers.get("Retry-After") or response_headers.get("X-RateLimit-Remaining") == "0"):
-                raw = response_headers.get("Retry-After")
+            if status in (403, 429) and (lowered.get("retry-after") or lowered.get("x-ratelimit-remaining") == "0"):
+                raw = lowered.get("retry-after")
                 try:
                     seconds = float(raw) if raw is not None else None
                 except ValueError:
