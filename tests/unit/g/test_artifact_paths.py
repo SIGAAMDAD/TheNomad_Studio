@@ -53,12 +53,14 @@ class ArtifactPathIsolationTests(unittest.TestCase):
 
     def test_symlinked_artifact_index_cannot_redirect_metadata_write(self):
         self.store.put(self.content, project_id='project', expected_digest=self.digest)
+        manifest_digest = sha256(b'manifest bytes')
+        self.store.put(b'manifest bytes', project_id='project', expected_digest=manifest_digest)
         index = self.root / 'project' / 'artifacts' / 'artifact.json'
         index.parent.mkdir(parents=True)
         target = self.outside / 'target'
         target.write_bytes(b'unrelated')
         index.symlink_to(target)
-        meta = Artifact('project', 'artifact', 'source', self.digest, 'e'*64,
+        meta = Artifact('project', 'artifact', 'source', self.digest, manifest_digest,
                         None, 'revision', 'canon', None, 'sha256:' + self.digest)
         with self.assertRaises(IntegrationError):
             self.store.register(meta)
@@ -88,6 +90,27 @@ class ArtifactPathIsolationTests(unittest.TestCase):
             self.store.put(self.content, project_id='project', expected_digest=self.digest)
         with self.assertRaises(IntegrationError):
             self.store.get(project_id='project', key='sha256:' + self.digest)
+
+    def test_missing_manifest_bytes_rejected_at_registration(self):
+        self.store.put(self.content, project_id='project', expected_digest=self.digest)
+        meta = Artifact('project', 'artifact', 'source', self.digest, 'f' * 64,
+                        None, 'revision', 'canon', None, 'sha256:' + self.digest)
+        with self.assertRaises(IntegrationError):
+            self.store.register(meta)
+        self.assertEqual(self.store.list_artifacts(project_id='project'), [])
+
+    def test_tampered_manifest_rejected_at_readback(self):
+        manifest = b'exact manifest'
+        manifest_digest = sha256(manifest)
+        self.store.put(self.content, project_id='project', expected_digest=self.digest)
+        self.store.put(manifest, project_id='project', expected_digest=manifest_digest)
+        meta = Artifact('project', 'artifact', 'source', self.digest, manifest_digest,
+                        None, 'revision', 'canon', None, 'sha256:' + self.digest)
+        self.store.register(meta)
+        self.assertEqual(self.store.get_artifact(project_id='project', artifact_id='artifact'), meta)
+        self.store._path(manifest_digest).write_bytes(b'tampered')
+        with self.assertRaises(IntegrationError):
+            self.store.get_artifact(project_id='project', artifact_id='artifact')
 
     def test_interrupted_publication_has_no_partial_visible_blob(self):
         # A failed atomic link cannot expose partial bytes at the final digest path.

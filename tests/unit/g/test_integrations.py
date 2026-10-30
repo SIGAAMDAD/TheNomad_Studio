@@ -326,7 +326,9 @@ class TestStorage(unittest.TestCase):
             raw = b'original glb or other artifact bytes'
             d = sha256(raw)
             s.put(raw, project_id='p1', expected_digest=d)
-            meta = Artifact('p1', 'art1', 'glb', d, 'e'*64, None, 'rev1', 'canon1', None, 'sha256:'+d)
+            manifest_digest = sha256(b'artifact manifest original')
+            s.put(b'artifact manifest original', project_id='p1', expected_digest=manifest_digest)
+            meta = Artifact('p1', 'art1', 'glb', d, manifest_digest, None, 'rev1', 'canon1', None, 'sha256:'+d)
             s.register(meta, validator=lambda b: self.assertEqual(b, raw))
             self.assertEqual(s.list_artifacts(project_id='p1'), [meta.summary()])
             self.assertEqual(s.get_artifact(project_id='p1', artifact_id='art1'), meta)
@@ -433,7 +435,9 @@ class TestPorts(unittest.TestCase):
             data = b'original bytes'
             d = sha256(data)
             artifacts.put(data, project_id='p1', expected_digest=d)
-            artifacts.register(Artifact('p1', 'a1', 'source', d, 'e'*64, None, 'rev1', 'canon1', None, 'sha256:'+d))
+            manifest_digest = sha256(b'manifest bytes')
+            artifacts.put(b'manifest bytes', project_id='p1', expected_digest=manifest_digest)
+            artifacts.register(Artifact('p1', 'a1', 'source', d, manifest_digest, None, 'rev1', 'canon1', None, 'sha256:'+d))
             fake = FakeGitHubHTTP()
             git = GitHub(fake, TOKEN, GitHubChannel('p1', 'owner', 'repo', 'existing-ref'), binding)
             ci = GitHubActions(git, binding, {'win': BuildTarget('win', 'game.yml', 'existing-ref')})

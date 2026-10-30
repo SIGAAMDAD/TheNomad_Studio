@@ -162,6 +162,9 @@ class ArtifactStore:
         if meta.storage_key != f"sha256:{digest(meta.content_digest)}":
             raise IntegrationError("invalid", "artifact storage/content mismatch")
         payload = self.get(project_id=meta.project_id, key=meta.storage_key)
+        # The manifest is an independently content-addressed original; a hash
+        # supplied as metadata without stored bytes is not a verified artifact.
+        self.get(project_id=meta.project_id, key='sha256:' + meta.manifest_digest)
         if meta.validator_digest is not None and validator is None:
             raise IntegrationError("invalid", "declared format validator must actually execute")
         if validator is not None:
@@ -179,7 +182,8 @@ class ArtifactStore:
                 raise ValueError("bad artifact metadata")
             entry = Artifact(**row)
             self.get(project_id=project_id, key=entry.storage_key)
-        except (ValueError, TypeError, KeyError) as exc:
+            self.get(project_id=project_id, key='sha256:' + digest(entry.manifest_digest))
+        except (ValueError, TypeError, KeyError, IntegrationError) as exc:
             raise IntegrationError("conflict", "artifact index invalid") from exc
         return entry
 
