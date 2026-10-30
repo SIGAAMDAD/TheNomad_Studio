@@ -27,15 +27,40 @@ class WorkforceTransaction:
     def __init__(self, connection: Any):
         self._connection = connection
 
+    @staticmethod
+    def _description(cursor: Any) -> list[str]:
+        """APSW may finalize an empty SELECT during execute(), before metadata.
+
+        sqlite3 exposes cursor.description even for empty results. APSW raises
+        ExecutionCompleteError on getdescription() after an empty statement.
+        That means no rows; other APSW errors must still propagate.
+        """
+        if not hasattr(cursor, 'getdescription'):
+            return [col[0] for col in cursor.description]
+        try:
+            return [col[0] for col in cursor.getdescription()]
+        except Exception as exc:
+            try:
+                import apsw
+            except ImportError:
+                raise exc
+            if isinstance(exc, apsw.ExecutionCompleteError):
+                return []
+            raise
+
     def one(self, sql: str, params: tuple = ()) -> dict | None:
         cursor = self._connection.execute(sql, params)
-        columns = [col[0] for col in cursor.getdescription()] if hasattr(cursor, 'getdescription') else [col[0] for col in cursor.description]
+        columns = self._description(cursor)
+        if not columns:
+            return None
         row = cursor.fetchone()
         return dict(zip(columns, row)) if row is not None else None
 
     def all(self, sql: str, params: tuple = ()) -> list[dict]:
         cursor = self._connection.execute(sql, params)
-        columns = [col[0] for col in cursor.getdescription()] if hasattr(cursor, 'getdescription') else [col[0] for col in cursor.description]
+        columns = self._description(cursor)
+        if not columns:
+            return []
         return [dict(zip(columns, row)) for row in cursor]
 
     def change(self, sql: str, params: tuple = ()) -> int:

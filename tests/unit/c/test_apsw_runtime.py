@@ -40,3 +40,20 @@ class TestActualAPSW(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+    def test_empty_apsw_selects_do_not_fail_description_lookup(self):
+        from studio.storage.workforce import WorkforceTransaction
+        connection = apsw.Connection(':memory:')
+        try:
+            connection.execute('CREATE TABLE sample(key TEXT PRIMARY KEY,value INTEGER)')
+            tx = WorkforceTransaction(connection)
+            self.assertIsNone(tx.one('SELECT key,value FROM sample WHERE key=?',('missing',)))
+            self.assertEqual(tx.all('SELECT key,value FROM sample WHERE key=?',('missing',)),[])
+            tx.change('INSERT INTO sample(key,value) VALUES (?,?)',('one',3))
+            self.assertEqual(tx.one('SELECT key,value FROM sample WHERE key=?',('one',)),
+                             {'key':'one','value':3})
+            self.assertEqual(tx.all('SELECT key,value FROM sample ORDER BY key'),
+                             [{'key':'one','value':3}])
+        finally:
+            connection.close()
