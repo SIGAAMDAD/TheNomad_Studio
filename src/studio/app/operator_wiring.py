@@ -59,6 +59,15 @@ def assemble_operator_service(
     for owner, (instance, expected_type) in services.items():
         if not isinstance(instance, expected_type):
             raise TypeError(f'owner {owner} requires an actual {expected_type.__name__}')
+        # An adapter's own method may remain callable when its actual delegated
+        # implementation is missing or replaced. Check the underlying domain
+        # before allowing a 72-operation registry to report a complete service.
+        if owner in ('A', 'B', 'D', 'E'):
+            delegated = getattr(instance, 'service', None)
+            if any(not callable(getattr(delegated, name, None))
+                   for name in instance.operation_ids):
+                raise ApiError('capability_unavailable',
+                               f'domain {owner} has missing implementation methods')
     if (not callable(getattr(verifier, 'verify_bearer', None))
             or not callable(getattr(grants, 'granted_project_ids', None))
             or not callable(getattr(transactions, 'execute_idempotent', None))):
