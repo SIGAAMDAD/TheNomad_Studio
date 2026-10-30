@@ -33,7 +33,7 @@ class ProductionTx:
         if "project_id" not in sql.lower():
             # The frozen schema contains global specialist/tool catalogs used
             # during task eligibility checks. Reads may reference those only.
-            referenced = re.findall(r"\\b(?:FROM|JOIN)\\s+([a-z_]+)\\b", sql, re.I)
+            referenced = re.findall(r"\b(?:FROM|JOIN)\s+([a-z_]+)\b", sql, re.I)
             if (write or not sql.lstrip().upper().startswith("SELECT ")
                     or not referenced or any(t.lower() not in GLOBAL_CATALOG for t in referenced)):
                 raise ProductionFault("forbidden", "D operation requires project-scoped SQL")
