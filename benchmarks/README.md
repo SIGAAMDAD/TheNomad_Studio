@@ -12,7 +12,7 @@ python benchmarks/r9_performance.py --profile scale --trials 7 --output r9-perf-
 
 `standard` is the complete benchmark *coverage* profile. `smoke` executes the same types of benchmarks at smaller sizes; `scale` increases history to 250,000 outbox rows, graph size to 16,384 tasks and contention to 16 threads. At least two trials are required. The seed defaults to `90134`.
 
-`openssl` is required only for the loopback mTLS benchmark; it is reported as skipped if unavailable. All other cases use the standard library. The optional GitHub Actions **Studio R9 performance measurements** workflow runs on `workflow_dispatch` only. It records artifacts but does not block release or claim production readiness.
+`openssl` is required only for the loopback mTLS benchmark; it is reported as skipped if unavailable. All other cases use the standard library. The optional GitHub Actions **Studio R9 performance measurements** workflow runs on request and when benchmark source/workflow files change. It records artifacts without an SLO threshold or production-readiness claim.
 
 ## Measurements
 
