@@ -55,5 +55,24 @@ class TestActualAPSW(unittest.TestCase):
             connection.close()
 
 
+    def test_empty_named_query_and_absent_get_on_actual_apsw(self):
+        with tempfile.TemporaryDirectory() as root:
+            store = ScopedStore(Path(root) / "empty.sqlite", fresh=True)
+            m = store.bind_domain("WG-M")
+            a = store.bind_domain("WG-A")
+            store.seal_bindings()
+            ctx = {"principal_id":"trusted", "issuer":"configured",
+                   "allowed_project_ids":["p"], "trusted_proof_ref":"proof"}
+            try:
+                with store.begin(actor=ctx,project_id="p",request_id="bootstrap",domain_owner=m) as tx:
+                    tx.execute_named("projects.insert",values={
+                        "name":"project","charter_digest":"digest","state":"active"})
+                with store.begin(actor=ctx,project_id="p",request_id="read",domain_owner=a) as tx:
+                    self.assertEqual(tx.select_named("bibles.scan"), [])
+                    self.assertIsNone(tx.select_named("bibles.get",keys={"bible_id":"missing"}))
+            finally:
+                store.close()
+
+
 if __name__ == "__main__":
     unittest.main()

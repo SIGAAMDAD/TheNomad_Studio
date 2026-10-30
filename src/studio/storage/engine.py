@@ -164,7 +164,19 @@ class ScopedTransaction:
 
     def _rows(self, sql: str, args: Sequence[Any]) -> list[dict[str, Any]]:
         cursor = self._execute(sql, args)
-        description = cursor.getdescription()
+        try:
+            description = cursor.getdescription()
+        except Exception as exc:
+            # APSW considers a SELECT that returned zero rows completed
+            # immediately. Do not interpret an empty project query as a
+            # provider/storage outage.
+            try:
+                import apsw
+            except ImportError:
+                raise exc
+            if isinstance(exc, apsw.ExecutionCompleteError):
+                return []
+            raise
         names = [d[0] for d in description]
         return [dict(zip(names, r)) for r in cursor]
 
