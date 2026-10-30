@@ -68,9 +68,13 @@ def test_missing_real_domain_or_auth_port_refuses_assembly():
     with pytest.raises(TypeError,match='owner G'):
         assemble_operator_service(**args)
     args=_fixture()
-    args['transactions']=None
-    with pytest.raises(TypeError,match='durable mutation runner'):
+    args['verifier']=None
+    with pytest.raises(TypeError,match='operator authentication'):
         assemble_operator_service(**args)
+    # All frozen mutations have their own domain transactions, including M.
+    args=_fixture()
+    args['transactions']=None
+    assert assemble_operator_service(**args).operator_service.transactions is None
     args=_fixture()
     args['governance'].service.createBible=None
     with pytest.raises(ApiError,match='missing implementation methods'):

@@ -69,9 +69,8 @@ def assemble_operator_service(
                 raise ApiError('capability_unavailable',
                                f'domain {owner} has missing implementation methods')
     if (not callable(getattr(verifier, 'verify_bearer', None))
-            or not callable(getattr(grants, 'granted_project_ids', None))
-            or not callable(getattr(transactions, 'execute_idempotent', None))):
-        raise TypeError('operator authentication, grants and durable mutation runner required')
+            or not callable(getattr(grants, 'granted_project_ids', None))):
+        raise TypeError('operator authentication and current project grants required')
 
     contracts = FrozenContracts(contracts_root)
     if len(contracts.operations) != 72:
@@ -82,5 +81,12 @@ def assemble_operator_service(
     missing = registry.missing(contracts)
     if missing:
         raise ApiError('capability_unavailable', 'operator contracts missing: '+', '.join(sorted(missing)))
+    # No second transaction is needed for methods with a C-backed atomic
+    # domain command port. If any mutation does not own its transaction, require
+    # the real C runner instead of silently permitting non-durable mutation.
+    unowned_mutations = [op.name for op in contracts.operations.values()
+                         if op.mutation and not registry.manages_atomic_mutation(op)]
+    if unowned_mutations and not callable(getattr(transactions, 'execute_idempotent', None)):
+        raise TypeError('durable mutation runner required for: ' + ', '.join(unowned_mutations))
     return replace(composition, operator_service=StudioOperatorService(
         contracts, verifier, grants, registry, transactions))
