@@ -41,14 +41,14 @@ def fault(code,call):
     assert err.value.code==code
 
 
-@pytest.mark.parametrize('request,keys',[
+@pytest.mark.parametrize('payload,keys',[
     (None,{'request_id'}),({}, {'request_id'}),
     ({'request_id':''},{'request_id'}),
     ({'request_id':'x'*201},{'request_id'}),
     ({'request_id':'valid','extra':1},{'request_id'}),
 ])
-def test_request_contract_exact_fields_and_idempotency_id(request,keys):
-    fault('invalid',lambda:_request('submitFeature',request,keys))
+def test_request_contract_exact_fields_and_idempotency_id(payload,keys):
+    fault('invalid',lambda:_request('submitFeature',payload,keys))
 
 
 @pytest.mark.parametrize('value',[None,'',42,'x'*513])
