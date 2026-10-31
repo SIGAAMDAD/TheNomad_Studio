@@ -1,0 +1,1526 @@
+{
+  "contract_version": "1.0.0",
+  "ops": [
+    {
+      "id": "createProject",
+      "method": "POST",
+      "path": "/v1/projects",
+      "owner": "M",
+      "auth": "owner",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "charter_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "project_id": "string",
+        "revision": "integer"
+      }
+    },
+    {
+      "id": "listProjects",
+      "method": "GET",
+      "path": "/v1/projects",
+      "owner": "M",
+      "auth": "authenticated",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "items": "array"
+      }
+    },
+    {
+      "id": "getProject",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}",
+      "owner": "M",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "project_id": "string",
+        "name": "string",
+        "revision": "integer"
+      }
+    },
+    {
+      "id": "configureProject",
+      "method": "PUT",
+      "path": "/v1/projects/{project_id}/config",
+      "owner": "M",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "config_digest": {
+          "type": "string",
+          "required": true
+        },
+        "expected_revision": {
+          "type": "integer",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "project_id": "string",
+        "revision": "integer"
+      }
+    },
+    {
+      "id": "preflightProject",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/preflight",
+      "owner": "M",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "project_id": "string",
+        "ready": "boolean",
+        "missing_capabilities": "array"
+      }
+    },
+    {
+      "id": "listPacks",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/packages",
+      "owner": "B",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "packages": "array"
+      }
+    },
+    {
+      "id": "enablePack",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/packages/enable",
+      "owner": "B",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "package_digest": {
+          "type": "string",
+          "required": true
+        },
+        "grants": {
+          "type": "array",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "package_digest": "string",
+        "enabled": "boolean"
+      }
+    },
+    {
+      "id": "disablePack",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/packages/disable",
+      "owner": "B",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "package_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "package_digest": "string",
+        "enabled": "boolean"
+      }
+    },
+    {
+      "id": "createCabal",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/cabals",
+      "owner": "B",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "charter_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "cabal_id": "string",
+        "revision": "integer"
+      }
+    },
+    {
+      "id": "staffCabal",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/cabals/{cabal_id}/staff",
+      "owner": "B",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "member_id": {
+          "type": "string",
+          "required": true
+        },
+        "role_id": {
+          "type": "string",
+          "required": true
+        },
+        "permission_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "cabal_id": "string",
+        "member_id": "string"
+      }
+    },
+    {
+      "id": "listCabals",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/cabals",
+      "owner": "B",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "cabals": "array"
+      }
+    },
+    {
+      "id": "listBibles",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/bibles",
+      "owner": "A",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "bibles": "array"
+      }
+    },
+    {
+      "id": "createBible",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/bibles",
+      "owner": "A",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "title": {
+          "type": "string",
+          "required": true
+        },
+        "kind": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "bible_id": "string",
+        "kind": "string"
+      }
+    },
+    {
+      "id": "stageBible",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/bibles/{bible_id}/stages",
+      "owner": "A",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "content_digest": {
+          "type": "string",
+          "required": true
+        },
+        "manifest_digest": {
+          "type": "string",
+          "required": true
+        },
+        "expected_edition_id": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "response_fields": {
+        "intent_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "diffBible",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/bibles/{bible_id}/diff",
+      "owner": "A",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "changed_clause_ids": "array",
+        "impacted_task_ids": "array"
+      }
+    },
+    {
+      "id": "publishBible",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/bibles/{bible_id}/publish",
+      "owner": "A",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "intent_id": {
+          "type": "string",
+          "required": true
+        },
+        "decision_id": {
+          "type": "string",
+          "required": true
+        },
+        "effect_digest": {
+          "type": "string",
+          "required": true
+        },
+        "expected_edition_id": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "response_fields": {
+        "edition_id": "string",
+        "snapshot_id": "string"
+      }
+    },
+    {
+      "id": "getCanon",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/canon",
+      "owner": "A",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "snapshot_id": "string",
+        "design_edition_id": "string",
+        "technical_edition_id": "string"
+      }
+    },
+    {
+      "id": "requestDecision",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/decisions",
+      "owner": "A",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "subject_type": {
+          "type": "string",
+          "required": true
+        },
+        "subject_id": {
+          "type": "string",
+          "required": true
+        },
+        "action": {
+          "type": "string",
+          "required": true
+        },
+        "effect_digest": {
+          "type": "string",
+          "required": true
+        },
+        "snapshot_id": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "response_fields": {
+        "decision_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "resolveDecision",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/decisions/{decision_id}/resolve",
+      "owner": "A",
+      "auth": "owner",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "decision": {
+          "type": "string",
+          "required": true
+        },
+        "expected_effect_digest": {
+          "type": "string",
+          "required": true
+        },
+        "expected_revision": {
+          "type": "integer",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "decision_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "listDecisions",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/decisions",
+      "owner": "A",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "decisions": "array"
+      }
+    },
+    {
+      "id": "submitFeature",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/features",
+      "owner": "D",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "brief_digest": {
+          "type": "string",
+          "required": true
+        },
+        "snapshot_id": {
+          "type": "string",
+          "required": true
+        },
+        "acceptance_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "feature_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "planFeature",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/features/{feature_id}/plan",
+      "owner": "D",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "snapshot_id": {
+          "type": "string",
+          "required": true
+        },
+        "expected_revision": {
+          "type": "integer",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "feature_id": "string",
+        "task_ids": "array"
+      }
+    },
+    {
+      "id": "listFeatures",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/features",
+      "owner": "D",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "features": "array"
+      }
+    },
+    {
+      "id": "listTasks",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/tasks",
+      "owner": "D",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "tasks": "array"
+      }
+    },
+    {
+      "id": "cancelTask",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/tasks/{task_id}/cancel",
+      "owner": "D",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "expected_revision": {
+          "type": "integer",
+          "required": true
+        },
+        "reason": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "task_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "dispatchTask",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/tasks/{task_id}/dispatch",
+      "owner": "D",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "expected_revision": {
+          "type": "integer",
+          "required": true
+        },
+        "worker_id": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "task_id": "string",
+        "lease_generation": "integer",
+        "command_id": "string",
+        "shift_id": "string",
+        "delivery_state": "string"
+      }
+    },
+    {
+      "id": "registerWorker",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/workers",
+      "owner": "I",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "worker_id": {
+          "type": "string",
+          "required": true
+        },
+        "browser_chat_ref": {
+          "type": "string",
+          "required": true
+        },
+        "role_id": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "worker_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "beginShift",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/workers/{worker_id}/shifts",
+      "owner": "I",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "shift_id": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "worker_id": "string",
+        "shift_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "stopShift",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/workers/{worker_id}/shifts/{shift_id}/stop",
+      "owner": "I",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "reason": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "shift_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "listWorkers",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/workers",
+      "owner": "I",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "items": "array"
+      }
+    },
+    {
+      "id": "requestReview",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/reviews",
+      "owner": "E",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "submission_id": {
+          "type": "string",
+          "required": true
+        },
+        "acceptance_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "review_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "submitReview",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/reviews/{review_id}/verdict",
+      "owner": "E",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "verdict": {
+          "type": "string",
+          "required": true
+        },
+        "evidence_digests": {
+          "type": "array",
+          "required": true
+        },
+        "source_revision_id": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "response_fields": {
+        "review_id": "string",
+        "verdict": "string"
+      }
+    },
+    {
+      "id": "listReviews",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/reviews",
+      "owner": "E",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "reviews": "array"
+      }
+    },
+    {
+      "id": "listArtifacts",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/artifacts",
+      "owner": "G",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "artifacts": "array"
+      }
+    },
+    {
+      "id": "getArtifact",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/artifacts/{artifact_id}",
+      "owner": "G",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "artifact_id": "string",
+        "content_digest": "string",
+        "kind": "string"
+      }
+    },
+    {
+      "id": "attachConnector",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/connectors",
+      "owner": "G",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "provider_key": {
+          "type": "string",
+          "required": true
+        },
+        "credential_ref": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "account_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "runBuild",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/builds",
+      "owner": "G",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "source_revision_id": {
+          "type": "string",
+          "required": true
+        },
+        "build_target": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "ci_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "stageIntegration",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/integrations",
+      "owner": "M",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "submission_id": {
+          "type": "string",
+          "required": true
+        },
+        "expected_revision_id": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "intent_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "promoteIntegration",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/integrations/{intent_id}/promote",
+      "owner": "M",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "expected_revision_id": {
+          "type": "string",
+          "required": true
+        },
+        "qa_review_ids": {
+          "type": "array",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "source_revision_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "publishRelease",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/releases/{release_id}/publish",
+      "owner": "M",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "source_revision_id": {
+          "type": "string",
+          "required": true
+        },
+        "snapshot_id": {
+          "type": "string",
+          "required": true
+        },
+        "effect_digest": {
+          "type": "string",
+          "required": true
+        },
+        "decision_id": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "release_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "listReleases",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/releases",
+      "owner": "M",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "releases": "array"
+      }
+    },
+    {
+      "id": "reconcileEffect",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/effects/{effect_id}/reconcile",
+      "owner": "G",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "expected_state": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "response_fields": {
+        "effect_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "configureBudget",
+      "method": "PUT",
+      "path": "/v1/projects/{project_id}/budgets/{budget_id}",
+      "owner": "F",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "limit_amount": {
+          "type": "integer",
+          "required": true
+        },
+        "expected_revision": {
+          "type": "integer",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "budget_id": "string",
+        "limit_amount": "integer"
+      }
+    },
+    {
+      "id": "getBudgets",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/budgets",
+      "owner": "F",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "budgets": "array"
+      }
+    },
+    {
+      "id": "listReports",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/reports",
+      "owner": "F",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "reports": "array"
+      }
+    },
+    {
+      "id": "listEvents",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/events",
+      "owner": "J",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "events": "array",
+        "next_cursor": "integer"
+      }
+    },
+    {
+      "id": "requestRestore",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/recovery",
+      "owner": "M",
+      "auth": "owner",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "backup_digest": {
+          "type": "string",
+          "required": true
+        },
+        "expected_revision": {
+          "type": "integer",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "recovery_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "prepareRelease",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/releases/prepare",
+      "owner": "M",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "source_revision_id": {
+          "type": "string",
+          "required": true
+        },
+        "snapshot_id": {
+          "type": "string",
+          "required": true
+        },
+        "artifact_ids": {
+          "type": "array",
+          "required": true
+        },
+        "release_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "release_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "importRoles",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/roles/import",
+      "owner": "B",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "catalog_digest": {
+          "type": "string",
+          "required": true
+        },
+        "role_manifest_digests": {
+          "type": "array",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "catalog_digest": "string",
+        "installed_count": "integer"
+      }
+    },
+    {
+      "id": "listRoles",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/roles",
+      "owner": "B",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "roles": "array"
+      }
+    },
+    {
+      "id": "listDepartments",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/departments",
+      "owner": "B",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "departments": "array"
+      }
+    },
+    {
+      "id": "createDeliberation",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/cabals/{cabal_id}/deliberations",
+      "owner": "B",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "subject_digest": {
+          "type": "string",
+          "required": true
+        },
+        "record_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "deliberation_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "listDeliberations",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/cabals/{cabal_id}/deliberations",
+      "owner": "B",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "deliberations": "array"
+      }
+    },
+    {
+      "id": "assignTask",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/tasks/{task_id}/assign",
+      "owner": "D",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "cabal_id": {
+          "type": "string",
+          "required": true
+        },
+        "expected_revision": {
+          "type": "integer",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "task_id": "string",
+        "cabal_id": "string",
+        "revision": "integer"
+      }
+    },
+    {
+      "id": "endShift",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/shifts/{shift_id}/end",
+      "owner": "I",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "receipt_commit_sha": {
+          "type": "string",
+          "required": true
+        },
+        "receipt_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "shift_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "observeCommandReceipt",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/commands/{command_id}/receipts",
+      "owner": "I",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "receipt_id": {
+          "type": "string",
+          "required": true
+        },
+        "worker_id": {
+          "type": "string",
+          "required": true
+        },
+        "shift_id": {
+          "type": "string",
+          "required": true
+        },
+        "kind": {
+          "type": "string",
+          "required": true
+        },
+        "result_digest": {
+          "type": "string",
+          "required": true
+        },
+        "receipt_commit_sha": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "command_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "openOversightCase",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/oversight",
+      "owner": "E",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "subject_id": {
+          "type": "string",
+          "required": true
+        },
+        "evidence_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "case_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "resolveOversightCase",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/oversight/{case_id}/resolve",
+      "owner": "E",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "resolution_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "case_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "listOversightCases",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/oversight",
+      "owner": "E",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "cases": "array"
+      }
+    },
+    {
+      "id": "requestReport",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/reports",
+      "owner": "F",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "report_profile_digest": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "report_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "listNotifications",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/notifications",
+      "owner": "F",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "notifications": "array"
+      }
+    },
+    {
+      "id": "ackNotification",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/notifications/{notification_id}/ack",
+      "owner": "F",
+      "auth": "project",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "expected_state": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "notification_id": "string",
+        "acknowledged": "boolean"
+      }
+    },
+    {
+      "id": "observeEffect",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/effects/{effect_id}",
+      "owner": "G",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "effect_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "inspectIntegration",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/integrations/{intent_id}",
+      "owner": "M",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "intent_id": "string",
+        "state": "string"
+      }
+    },
+    {
+      "id": "observeRecovery",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/recovery",
+      "owner": "M",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "recovery_state": "string",
+        "outstanding_effect_ids": "array"
+      }
+    },
+    {
+      "id": "getProjectPolicy",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/policy",
+      "owner": "A",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "policy_id": "string",
+        "revision": "integer",
+        "policy_digest": "string"
+      }
+    },
+    {
+      "id": "setProjectPolicy",
+      "method": "PUT",
+      "path": "/v1/projects/{project_id}/policy",
+      "owner": "A",
+      "auth": "owner",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "policy_digest": {
+          "type": "string",
+          "required": true
+        },
+        "expected_revision": {
+          "type": "integer",
+          "required": true
+        },
+        "rules": {
+          "type": "array",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "policy_id": "string",
+        "revision": "integer",
+        "policy_digest": "string"
+      }
+    },
+    {
+      "id": "listProjectGrants",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/access",
+      "owner": "A",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "grants": "array"
+      }
+    },
+    {
+      "id": "grantProjectAccess",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/access/grant",
+      "owner": "A",
+      "auth": "owner",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "principal_id": {
+          "type": "string",
+          "required": true
+        },
+        "grant_code": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "principal_id": "string",
+        "grant_code": "string"
+      }
+    },
+    {
+      "id": "revokeProjectAccess",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/access/revoke",
+      "owner": "A",
+      "auth": "owner",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "principal_id": {
+          "type": "string",
+          "required": true
+        },
+        "grant_code": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "principal_id": "string",
+        "grant_code": "string"
+      }
+    },
+    {
+      "id": "listToolGrants",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}/tools/grants",
+      "owner": "B",
+      "auth": "project",
+      "mutation": false,
+      "request_fields": {},
+      "response_fields": {
+        "grants": "array"
+      }
+    },
+    {
+      "id": "revokeToolGrant",
+      "method": "POST",
+      "path": "/v1/projects/{project_id}/tools/grants/{grant_id}/revoke",
+      "owner": "B",
+      "auth": "owner",
+      "mutation": true,
+      "request_fields": {
+        "request_id": {
+          "type": "string",
+          "required": true
+        },
+        "expected_state": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "response_fields": {
+        "grant_id": "string",
+        "revoked": "boolean"
+      }
+    }
+  ]
+}

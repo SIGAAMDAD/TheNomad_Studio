@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "canon_snapshot_id": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+      "type": "string"
+    },
+    "channel_id": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+      "type": "string"
+    },
+    "contract_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "from_shift_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "issued_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "HELLO",
+        "ASSIGN",
+        "NOTE",
+        "QUESTION",
+        "ANSWER",
+        "EVIDENCE",
+        "REVIEW",
+        "HANDOFF",
+        "STOP",
+        "STATUS"
+      ]
+    },
+    "lease_generation": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "message_id": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+      "type": "string"
+    },
+    "payload_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "payload_ref": {
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "project_id": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1"
+    },
+    "task_id": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+      "type": "string"
+    },
+    "to_shift_id": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "protocol_version",
+    "message_id",
+    "project_id",
+    "channel_id",
+    "from_shift_id",
+    "to_shift_id",
+    "task_id",
+    "lease_generation",
+    "kind",
+    "issued_at",
+    "payload_digest",
+    "payload_ref",
+    "canon_snapshot_id",
+    "contract_digest"
+  ],
+  "title": "GitHubRelayMessageV1",
+  "type": "object"
+}

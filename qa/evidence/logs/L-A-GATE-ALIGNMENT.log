@@ -1,0 +1,6 @@
+$ /opt/pyvenv/bin/python /mnt/data/wg_l_packet/AUDIT/test_r5_gate_alignment.py
+EXIT: 0
+STDOUT:
+PASS R5 external-effect classifications, exact HELLO/QA/receipt guards, 13 launch prompts, 13 workgroups, no paid inference runtime
+
+STDERR:

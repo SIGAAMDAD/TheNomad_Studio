@@ -1,0 +1,130 @@
+name: Studio source, integration and security verification
+on:
+  push:
+    branches:
+      - 'implementation/**'
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: studio-verification-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  python:
+    name: Python, persistence, contracts and failure recovery
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: src:.
+      STUDIO_SCHEMA_PATH: ${{ github.workspace }}/schema/initial_schema.sql
+      STUDIO_CONTRACT_DIR: ${{ github.workspace }}/CONTRACTS
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - name: Install production and test dependencies
+        run: python -m pip install -e '.[coordinator,dev]'
+      - name: Python syntax, SQL integrity and immutability
+        run: |
+          python -m compileall -q src tests qa scripts
+          python scripts/verify_workforce_schema.py
+      - name: Integrated regression, isolation, adversarial and acceptance tests
+        run: python -m pytest -q tests/unit tests/integration tests/acceptance --cov=src/studio --cov-fail-under=90 --cov-report=xml:python-coverage.xml --junitxml=python-results.xml
+      - name: Verify APSW is actually installed
+        run: python -c 'import apsw; print("APSW", apsw.apswversion())'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: python-tests-${{ github.sha }}
+          path: |
+            python-results.xml
+            python-coverage.xml
+          retention-days: 7
+  cockpit:
+    name: TypeScript contract, tests and production build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ui
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          # Direct dependencies are version-pinned; an npm lockfile has not yet been
+          # generated from the authenticated package registry in this runtime.
+      - name: Install declared pinned dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npm run check
+      - run: npm test
+      - name: Collect complete cockpit TypeScript and TSX coverage
+        run: npm run coverage
+      - name: Enforce 90 percent on all and authored cockpit source
+        working-directory: .
+        run: python scripts/verify_studio_coverage.py --typescript ui/coverage/coverage-summary.json --minimum 90
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: cockpit-${{ github.sha }}
+          path: |
+            ui/dist
+            ui/coverage/coverage-summary.json
+            ui/coverage/cobertura-coverage.xml
+          retention-days: 7
+  tool-host:
+    name: .NET host and authorization regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet build host/Nomad.ToolHost/Nomad.ToolHost.csproj --configuration Release --nologo
+      - name: Collect .NET host authorization regression and production coverage
+        run: |
+          dotnet tool install --global dotnet-coverage
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet-coverage collect "dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Release" -f cobertura -o toolhost-coverage.xml
+      - name: Report complete .NET production host denominator
+        run: python scripts/verify_studio_coverage.py --dotnet toolhost-coverage.xml --minimum 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: toolhost-coverage-${{ github.sha }}
+          path: toolhost-coverage.xml
+          retention-days: 7
+  packaging:
+    name: Deterministic artifact and source provenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e '.[dev]'
+      - run: python -m pytest -q tests/unit/m/test_packaging.py tests/acceptance/test_system_contracts.py
+      - name: Verify no executable AI API worker was introduced
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          source = '\n'.join(p.read_text(errors='replace') for p in Path('src').rglob('*.py'))
+          forbidden = ['OpenAIClient(', 'ChatCompletion(', 'AnthropicClient(']
+          for pattern in forbidden:
+              if pattern in source:
+                  raise SystemExit(f'Forbidden paid model worker client: {pattern}')
+          PY

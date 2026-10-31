@@ -1,0 +1,51 @@
+{
+  "contract_hashes": {
+    "api_types": "c9e10b5aa27b2efdff4c3965f567d78e8ca6d088810086d5498bd5718f62d196",
+    "openapi": "34c58a40dda4cb95b55c8dc970b9f4d1702f25b93d7ce86f9c14b1ef0b85c6b1"
+  },
+  "files": {
+    "tests/unit/k/WG_K_TEST_LOG.txt": "15c0843494bb9586ed39195c273aff131f0c7cbdd6fbbd38f52e0ff27088da43",
+    "tests/unit/k/client.test.mjs": "4d29b1b6e03d5e7c868a0e7ae583c3e9f351bc91a4b774303a1c6ec8477252ce",
+    "tests/unit/k/contracts.test.mjs": "2c51545957665f5d9c4d5e00299312186af80b79812c68b2744ab7cf0b63603d",
+    "ui/IMPLEMENTATION_HANDOFF.md": "e31acf91edf0e06be0ac8233b99d4f019bdc1a2b89283956a282004d0c1ba308",
+    "ui/README.md": "d30f5bc258105792601a72a4e13913c6b106b09b4ef40b1a8898f40782eff937",
+    "ui/index.html": "572356fca8eb777aab2f6d7025ff3b8316faaf08b57e201bb13b3e84422db34f",
+    "ui/package.json": "199fa0f07482b19a09499fe48dde2da51ba32d23b11f03c6dba31b35ca206241",
+    "ui/scripts/generate-api.mjs": "e26c6946e18ba30a1987cfede936b9a40914e4591c9d33cf1be4cbfbb1ffdeff",
+    "ui/scripts/verify-handoff.mjs": "2097533ab369d31d40c18950c774001566adb4df15f2f70983920b04d83e02c4",
+    "ui/src/App.tsx": "6d29db516021b89d105bcff372dc1a9f484df314ad69ce574ce77b374eb26c7b",
+    "ui/src/catalog.ts": "c8efc334d998cc975e39cbcf7c2ef623237b9e2e2739bf38cd0835981b40a62a",
+    "ui/src/client.ts": "a077fe3683353781501b32be7232fdcd9f90c59c9ab28d6758a99263444f0a2a",
+    "ui/src/components/BibleWorkbench.tsx": "439abc2e597f812e574e5cdeeb4b22229df99d4a1cd4a344491d96c19fbfd281",
+    "ui/src/components/CommandForm.tsx": "8ff5f35ea4149fbef7b03ab1f4c121854fb0a03f29d7623fb806c52996a5b454",
+    "ui/src/components/FieldEditor.tsx": "ed44f9635352d02f569ee2378a8286ace254066c16bd8067221571e224d4e41b",
+    "ui/src/components/HandoffPanel.tsx": "56935dc4a92fcedd63bfc9d14fbe3cb9f15d055e6ac447aaefda962999f36c2a",
+    "ui/src/components/RecordPanel.tsx": "071105c4fbed4895b555a334295d82bb88e18f7ac01ca81be654baf49d7e421f",
+    "ui/src/form.ts": "1670d893bb14653ce0b66dbf82f6a5744a5898f72215fab1ff268fce99a72d80",
+    "ui/src/generated/operations.ts": "4628663b26290d265c0a657cfc60a01e101ae51955c5f8a674bec2054a4cd044",
+    "ui/src/main.tsx": "e8cb15f76e788c4cd8750a70f51307baf9ca41c4a14b177eeb6f1dcd9942616a",
+    "ui/src/schema.ts": "24df455c3a74be63a293e3e9f401692e33cadedc830bac3dc22211eb86874693",
+    "ui/src/session.ts": "15cbe6b632de52207df9b388d804931782bcb348354f07b3dd915a75709661c9",
+    "ui/src/style.css": "477e62bb11a8a543cd3f426c8073e3497a4c89b828f73538e1c8cf7fab79806e",
+    "ui/src/vite-env.d.ts": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+    "ui/tsconfig.json": "ba88e1791b7198326b17b6731be145afd71208b6d595efef70f938e04eb4b69f",
+    "ui/vite.config.ts": "75d13a41b0f7dda50ee81c34d5b50e77c984bdf5bbb26912dcd80ab4b20dc103"
+  },
+  "format": "WG-K-R5-changed-owned-files-sha256-v1",
+  "ownership": [
+    "ui/**",
+    "tests/unit/k/**"
+  ],
+  "source_archive_sha256": "84ba2f2a7fc038e656684f16aa4f9d75ffc398593703462205369889230e5a4b",
+  "source_baseline": "R5 greenfield empty tree + uploaded plan ZIP",
+  "tests": {
+    "live_integration": "NOT_RUN",
+    "node_unit": {
+      "fail": 0,
+      "pass": 16
+    },
+    "react_vite_build": "NOT_RUN",
+    "typescript_core": "PASS"
+  },
+  "worker": "K"
+}

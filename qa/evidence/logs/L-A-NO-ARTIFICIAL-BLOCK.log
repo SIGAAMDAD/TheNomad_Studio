@@ -1,0 +1,7 @@
+$ /opt/pyvenv/bin/python /mnt/data/wg_l_packet/tests/test_no_artificial_blocks.py
+EXIT: 0
+STDOUT:
+REJECTED injected global approval gate
+PASS 13 immediately executable worker prompts; rejected artificial ratification gate
+
+STDERR:

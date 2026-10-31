@@ -1,0 +1,28 @@
+{
+  "authority": "WORKERS/WG_L.md and frozen requirements; source mapping only",
+  "status_rule": "An L-A result is not a substitute for complete integrated TEST-REQ acceptance. The 65 frozen matrix tests default NOT_RUN absent independent runtime evidence.",
+  "checks": {
+    "TEST-REQ-005": ["L-A-174-ROLE-BYTES", "L-B-role-import", "L-C-MANUAL-BROWSER-PILOT"],
+    "TEST-REQ-011": ["L-A-174-ROLE-BYTES", "L-B-skill-install", "L-B-host-skill-smoke"],
+    "TEST-REQ-015": ["L-A-QA-RECEIPT-CONSISTENCY", "L-B-review-author-rejection", "L-B-review-artifact-rejection"],
+    "TEST-REQ-017": ["L-A-ALL-13-SUBMISSIONS", "L-B-canonical-stale-base", "L-B-promotion-CAS", "L-B-FAULT-promotion"],
+    "TEST-REQ-020": ["L-B-host-toolchain", "L-B-real-game-build", "L-C-MANUAL-BROWSER-PILOT"],
+    "TEST-REQ-033": ["L-A-ALL-13-SUBMISSIONS", "L-A-NEGATIVE-SOURCE-SCAN", "L-B-no-authority-expansion"],
+    "TEST-REQ-034": ["L-A-REFERENCE-SQL", "L-A-APSW-SQL-REFERENCE", "L-B-TWO-PROJECT-ISOLATION", "L-C-MANUAL-BROWSER-PILOT"],
+    "TEST-REQ-038": ["L-B-TWO-PROJECT-ISOLATION", "L-B-cross-project-bible", "L-B-cross-project-approval", "L-B-cross-project-blob"],
+    "TEST-TEC-009": ["L-A-ALL-13-SUBMISSIONS", "L-A-QA-RECEIPT-CONSISTENCY", "L-B-github-remote-readback"],
+    "TEST-NEG-AI-API": ["L-A-NEGATIVE-SOURCE-SCAN", "L-B-no-model-api-runtime"],
+    "TEST-NEG-BRANCH-WAVE": ["L-A-PLAN-FROZEN", "L-A-NEGATIVE-SOURCE-SCAN", "L-B-no-extra-workgroup-branch"],
+    "TEST-NEG-LEGACY": ["L-A-NEGATIVE-SOURCE-SCAN", "L-B-no-legacy-state"],
+    "TEST-NEG-SELF-APPROVAL": ["L-B-forged-owner-claim", "L-B-replayed-approval"],
+    "TEST-NEG-AUTOWAKE": ["L-B-stop-unacknowledged", "L-C-MANUAL-BROWSER-PILOT"],
+    "TEST-NO-ARTIFICIAL-BLOCK": ["L-A-NO-ARTIFICIAL-BLOCK", "L-A-PLAN-FROZEN"],
+    "TEST-R5-SQL-REFERENCE": ["L-A-REFERENCE-SQL", "L-A-APSW-SQL-REFERENCE"],
+    "TEST-FORGE-OWNERSHIP": ["L-A-PLAN-FROZEN", "L-A-ALL-13-SUBMISSIONS"],
+    "TEST-FORGE-SQL-PROBE": ["L-A-APSW-SQL-REFERENCE", "L-B-physical-transaction-guard"],
+    "TEST-R5-API-CONTRACT": ["L-A-CONTRACTS", "L-B-API-contract-local"],
+    "TEST-REQ-IMPLEMENT-NO-ARTIFICIAL-BLOCK": ["L-A-NO-ARTIFICIAL-BLOCK"]
+  },
+  "required_fault_injection": ["blob-stage", "sql-commit", "provider-timeout", "host-kill", "github-write", "promotion"],
+  "note": "L-B arbitrary scenario results must be reviewed against these concrete cases and actual API/SQL/host/provider behavior before a frozen TEST-REQ is closed."
+}

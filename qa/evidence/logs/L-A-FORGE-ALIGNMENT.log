@@ -1,0 +1,8 @@
+$ /opt/pyvenv/bin/python /mnt/data/wg_l_packet/tests/test_forge_alignment.py
+EXIT: 0
+STDOUT:
+PASS R5_FORGE_ALIGNMENT requirements traced, 72 operators, 66 state writers, 13 source owners, one manual-chat wave; no local-start gate
+REJECTED paid-model execution substitution
+REJECTED missing state owner
+
+STDERR:

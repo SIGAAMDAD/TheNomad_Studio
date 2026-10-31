@@ -1,0 +1,8 @@
+{
+  "base_revision_id": "source-defined",
+  "constraints": {
+    "expected_waves": 1,
+    "expected_workgroups": 13
+  },
+  "purpose": "source contribution ownership tests"
+}

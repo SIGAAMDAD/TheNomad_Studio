@@ -1,0 +1,1145 @@
+{
+  "operations": [
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject unverified caller, duplicate key with changed body, invalid charter digest.",
+      "idempotency": "scoped (principal_id,request_id,request_body_sha256) bootstrap",
+      "method": "POST",
+      "operation_id": "createProject",
+      "owner": "M",
+      "path": "/v1/projects",
+      "records": [
+        "projects",
+        "project_grants",
+        "bootstrap_idempotency"
+      ],
+      "required_auth": "owner",
+      "success_postcondition": "Allocate new project and grant creator owner access in one bootstrap transaction; identical request_id returns same project_id.",
+      "transaction_owner": "M"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No unauthorized project names or totals may leak.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listProjects",
+      "owner": "M",
+      "path": "/v1/projects",
+      "records": [
+        "projects",
+        "project_grants"
+      ],
+      "required_auth": "authenticated",
+      "success_postcondition": "Return only projects for which authenticated principal has a grant; stable order and bounded pagination.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Wrong project returns forbidden or missing without cross-tenant record disclosure.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "getProject",
+      "owner": "M",
+      "path": "/v1/projects/{project_id}",
+      "records": [
+        "projects",
+        "project_grants"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read exact project revision and identity from authenticated scope.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Stale revision fails; missing installed capabilities reflected by preflight rather than auto-install.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "PUT",
+      "operation_id": "configureProject",
+      "owner": "M",
+      "path": "/v1/projects/{project_id}/config",
+      "records": [
+        "projects",
+        "project_profiles"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Apply config_digest using expected_revision CAS and emit project change event.",
+      "transaction_owner": "M"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Every missing capability reported; no false ready from registration only.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "preflightProject",
+      "owner": "M",
+      "path": "/v1/projects/{project_id}/preflight",
+      "records": [
+        "project_packages",
+        "tool_grants",
+        "external_accounts"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Check selected capability packs, credentials, executable availability and configured adapter readiness without mutating state.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Do not enumerate other project grants or configurations.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listPacks",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/packages",
+      "records": [
+        "package_revisions",
+        "project_packages"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "List installed package revisions and per-project enabled state; include package_digest.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject missing signature/digest, unresolved dependencies, privilege expansion and unapproved Canon writes.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "enablePack",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/packages/enable",
+      "records": [
+        "project_packages",
+        "tool_grants"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Require installed verified package digest and configured per-project grants; enable only exact version.",
+      "transaction_owner": "B"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject removal of blobs still referenced; no retroactive rewrite of active receipts.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "disablePack",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/packages/disable",
+      "records": [
+        "project_packages",
+        "tool_grants"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Disable selected project package and new dispatch; running attempts keep pinned version and are reconciled.",
+      "transaction_owner": "B"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Do not grant owner powers to cabal automatically.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "createCabal",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/cabals",
+      "records": [
+        "cabals"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Insert project-scoped cabal and charter digest with initial active state.",
+      "transaction_owner": "B"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject missing role, wrong cabal project, or self-escalating permission.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "staffCabal",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/cabals/{cabal_id}/staff",
+      "records": [
+        "cabal_members",
+        "specialist_roles"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Bind exact cabal_id and installed role_id to member; record explicit permission digest.",
+      "transaction_owner": "B"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No implicit cross-project cabal membership.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listCabals",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/cabals",
+      "records": [
+        "cabals",
+        "cabal_members"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read cabals in project, optional members and latest state.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Never display unpublished draft as authoritative.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listBibles",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/bibles",
+      "records": [
+        "bibles",
+        "active_bible_editions"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "List project Bible IDs, kinds and active edition reference.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject unsupported kind and duplicate project-local ID.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "createBible",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/bibles",
+      "records": [
+        "bibles"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Create project-local Design or Technical Bible with immutable ID; no published edition yet.",
+      "transaction_owner": "A"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject missing/mismatched project blobs or stale expected active edition.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "stageBible",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/bibles/{bible_id}/stages",
+      "records": [
+        "bible_publication_intents",
+        "project_blobs"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Create publication intent for requested verified content+manifest digests; record base edition under expected_edition_id.",
+      "transaction_owner": "A"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No inferred approvals or auto-impact decisions.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "diffBible",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/bibles/{bible_id}/diff",
+      "records": [
+        "bible_clauses",
+        "bible_publication_intents",
+        "tasks"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Compare staged edition to active project-local clause IDs and calculate affected task identifiers.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": true,
+      "failure_boundary": "Reject stale edition, reused decision, unavailable bytes, foreign project or wrong digest.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "publishBible",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/bibles/{bible_id}/publish",
+      "records": [
+        "bible_publication_intents",
+        "bible_editions",
+        "active_bible_editions",
+        "canon_snapshots"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Check exact owner-approved digest, durable verified bytes and expected edition CAS; publish edition and snapshot atomically in SQLite.",
+      "transaction_owner": "A"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject missing active edition; never silently fall back to old snapshot.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "getCanon",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/canon",
+      "records": [
+        "canon_snapshots",
+        "active_bible_editions"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Return project-local active Design/Technical edition IDs and snapshot digest.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject nonexistent subject; request does not approve anything.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "requestDecision",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/decisions",
+      "records": [
+        "decision_proposals"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Create pending proposal record via service, binding project, actual subject, action, canonical effect_digest and snapshot.",
+      "transaction_owner": "A"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject caller-supplied is_owner, stale approval, altered digest, or cross-project subject.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "resolveDecision",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/decisions/{decision_id}/resolve",
+      "records": [
+        "decision_proposals",
+        "owner_decisions",
+        "approval_consumptions"
+      ],
+      "required_auth": "owner",
+      "success_postcondition": "Authenticated human owner resolves exact proposal version; record proof from trusted authentication context.",
+      "transaction_owner": "A"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Do not leak or reinterpret decisions from another project.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listDecisions",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/decisions",
+      "records": [
+        "decision_proposals",
+        "owner_decisions"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "List scoped proposals/decisions with their exact subject and state.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject nonexistent snapshot, nonexistent bytes or duplicate divergent command.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "submitFeature",
+      "owner": "D",
+      "path": "/v1/projects/{project_id}/features",
+      "records": [
+        "features"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Create feature from content-addressed brief and pinned current Canon snapshot; retain acceptance digest.",
+      "transaction_owner": "D"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject cycle, unknown capability, stale feature revision; no unsanctioned tasks.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "planFeature",
+      "owner": "D",
+      "path": "/v1/projects/{project_id}/features/{feature_id}/plan",
+      "records": [
+        "features",
+        "tasks",
+        "task_dependencies"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Produce stable acyclic DAG, task acceptances, source/revision pins; update feature revision with CAS.",
+      "transaction_owner": "D"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Omit nonproject features even with same ID.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listFeatures",
+      "owner": "D",
+      "path": "/v1/projects/{project_id}/features",
+      "records": [
+        "features"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "List project-scoped features with snapshot IDs and states.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No hidden replan or state mutation on reads.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listTasks",
+      "owner": "D",
+      "path": "/v1/projects/{project_id}/tasks",
+      "records": [
+        "tasks",
+        "leases"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read project task status, claimed generation, and dependency readiness.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Do not convert stop request or silence into verified cancellation.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "cancelTask",
+      "owner": "D",
+      "path": "/v1/projects/{project_id}/tasks/{task_id}/cancel",
+      "records": [
+        "tasks",
+        "leases",
+        "relay_messages"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "CAS task revision; for an enrolled browser worker queue stop relay without claiming termination.",
+      "transaction_owner": "D"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Never trigger metered inference; reject duplicate active lease and stale canonical snapshot.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "dispatchTask",
+      "owner": "D",
+      "path": "/v1/projects/{project_id}/tasks/{task_id}/dispatch",
+      "records": [
+        "tasks",
+        "leases",
+        "reservations",
+        "shift_assignments",
+        "command_outbox"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Atomically persist lease, reservation and addressed GitHub command outbox for the observed active worker shift. Never auto-create a ChatGPT browser conversation.",
+      "transaction_owner": "D"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Require authenticated scope and independent verified GitHub readback; never infer browser execution from an API call.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "registerWorker",
+      "owner": "I",
+      "path": "/v1/projects/{project_id}/workers",
+      "records": [
+        "worker_conversations"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Enroll the existing browser conversation once, independently of any task or lease.",
+      "transaction_owner": "I"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Require authenticated scope and independent verified GitHub readback; never infer browser execution from an API call.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "beginShift",
+      "owner": "I",
+      "path": "/v1/projects/{project_id}/workers/{worker_id}/shifts",
+      "records": [
+        "worker_shifts"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Record one human-initiated response shift; only verified GitHub HELLO establishes active execution.",
+      "transaction_owner": "I"
+    },
+    {
+      "external_effect": true,
+      "failure_boundary": "Require authenticated scope and independent verified GitHub readback; never infer browser execution from an API call.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "stopShift",
+      "owner": "I",
+      "path": "/v1/projects/{project_id}/workers/{worker_id}/shifts/{shift_id}/stop",
+      "records": [
+        "worker_shifts",
+        "command_outbox"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Publish an advisory STOP command for an active response; no forced browser shutdown.",
+      "transaction_owner": "I"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No claim of continuous execution or cryptographic chat identity from self-reports.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listWorkers",
+      "owner": "I",
+      "path": "/v1/projects/{project_id}/workers",
+      "records": [
+        "worker_conversations",
+        "worker_shifts"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read manually enrolled worker conversations and shifts and observed GitHub last activity; distinguish pending, active_observed, quiet, stop_requested and unknown.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject reviewer identical author or same lineage; missing submitted bytes.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "requestReview",
+      "owner": "E",
+      "path": "/v1/projects/{project_id}/reviews",
+      "records": [
+        "qa_reviews",
+        "submissions",
+        "worker_lineages"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Create review for exact submitted artifact set/source SHA and acceptance digest, assign independent principal.",
+      "transaction_owner": "E"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject fake evidence, stale source, and author self-review.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "submitReview",
+      "owner": "E",
+      "path": "/v1/projects/{project_id}/reviews/{review_id}/verdict",
+      "records": [
+        "qa_reviews",
+        "qa_receipts",
+        "qa_independence_proofs"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Commit verdict and source/artifact-bound evidence from actual checks, including reviewer principal from auth.",
+      "transaction_owner": "E"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No passing verdict without immutable evidence.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listReviews",
+      "owner": "E",
+      "path": "/v1/projects/{project_id}/reviews",
+      "records": [
+        "qa_reviews",
+        "qa_receipts"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Return review verdicts bound to submission, source and evidence digests.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject foreign-project content access.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listArtifacts",
+      "owner": "G",
+      "path": "/v1/projects/{project_id}/artifacts",
+      "records": [
+        "artifacts"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "List project scoped artifact records, digest, producer and source revision.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Missing artifact_id cannot silently return first item.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "getArtifact",
+      "owner": "G",
+      "path": "/v1/projects/{project_id}/artifacts/{artifact_id}",
+      "records": [
+        "artifacts",
+        "project_blobs"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Return exact artifact metadata for URL artifact_id; verify project access to digest.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": true,
+      "failure_boundary": "Never store raw credential in logs, SQLite, or outgoing worker context.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "attachConnector",
+      "owner": "G",
+      "path": "/v1/projects/{project_id}/connectors",
+      "records": [
+        "external_accounts"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Store a credential reference, provider key and project scope; preflight authenticated provider access.",
+      "transaction_owner": "G"
+    },
+    {
+      "external_effect": true,
+      "failure_boundary": "Tool simulation cannot mark real build passed; timeout remains unknown.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "runBuild",
+      "owner": "G",
+      "path": "/v1/projects/{project_id}/builds",
+      "records": [
+        "ci_runs",
+        "effect_intents"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Stage real configured build/CI operation for exact source SHA and build target; record remote run identifier.",
+      "transaction_owner": "G"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject missing blob, stale base, conflicts, unreviewed submission.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "stageIntegration",
+      "owner": "M",
+      "path": "/v1/projects/{project_id}/integrations",
+      "records": [
+        "integration_intents",
+        "submissions"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Create intent pinned to expected canonical revision, submission manifest and path hashes; materialize candidate.",
+      "transaction_owner": "M"
+    },
+    {
+      "external_effect": true,
+      "failure_boundary": "If expected pointer changed or QA on other bytes, return conflict and rerun QA.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "promoteIntegration",
+      "owner": "M",
+      "path": "/v1/projects/{project_id}/integrations/{intent_id}/promote",
+      "records": [
+        "integration_intents",
+        "source_revisions",
+        "qa_reviews"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Revalidate integrated candidate bytes and QA receipts; CAS canonical pointer from expected revision in one transaction.",
+      "transaction_owner": "M"
+    },
+    {
+      "external_effect": true,
+      "failure_boundary": "Reject release decision used for other subject/effect, stale source or incomplete QA/CI.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "publishRelease",
+      "owner": "M",
+      "path": "/v1/projects/{project_id}/releases/{release_id}/publish",
+      "records": [
+        "releases",
+        "effect_intents",
+        "approval_consumptions"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "For release_id require matching approved release digest/source SHA/snapshot; journal provider publish and readback.",
+      "transaction_owner": "M"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Never equate prepared or unknown with published.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listReleases",
+      "owner": "M",
+      "path": "/v1/projects/{project_id}/releases",
+      "records": [
+        "releases"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Return project release records and verified readback status.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": true,
+      "failure_boundary": "No fabricated delivery or blind resubmission.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "reconcileEffect",
+      "owner": "G",
+      "path": "/v1/projects/{project_id}/effects/{effect_id}/reconcile",
+      "records": [
+        "effect_intents",
+        "relay_observations"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read remote GitHub/Drive/CI effects and relay Git commits by exact ID and digest, classify UNKNOWN until proven.",
+      "transaction_owner": "G"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject limit below already committed or reserved amount.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "PUT",
+      "operation_id": "configureBudget",
+      "owner": "F",
+      "path": "/v1/projects/{project_id}/budgets/{budget_id}",
+      "records": [
+        "budgets"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Set exact project budget limit via revision CAS and preserve consumed/reserved accounting.",
+      "transaction_owner": "F"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Never derive committed budget by guessing provider spend.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "getBudgets",
+      "owner": "F",
+      "path": "/v1/projects/{project_id}/budgets",
+      "records": [
+        "budgets",
+        "reservations"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Report project limits, reserved and consumed amounts from durable ledger.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No delivery success on local render alone.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listReports",
+      "owner": "F",
+      "path": "/v1/projects/{project_id}/reports",
+      "records": [
+        "reports"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read report IDs, artifact digests and delivery evidence/state.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Do not invent worker heartbeat when no GitHub commit was observed.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listEvents",
+      "owner": "J",
+      "path": "/v1/projects/{project_id}/events",
+      "records": [
+        "audit_events"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Return project-local events including GitHub relay observations; event cursor is a projection, not authoritative relay transport.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": true,
+      "failure_boundary": "Reject corrupt backup, wrong project, stale revision; avoid destructive overwrite.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "requestRestore",
+      "owner": "M",
+      "path": "/v1/projects/{project_id}/recovery",
+      "records": [
+        "recovery_jobs",
+        "backup_sets",
+        "effect_intents"
+      ],
+      "required_auth": "owner",
+      "success_postcondition": "Record recovery intent for verified backup digest; restore into isolated staging and reconcile unresolved effects first.",
+      "transaction_owner": "M"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject unverified blobs, failed QA, mismatched artifact source revision.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "prepareRelease",
+      "owner": "M",
+      "path": "/v1/projects/{project_id}/releases/prepare",
+      "records": [
+        "releases",
+        "release_artifacts"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Create prepared release binding source_revision_id, pinned snapshot, approved artifact digests and release digest.",
+      "transaction_owner": "M"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Never fabricate role archives or count missing roles as ready.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "importRoles",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/roles/import",
+      "records": [
+        "specialist_roles",
+        "departments"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Validate actual catalog digest and each role manifest/resources, insert ready/unavailable with observed evidence.",
+      "transaction_owner": "B"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Distinct missing/unavailable vs ready.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listRoles",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/roles",
+      "records": [
+        "specialist_roles"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read installed role IDs, revision, readiness and missing dependencies.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Missing 12-department inventory must report incomplete import.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listDepartments",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/departments",
+      "records": [
+        "departments"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read installed organizational departments; do not assume catalog bytes exist.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Cabal conclusion alone never grants owner approval.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "createDeliberation",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/cabals/{cabal_id}/deliberations",
+      "records": [
+        "deliberations",
+        "cabals"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Create scoped cabal deliberation with immutable subject+record digests.",
+      "transaction_owner": "B"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No unauthorized cross-cabal data.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listDeliberations",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/cabals/{cabal_id}/deliberations",
+      "records": [
+        "deliberations"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Return cabal-local discussion state and attached evidence.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject cross-project cabal or already running task reassignment.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "assignTask",
+      "owner": "D",
+      "path": "/v1/projects/{project_id}/tasks/{task_id}/assign",
+      "records": [
+        "tasks",
+        "cabals"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "CAS task revision and assign to a valid project cabal before dispatch.",
+      "transaction_owner": "D"
+    },
+    {
+      "external_effect": true,
+      "failure_boundary": "Require authenticated scope and independent verified GitHub readback; never infer browser execution from an API call.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "endShift",
+      "owner": "I",
+      "path": "/v1/projects/{project_id}/shifts/{shift_id}/end",
+      "records": [
+        "worker_shifts",
+        "command_receipts"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Finish a shift only after verified final GitHub receipt and no outstanding commands.",
+      "transaction_owner": "I"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Require authenticated scope and independent verified GitHub readback; never infer browser execution from an API call.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "observeCommandReceipt",
+      "owner": "I",
+      "path": "/v1/projects/{project_id}/commands/{command_id}/receipts",
+      "records": [
+        "command_outbox",
+        "command_receipts"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Project an independently read-back, recipient-matching GitHub command receipt.",
+      "transaction_owner": "I"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject missing evidence or unauthorized reviewer view.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "openOversightCase",
+      "owner": "E",
+      "path": "/v1/projects/{project_id}/oversight",
+      "records": [
+        "oversight_cases"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Open scoped investigation tied to concrete subject and evidence digest.",
+      "transaction_owner": "E"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject unresolved evidence references or forged author identity.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "resolveOversightCase",
+      "owner": "E",
+      "path": "/v1/projects/{project_id}/oversight/{case_id}/resolve",
+      "records": [
+        "oversight_cases"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Commit resolution digest with auditor principal and durable event.",
+      "transaction_owner": "E"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No case disclosure across project principals.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listOversightCases",
+      "owner": "E",
+      "path": "/v1/projects/{project_id}/oversight",
+      "records": [
+        "oversight_cases"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Return only authorized project oversight records and state.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": true,
+      "failure_boundary": "Do not assume a recipient browser chat opened report or can be awakened.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "requestReport",
+      "owner": "F",
+      "path": "/v1/projects/{project_id}/reports",
+      "records": [
+        "reports",
+        "relay_messages"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Generate report from observed relay and project records; optionally publish to configured GitHub inbox and mark sent only on commit readback.",
+      "transaction_owner": "F"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No other project notification leakage.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listNotifications",
+      "owner": "F",
+      "path": "/v1/projects/{project_id}/notifications",
+      "records": [
+        "notifications"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read scoped event notifications and delivery states.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject stale state, duplicate divergent acknowledgments.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "ackNotification",
+      "owner": "F",
+      "path": "/v1/projects/{project_id}/notifications/{notification_id}/ack",
+      "records": [
+        "notifications"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Acknowledge exact notification_id and current state in project.",
+      "transaction_owner": "F"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Unknown stays unknown until observed.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "observeEffect",
+      "owner": "G",
+      "path": "/v1/projects/{project_id}/effects/{effect_id}",
+      "records": [
+        "effect_intents"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read exact effect_id, provider readback and state without mutation.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Do not claim success from prepared candidate.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "inspectIntegration",
+      "owner": "M",
+      "path": "/v1/projects/{project_id}/integrations/{intent_id}",
+      "records": [
+        "integration_intents"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read intent_id, expected canonical revision, staged digest and QA state.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No side effects on health inspection.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "observeRecovery",
+      "owner": "M",
+      "path": "/v1/projects/{project_id}/recovery",
+      "records": [
+        "recovery_jobs",
+        "effect_intents"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read outstanding uncertain effects and restore status without restarting operations.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No inherited rule from another project.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "getProjectPolicy",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/policy",
+      "records": [
+        "project_policies",
+        "project_policy_rules"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Read active project policy digest/revision and rules.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject caller policy elevation or stale revision; packs cannot edit rules.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "PUT",
+      "operation_id": "setProjectPolicy",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/policy",
+      "records": [
+        "project_policies",
+        "project_policy_rules"
+      ],
+      "required_auth": "owner",
+      "success_postcondition": "Owner-verified CAS replace project policy rules with explicit dispositions; emit immutable policy digest.",
+      "transaction_owner": "A"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Reject worker introspection of owner grants without permit.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listProjectGrants",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/access",
+      "records": [
+        "project_grants"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "List grants in project for authorized principal only.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Never derive owner from submitted principal_id.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "grantProjectAccess",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/access/grant",
+      "records": [
+        "project_grants"
+      ],
+      "required_auth": "owner",
+      "success_postcondition": "Owner-authorized grant principal and code for exact project; log issuer/subject evidence.",
+      "transaction_owner": "A"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "In-flight operations reconcile with effective grants, no silent promotion.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "revokeProjectAccess",
+      "owner": "A",
+      "path": "/v1/projects/{project_id}/access/revoke",
+      "records": [
+        "project_grants"
+      ],
+      "required_auth": "owner",
+      "success_postcondition": "Revoke exact project/principal/grant; new requests re-auth each time.",
+      "transaction_owner": "A"
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "No cross-project grant reuse even if package digest same.",
+      "idempotency": "read-only; no idempotency key",
+      "method": "GET",
+      "operation_id": "listToolGrants",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/tools/grants",
+      "records": [
+        "tool_grants"
+      ],
+      "required_auth": "project",
+      "success_postcondition": "Return active and revoked grants for this project.",
+      "transaction_owner": null
+    },
+    {
+      "external_effect": false,
+      "failure_boundary": "Do not assume in-flight OS operation stopped on DB update alone.",
+      "idempotency": "scoped (project_id,operation_owner,request_id,request_body_sha256)",
+      "method": "POST",
+      "operation_id": "revokeToolGrant",
+      "owner": "B",
+      "path": "/v1/projects/{project_id}/tools/grants/{grant_id}/revoke",
+      "records": [
+        "tool_grants"
+      ],
+      "required_auth": "owner",
+      "success_postcondition": "Revoke grant_id in project; reject subsequent dispatch and inform affected worker shifts.",
+      "transaction_owner": "B"
+    }
+  ],
+  "version": "1.0.0"
+}

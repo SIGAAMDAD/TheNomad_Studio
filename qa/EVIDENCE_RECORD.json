@@ -1,0 +1,87 @@
+{
+  "actual_remote_commit": null,
+  "baseline_plan_sha256": "8d68e255008369a299c66ca1a0c253e60faecb2ef46415ad09cbb9b38b41d09b",
+  "baseline_source_tree_sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+  "baseline_zip_sha256": "84ba2f2a7fc038e656684f16aa4f9d75ffc398593703462205369889230e5a4b",
+  "commands": [
+    {
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/unit/l",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "qa/evidence/logs/unit.log",
+      "log_sha256": "8eeb5cb6b3b848e97a6ddd57bde872b39d14e0abe63354fabebfb882542027f8",
+      "passed": 23
+    },
+    {
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/acceptance",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "environment": {
+        "NOMAD_R5_PACKET": "<exact extracted frozen packet>"
+      },
+      "exit_code": 0,
+      "log": "qa/evidence/logs/acceptance.log",
+      "log_sha256": "c069debec475298fbf974e2d0ce205584a149edc81d9fa5db554c596b0b5830c",
+      "passed": 5
+    },
+    {
+      "argv": [
+        "python",
+        "-m",
+        "qa.runner",
+        "--packet",
+        "<exact extracted frozen packet>",
+        "--out",
+        "<QA output directory>"
+      ],
+      "exit_code": 0,
+      "fail": 0,
+      "log": "qa/evidence/logs/reference-run.log",
+      "log_sha256": "0d3ae240b251e2bf0d9bd540a6b4f2179be4f0991ff9f6a5ca526483cf694a8d",
+      "not_run": 75,
+      "pass": 16
+    }
+  ],
+  "format_version": 1,
+  "not_run": [
+    "APSW module",
+    "canonical integrated source",
+    "all other workgroup submissions",
+    "actual 174 role installed bytes",
+    "real HTTP/host/CI",
+    "live GitHub / human-opened ChatGPT browser pilot",
+    "source promotion"
+  ],
+  "only_owned_paths": true,
+  "raw_packet_test_log_sha256": {
+    "L-A-CONTRACTS.log": "3ce3a649289f448e0dc96202dd9b23e02b9b4718fa534ee8e8c6d162eafcc371",
+    "L-A-DISPATCH-INVARIANTS.log": "474ec232d67f6c903af396d2353f76a50802e8cf3692cd2bec1f481286e6dd38",
+    "L-A-FORGE-ALIGNMENT.log": "4cfad2eac33b52774b7d87ced8e4a5a29cacc7133b0cf97e78cd2d3f00ef2ad8",
+    "L-A-GATE-ALIGNMENT.log": "91aca279ec0f608ea90e2083a0852d03bb2bf042d4bb8e132633353c23c33b49",
+    "L-A-NO-ARTIFICIAL-BLOCK.log": "eb346b7b1d66402c19d29d33baa4f732c5c87a2d53215081cfd0bc0ce86a1fd9",
+    "L-A-NO-PAID-INFERENCE.log": "3f27a6e5e44a324ccc50e6919f8846c67da44882cb6245876620a8a5ce703ad4",
+    "L-A-REFERENCE-SQL.log": "6460e0c21fc4b1070c3dfe6a0a970ec2c85d171740ebcb434f7f867da74ad219",
+    "L-A-RELAYS.log": "d034643e5407afe9cd17ea42db0fa107a05658b85b8a07ccf4fa65c0570c8cb0",
+    "acceptance.log": "c069debec475298fbf974e2d0ce205584a149edc81d9fa5db554c596b0b5830c",
+    "reference-run.log": "0d3ae240b251e2bf0d9bd540a6b4f2179be4f0991ff9f6a5ca526483cf694a8d",
+    "unit.log": "8eeb5cb6b3b848e97a6ddd57bde872b39d14e0abe63354fabebfb882542027f8"
+  },
+  "worker": "WG-L"
+}

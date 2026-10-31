@@ -1,0 +1,12 @@
+services:
+  studio:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    env_file:
+      - studio.env
+    volumes:
+      - studio_state:/var/lib/nomad-studio
+    restart: "no"  # no silent live deployment or unsafe reboot policy
+volumes:
+  studio_state: {}

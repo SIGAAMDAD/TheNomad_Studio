@@ -1,0 +1,1104 @@
+{
+  "departments": [
+    {
+      "department_id": "production",
+      "name": "Leadership and Production"
+    },
+    {
+      "department_id": "design",
+      "name": "Game Design"
+    },
+    {
+      "department_id": "narrative",
+      "name": "Narrative and Cinematics"
+    },
+    {
+      "department_id": "engineering",
+      "name": "Engineering"
+    },
+    {
+      "department_id": "visual_art",
+      "name": "Visual Art"
+    },
+    {
+      "department_id": "tech_art",
+      "name": "Technical Art and VFX"
+    },
+    {
+      "department_id": "animation",
+      "name": "Animation and Capture"
+    },
+    {
+      "department_id": "audio",
+      "name": "Audio"
+    },
+    {
+      "department_id": "ux",
+      "name": "UX UI and Player Research"
+    },
+    {
+      "department_id": "qa",
+      "name": "Quality Assurance"
+    },
+    {
+      "department_id": "publishing",
+      "name": "Publishing Localization and Release"
+    },
+    {
+      "department_id": "studio_ops",
+      "name": "Studio Operations and Business"
+    }
+  ],
+  "provenance": {
+    "departments_v4_sha256": "eac06b99d632f57f876404024ad9b2d349f3f91b2b0df0adee7a5c280a3b6c6f",
+    "reasoning_profiles_sha256": "7260e576cc92c1707b4c92beb1a6a9e5922e2991c5601c64c50582b7d83b1d0f",
+    "roles_manifest_sha256": "d0d0fef5643a8d9b9b2eaa140ee6394beda5e23d46536402f38461930b337b71"
+  },
+  "roles": [
+    {
+      "department_id": "production",
+      "manifest_digest": "1b0d51696d4f1d7a7fb44c4c973b56c139bac3b807551979f5f9f9c9a44df6a5",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-creative-director"
+    },
+    {
+      "department_id": "production",
+      "manifest_digest": "05e4172f9f23ca240ef5fb87d40fdddfa4cf1f6e0022bded9b391c4a7e6204c3",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-game-director"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "9cf7ebdbe5d5252999c12b63ce217a1ae0a17269b1e652822aec3e9de309a464",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-technical-director"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "00995c0df3d29d76efb6df8d73dab122762337a229ae1f7057c5edc836aa56b8",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-art-director"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "46cbf03ac4e48d75f7dd459c2fa954e2dcaeb58fdc5db54d7a610a3922394510",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-design-director"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "aa32f8a96d882d0fbb8dbd0c84fa2120f6d4f7e33d44536d129a21f5ce13c107",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-narrative-director"
+    },
+    {
+      "department_id": "audio",
+      "manifest_digest": "c1faa58a005e9cf4c424c8be51df777a79cbd4e1132860633fb56a0591aa6c2a",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-audio-director"
+    },
+    {
+      "department_id": "animation",
+      "manifest_digest": "4ea4e0233bfd85c15deda14531ca2643e13886b1bca9df7b480d5e8f797ec31b",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-animation-director"
+    },
+    {
+      "department_id": "production",
+      "manifest_digest": "c4567a45cee4a8e3342db987896e4a632fe57f018036006f4456fadf3dfbc648",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-executive-producer"
+    },
+    {
+      "department_id": "production",
+      "manifest_digest": "823cb7dd94310b73aa0c757cf0d8533b35eba81027be536ad680aae6d1377f7b",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-lead-producer"
+    },
+    {
+      "department_id": "production",
+      "manifest_digest": "ec7e06793884a6da07bf5ef7a973aaa285b49a6de7d756149797c72a1e7b0677",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-technical-producer"
+    },
+    {
+      "department_id": "production",
+      "manifest_digest": "0603b02e356a54742d537fb6127ad2152b2a4c54df7313da9a230001f147cd2c",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-production-coordinator"
+    },
+    {
+      "department_id": "production",
+      "manifest_digest": "024d1acc28e606539c480bbc07efc2662419d28ea31a37798aea62656ec0d57e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-external-development-producer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "385f7dfe55ffca6544a9f30e9c96e63086c433db5da1a3faabae27cd896fe52e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-lead-game-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "6352c66061b368ef4f6da75469f0e91381b47f4b0da86aca6eae1fa339957bfa",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-gameplay-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "dd6f8e7789576fda5baedcae64832a1efdf12eff64de8c74b3fd9428108286b1",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-combat-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "a44a14ccc8653a6d31b895c3a64cbcb82e1aaf2d509807e988610b8521a58db2",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-player-movement-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "217c546fe23baaa49df79507e1c1a2a6fdb7332451c5c7df31b1cae9d1625c4a",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-weapons-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "051587c86aa7838dd90c0511cde1706c45c09fec98b5544fc2ad86ce5af147cb",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-systems-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "5fd0c100d97c08c2f22c80360f3a743453673de9b634764a1c9ed867275b2e33",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-progression-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "45651b76ce4d253b739e4d31ea3140a6737ae19f955ae2eaa83817f314a34fde",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-economy-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "9a4f87d0bd66eb4a603f15c2f4a38ff43ecaba5f500c2c3ca2e6fa9351770d7f",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-ai-behavior-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "2ebf7a41502780eeca0f7d0b155379b05d2499cd07760fdbc2c89da01d3867c2",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-level-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "aa15bd4be6c52443eb0399022f497fb2a86bade31be1019cb8a7e0888953784c",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-world-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "1846181b8cc08cbd0cebe3dbb6a1d1546ef4f108d717d3dcaac23b6f50e0b25b",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-encounter-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "902de6e8e94e84bda81748c2126b582e6a62472fca67eb55c5bd319784cb08da",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-quest-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "68414ef616898e010170dfd55323af9419e1409c9e004a4e936512b2b4474efa",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-mission-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "afe0183443483d9862e228424293049c87ddeb6bb389535a13cb7183cb62bc12",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-technical-game-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "428e519f39d28f6946e38d1b5ee8a48b7ccbdfa54f1be943a9fb3f883aa2345b",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-balance-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "769b37aabb1341c0584d5f429463c4f6369f00976df88d7ec830f5f47be36c03",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-accessibility-designer"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "087036dec6ac8c6b10bd2f29b33e4bdd9b74c94be024880c3ab35a5bb43e5d1e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-narrative-designer"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "5667aa72def9b3aec270cb7918c15102692c5766a2020ba5968db5e9502962b9",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-game-writer"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "b0255f3609ab2e7a6d79e9bddebd50fa31e1435122c6b9b7f9564547d59761f0",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-lore-writer"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "d3e9f5fc44aebfaa45198715ed039a541bb32daa8ed68cfc31dd82994678f85e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-dialogue-designer"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "12d8abbd904e6e418955e367f87d176b347e593bcd5341f90fcfe9435426b477",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-cinematic-designer"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "01567bfb227fe6cac5581202b59a5f58a758f1a0b737f7bfc8ef5694415db839",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-narrative-editor"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "6007e3939d0c66dc1914080c526e40a1e2c49be38b7231792727004c39c9b4c7",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-storyboard-artist"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "46f1332d8798d9c52ad019bdc8a3ef8ddfc3797a3ed2084079df3e8692a1788d",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-lead-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "dd67a280d08c7d42516d89dd25b6c69b714d29afc29a6347cfe9febdaa524085",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-engine-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "70477e2d6e07f4de0c5369ffb2a17b8f5fc3d0f67009b4dfb008f1cdf36cbde5",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-rendering-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "2109d4285daea8130c756a1e17147fec2ebe1a6a70c40d97e1c1e44c44e5b2be",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-gameplay-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "1b168f18ea993336bf9b8f131d066fde662e00f368fe3416d3e3a28712d39707",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-combat-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "fe74129daa06125b964cba01329114b7f92fb44598a5eb78296c3afb3b75bba3",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-ai-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "12304eaad247fdaebc99ec61c674b4a6e17477e5f32a915d8df69c8a890542db",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-navigation-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "3bfec982b6738dcd0a92c73754629477a3038058ef36d60223f76e8ddcfff84d",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-physics-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "375e3101ce9609ff9dc1f167521678731281fd267d59fa51af76be0beceea361",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-animation-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "5e7f81c0c1f9a0101910f208d2465f0669349ee780289d5748196b7ff5ae40df",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-ui-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "48dcdf1f0947148a656f7d57b02ffd5d4043e71ba92448d2441d4d7f05f452f4",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-tools-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "7b7fbb75f574655caee7d34145d7cf7bed83b12d2d47d31828a81a32c86ddfc6",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-world-streaming-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "e2562d4db621a694a1bd474a396a4f249fb73dfd24eb1601324e687af3536550",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-memory-systems-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "8d01586165206e6fd4ba0ee7609cee3d495acd3ff6ac9626a9b31fcefda41b43",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-audio-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "6e1a4569af8349c607ebb495f6552f4aa97c98eb652c97e4fbddee60e6089997",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-platform-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "042004291b7a49300ad6c2b43ce700f8e6f4d453c09f22535760f3cdcd5e972d",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-build-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "52ec6aedb2903a02f98bb5f6eebdee98259a69bb52c901ca0e7a75250caecbe7",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-integration-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "785e50d71e1f9992f9740c7ef75c94b5e89145a9bf4efb958ab1bc8cd58322a6",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-ci-devops-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "d571feaf9fbda1a11c1951935b67f9e842732475fff5da57bb7d915c03ad9a02",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-network-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "43ee06192129c0a9ece1081a3fffb23bdc308c8b8dab675eac0eded70d29a8cf",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-performance-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "3ac72cb0b50677e4b03608a2a3a1b6e9e27dcfcb8059120fc70e282c21f904ec",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-save-systems-programmer"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "c150df81890eb222c2faf033364fe818b30d01b01ca2212efe06a16488688f34",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-concept-artist"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "4bc7f6187794145e41530cee0c4690c7572225bab68eb9070963d1a28f303f87",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-character-artist"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "0c3229bf2ca37ccaacf22e7e1366b2d738f428125d199671da64f34800816f27",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-creature-artist"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "53647850e8351297165ae17380fb42d044f70c6cd61ee6da4eb7615ecbd755b3",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-environment-artist"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "df9c4bc1a1c30d3fd65818db523c5acf3f126bb159e727b9e4906252fa9128d6",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-level-artist"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "2ac139e920223ed80ebd88020caf38163885147086d5d7c99674a8462331085a",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-prop-artist"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "b9276e75f9f33d1cada40c98c4d55c7d7de9de86d43537d39729db324e61bb51",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-weapon-artist"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "6a6863d7399b9ef95f3ee42cc316579c8588d34ab7884270bc93ebc2f4c51e5d",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-material-artist"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "34cca165a72b4be1bc1ae5fe289e3ea2028d1595c03a0ce7cd7427a993500e81",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-lighting-artist"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "eb0a5e49c025f068e3d57ef30ba9018476545fe8c08a04826c9b1176d4d0d1cc",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-ui-artist"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "2d9c86099b24f79dbbac9f5337db91d5d0786395ee9224b79e0ba64461322f1f",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-illustration-artist"
+    },
+    {
+      "department_id": "visual_art",
+      "manifest_digest": "9d8fe8f5d9a27b2e46873d53cf5b8f934b8c2b215d7eed4202177216dc26f97f",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-procedural-environment-artist"
+    },
+    {
+      "department_id": "tech_art",
+      "manifest_digest": "bab37b1eeb185a744ace714f7aedd7027e82b9fabed839238826f350708d4e83",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-technical-art-director"
+    },
+    {
+      "department_id": "tech_art",
+      "manifest_digest": "8c2c67ddbde162f2f04e178cec6598ea7d6360da05737c7dc755367996a6eef2",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-technical-artist"
+    },
+    {
+      "department_id": "tech_art",
+      "manifest_digest": "f415270ec59598a30bf534c91a6d1e75808a3f53c67b1c69144ed6c856c45e5b",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-shader-technical-artist"
+    },
+    {
+      "department_id": "tech_art",
+      "manifest_digest": "965a0645ffabb11c511b95983d98e000411b43c761e972742cc087355d2039d6",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-environment-technical-artist"
+    },
+    {
+      "department_id": "tech_art",
+      "manifest_digest": "93c0ca4c6e93233b3000c5173eeb991055fe8d9768b3505760954e38eb85b330",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-character-technical-artist"
+    },
+    {
+      "department_id": "tech_art",
+      "manifest_digest": "6813f02c81563fbab43b7a9142934c5270465553f7571332eb1eb281d1ede1e8",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-procedural-tools-tech-artist"
+    },
+    {
+      "department_id": "tech_art",
+      "manifest_digest": "bf1716df4461faa100bf71ee5996a4e21c082214698a1a0ed7061f2deea10821",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-vfx-artist"
+    },
+    {
+      "department_id": "tech_art",
+      "manifest_digest": "8d66abb8eaa4f8031eb101f2c945f3060d5d433826d1a4a8c23fa52efbdd7095",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-vfx-technical-artist"
+    },
+    {
+      "department_id": "animation",
+      "manifest_digest": "2a2b8ad6c6621d4663477016e6f77ec5e77790c46437e5e7497dd8ba2ea22e78",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-gameplay-animator"
+    },
+    {
+      "department_id": "animation",
+      "manifest_digest": "d7a511adea6d446b4fbae9af5cac84c6b272c61d4c5fbf3457c34c81017b8534",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-combat-animator"
+    },
+    {
+      "department_id": "animation",
+      "manifest_digest": "bbf8760d8c34a77dab26837bb266ba41718e9feb3093c0a96efa5e13bc235585",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-creature-animator"
+    },
+    {
+      "department_id": "animation",
+      "manifest_digest": "5e6eeee5fd4d2ca5180f4068fe0915e8af4de3bfa04cab0a1c8c29d4304b1d32",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-cinematic-animator"
+    },
+    {
+      "department_id": "animation",
+      "manifest_digest": "886ad565db5b925d54d8186e2ca69e336bd689df9e25925ac106b6145509aa62",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-facial-animator"
+    },
+    {
+      "department_id": "animation",
+      "manifest_digest": "c2b061d3d564784b0344f88ac3d13f73883baf2043ad431903452f9833c4ed70",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-character-rigger"
+    },
+    {
+      "department_id": "animation",
+      "manifest_digest": "47e208da411b286c7a538f35924b67194b2928fc9268519e519d9e9f5c132dc9",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-technical-animator"
+    },
+    {
+      "department_id": "animation",
+      "manifest_digest": "86593cc1210caf71c649ed46972efbcef8ad239c357dc2b2edd8a76f8fbd5d28",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-motion-capture-specialist"
+    },
+    {
+      "department_id": "animation",
+      "manifest_digest": "19eab6874e73efc46a2120e31722423a4c202e6f927acd5af06a50a76f90bec1",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-ui-motion-designer"
+    },
+    {
+      "department_id": "audio",
+      "manifest_digest": "4936b773283b9dd3845a517b44e436e3aedd0cdcfcce5a9cb90227173cfda15a",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-sound-designer"
+    },
+    {
+      "department_id": "audio",
+      "manifest_digest": "5e33c130ce2cf5b6fa53130aec921ec31fbbf256c1fad084ddca54f4051275a1",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-technical-sound-designer"
+    },
+    {
+      "department_id": "audio",
+      "manifest_digest": "edaa8ef4c566addd078ac4fedde8748e5f1e304f2fd9740cecdd5e4d9f9aa0d5",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-audio-implementer"
+    },
+    {
+      "department_id": "audio",
+      "manifest_digest": "dcc754cd40a1f3d8cf4b6f6223bc1b7e89cbff18f4198c74fb8523e1e7aa1b89",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-composer"
+    },
+    {
+      "department_id": "audio",
+      "manifest_digest": "6609f014731d76457c17e76be0ccdb9b23ba0180f0cf37300c7268db73a8832b",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-interactive-music-designer"
+    },
+    {
+      "department_id": "audio",
+      "manifest_digest": "f93cbdca9329ecb240885d494250ea4a52c51580481ade0492fc9986dd26836d",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-dialogue-editor"
+    },
+    {
+      "department_id": "audio",
+      "manifest_digest": "452b8e94772a5528ce134e363c68468cc14fe24e1cb973871668f65c34e139b4",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-audio-mixer"
+    },
+    {
+      "department_id": "audio",
+      "manifest_digest": "f3aabe8313b7e4555cf0faa5722469601446d5784a00335554c6fa68243e095e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-voice-director"
+    },
+    {
+      "department_id": "ux",
+      "manifest_digest": "75fae1acbc7757c32e25865cf30c62e982083b917dbce24744fbbb9b56feebd1",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-ux-director"
+    },
+    {
+      "department_id": "ux",
+      "manifest_digest": "1a8878d924e0c7a6d0abf6be075f9f1dc08da1760b69a58083effc3319cf5405",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-ux-designer"
+    },
+    {
+      "department_id": "ux",
+      "manifest_digest": "0956ec21716c4aec620535d2b1e3ccd7939aa2683f9615baff28fe0302454f67",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-ui-designer"
+    },
+    {
+      "department_id": "ux",
+      "manifest_digest": "88da681a2139cc13dc2242eaa7411d96063e9dff5589449186e841fbbdd2f0a9",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-user-researcher"
+    },
+    {
+      "department_id": "ux",
+      "manifest_digest": "baf9da47a41d9eb7795eda58114c079214bbd39b5454b652fd40c3743e5ccfa9",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-player-insights-analyst"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "70bb43a3a3981be9cb7a39ba64275dabfa0328329b8731bacd5c868d02387ab7",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-qa-lead"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "08f6b931bb51ea39867bff4d13e47bcc1c0cc5ebc440d18848882299037ace3c",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-functional-qa-tester"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "bfc48348f0a56348b68a9f2ef3f15e1e5ac3c889dd181b40c6b5b284244473cf",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-technical-qa-analyst"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "8cab1cd7fe21e69a63f20dd2dd13ec1d9ad1ee64cd7c2bdc703de91e48c0665e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-automation-qa-engineer"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "c8e2ef7e42aaf081149d92ef32f200d88a9f97244fb5b86e0b97ffeabba7da93",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-performance-qa-analyst"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "2e6a05309939b1cbfc471c7e833275af833ee11c2fdd0cadf57233635cb5257e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-compatibility-tester"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "5796448862514f4e65f372087144b85629ed26e1129c14d4a03217d0c663b4fe",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-accessibility-tester"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "493802f24aa2dc98015aedb5ce9c10bbb8f4d5bf0c8ba7cf78c46ca437db1911",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-localization-qa-tester"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "96f023f768ed8651c7b1b5c02c04392d52768082aaa411ac541cb88ee75e662f",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-playtest-coordinator"
+    },
+    {
+      "department_id": "publishing",
+      "manifest_digest": "aafd2f810a4ca2619adf753c0d3f36c6f8669d59b0130c6f8f420b508e0b5695",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-release-manager"
+    },
+    {
+      "department_id": "publishing",
+      "manifest_digest": "5f78d54875810f666f45788ec434b17f8dcaecd7d55ea6762485e4099d59d3c1",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-certification-specialist"
+    },
+    {
+      "department_id": "publishing",
+      "manifest_digest": "2889f0e33d4da4d56b60c71953201ccb125edf508f95c27378570a8534978d96",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-localization-producer"
+    },
+    {
+      "department_id": "publishing",
+      "manifest_digest": "19bbc97feb94a9b927017a03a271a1aa77f51cac97cd4c0d32b2e72e503fb8ec",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-localization-specialist"
+    },
+    {
+      "department_id": "publishing",
+      "manifest_digest": "83cadd0f23ef2ad130bb96187aa8abbff66ca41f9860c7cdcebbd377beef0777",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-product-manager"
+    },
+    {
+      "department_id": "publishing",
+      "manifest_digest": "e4520cb394d7d0edd28721bc4a6a08e22622420d348142db517b13948f4c22e0",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-brand-marketing-manager"
+    },
+    {
+      "department_id": "publishing",
+      "manifest_digest": "850be55dca6926ac6365dbf4799734144230f1782f3c1aa6f248f5f362e462da",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-community-manager"
+    },
+    {
+      "department_id": "publishing",
+      "manifest_digest": "09444777167496ca04eda6bcdd8ba0934cd5acd879ad945c818a662d25d9635e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-public-relations-manager"
+    },
+    {
+      "department_id": "publishing",
+      "manifest_digest": "e199d375cf0a82cd7cae34afeab13b1c0707a1052bc80775640f6b7dbdf48612",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-marketing-capture-artist"
+    },
+    {
+      "department_id": "publishing",
+      "manifest_digest": "08c5346046302af2bfe9a3734904d933e21d12c513e9eb0191187c5b9a2e96d9",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-trailer-editor"
+    },
+    {
+      "department_id": "publishing",
+      "manifest_digest": "7f9c7c27798da0e1665dbe5c5f3288456a80c0455237e0f2d9785137347c19b8",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-player-support-specialist"
+    },
+    {
+      "department_id": "studio_ops",
+      "manifest_digest": "ed2024ce9e09ca3ce1c2844d4a5367e805e0d182c2722d19b7a1567fbe1128b0",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-studio-operations-manager"
+    },
+    {
+      "department_id": "studio_ops",
+      "manifest_digest": "40d86c0f7b643830335f2d8c2c5889e35ee36d6be0734eea0cf080c8bec81b45",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-finance-producer"
+    },
+    {
+      "department_id": "studio_ops",
+      "manifest_digest": "92d08f6dcf7bb3c5a10f38b38ef78ba5bd6982e19a4221968221b74e92de5890",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-vendor-outsourcing-manager"
+    },
+    {
+      "department_id": "studio_ops",
+      "manifest_digest": "e7dc6334d230095c8ad4636d4c7942487eb750c1362092a51b06c5e71ff75a9e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-business-development-manager"
+    },
+    {
+      "department_id": "studio_ops",
+      "manifest_digest": "22e69b1756562f9a3c5dddd46f020845f6978cac7eb9f84cfada042199c8db9d",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-legal-licensing-manager"
+    },
+    {
+      "department_id": "studio_ops",
+      "manifest_digest": "e377cb2481e144dea9fe9c59fa404e7f512d6aedd7810fdcddf4fa7a32276d44",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-documentation-manager"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "0be74b73912bef5bb66ca793338b90971ca203465561c1ba10134eda4a2b1fa4",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-player-controller-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "322fa2311ba60ca650c2adb67ce3bc8fd1429fcb5a4a54d25a479ef333a4870e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-ability-framework-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "e38700af73b285aec5cb395cd58e97859c919e86e9bdde4c4f21e72a78ae317c",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-interaction-systems-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "22f62d73611b2e855677810574784ba871a3888b2315d53bbbef8566bac32e85",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-inventory-equipment-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "5bd7a56cf05b9bbfb43e7f6c17d7410fb5cf7bfe6fbe5fe2c926183c1f22ed18",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-quest-runtime-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "1fd11f32c4e00ec7b1bc762b36644a807c35be866f339e22288b0d1912380731",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-gameplay-scripting-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "3f5239ffdcd4d377f15132ef3367737fb3145b5db555cab989a367610c460750",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-locomotion-physics-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "b0ea43bfb381422378c3323dfee972645254cae868f3f2510d642f40bd038fd6",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-boss-behavior-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "733e5abf0b2d8a91149f9a5d980c4426edd97bd005621113666316d56c236532",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-gameplay-debugging-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "740d4d436b498f67d3827957dfd43c4fd64793e6c52d60647f1e8ae0cc584f16",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-render-graph-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "ad646fc9c5c148f9649f4a0595c26270209958682d2eb6d14548389a71673a06",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-gpu-memory-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "b4608a9eb10f576f5fb10253cfaf9c6ff3c133f71701227dfd488b4b5d4f53e4",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-shader-compiler-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "06a4ed2af8a4176489bcb5efa7e313f7fb1bc92c2fd9d01d9afb53cead86b43f",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-visibility-occlusion-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "d2e52415c767e48c955acd4bab6108ea9eb517bacc3e033be032b20bd117937b",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-lighting-renderer-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "ab7ed1702ef9c924ef028c4841280c72f22a89c4231e2b3cc0470bb881368acb",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-material-system-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "b67afbe35853435a464a3b35787d13bcf3ceef8cfa5e3dfacae5751fe5b7c618",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-post-processing-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "f7a1a03515cfdb30dc58ce57242955c452177acc7f892b0361030a7ad5701077",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-volumetric-rendering-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "bd6e90ae2148e6b5a2cc4c442ebe4bd765ad70faecfd05b2c0bb2d8f013f41fa",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-graphics-backend-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "4d082bf5d28d988ae6374398fa9f4f678990f914eadd86ca669f46fedfcfb056",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-terrain-rendering-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "86a41de7feceb1c1913d9e017df639efc8ac0b9e029e32bd15b4d06c15cb32cc",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-gpu-driven-rendering-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "17bdb7ef0962fd582e93a5b26f79e15976f5cabfe6d9f27eacba30ba8d7bacb0",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-godot-editor-extension-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "d1ab47cb7132a7b6f50640ee736f64b8bd571ee66bd25dceb3f46ec921bf673e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-asset-import-pipeline-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "ef6de8b26e3499463e4ab5be5e4280ee4e114a241ab3fe92fff4ba903fa4ab23",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-terrain-authoring-tools-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "fc069e3608cd004c31399a1820f0699aabfb7592bc2874a0809b5070e11a9fc1",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-hlod-cook-tools-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "e9659c2c11f3f08f892ff1cac236901c9fc9ad30c7418d7e229c898854b6f9da",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-gameplay-data-editor-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "3111ae572e92b507eb2731d9d55faca5fda6c076d5992d2c81b22f25944e9dcb",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-shader-build-tools-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "399aa8f6ae397a70b279e50f0eb2df2d9cbc2b20e3c3a38e9c5e36da101078dd",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-engine-profiler-tools-programmer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "33e1e1fba070ea8c4c16446287bdd524faaf251896b5f47ae087f99669db533d",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-content-validation-engineer"
+    },
+    {
+      "department_id": "engineering",
+      "manifest_digest": "16c343d1a9611560a91148411980e34cb61934c0246cbcfb8009c1f0880a0410",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-designer-workflow-tools-programmer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "ec4ad6566ead16db608891dc5794d3fc693377ca84cfccdb515c80b02661c30c",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-boss-encounter-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "0e72cba76af8724c88391c15872f5f50f68a84ebbc90020dfe4469bb5da1d474",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-loot-itemization-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "3473889e152cf4bc3ca7334c07daffa454a25f1f2e9e0376a2629158c321dd29",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-difficulty-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "95c82af58ef1b4942a1dcf91d14eda32bf3557abfee3ddc3210191aff15b3c41",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-traversal-encounter-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "6beeb0f43d57ba6e10a8d285a88022514f529ab1409a9d5b47b723fdd9d261fe",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-environmental-interaction-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "366de4530dc3d5666fe55f5b6e93b9fab96c7caba0a99a52a5ea3758875c8ba4",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-combat-feedback-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "4cf8c872d9210efd798f0f8e221af9eb23c59b0e7cc10e4a989c7db7747c1ea8",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-gameplay-data-designer"
+    },
+    {
+      "department_id": "design",
+      "manifest_digest": "f916ea29e977d0f62a354970dd8db73bc0a43c734166e2e780b060f4e0a8d2a4",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-tutorial-onboarding-designer"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "2cf7fa95a70fb261862cd02d014dcc208878f2916f4cf48e08fcbd49e2529d33",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-narrative-creator"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "48a914634a66c90b82b75ec6fe6aa1448b4de3f7cf85f04f3b6e35b19c0d66f3",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-character-arc-writer"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "1014000c9a06282d8cc8c1ef11a154a96d7898538809fa83af3503453e3fa782",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-branching-dialogue-writer"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "71557d755f3393327c8ae8ded178aafa8ad98e65984d5f01909cc02c06fc056a",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-environmental-storytelling-designer"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "5c24c2b549317aa069c657fd9675ac78ceba13a22d16ee0859e2a220a2adb941",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-cinematic-scriptwriter"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "b37a7ee2c6ec6fd832cecadb0f9ae074bbc80ffd69db4bd29ef06ba551defc68",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-narrative-systems-designer"
+    },
+    {
+      "department_id": "narrative",
+      "manifest_digest": "d07a25217de274e3f14634e84d977ec108bc5a0dc96c1e85281bba75a2d16a8e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-canon-continuity-keeper"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "e8eb0a52a265c0b6e312f67602f59b19746a62b7d10786186f216059641d0828",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-combat-test-engineer"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "bb15cea5033566d029c76fde964bf311ff4025e60689418c89de4a60505ee0fa",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-narrative-validation-engineer"
+    },
+    {
+      "department_id": "qa",
+      "manifest_digest": "8ecad2abc0cf84d15c776bf5938ee7d9a7a823df4c4079793c6ce13278097af6",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-rendering-regression-engineer"
+    },
+    {
+      "department_id": "production",
+      "manifest_digest": "b93982d2935329c4d3d8c499f9a1228718f3187b8d3af596406e42282175bf6e",
+      "revision": "2026-10-30-r5",
+      "role_id": "rpg-autonomous-workgroup-controller"
+    }
+  ],
+  "schema_version": 1
+}

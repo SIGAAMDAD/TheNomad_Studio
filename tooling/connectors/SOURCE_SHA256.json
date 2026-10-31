@@ -1,0 +1,104 @@
+{
+  "files": [
+    {
+      "path": "src/studio/integrations/__init__.py",
+      "sha256": "6827fa3dd360f16d2d50326c97e8ebe3cebaaf913dd3392e791e620c710e54f8",
+      "size": 910
+    },
+    {
+      "path": "src/studio/integrations/api_ports.py",
+      "sha256": "be3af194e35e54da9b5d6bb32029fb7585c6bf9f585458b8a9d0456d161241e5",
+      "size": 5129
+    },
+    {
+      "path": "src/studio/integrations/artifacts.py",
+      "sha256": "ab0717c3253be4ed1578a4b85ee71a74b69685ec32fe4da527c3a587df1f15d1",
+      "size": 4937
+    },
+    {
+      "path": "src/studio/integrations/ci.py",
+      "sha256": "21591957d73c6f8ea939862d7e2f5387c41139ffc86ec451687d212ff206990e",
+      "size": 6349
+    },
+    {
+      "path": "src/studio/integrations/common.py",
+      "sha256": "33e359d9372b07797a78634e0da9b1a9aff41872e1064a02e1a01534e3096485",
+      "size": 3281
+    },
+    {
+      "path": "src/studio/integrations/connectors.py",
+      "sha256": "1276350ee9136cdfde9bbab6d882c5ee4cc0bc1286a042f53bb8468cdb222bf0",
+      "size": 2696
+    },
+    {
+      "path": "src/studio/integrations/drive.py",
+      "sha256": "e327b3f853a2b2c0d108bca09be0409604a53d833456c44f17a8de0166f263de",
+      "size": 6047
+    },
+    {
+      "path": "src/studio/integrations/effects.py",
+      "sha256": "ce24b68a627b213a93264c4c04cbc43908c46820381e587b3b2957da2ed9b5b4",
+      "size": 3095
+    },
+    {
+      "path": "src/studio/integrations/github.py",
+      "sha256": "12ab2111a72a90bbacb5c616f2854d3457ce64807f616c7c977b88b1f7fce045",
+      "size": 12279
+    },
+    {
+      "path": "src/studio/integrations/http.py",
+      "sha256": "bc3ab7835d4987ae16e9416f7cf605a495dc5e0c410db9a48b6b398b45584d57",
+      "size": 2993
+    },
+    {
+      "path": "src/studio/integrations/relay.py",
+      "sha256": "711918bf7a85d2ad72d0fdd2e383323fad37f975e6a2204775fd0b6066b21844",
+      "size": 3107
+    },
+    {
+      "path": "src/studio/integrations/retry.py",
+      "sha256": "b44ab79d9ba696773f8e6160cbf4e67c712ae11d5218f5b37795f1f7ddc16be7",
+      "size": 950
+    },
+    {
+      "path": "src/studio/integrations/source.py",
+      "sha256": "4d09fac0c1eda8c87d6ab3c8c9db2e03af45f51fe595eb25b370d37d4ba10bed",
+      "size": 4260
+    },
+    {
+      "path": "src/studio/integrations/toolchain.py",
+      "sha256": "402e3437f80b3cdf2ea7dbef5472fe2552e1a1d3c860274a3faf80de3eacde7d",
+      "size": 2959
+    },
+    {
+      "path": "tests/unit/g/test_integrations.py",
+      "sha256": "80356996299709776d1e1ef28205546824f25717c0ef78b010cc0f5098efd97e",
+      "size": 25293
+    },
+    {
+      "path": "tooling/connectors/README.md",
+      "sha256": "86de712a2020e6009dc39763abf2a85c3d476477356ccbf93b0886f104769df3",
+      "size": 6225
+    },
+    {
+      "path": "tooling/connectors/TEST_LOG.txt",
+      "sha256": "b116afc60f1a36f7e038849958dd024494ddb1360ac1134a548f87e5740da19b",
+      "size": 3254
+    },
+    {
+      "path": "tooling/connectors/WG_G_HANDOFF.md",
+      "sha256": "5a64c8c7c3b1ff1c9f944ff6b48dc9999a3dcc0471089fdacb7f35abaab62a0c",
+      "size": 4137
+    },
+    {
+      "path": "tooling/connectors/verify_package.py",
+      "sha256": "54131c1547b218bdce8e4567359cb89f2c1617906d17a1f190bffd59a0106320",
+      "size": 1134
+    }
+  ],
+  "format_version": 1,
+  "input_archive_sha256": "84ba2f2a7fc038e656684f16aa4f9d75ffc398593703462205369889230e5a4b",
+  "plan_sha256": "8d68e255008369a299c66ca1a0c253e60faecb2ef46415ad09cbb9b38b41d09b",
+  "source_baseline": "empty greenfield source + R5 Forge replan ZIP",
+  "workgroup": "WG-G"
+}

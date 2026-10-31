@@ -1,17 +1,49 @@
-# The Nomad Studio V1 — Operational Control Plane
+# The Nomad Studio
 
-[Version and compatibility](studio/VERSION.json) · [Execution protocol](studio/v1/OPERATING_CONTRACT.md) · [Launch checklist](studio/v1/LAUNCH_CHECKLIST.md) · [Worker prompts](studio/v1/prompts/INDEX.md) · [Merge authorization](studio/v1/MERGE_AUTHORITY.md)
+The Nomad Studio is the project-scoped production control plane for manually initialized ChatGPT browser conversations, cabal/task scheduling, source integration, independent QA, GitHub relay evidence and deterministic tooling. It is not an AI model runtime or a browser wake-up service.
 
-**Lead Director → Studio Production Director (S00) → 12 accountable department heads → 174 specialized roles → independent QA → head-authorized merges.** Every substantive worker response commits a department ledger event and mirrors its attempt metadata through the GitHub Issue communication relay. Heads retain parent ownership across executions; junior engineers must checkpoint/yield rather than declaring unfinished work complete.
+## Runtime and authority
 
-- `main`: reviewed source and policies. `studio/runtime`: approved jobs, worker registry, ledger, receipts and leases. `studio/comms`: immutable transport events, inbox projections and hourly/23:00 Central reports. The branches are intentionally different histories.
-- GitHub Actions is the deterministic broker, not an AI runner. Active/manual chats fetch the inbox when executing. Each logical CW worker is registered explicitly; a GitHub commit does not awaken an inactive chat.
-- Source execution W01–W05 targets the authorized *source repository*, not this Studio hub. Source merge requires a separately authenticated department head with exact-SHA QA/CI and Lead Director gates.
-- Worker-health auditor cross-checks STARTED/HEARTBEAT/YIELDED/SUBMITTED events against immutable per-response ledger attempts and flags missing checkpoints, overdue progress and unacknowledged handoffs.
-- Live runtime gates: source_writes_enabled=false; auto_ai_enabled=false; auto_dispatch_enabled=true (owner-enabled non-spending pilot dispatch). Existing runtime jobs and features are not erased by the V1 product version reset. Current live chat-worker registry is empty.
+- **Owner:** final authority for architecture, policy, protected source merges, canon and releases.
+- **Workers:** a registered worker is an ordinary browser conversation; a shift is one actually executing assistant response. Assignments, shifts, leases, commands and remote receipts are distinct.
+- **Python/APSW:** project-scoped durable state, transactions, governance, scheduling, leases, outbox, checkpoints and recovery.
+- **GitHub:** immutable addressed communications, verified source refs, CI and exact remote readback. Source and communications branches have separate bindings.
+- **.NET ToolHost:** pinned, bounded, manifest-authorized process runner with fail-closed OS sandbox controls; not a ChatGPT runner.
+- **TypeScript cockpit:** authenticated operator client for the frozen 72-operation API.
+- **Google Drive:** long-form creative bibles under their own owner-approval and revision rules.
 
-**Validation:** `python -m unittest discover -s tests -q`, `python scripts/studio.py validate`, `python scripts/production.py validate` and reviewed GitHub Actions checks. These prove code invariants; cross-chat runtime, Gmail delivery, source CI publisher credentials and head merge permissions need their own witnessed acceptance runs.
+The coordinator cannot autonomously start or resume a ChatGPT browser response. A queued command is not proof of browser execution.
 
-## Historic documentation
+## Source tree
 
-Files with V2/V3/V4 in their names remain as compatibility and prior design records, not authoritative V1 launch instructions. Original 174 specialist manuals are retained. The stale GOAP control-plane draft is addressed in [GOAP cleanup](studio/v1/GOAP_CLEANUP.md); actual GOAP source remains its own repository.
+| Area | Contents |
+| --- | --- |
+| src/studio/ | Live studio domains, APSW state, provider adapters, HTTP and recovery |
+| CONTRACTS/ and schema/ | Frozen operator contracts and storage contracts |
+| host/ | Deterministic ToolHost |
+| ui/ | Operator cockpit |
+| tests/ and qa/ | Regression, security, failure injection and provenance evidence |
+| skills/ and studio/ | Specialist reference material and retained historical contracts |
+| deploy/ and docs/ | Configuration, deployment and acceptance instructions |
+
+## Verification
+
+Install the appropriate Python 3.11+ / APSW, Node/npm and .NET toolchains before running:
+
+    python -m pip install -e '.[dev,coordinator]'
+    python scripts/verify_workforce_schema.py
+    python -m pytest -q tests/unit tests/integration tests/acceptance --cov=src/studio --cov-fail-under=90
+    (cd ui && npm ci && npm run check && npm test && npm run coverage && npm run build)
+    dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Release
+
+Hosted CI additionally verifies source provenance and enforces 90% line coverage independently for Python, complete TS/TSX, authored TS/TSX and production C# ToolHost.
+
+## Deployment
+
+The real service entry point is studio.app.cli with STUDIO_COMPOSITION_FACTORY=studio.app.production_factory:build_from_environment and an installed STUDIO_TRUSTED_PORTS_FACTORY. The factory constructs all 72 operation handlers around a shared APSW writer; missing trusted adapters fail closed. Operator HTTP binds only to loopback and requires a trusted TLS proxy. See deploy/README.md and docs/SETUP.md.
+
+## Acceptance
+
+The source/coverage/control gates have passed at the verified R5R implementation revision. Tier C browser continuation F-20 still needs live evidence: an already-initialized ordinary browser conversation handles two consecutive GitHub assignments and publishes two authentic receipts during a continuing response. No paid AI API execution is implicitly authorized.
+
+See docs/OWNER_SETUP.md, docs/CHATGPT_SETUP.md, docs/PRODUCTION_PIPELINE.md and docs/REPO_MAINTENANCE.md.

@@ -1,0 +1,107 @@
+{
+  "worker": "WG-H",
+  "project": "NOMAD-STUDIO-R5-FORGE-UNBLOCKED-IMPLEMENTATION",
+  "source_baseline": "EMPTY_NEW_SOURCE_TREE",
+  "input_archive_sha256": "84ba2f2a7fc038e656684f16aa4f9d75ffc398593703462205369889230e5a4b",
+  "plan_json_sha256": "8d68e255008369a299c66ca1a0c253e60faecb2ef46415ad09cbb9b38b41d09b",
+  "frozen_dto_sha256": "4822e0c5ea2b18bea0d8e5d20c7b751c3e3894bbf448b3949105f22d83cacf18",
+  "tests": {
+    "offline_pytest": {
+      "status": "PASS",
+      "command": "R5_PACKET_ROOT=/mnt/data/wg_h_r5 pytest -q -p no:cacheprovider tests/unit/h/test_contract_static.py",
+      "result": "7 passed in 0.03s"
+    },
+    "dotnet_build": {
+      "status": "NOT_RUN",
+      "reason": "dotnet command not installed"
+    },
+    "dotnet_unit_tests": {
+      "status": "NOT_RUN",
+      "reason": "dotnet command not installed"
+    },
+    "linux_sandbox": {
+      "status": "NOT_RUN",
+      "reason": "bubblewrap unavailable"
+    },
+    "tier_c_real_game": {
+      "status": "NOT_RUN",
+      "reason": "owner-selected live game project, credentials and other WGs missing"
+    },
+    "windows_sandbox": {
+      "status": "NOT_IMPLEMENTED",
+      "reason": "no verified restricted-token/Job-Object backend"
+    }
+  },
+  "changed_source_files": [
+    {
+      "path": "host/DEPENDENCY_DECISION.md",
+      "sha256": "5169ee83ddf0b609fb42f37bd41a0ec9318ed7f2c78820a270f25b39854a5371",
+      "bytes": 1574
+    },
+    {
+      "path": "host/HANDOFF.md",
+      "sha256": "f90330f5cb902682a1ae26d01554e97bdfa152d62098d26ad223c116498ee242",
+      "bytes": 4133
+    },
+    {
+      "path": "host/Nomad.ToolHost/Contracts/HostTypes.cs",
+      "sha256": "4822e0c5ea2b18bea0d8e5d20c7b751c3e3894bbf448b3949105f22d83cacf18",
+      "bytes": 3395
+    },
+    {
+      "path": "host/Nomad.ToolHost/HostConfig.cs",
+      "sha256": "07f8faad4bb1ed0dcf918d4df43ed3f5322fbfbf272b732387d43e2a2ec34716",
+      "bytes": 16373
+    },
+    {
+      "path": "host/Nomad.ToolHost/HostRuntime.cs",
+      "sha256": "1c8f8dfb808ef742c0108ee4abd64639d94f0479cc7382f184ddb7f1a3c8ffb7",
+      "bytes": 12872
+    },
+    {
+      "path": "host/Nomad.ToolHost/Nomad.ToolHost.csproj",
+      "sha256": "0f4f3a9218af5a4bb3c7e390e7f3d3014cbdd4a33b092e95f0c240678fa2bc8e",
+      "bytes": 394
+    },
+    {
+      "path": "host/Nomad.ToolHost/Program.cs",
+      "sha256": "5f086df7f6aaded075f0c03f875f106959cf08920b23842cef71780cff273283",
+      "bytes": 4356
+    },
+    {
+      "path": "host/Nomad.ToolHost/Protocol.cs",
+      "sha256": "9852351839d0969beb5f5c839896574e3231d5e450fbe09c58a9b8eecc0f3ba2",
+      "bytes": 7079
+    },
+    {
+      "path": "host/Nomad.ToolHost/Sandbox.cs",
+      "sha256": "bfd41bb9931f77d0b9dde32c3e1841c4a587a609ab9e6ac19dc67003ac4bcf6a",
+      "bytes": 6049
+    },
+    {
+      "path": "host/Nomad.ToolHost/ToolJournal.cs",
+      "sha256": "1365a4bf37467659f1fee0c21f4dcd48b12d73bce010e434d87915ca9f3fd0eb",
+      "bytes": 3198
+    },
+    {
+      "path": "host/README.md",
+      "sha256": "812070c4468587552317bb328edb10098de43c90eacf84690d973632a26f19aa",
+      "bytes": 5879
+    },
+    {
+      "path": "tests/unit/h/Nomad.ToolHost.Tests.csproj",
+      "sha256": "e36967cd643bddee9e7f4831218c12275422fa7a66a810695cdff2324a7fb3f0",
+      "bytes": 409
+    },
+    {
+      "path": "tests/unit/h/Program.cs",
+      "sha256": "3c7a7e83df681b78b00db1cda0225f1139adb8e362942fc78daf6ca49be8fcba",
+      "bytes": 10006
+    },
+    {
+      "path": "tests/unit/h/test_contract_static.py",
+      "sha256": "cd9005c356e3a776580db576cc1f3c861dedcef7b7028efb08a82c57e4fcb066",
+      "bytes": 3109
+    }
+  ]
+}
