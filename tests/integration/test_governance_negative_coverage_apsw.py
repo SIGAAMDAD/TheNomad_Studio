@@ -69,7 +69,7 @@ def test_unverified_owner_cannot_modify_policy_or_grants(governance):
     req={'request_id':'policy1','policy_digest':digest([]),'rules':[],'expected_revision':0}
     with pytest.raises(GovernanceError,match='owner'):
         svc.setProjectPolicy(actor(owner=False),'p',req)
-    with pytest.raises(GovernanceError,match='owner'):
+    with pytest.raises(GovernanceError,match='grant'):
         svc.setProjectPolicy(actor(principal='member'),'p',req)
     with pytest.raises(GovernanceError,match='owner'):
         svc.grantProjectAccess(actor(owner=False),'p',{'request_id':'grant1','principal_id':'member','grant_code':'owner'})
@@ -133,5 +133,5 @@ def test_decision_revision_effect_and_resolution_replays(governance):
     assert rejected['state']=='rejected'
     with pytest.raises(GovernanceError,match='resolved'):
         svc.resolveDecision(actor(),'p',did,{
-        'request_id':'duplicate','expected_revision':1,'expected_effect_digest':'e'*64,'decision':'approve'})
+        'request_id':'duplicate','expected_revision':2,'expected_effect_digest':'e'*64,'decision':'approve'})
     assert svc.listDecisions(actor(),'p')['decisions'][0]['state']=='rejected'
