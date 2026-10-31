@@ -112,7 +112,7 @@ class ConnectedGitHubProviders:
                     self.writer,
                     lambda p,provider,typ,subject,action: (
                         f"{target.owner}/{target.repository}@{target.comms_ref}",
-                        target.effect_path(typ,subject,action))))),
+                        target.effect_path(typ,subject,action)))),
         )
 
 
