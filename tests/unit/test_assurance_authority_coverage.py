@@ -66,7 +66,7 @@ class Tx:
         if 'FROM worker_lineages' in sql:
             if not self.lineage:
                 return None
-            return {'root_worker_id': 'author-root' if not self.reviewer_root or self.same_root else 'reviewer-root'}
+            return {'root_worker_id': 'author-root' if args[-1]=='worker' or self.same_root else 'reviewer-root'}
         raise AssertionError('unexpected SQL query: '+sql)
 
 

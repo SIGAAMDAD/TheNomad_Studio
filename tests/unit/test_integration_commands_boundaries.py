@@ -127,3 +127,115 @@ def test_cross_project_actor_cannot_inspect(tmp_path):
     svc,source,state,remote=build(tmp_path)
     with pytest.raises(StudioError,match='wrong project'):
         svc.inspectIntegration(Actor(),'other','intent')
+
+class FakeCanonical:
+    def __init__(self,tmp_path):
+        self.candidate=SimpleNamespace(project_id='p',expected_revision_id='base',revision_id='candidate',
+            submission_ids=('sub',),author_ids=('shift',),tree_digest='tree',tree={'src/wg/x.txt':b'value'})
+        self.stages=tmp_path/'stages'
+        self.stages.mkdir(parents=True,exist_ok=True)
+        (self.stages/'intent').mkdir(exist_ok=True)
+        self.current='base';self.promotions=[];self.recovered=[]
+    def current_revision(self):return self.current
+    def stage(self,*,intent_id,project_id,submissions):
+        assert project_id=='p' and submissions[0][0]=='sub'
+        return self.candidate
+    def inspect(self,intent_id):
+        assert intent_id
+        return self.candidate
+    def promote(self,**kw):
+        self.promotions.append(kw)
+        return self.candidate.revision_id
+    def read_revision(self,revision):
+        assert revision=='candidate';return self.candidate.tree
+    def recover_local_pointer(self,revision,tree):
+        self.recovered.append((revision,tree))
+
+
+class ConnectedC(C):
+    def __init__(self):
+        super().__init__()
+        self.cas=True;self.record=[]
+    def record_stage(self,**kwargs):
+        self.record.append(kwargs)
+        self.intent=IntegrationRecord(kwargs['intent_id'],'p',kwargs['expected_revision_id'],
+                                      kwargs['staged_revision_id'],'sub','staged')
+        return self.intent
+    def cas_canonical_promotion(self,**kwargs):
+        return self.cas
+
+
+class ConfigurableQA:
+    def __init__(self,accepted=False):self.accepted=accepted;self.calls=[]
+    def verify(self,**kwargs):self.calls.append(kwargs);return self.accepted
+
+
+class ConfigurableRemote(Remote):
+    def verify_exact(self,**kwargs):
+        self.reads+=1
+        return getattr(self,'accepted',False)
+
+
+def connected(tmp_path):
+    original=submission(changes=(SimpleNamespace(path='src/wg/x.txt'),))
+    svc,source,old,remote=build(tmp_path,original)
+    c=ConnectedC();svc.state=c
+    tree=FakeCanonical(tmp_path);svc._tree=lambda project:tree
+    qa=ConfigurableQA();svc.qa=qa
+    return svc,c,tree,qa,remote
+
+
+def test_stage_persists_exact_verified_source_identity_and_replays(tmp_path):
+    svc,state,tree,qa,remote=connected(tmp_path)
+    request={'request_id':'r','submission_id':'sub','expected_revision_id':'base'}
+    result=svc.stageIntegration(Actor(),'p',request)
+    assert result['state']=='staged'
+    assert state.record[0]['staged_revision_id']=='candidate'
+    assert svc.stageIntegration(Actor(),'p',request)==result
+    state.intent=IntegrationRecord(result['intent_id'],'p','base','tampered','sub','staged')
+    with pytest.raises(StudioError,match='stage cache'):
+        svc.stageIntegration(Actor(),'p',request)
+
+
+def test_promotion_needs_exact_canonical_qa_remote_and_cas(tmp_path):
+    svc,state,tree,qa,remote=connected(tmp_path)
+    staged=svc.stageIntegration(Actor(),'p',{'request_id':'stage','submission_id':'sub','expected_revision_id':'base'})
+    intent=staged['intent_id']
+    request={'request_id':'promote','expected_revision_id':'base','qa_review_ids':['review']}
+    with pytest.raises(StudioError) as err:svc.promoteIntegration(Actor(),'p',intent,request)
+    assert err.value.code=='qa_failed'
+    qa.accepted=True
+    with pytest.raises(StudioError) as err:svc.promoteIntegration(Actor(),'p',intent,request)
+    assert err.value.code=='unknown_effect'
+    remote.accepted=True
+    state.cas=False
+    with pytest.raises(StudioError) as err:svc.promoteIntegration(Actor(),'p',intent,request)
+    assert err.value.code=='stale_revision'
+    state.cas=True
+    assert svc.promoteIntegration(Actor(),'p',intent,request)=={'source_revision_id':'candidate','state':'promoted'}
+    assert len(tree.promotions)==1
+
+
+def test_canonical_mismatch_and_corrupt_intent_are_rejected_before_QA(tmp_path):
+    svc,state,tree,qa,remote=connected(tmp_path)
+    result=svc.stageIntegration(Actor(),'p',{'request_id':'stage','submission_id':'sub','expected_revision_id':'base'})
+    req={'request_id':'promote','expected_revision_id':'stale','qa_review_ids':['review']}
+    with pytest.raises(StudioError) as exc:svc.promoteIntegration(Actor(),'p',result['intent_id'],req)
+    assert exc.value.code=='stale_revision'
+    state.intent=IntegrationRecord(result['intent_id'],'p','base','tampered','sub','staged')
+    with pytest.raises(StudioError) as exc:svc.promoteIntegration(Actor(),'p',result['intent_id'],req)
+    assert exc.value.code=='invalid'
+    assert qa.calls==[]
+
+
+def test_recovery_requires_verified_bytes_for_local_mirror(tmp_path):
+    svc,state,tree,qa,remote=connected(tmp_path)
+    state.canonical='candidate'
+    tree.current='base'
+    with pytest.raises(StudioError) as exc:svc.reconcileLocalMirror(project_id='p')
+    assert exc.value.code=='unknown_effect'
+    remote.accepted=True
+    assert svc.reconcileLocalMirror(project_id='p')=='candidate'
+    assert tree.recovered==[('candidate',tree.candidate.tree)]
+    tree.current='candidate'
+    assert svc.reconcileLocalMirror(project_id='p')=='candidate'
