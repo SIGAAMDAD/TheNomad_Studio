@@ -41,10 +41,17 @@ class CommandDeliveryPump:
         if len(projects)>100:
             raise RuntimeError("ready project count exceeds bounded publisher scan")
         totals={"published":0,"unknown":0,"rejected":0}
+        self.last_error=None
         for project_id in projects:
-            actor=self.actor_for_project(project_id)
-            provider=self.github_for_project(project_id)
-            result=self.workforce.publish_pending(actor,project_id,provider=provider)
+            try:
+                actor=self.actor_for_project(project_id)
+                provider=self.github_for_project(project_id)
+                result=self.workforce.publish_pending(actor,project_id,provider=provider)
+            except Exception as exc:
+                # One project's unavailable credentials/provider cannot starve
+                # independent project outboxes. Its durable rows remain queued.
+                self.last_error=exc
+                continue
             for key in totals:
                 totals[key]+=int(result[key])
         return totals
@@ -53,7 +60,6 @@ class CommandDeliveryPump:
         while not self._stop.is_set():
             try:
                 self.poll_once()
-                self.last_error=None
             except Exception as exc:
                 # A single unavailable provider must not invent success or
                 # discard the C outbox. The next bounded cycle retries QUEUED
