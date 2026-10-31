@@ -62,8 +62,7 @@
     "mode": {
       "enum": [
         "interactive",
-        "scheduled",
-        "event_work",
+        "browser_shift",
         "controller"
       ]
     },

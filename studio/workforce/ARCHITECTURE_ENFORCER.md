@@ -6,9 +6,9 @@ STATUS: REVIEW DRAFT. No active agent, browser-worker shift, source PR, spending
 
 Architecture Enforcer is a **governance duty**, not a 175th profession or an
 additional active paid worker:
-- Studio Production Director Production Director (Instant): inspect job scope and route potential architecture changes.
-- independent technical QA Independent Technical QA (Sol Medium): inspect actual PR diff, ABI/contracts, source ownership and negative cases independently.
-- authorized technical escalation Principal Engineer (Sol High): optional architecture analysis only when the owner requests or the issue warrants escalation.
+- Studio Production Director: inspect job scope and route potential architecture changes.
+- Independent Technical QA: inspect actual PR diff, ABI/contracts, source ownership and negative cases independently.
+- Principal Engineer (owner-authorized escalation): optional architecture analysis only when the owner requests or the issue warrants escalation.
 - Human Owner: sole authority to approve/reject an architecture change and accept source merges.
 
 The enforcer may **block work, request a contract, and initiate an
@@ -58,7 +58,7 @@ existing approved architecture contract:
    receipt be persisted against the exact source baseline.
 9. Studio Production Director rebases/rescopes the original work from the newly approved source
    baseline, updates the frozen contract, and revalidates ownership,
-   work branch, leases and compiler/test gates. W01–W04 then continue
+   work branch, leases and compiler/test gates. authorized R5R specialist shifts then continue
    ordinary code implementation; independent technical QA performs separate final QA.
 10. If rejected, retain the approved architecture and either implement
     a no-change alternative or cancel the dependent job. Never silently

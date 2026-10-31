@@ -1,6 +1,6 @@
 # Legacy ten-slot scheduler removal
 
-The old S00-S09 scheduler, V1 JSON job/slot/feature registries, Work-task-triggered prompts, cron-based dispatch and Issue-comment broker have been removed from `main`.
+The old S00-S09 scheduler, V1 JSON job/slot/feature registries, Work-task-triggered prompts, cron-based dispatch and Issue-comment broker have been removed from the PR #36 implementation tree (not yet merged to `main`).
 
 ## Current operational authority
 

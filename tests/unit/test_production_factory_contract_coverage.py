@@ -95,6 +95,10 @@ def test_build_environment_validates_required_storage_and_outbox(monkeypatch,tmp
     with pytest.raises(StudioError,match='publisher'):
         factory.build_from_environment()
     module.get_ports=lambda:replace(ports(),command_delivery=SimpleNamespace(start=lambda:None,stop=lambda:None))
+    with pytest.raises(StudioError,match='source target'):
+        factory.build_from_environment()
+    module.get_ports=lambda:replace(ports(),command_delivery=SimpleNamespace(start=lambda:None,stop=lambda:None),
+                                    source_target_for_project=lambda project: None)
     with pytest.raises(StudioError,match='durable database'):
         factory.build_from_environment()
     monkeypatch.setenv('STUDIO_APSW_DATABASE',str(tmp_path/'studio.sqlite'))

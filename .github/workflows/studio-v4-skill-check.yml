@@ -18,6 +18,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate canonical contract and role resource mirrors
+        run: python scripts/verify_canonical_mirrors.py
       - name: Validate V4 roster and event examples
         run: python skills/rpg-studio-all-roles/scripts/validate_v4.py
       - name: Validate V4 workflow invariants

@@ -1,7 +1,7 @@
-# Source repository ownership graph — Studio V3
+# Owner source repository routes — R5R
 
-STATUS: OWNER-DEFINED ROUTING DRAFT. No paid workers or source writes activated.
-Authoritative structured map: `studio/workforce/source_targets.v1.json`.
+Source routes are enforced at the authenticated R5R promotion boundary.
+Reviewed route contract: `src/studio/app/source_policy.py`; authenticated per-project source binding is required.
 
 ## Control plane and real source repositories
 
@@ -64,7 +64,7 @@ Example only, not admitted source work:
 ```
 
 The `workstream` and `repository` must agree with the reviewed
-source_targets registry. `mod_gameplay` additionally requires
+R5R source route policy. `mod_gameplay` additionally requires
 `language: "C#"`. Missing or mismatched workstream, branch,
 work branch or language makes an engineering job invalid.
 `baseline_sha` must be read from the actual source branch and
@@ -75,7 +75,7 @@ automatically frozen baselines.
 
 1. Studio Production Director admits an owner-approved scoped job with exact source repository,
    workstream, branch, baseline SHA, authorized paths and exclusivity.
-2. W01–W04 fetch from THAT source repository. The work branch is
+2. assigned specialists fetch from THAT source repository. The work branch is
    `studio/<JOB_ID>` **inside that same source repository**.
 3. The worker modifies only approved paths, commits/pushes only its
    work branch and opens/updates a source PR with base equal to the
@@ -86,7 +86,7 @@ automatically frozen baselines.
    receipt. Studio receives no implementation source.
 5. W02 can continue W01's branch after an exclusive-lease handoff;
    W03 performs difficult debugging; W04 integrates independently
-   verified systems under a separate integration job; W05 reviews
+   verified systems under a separate integration job; independent QA reviews
    the exact source revision without editing it.
 6. Only the owner accepts and merges changes **inside the source repo**.
 
@@ -154,7 +154,7 @@ PR revision through a verified GitHub owner review and merge. See
   remain in effect. Work spending/credentials are separately gated.
 - Studio Production Director must acquire source baselines and actual build evidence before
   admitting source jobs. The canonical source registry is not frozen.
-- The reusable W01-W05 native Work tasks may subscribe to *Studio hub
+- The reusable W01-independent QA native Work tasks may subscribe to *Studio hub
   work-order PR* activity as a control-plane signal. These PRs contain
   metadata only; their exact source repository, baseline SHA and source
   branch are validated against the approved job. All source code commits,

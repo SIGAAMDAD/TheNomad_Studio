@@ -12,7 +12,6 @@
     "build": "npm run generate && tsc -b && vite build",
     "check": "npm run generate && tsc --noEmit -p tsconfig.json",
     "test": "node --test ../tests/unit/k/*.test.mjs",
-    "verify-handoff": "node scripts/verify-handoff.mjs",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {

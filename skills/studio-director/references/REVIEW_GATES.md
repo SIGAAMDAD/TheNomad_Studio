@@ -38,4 +38,4 @@
 
 The reviewer must be a different author/run, not the same skill acting twice and calling itself independent. If no independent worker is available, mark `QA_PENDING`, provide the exact review brief, and do not promote `VERIFIED`. `REWORK` stays on the same original job, branch/PR and child issue, with issue-linked finding IDs and exact failing evidence.
 
-Architecture and canon owner approvals are separate from ordinary QA. A specialist may propose but cannot silently alter frozen interfaces or accepted world facts. `source_writes_enabled=false` in the live Studio config is authoritative until actually changed by an owner-approved action. No paid use or Work activation without authorization.
+Architecture and canon owner approvals are separate from ordinary QA. A specialist may propose but cannot silently alter frozen interfaces or accepted world facts. Source-write grants must be checked from current authenticated R5R project policy and trusted owner decisions. No paid use or Work activation without authorization.

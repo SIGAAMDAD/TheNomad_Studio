@@ -11,7 +11,6 @@ cd ui
 npm install
 npm run generate
 npm run check
-npm run verify-handoff
 npm run build
 npm test
 npm run dev

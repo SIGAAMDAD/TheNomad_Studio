@@ -80,7 +80,7 @@ def main() -> int:
     parser.add_argument('--timeout', type=int, default=120)
     args = parser.parse_args()
     root = args.root.resolve()
-    plan = args.plan.resolve() if args.plan else root/'studio/quality/prepilot/R5R_PRE_PILOT_PLAN.md'
+    plan = args.plan.resolve() if args.plan else root/'tests/prepilot/fixtures/R5R_PRE_PILOT_PLAN.md'
     args.out.mkdir(parents=True, exist_ok=True)
     missing_plan = not plan.is_file()
     ids = CASE_ID.findall(plan.read_text()) if not missing_plan else []

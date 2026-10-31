@@ -58,6 +58,7 @@ from .production_commands import ProductionCommands
 from .provider_commands import ProviderCommands
 from .projects import ProjectService
 from .releases import RecoveryCoordinator, ReleaseCoordinator
+from .source_policy import SourceTarget, validate_source_target
 
 
 @dataclass(frozen=True)
@@ -99,6 +100,8 @@ class TrustedPorts:
     bootstrap_credentials: tuple[str, ...] = ()
     command_delivery: Any | None = None
     github_webhook_hints: Any | None = None
+    # Resolved from authenticated deployment/project configuration, never chat input.
+    source_target_for_project: Callable[[str], SourceTarget] | None = None
 
 
 class ProjectProviderRouter:
@@ -294,6 +297,22 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
                                recover=lambda:None,
                                start=build_recovery.start,stop=build_recovery.stop))
         runtime=StudioRuntime(parts)
+        def verified_owner_route(project_id: str, revision_id: str):
+            # The trusted provider performs real GitHub SHA/tree readback.  The
+            # independent per-project binding is required before APSW CAS.
+            binding = ports.source_target_for_project
+            if not callable(binding):
+                raise StudioError('capability_unavailable', 'authenticated source binding absent')
+            target = binding(project_id)
+            verified = ports.verified_source_revision(project_id, revision_id)
+            from studio.storage.integration_state import VerifiedRevision
+            if not isinstance(verified, VerifiedRevision):
+                raise StudioError('unknown_effect', 'remote source revision not verified')
+            validate_source_target(target, project_id=project_id,
+                                   repo_id=verified.repo_id,
+                                   commit_sha=verified.commit_sha)
+            return verified
+
         app=StudioComposition(
             projects=ProjectService(ProjectAPSWStore(writer),ports.capability_probe),
             releases=ReleaseCoordinator(ReleaseAPSWStore(writer),
@@ -303,7 +322,7 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
             integrations=IntegrationService(
                 roster=ports.integration_roster,tree_root=source_root,
                 submissions=ports.integration_submissions,
-                state=IntegrationAPSWStore(writer,ports.verified_source_revision),
+                state=IntegrationAPSWStore(writer,verified_owner_route),
                 qa=ports.integration_qa,remote=ports.integration_remote))
         return assemble_operator_service(
             composition=app,governance=governance,organization=organization,
@@ -330,6 +349,9 @@ def build_from_environment() -> StudioComposition:
     if ports.command_delivery is None:
         raise StudioError("capability_unavailable",
                           "durable GitHub command outbox publisher is not configured")
+    if not callable(ports.source_target_for_project):
+        raise StudioError('capability_unavailable',
+                          'authenticated owner-approved source target provider is not configured')
     db=os.environ.get("STUDIO_APSW_DATABASE")
     blobs=os.environ.get("STUDIO_BLOB_ROOT")
     source=os.environ.get("STUDIO_SOURCE_ROOT")

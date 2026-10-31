@@ -1,6 +1,6 @@
 # Repository hygiene and branch ownership — R5R
 
-Audit date: 2026-10-31. The implementation branch contains 1,244 tracked blobs (approximately 5.2 MB of uncompressed content), with zero empty files and no tracked Node dependencies, Python bytecode, built distributions, coverage databases, ZIPs or SQLite state files.
+Audit baseline: PR #36 at c9e5be46370f33a3c2e0b6ebddfc89132c7be68b. The staged cleanup inventory contains 899 tracked files, versus 933 in the PR #36 baseline; Git verifies the exact final commit tree at publication.
 
 ## Branch roles
 
@@ -16,8 +16,8 @@ The root README and superseded V2/V3 ChatGPT scheduling, owner setup and product
 ## Current retention
 
 - R5R Python, API, database, C# host, frontend and canonical contracts remain installed.
-- Verified QA evidence and independently installable specialist manuals remain preserved.
-- The S00-S09 slot scheduler, its JSON control state, scheduled GitHub workflows and V1/Work-era worker prompts were removed from `main`. Existing operational branch history has not been rewritten.
+- Executable QA harnesses, exact-head CI evidence, and independently installable specialist manuals remain preserved; archived workgroup records remain in Git history.
+- The legacy scheduler and all remaining active legacy skill/policy instructions have been removed from this implementation branch, pending a separately authorized merge to `main`. Existing operational branch history has not been rewritten.
 
 ## Deletion criteria
 

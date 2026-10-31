@@ -17,14 +17,14 @@ Create one UTF-8 JSON file for **every substantive worker response**, even for p
 
 on branch `studio/runtime` of `SIGAAMDAD/TheNomad_Studio`. `department_id` must appear in `departments.v4.json`; path components must match `[a-zA-Z0-9_-]+`. Use a stable response/attempt identifier and a unique event ID such as `WORKER-20261027T201500Z-0001` or `CHAT-20261027T201500Z-<unique-suffix>`; no overwrites. Record `event_id` in JSON equal to basename. For different authored tasks, create separate event files even if the chat response summarizes several.
 
-Read the existing event index/issue before create. Use GitHub `create_file` with the exact branch; retry a transient branch-head collision only after readback confirms the file is absent and current authority is unchanged. If file exists, compare content and treat a semantically identical event as idempotent, not as a new attempt. Never rewrite another worker's ledger or the shared runtime queue; let the deterministic controller aggregate it.
+Read the existing event index/issue before create. Use GitHub `create_file` with the exact branch; retry a transient branch-head collision only after readback confirms the file is absent and current authority is unchanged. If file exists, compare content and treat a semantically identical event as idempotent, not as a new attempt. Never rewrite another worker's ledger or the shared runtime queue; let the R5R coordinator reconcile it.
 
 ## Required event fields
 
 See [`ledger_event.schema.json`](ledger_event.schema.json) for machine validation. Every event contains:
 
-- `schema_version: 4`, `event_id`, `recorded_at_utc` (offset-aware UTC timestamp), `request_id`, `department_id`, `role_id`, `mode` (`interactive`, `scheduled`, `event_work`, `controller`), `event_type`, `status`, `summary`.
-- `issue`: real `{repo, number, url}` or `null` if an issue was not created/authorized; `job_id` and `attempt_id` when known; `worker_slot` when known.
+- `schema_version: 4`, `event_id`, `recorded_at_utc` (offset-aware UTC timestamp), `request_id`, `department_id`, `role_id`, `mode` (`interactive`, `browser_shift`, `controller`), `event_type`, `status`, `summary`.
+- `issue`: real `{repo, number, url}` or `null` if an issue was not created/authorized; `job_id` and `attempt_id` when known; `worker_id` and `shift_id` when known.
 - `todo`: list of `{id, description, state, issue_number?}`. Use `OPEN`, `DOING`, `BLOCKED`, `DONE`; do not delete historic TODOs. A state change is a new event.
 - `dependencies`: list of `{issue_number, department_id, state, reason}`; link blockers to actual issues when available.
 - `artifacts`: list of `{kind, uri, revision, verified}`; source code uses exact commit SHA, content uses immutable doc revision or repository ref; assets include file hashes.

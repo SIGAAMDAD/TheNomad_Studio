@@ -36,6 +36,22 @@ class StudioV4Tests(unittest.TestCase):
         for dept,meta in self.registry['departments'].items():
             self.assertEqual(self.registry['role_to_department'][meta['head_role']],dept)
 
+    def test_reject_legacy_scheduled_slots(self):
+        for field, value in (("mode", "scheduled"), ("mode", "event_work"), ("worker_slot", "S01")):
+            candidate = copy.deepcopy(self.example)
+            candidate[field] = value
+            with self.assertRaises(AssertionError):
+                validate_event(candidate)
+
+    def test_browser_shift_requires_worker_and_shift(self):
+        candidate = copy.deepcopy(self.example)
+        candidate["mode"] = "browser_shift"
+        with self.assertRaises(AssertionError):
+            validate_event(candidate)
+        candidate["worker_id"] = "registered-worker"
+        candidate["shift_id"] = "verified-shift"
+        self.assertTrue(validate_event(candidate))
+
     def test_example_ledger(self):
         self.assertTrue(validate_event(self.example))
 
