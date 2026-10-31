@@ -4,7 +4,8 @@ COPY pyproject.toml README.md ./
 COPY src/ ./src/
 COPY CONTRACTS/ ./CONTRACTS/
 COPY schema/ ./schema/
-RUN python -m pip install --no-cache-dir '.[coordinator]'
+# Source-relative frozen schema resolution requires the copied /studio/src tree.
+RUN python -m pip install --no-cache-dir -e '.[coordinator]'
 ENV PYTHONUNBUFFERED=1
 ENV STUDIO_DATA_ROOT=/var/lib/nomad-studio
 VOLUME ["/var/lib/nomad-studio"]
