@@ -83,6 +83,8 @@ class GitHub:
                                 rate_governor=rate_governor,
                                 account_scope=binding.provider_account_id)
         self.prefix = f"/repos/{quote(channel.owner, safe='')}/{quote(channel.repo, safe='')}"
+        self._scan_cache_key = None
+        self._scan_cache_result = None
 
     def _request(self, method: str, path: str, data: dict | None = None, expect: tuple[int, ...] = (200,)):
         return self.api.request(method, self.prefix + path, data, expect=expect)
@@ -245,15 +247,23 @@ class GitHub:
         tip = self.branch_tip()
         if expected_head is not None and tip != git_sha(expected_head):
             raise RemoteUnknown("head changed during paginated read; rescan")
-        old = {}
-        if verified_ref_sha:
-            self._is_descendant(git_sha(verified_ref_sha), tip)
-            old = self._tree(verified_ref_sha)
-        current = self._tree(tip)
-        for path, blob in old.items():
-            if current.get(path) != blob:
-                raise RemoteUnknown("relay history deleted or overwritten an immutable file")
-        added = sorted(set(current).difference(old))
+        scan_key = (git_sha(verified_ref_sha) if verified_ref_sha else None, tip)
+        if self._scan_cache_key == scan_key:
+            # Git commit trees are immutable. Recheck the live branch ref on
+            # every page, but do not enumerate both complete trees again.
+            added, current = self._scan_cache_result
+        else:
+            old = {}
+            if verified_ref_sha:
+                self._is_descendant(git_sha(verified_ref_sha), tip)
+                old = self._tree(verified_ref_sha)
+            current = self._tree(tip)
+            for path, blob in old.items():
+                if current.get(path) != blob:
+                    raise RemoteUnknown("relay history deleted or overwritten an immutable file")
+            added = tuple(sorted(set(current).difference(old)))
+            self._scan_cache_key = scan_key
+            self._scan_cache_result = (added, current)
         if offset > len(added):
             raise IntegrationError("invalid", "poll offset exceeds verified enumeration")
         # Never advance cursor when the directory contains unrecognized files.

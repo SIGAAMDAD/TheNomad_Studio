@@ -47,15 +47,16 @@ class StudioRuntime:
 
     def stop(self) -> None:
         self.ready = False
-        errors: list[BaseException] = []
-        for component in reversed(self._started):
+        # A still-running publisher must not lose its APSW writer while a
+        # blocked remote request may eventually finish and commit state.
+        # Keep failed dependencies started so shutdown can safely retry.
+        while self._started:
+            component=self._started[-1]
             try:
                 component.stop()
             except Exception as exc:
-                errors.append(exc)
-        self._started.clear()
-        if errors:
-            raise StudioError("internal", f"{len(errors)} component(s) failed to stop") from errors[0]
+                raise StudioError("internal", f"{component.name} failed to stop") from exc
+            self._started.pop()
 
     def __enter__(self) -> "StudioRuntime":
         self.start()
