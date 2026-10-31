@@ -34,7 +34,7 @@ jobs:
           python -m compileall -q src tests qa scripts
           python scripts/verify_workforce_schema.py
       - name: Integrated regression, isolation, adversarial and acceptance tests
-        run: python -m pytest -q tests/unit tests/integration tests/acceptance --cov=src/studio --cov-report=xml:python-coverage.xml --junitxml=python-results.xml
+        run: python -m pytest -q tests/unit tests/integration tests/acceptance --cov=src/studio --cov-fail-under=90 --cov-report=xml:python-coverage.xml --junitxml=python-results.xml
       - name: Verify APSW is actually installed
         run: python -c 'import apsw; print("APSW", apsw.apswversion())'
       - uses: actions/upload-artifact@v4

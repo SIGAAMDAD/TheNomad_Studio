@@ -172,5 +172,5 @@ def test_owner_decision_replay_and_unknown_snapshot_are_rejected(governance):
     assert svc.requestDecision(actor(),'p',req)==first
     with pytest.raises(GovernanceError,match='Canon'):
         svc.requestDecision(actor(),'p',{**req,'request_id':'decision2','snapshot_id':'no-such-canon'})
-    with pytest.raises(GovernanceError,match='intent'):
-        svc.prepare_publication_effect(actor(),'p',b,'unobserved-intent')
+    with pytest.raises(GovernanceError,match='staged'):
+        svc.diffBible(actor(),'p',b)
