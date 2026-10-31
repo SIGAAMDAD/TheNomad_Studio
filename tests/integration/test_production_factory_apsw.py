@@ -236,3 +236,37 @@ def test_webhook_ingress_is_composed_after_c_and_signals_readback(tmp_path):
             "WHERE project_id='p1' AND action_owner='WG-G'"))=={'n':1}
     finally:
         app.projects.store.writer.close()
+
+
+def test_trusted_r5r_source_target_fences_remote_revision_before_cas(tmp_path):
+    from studio.app.source_policy import SourceTarget
+    from studio.storage.integration_state import VerifiedRevision
+    from studio.app.errors import StudioError
+
+    approved = SourceTarget('project', 'rendering_engine',
+                            'SIGAAMDAD/Terrain3D', 'Terrain3D_NomadRenderer', 'repo')
+    observed = {'repo_id': 'repo', 'target': approved}
+    config = dataclasses.replace(
+        ports(),
+        source_target_for_project=lambda project: observed['target'],
+        verified_source_revision=lambda project, revision:
+            VerifiedRevision(observed['repo_id'], 'a'*40, revision),
+    )
+    app = assemble_live_studio(
+        database_path=tmp_path/'routed.sqlite', blob_root=tmp_path/'blobs',
+        source_root=tmp_path/'sources', contracts_root='CONTRACTS', ports=config, fresh=True)
+    try:
+        readback = app.integrations.state.verified_revision
+        assert readback('project', 'b'*64) == VerifiedRevision('repo', 'a'*40, 'b'*64)
+        with pytest.raises(StudioError, match='project source target'):
+            readback('foreign-project', 'b'*64)
+        observed['repo_id'] = 'different'
+        with pytest.raises(StudioError, match='different repository'):
+            readback('project', 'b'*64)
+        observed['repo_id'] = 'repo'
+        observed['target'] = dataclasses.replace(approved, ref='unauthorized-branch')
+        with pytest.raises(StudioError, match='owner-selected target'):
+            readback('project', 'b'*64)
+    finally:
+        if app.runtime.ready:
+            app.runtime.stop()

@@ -19,7 +19,7 @@ Pick the single primary owner of each task. Read that role file before execution
 | [Technical Producer](rpg-technical-producer.md) (`rpg-technical-producer`) | Coordinate engine/tooling deliveries, ABI gates, build dependencies, and integration sequence |
 | [Production Coordinator](rpg-production-coordinator.md) (`rpg-production-coordinator`) | Keep task metadata, milestones, meeting decisions, assets, and handoffs traceable |
 | [External Development Producer](rpg-external-development-producer.md) (`rpg-external-development-producer`) | Specify and accept outsourced art, audio, animation, and engineering deliverables |
-| [Autonomous Workgroup Controller](rpg-autonomous-workgroup-controller.md) (`rpg-autonomous-workgroup-controller`) | Own task approval manifests dispatch boundaries role-to-task routing and audit records for scheduled or agent-based workers. |
+| [Autonomous Workgroup Controller](rpg-autonomous-workgroup-controller.md) (`rpg-autonomous-workgroup-controller`) | Own task approval manifests dispatch boundaries role-to-task routing and audit records for registered browser workers and response-bound shifts. |
 
 ## Game Design (25)
 

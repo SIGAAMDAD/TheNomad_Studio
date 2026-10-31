@@ -4,7 +4,7 @@
 
 At **23:00 `America/Chicago`**, a configured report process must reconcile authenticated R5R project/worker/shift/task/receipt state, GitHub Issues, exact source PRs/commits/CI/QA and versioned Drive artifacts. Reports are derived from real evidence, not a ten-slot scheduled ChatGPT workforce.
 
-A Skill alone cannot create the schedule or send the email. The scheduled task must be created/verified through real task controls; Gmail delivery requires an authorized connector and a verified recipient. Record actual sent message ID. If delivery is impossible, retain the report and mark `DAILY_EMAIL_BLOCKED`; don't claim it was delivered.
+A Skill alone cannot create the schedule or send the email. An externally configured report service (if actually present) must be verified independently; Gmail delivery requires an authorized connector and a verified recipient. Record actual sent message ID. If delivery is impossible, retain the report and mark `DAILY_EMAIL_BLOCKED`; don't claim it was delivered.
 
 ## Reconciliation algorithm
 

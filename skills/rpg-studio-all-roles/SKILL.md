@@ -27,7 +27,7 @@ Operate as the relevant **department head or specialist**, with The Nomad's huma
 ## Source and authority
 
 - Current control plane: `src/studio/` and the authenticated R5R operator API, with APSW durable state and GitHub immutable source/receipt readback.
-- Source workstreams are selected from verified `studio/workforce/source_targets.v1.json`, not guessed from role name: `SIGAAMDAD/Terrain3D`, `NomadFramework`, `The_Nomad`, `NomadMain`, `TheNomad_GOAP`.
+- Source workstreams must match authenticated R5R project bindings and the owner-selected route policy in `src/studio/app/source_policy.py`, never inferred from a role name: `SIGAAMDAD/Terrain3D`, `NomadFramework`, `The_Nomad`, `NomadMain`, `TheNomad_GOAP`.
 - Honor actual authenticated project policy, source grants and owner approval; do not invent Work-task or paid API worker execution.
 - Code is `SUBMITTED` only with a real final source commit plus matching report. `VERIFIED` additionally requires passing exact-SHA CI and independent QA; the human owner controls final acceptance. Creative and asset outputs have their own evidence rules in [Review gates](references/REVIEW_GATES.md).
 - Studio skills and instructions cannot themselves launch chats, push commits, schedule tasks or send mail. Invoke actual available connected actions; report `NOT_EXECUTED` when unavailable.

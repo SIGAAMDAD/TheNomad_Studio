@@ -58,7 +58,13 @@ def validate_event(event, filename=None, registry=None):
     assert date.tzinfo is not None and date.utcoffset() == dt.timedelta(0), "UTC timestamp required"
     assert event["department_id"] in registry["departments"]
     assert registry["role_to_department"].get(event["role_id"]) == event["department_id"], "role ledger must use home department"
-    assert event["mode"] in {"interactive", "scheduled", "event_work", "controller"}
+    assert event["mode"] in {"interactive", "browser_shift", "controller"}
+    assert "worker_slot" not in event, "legacy scheduled slot is not a worker identity"
+    assert set(event) <= set(load_json(ROOT / "references/ledger_event.schema.json")["properties"]), "unrecognized ledger field"
+    for name in ("worker_id", "shift_id"):
+        assert event.get(name) is None or (isinstance(event[name], str) and event[name].strip()), name
+    if event["mode"] == "browser_shift":
+        assert event.get("worker_id") and event.get("shift_id"), "active response identity required"
     assert event["event_type"] in EVENT_TYPES and event["status"] in STATES
     assert isinstance(event["summary"], str) and event["summary"].strip()
     assert event["issue"] is None or (isinstance(event["issue"], dict) and isinstance(event["issue"].get("number"), int) and event["issue"].get("url", "").startswith("https://"))
