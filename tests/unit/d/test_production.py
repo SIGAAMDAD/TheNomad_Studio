@@ -156,9 +156,17 @@ def fixture_db(db):
             db.execute("""INSERT INTO worker_conversations(project_id,worker_id,principal_id,role_id,browser_chat_ref,state)
                          VALUES (?,?,?,?,?,'registered')""",
                        (project,member,'owner',f'role-{project}',f'chat-{project}-{member}'))
-            db.execute("""INSERT INTO worker_shifts(project_id,shift_id,worker_id,state,created_at,observed_at,hello_commit_sha,hello_digest)
-                         VALUES (?,?,?,'active','now','now',?,?)""",
-                       (project,f'shift-{project}-{member}',member,'a'*40,'b'*64))
+            db.execute("""INSERT INTO worker_lineages(
+                project_id,worker_id,root_worker_id,parent_worker_id,lineage_digest)
+                VALUES(?,?,?,NULL,?)""",
+                (project,member,member,hashlib.sha256(member.encode()).hexdigest()))
+            db.execute("""INSERT INTO worker_shifts(project_id,shift_id,worker_id,state,created_at)
+                         VALUES(?,?,?,'awaiting_hello','now')""",
+                       (project,f'shift-{project}-{member}',member))
+            db.execute("""UPDATE worker_shifts SET state='active',observed_at='now',
+                         hello_commit_sha=?,hello_digest=? WHERE project_id=? AND worker_id=?
+                         AND shift_id=? AND state='awaiting_hello'""",
+                       ('a'*40,'b'*64,project,member,f'shift-{project}-{member}'))
         for cabal in (f'{project}-cabal', f'{project}-reserve'):
             db.execute('INSERT INTO cabals VALUES (?,?,?,?,?)', (project,cabal,cabal,'charter','active'))
             for member in ('w1', 'w2'):
@@ -253,7 +261,7 @@ class ProductionTests(unittest.TestCase):
         self.assertEqual(self.storage.db.execute("SELECT reserved_amount FROM budgets WHERE project_id='p1'").fetchone()[0],3)
         prepared=self.svc.prepared_assignment(self.actor,'p1',task,1)
         self.assertEqual((prepared.worker_id, prepared.source_revision_id),('w1','rev1'))
-        self.assertEqual(self.storage.db.execute('SELECT COUNT(*) FROM sessions').fetchone()[0],0)
+        self.assertEqual(self.storage.db.execute('SELECT COUNT(*) FROM worker_shifts').fetchone()[0],4)
         self.assertEqual(self.storage.db.execute('SELECT COUNT(*) FROM relay_messages').fetchone()[0],0)
         self.assertFault('stale_revision',lambda:self.svc.dispatchTask(self.actor,'p1',task,
                          {'request_id':'dispatch2','expected_revision':1,'worker_id':'w2'}))
@@ -442,7 +450,7 @@ class ProductionTests(unittest.TestCase):
         assert row['remote_path']==f'.nomad/relays/p1/mail/w1/{result["command_id"]}.json'
         assert json.loads(row['envelope_json'])['shift_id']=='shift-p1-w1'
         assert self.storage.db.execute('SELECT COUNT(*) FROM shift_assignments').fetchone()[0]==1
-        assert self.storage.db.execute('SELECT COUNT(*) FROM sessions').fetchone()[0]==0
+        assert self.storage.db.execute('SELECT COUNT(*) FROM worker_shifts').fetchone()[0]==4
         assert self.svc.dispatchTask(self.actor,'p1',task,{'request_id':'dispatch','expected_revision':1,'worker_id':'w1'})==result
         assert self.storage.db.execute('SELECT COUNT(*) FROM command_outbox').fetchone()[0]==1
 

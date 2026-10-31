@@ -160,7 +160,7 @@ class OrganizationTests(unittest.TestCase):
         self.assertEqual(set(self.db.tables['deliberations'][("P1",d['deliberation_id'])]),
                          {'project_id','deliberation_id','cabal_id','subject_digest','record_digest','state'})
         draft=self.svc.build_cabal_relay_draft(ACTOR,'P1',cabal,kind='HANDOFF',
-                                 content_digest=HASH,target_session_id='S1')
+                                 content_digest=HASH,target_shift_id='S1')
         self.assertEqual(draft['delivery_state'],'DRAFT_NOT_PUBLISHED')
 
     def test_dependency_preflight_exact_versions_and_project_profile(self):

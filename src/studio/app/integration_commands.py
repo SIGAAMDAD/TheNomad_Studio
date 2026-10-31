@@ -21,7 +21,7 @@ from .projects import Actor, request_hash
 class Submission:
     submission_id: str
     project_id: str
-    author_session_id: str
+    author_shift_id: str
     group: str
     handoff: Handoff
     remote_bytes_verified: bool
@@ -92,7 +92,7 @@ class IntegrationService:
             candidate = tree.inspect(intent_id)
             if (candidate.revision_id != existing.staged_revision_id or
                     candidate.submission_ids != (source.submission_id,) or
-                    candidate.author_ids != (source.author_session_id,) or
+                    candidate.author_ids != (source.author_shift_id,) or
                     candidate.expected_revision_id != expected):
                 raise StudioError("conflict", "stage cache replay differs from persisted intent")
             stored = self.state.record_stage(
@@ -107,7 +107,7 @@ class IntegrationService:
         if expected != tree.current_revision():
             raise StudioError("stale_revision", "local canonical source needs recovery")
         candidate = tree.stage(intent_id=intent_id, project_id=project_id,
-                               submissions=[(source.submission_id, source.author_session_id,
+                               submissions=[(source.submission_id, source.author_shift_id,
                                              source.handoff)])
         record = self.state.record_stage(
             project_id=project_id, principal_id=actor.principal_id,

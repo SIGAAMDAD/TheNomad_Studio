@@ -22,14 +22,14 @@ TOKEN = lambda: 'fixture-token-not-real'
 
 def envelope(mid='msg1', project='p1', recipient='s1', kind='NOTE', from_id='s1'):
     return canonical(dict(protocol_version='1', message_id=mid, project_id=project, channel_id='chan',
-        from_session_id=from_id, to_session_id=recipient, task_id='task1', lease_generation=1,
+        from_shift_id=from_id, to_shift_id=recipient, task_id='task1', lease_generation=1,
         kind=kind, issued_at='2026-10-30T00:00:00Z', payload_digest='d'*64, payload_ref='sha256:'+'d'*64,
         canon_snapshot_id='canon1', contract_digest='e'*64))
 
 
 def receipt(mid='msg1', rid='r1', project='p1', recipient='s1'):
     return canonical(dict(protocol_version='1', receipt_id=rid, project_id=project, channel_id='chan',
-        message_id=mid, recipient_session_id=recipient, kind='SEEN', checkpoint_digest=None,
+        message_id=mid, recipient_shift_id=recipient, kind='SEEN', checkpoint_digest=None,
         issued_at='2026-10-30T00:00:00Z', observed_message_sha256='b'*64, contract_digest='e'*64))
 
 

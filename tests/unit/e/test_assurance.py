@@ -176,22 +176,39 @@ class AssuranceTests(unittest.TestCase):
         self.sql("INSERT INTO features(project_id,feature_id,brief_digest,snapshot_id,state) VALUES('P','feature','brief','canon','running')")
         self.acceptance = digest(b"acceptance-profile")
         self.sql("INSERT INTO tasks(project_id,task_id,feature_id,cabal_id,snapshot_id,acceptance_digest,state) VALUES('P','task','feature','cabal','canon',?,'submitted')", (self.acceptance,))
-        self.sql("INSERT INTO leases(project_id,task_id,generation,worker_id,expires_at,status) VALUES('P','task',1,'worker','2030','active')")
+        self.sql("INSERT INTO leases(project_id,task_id,generation,worker_id,expires_at,status) VALUES('P','task',1,'author-worker','2030','active')")
         self.sql("INSERT INTO package_revisions(package_digest,package_id,package_version,manifest_digest,kind,state) VALUES('pkg','pkg','1','manifest','other','installed')")
-        for session, principal in [("author-session", "author"), ("descendant-session", "descendant"),
-                                   ("independent-session", "independent")]:
-            self.sql("""INSERT INTO sessions(project_id,session_id,author_principal_id,task_id,lease_generation,package_digest,snapshot_id,state)
-                      VALUES('P',?,?,'task',1,'pkg','canon','prepared')""", (session, principal))
-        for session, root in [("author-session", "author-session"), ("descendant-session", "author-session"),
-                              ("independent-session", "independent-session")]:
-            self.sql("INSERT INTO session_lineages(project_id,session_id,root_session_id,lineage_digest) VALUES('P',?,?,?)",
-                     (session, root, digest((session+root).encode())))
+        for worker, principal, root in [
+            ("author-worker","author","author-worker"),
+            ("descendant-worker","descendant","author-worker"),
+            ("independent-worker","independent","independent-worker"),
+        ]:
+            self.sql("INSERT INTO worker_conversations(project_id,worker_id,principal_id,"
+                     "role_id,browser_chat_ref,state) VALUES('P',?,?,? ,?,'registered')",
+                     (worker,principal,"role",worker+"-browser-chat"))
+        for worker, root in [
+            ("author-worker","author-worker"),
+            ("descendant-worker","author-worker"),
+            ("independent-worker","independent-worker")
+        ]:
+            self.sql("INSERT INTO worker_lineages(project_id,worker_id,root_worker_id,lineage_digest)"
+                     "VALUES('P',?,?,?)",(worker,root,digest((worker+root).encode())))
+        for shift, worker in [
+            ("author-shift","author-worker"),
+            ("descendant-shift","descendant-worker"),
+            ("independent-shift","independent-worker")
+        ]:
+            self.sql("INSERT INTO worker_shifts(project_id,shift_id,worker_id,state,created_at) "
+                     "VALUES('P',?,?,'awaiting_hello','now')",(shift,worker))
+        self.sql("INSERT INTO shift_assignments(project_id,assignment_id,shift_id,"
+                 "worker_id,task_id,lease_generation,state) "
+                 "VALUES('P','assignment','author-shift','author-worker','task',1,'submitted')")
         self.sql("INSERT INTO project_repositories(project_id,repo_id,provider_key,remote_ref) VALUES('P','repo','github','main')")
         self.sql("INSERT INTO source_revisions(project_id,revision_id,repo_id,commit_sha,tree_digest,state) VALUES('P','rev','repo','abc123','tree123','staged')")
         self.source_bytes = b'{"valid":true}'
         self.put_artifact("artifact", self.source_bytes)
-        self.sql("""INSERT INTO submissions(project_id,submission_id,session_id,task_id,lease_generation,source_revision_id,manifest_digest,state)
-                  VALUES('P','sub','author-session','task',1,'rev','sub-manifest','staged')""")
+        self.sql("""INSERT INTO submissions(project_id,submission_id,shift_id,task_id,lease_generation,source_revision_id,manifest_digest,state)
+                  VALUES('P','sub','author-shift','task',1,'rev','sub-manifest','staged')""")
         self.sql("UPDATE submissions SET state='submitted' WHERE project_id='P' AND submission_id='sub'")
         self.sql("INSERT INTO submission_artifacts(project_id,submission_id,artifact_id) VALUES('P','sub','artifact')")
         self.conn.execute("PRAGMA foreign_keys=ON")
@@ -199,15 +216,15 @@ class AssuranceTests(unittest.TestCase):
     def put_artifact(self, artifact_id, contents):
         content_digest = self.vault.put_verified(project_id="P", content=contents)
         manifest = {"project_id": "P", "artifact_id": artifact_id, "kind": "json", "content_digest": content_digest,
-                    "manifest_digest": "declared-self-digest", "producer_session_id": "author-session",
+                    "manifest_digest": "declared-self-digest", "producer_shift_id": "author-shift",
                     "source_revision_id": "rev", "canon_snapshot_id": "canon",
                     "validator_digest": digest(b"installed-json-validator"), "storage_key": "blob-key"}
         manifest_digest = self.vault.put_verified(project_id="P", content=canon(manifest))
         for d, purpose in [(content_digest, "artifact-content"), (manifest_digest, "artifact-manifest")]:
             self.sql("INSERT OR IGNORE INTO blobs(content_digest,byte_size,store_key,durability) VALUES(?,?,?,'verified')", (d, len(self.vault.get(project_id="P", digest=d)), d))
             self.sql("INSERT OR IGNORE INTO project_blobs(project_id,content_digest,purpose) VALUES('P',?,?)", (d, purpose))
-        self.sql("""INSERT INTO artifacts(project_id,artifact_id,kind,content_digest,manifest_digest,producer_session_id,source_revision_id,snapshot_id)
-                  VALUES('P',?,'json',?,?,'author-session','rev','canon')""", (artifact_id, content_digest, manifest_digest))
+        self.sql("""INSERT INTO artifacts(project_id,artifact_id,kind,content_digest,manifest_digest,producer_shift_id,source_revision_id,snapshot_id)
+                  VALUES('P',?,'json',?,?,'author-shift','rev','canon')""", (artifact_id, content_digest, manifest_digest))
 
     def request(self, request_id="r1"):
         return self.svc.requestReview(self.author, "P", {"request_id": request_id, "submission_id": "sub", "acceptance_digest": self.acceptance})["review_id"]
@@ -242,11 +259,11 @@ class AssuranceTests(unittest.TestCase):
         self.assertFalse(self.conn.execute("SELECT 1 FROM qa_reviews").fetchone())
 
     def test_03_same_root_descendant_rejected(self):
-        self.directory.selected = ReviewerAssignment("descendant", "descendant-session")
+        self.directory.selected = ReviewerAssignment("descendant", "author-worker")
         self.rejected("forbidden", self.request)
 
     def test_04_separate_worker_lineage_allowed(self):
-        self.directory.selected = ReviewerAssignment("independent", "independent-session")
+        self.directory.selected = ReviewerAssignment("independent", "independent-worker")
         rid = self.request()
         self.assertEqual(self.verdict(rid, principal=self.actor("independent", "P"))["verdict"], "pass")
 

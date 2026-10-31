@@ -45,6 +45,15 @@ CREATE TABLE worker_conversations(
  FOREIGN KEY(project_id) REFERENCES projects(project_id),
  FOREIGN KEY(principal_id) REFERENCES principals(principal_id),
  FOREIGN KEY(role_id) REFERENCES specialist_roles(role_id)) STRICT;
+-- Provenance belongs to persistent worker conversations.
+CREATE TABLE worker_lineages(
+ project_id TEXT NOT NULL,worker_id TEXT NOT NULL,
+ root_worker_id TEXT NOT NULL,parent_worker_id TEXT,lineage_digest TEXT NOT NULL,
+ PRIMARY KEY(project_id,worker_id),
+ FOREIGN KEY(project_id,worker_id) REFERENCES worker_conversations(project_id,worker_id),
+ FOREIGN KEY(project_id,root_worker_id) REFERENCES worker_conversations(project_id,worker_id),
+ FOREIGN KEY(project_id,parent_worker_id) REFERENCES worker_conversations(project_id,worker_id)
+) STRICT;
 CREATE TABLE worker_shifts(
  project_id TEXT NOT NULL,shift_id TEXT NOT NULL,worker_id TEXT NOT NULL,
  state TEXT NOT NULL CHECK(state IN ('awaiting_hello','active','stopping','finished','interrupted','unknown')),
@@ -92,11 +101,10 @@ CREATE TRIGGER shift_assignment_matches_lease BEFORE INSERT ON shift_assignments
  BEGIN SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM leases l WHERE l.project_id=NEW.project_id
  AND l.task_id=NEW.task_id AND l.generation=NEW.lease_generation AND l.worker_id=NEW.worker_id)
  THEN RAISE(ABORT,'shift assignment worker differs from lease') END; END;
-CREATE TABLE sessions(project_id TEXT NOT NULL,session_id TEXT NOT NULL,author_principal_id TEXT NOT NULL,task_id TEXT NOT NULL,lease_generation INTEGER NOT NULL,session_mode TEXT NOT NULL DEFAULT 'manual_chatgpt_browser' CHECK(session_mode='manual_chatgpt_browser'),browser_chat_ref TEXT,package_digest TEXT NOT NULL,snapshot_id TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN ('prepared','awaiting_manual_start','active_observed','quiet','stop_requested','completed_verified','failed_verified','unknown')),PRIMARY KEY(project_id,session_id),FOREIGN KEY(project_id,task_id,lease_generation) REFERENCES leases(project_id,task_id,generation),FOREIGN KEY(author_principal_id) REFERENCES principals(principal_id),FOREIGN KEY(project_id,snapshot_id) REFERENCES canon_snapshots(project_id,snapshot_id),FOREIGN KEY(package_digest) REFERENCES package_revisions(package_digest)) STRICT;
-CREATE TABLE checkpoints(project_id TEXT NOT NULL,checkpoint_id TEXT NOT NULL,session_id TEXT NOT NULL,context_digest TEXT NOT NULL,relay_cursor TEXT,recorded_at TEXT NOT NULL,PRIMARY KEY(project_id,checkpoint_id),FOREIGN KEY(project_id,session_id) REFERENCES sessions(project_id,session_id)) STRICT;
+CREATE TABLE checkpoints(project_id TEXT NOT NULL,checkpoint_id TEXT NOT NULL,shift_id TEXT NOT NULL,context_digest TEXT NOT NULL,relay_cursor TEXT,recorded_at TEXT NOT NULL,PRIMARY KEY(project_id,checkpoint_id),FOREIGN KEY(project_id,shift_id) REFERENCES worker_shifts(project_id,shift_id)) STRICT;
 CREATE TABLE relay_messages(
  project_id TEXT NOT NULL,message_id TEXT NOT NULL,channel_id TEXT NOT NULL,
- from_session_id TEXT,to_session_id TEXT NOT NULL,
+ from_shift_id TEXT,to_shift_id TEXT NOT NULL,
  kind TEXT NOT NULL CHECK(kind IN ('HELLO','ASSIGN','NOTE','QUESTION','ANSWER','EVIDENCE','REVIEW','HANDOFF','STOP','STATUS')),
  task_id TEXT NOT NULL,lease_generation INTEGER NOT NULL CHECK(lease_generation>0),
  canon_snapshot_id TEXT NOT NULL,contract_digest TEXT NOT NULL,envelope_digest TEXT NOT NULL,
@@ -104,18 +112,18 @@ CREATE TABLE relay_messages(
  delivery_state TEXT NOT NULL CHECK(delivery_state IN ('queued','published','observed','unknown','rejected')),ack_at TEXT,
  PRIMARY KEY(project_id,message_id),UNIQUE(project_id,message_id,channel_id),UNIQUE(project_id,remote_path),
  FOREIGN KEY(project_id,channel_id) REFERENCES relay_channels(project_id,channel_id),
- FOREIGN KEY(project_id,from_session_id) REFERENCES sessions(project_id,session_id),
- FOREIGN KEY(project_id,to_session_id) REFERENCES sessions(project_id,session_id),
+ FOREIGN KEY(project_id,from_shift_id) REFERENCES worker_shifts(project_id,shift_id),
+ FOREIGN KEY(project_id,to_shift_id) REFERENCES worker_shifts(project_id,shift_id),
  FOREIGN KEY(project_id,task_id,lease_generation) REFERENCES leases(project_id,task_id,generation),
  FOREIGN KEY(project_id,canon_snapshot_id) REFERENCES canon_snapshots(project_id,snapshot_id)
 ) STRICT;
-CREATE TABLE tool_operations(project_id TEXT NOT NULL,operation_id TEXT NOT NULL,session_id TEXT NOT NULL,grant_id TEXT NOT NULL,entrypoint_id TEXT NOT NULL,lease_generation INTEGER NOT NULL,state TEXT NOT NULL CHECK(state IN ('prepared','running','observed','unknown','failed','canceled')),receipt_digest TEXT,PRIMARY KEY(project_id,operation_id),FOREIGN KEY(project_id,session_id) REFERENCES sessions(project_id,session_id),FOREIGN KEY(project_id,grant_id) REFERENCES tool_grants(project_id,grant_id)) STRICT;
+CREATE TABLE tool_operations(project_id TEXT NOT NULL,operation_id TEXT NOT NULL,shift_id TEXT NOT NULL,grant_id TEXT NOT NULL,entrypoint_id TEXT NOT NULL,lease_generation INTEGER NOT NULL,state TEXT NOT NULL CHECK(state IN ('prepared','running','observed','unknown','failed','canceled')),receipt_digest TEXT,PRIMARY KEY(project_id,operation_id),FOREIGN KEY(project_id,shift_id) REFERENCES worker_shifts(project_id,shift_id),FOREIGN KEY(project_id,grant_id) REFERENCES tool_grants(project_id,grant_id)) STRICT;
 
 CREATE TABLE source_revisions(project_id TEXT NOT NULL,revision_id TEXT NOT NULL,repo_id TEXT NOT NULL,commit_sha TEXT NOT NULL,tree_digest TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN ('staged','canonical','superseded')),PRIMARY KEY(project_id,revision_id),UNIQUE(project_id,repo_id,commit_sha),FOREIGN KEY(project_id,repo_id) REFERENCES project_repositories(project_id,repo_id)) STRICT;
-CREATE TABLE artifacts(project_id TEXT NOT NULL,artifact_id TEXT NOT NULL,kind TEXT NOT NULL,content_digest TEXT NOT NULL,manifest_digest TEXT NOT NULL,producer_session_id TEXT,source_revision_id TEXT,snapshot_id TEXT,PRIMARY KEY(project_id,artifact_id),FOREIGN KEY(project_id) REFERENCES projects(project_id),FOREIGN KEY(content_digest) REFERENCES blobs(content_digest),FOREIGN KEY(manifest_digest) REFERENCES blobs(content_digest),FOREIGN KEY(project_id,producer_session_id) REFERENCES sessions(project_id,session_id),FOREIGN KEY(project_id,source_revision_id) REFERENCES source_revisions(project_id,revision_id),FOREIGN KEY(project_id,snapshot_id) REFERENCES canon_snapshots(project_id,snapshot_id)) STRICT;
-CREATE TABLE submissions(project_id TEXT NOT NULL,submission_id TEXT NOT NULL,session_id TEXT NOT NULL,task_id TEXT NOT NULL,lease_generation INTEGER NOT NULL,source_revision_id TEXT,manifest_digest TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN ('staged','submitted','qa_passed','qa_failed','integrated','rejected')),PRIMARY KEY(project_id,submission_id),FOREIGN KEY(project_id,session_id) REFERENCES sessions(project_id,session_id),FOREIGN KEY(project_id,task_id,lease_generation) REFERENCES leases(project_id,task_id,generation),FOREIGN KEY(project_id,source_revision_id) REFERENCES source_revisions(project_id,revision_id)) STRICT;
+CREATE TABLE artifacts(project_id TEXT NOT NULL,artifact_id TEXT NOT NULL,kind TEXT NOT NULL,content_digest TEXT NOT NULL,manifest_digest TEXT NOT NULL,producer_shift_id TEXT,source_revision_id TEXT,snapshot_id TEXT,PRIMARY KEY(project_id,artifact_id),FOREIGN KEY(project_id) REFERENCES projects(project_id),FOREIGN KEY(content_digest) REFERENCES blobs(content_digest),FOREIGN KEY(manifest_digest) REFERENCES blobs(content_digest),FOREIGN KEY(project_id,producer_shift_id) REFERENCES worker_shifts(project_id,shift_id),FOREIGN KEY(project_id,source_revision_id) REFERENCES source_revisions(project_id,revision_id),FOREIGN KEY(project_id,snapshot_id) REFERENCES canon_snapshots(project_id,snapshot_id)) STRICT;
+CREATE TABLE submissions(project_id TEXT NOT NULL,submission_id TEXT NOT NULL,shift_id TEXT NOT NULL,task_id TEXT NOT NULL,lease_generation INTEGER NOT NULL,source_revision_id TEXT,manifest_digest TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN ('staged','submitted','qa_passed','qa_failed','integrated','rejected')),PRIMARY KEY(project_id,submission_id),FOREIGN KEY(project_id,shift_id) REFERENCES worker_shifts(project_id,shift_id),FOREIGN KEY(project_id,task_id,lease_generation) REFERENCES leases(project_id,task_id,generation),FOREIGN KEY(project_id,source_revision_id) REFERENCES source_revisions(project_id,revision_id)) STRICT;
 CREATE TABLE submission_artifacts(project_id TEXT NOT NULL,submission_id TEXT NOT NULL,artifact_id TEXT NOT NULL,PRIMARY KEY(project_id,submission_id,artifact_id),FOREIGN KEY(project_id,submission_id) REFERENCES submissions(project_id,submission_id),FOREIGN KEY(project_id,artifact_id) REFERENCES artifacts(project_id,artifact_id)) STRICT;
-CREATE TABLE qa_reviews(project_id TEXT NOT NULL,review_id TEXT NOT NULL,submission_id TEXT NOT NULL,reviewer_principal_id TEXT NOT NULL,author_session_id TEXT NOT NULL,source_revision_id TEXT,acceptance_digest TEXT NOT NULL,verdict TEXT NOT NULL CHECK(verdict IN ('pending','pass','fail','incomplete')),evidence_digest TEXT,PRIMARY KEY(project_id,review_id),FOREIGN KEY(project_id,submission_id) REFERENCES submissions(project_id,submission_id),FOREIGN KEY(reviewer_principal_id) REFERENCES principals(principal_id),FOREIGN KEY(project_id,author_session_id) REFERENCES sessions(project_id,session_id),FOREIGN KEY(project_id,source_revision_id) REFERENCES source_revisions(project_id,revision_id)) STRICT;
+CREATE TABLE qa_reviews(project_id TEXT NOT NULL,review_id TEXT NOT NULL,submission_id TEXT NOT NULL,reviewer_principal_id TEXT NOT NULL,author_shift_id TEXT NOT NULL,source_revision_id TEXT,acceptance_digest TEXT NOT NULL,verdict TEXT NOT NULL CHECK(verdict IN ('pending','pass','fail','incomplete')),evidence_digest TEXT,PRIMARY KEY(project_id,review_id),FOREIGN KEY(project_id,submission_id) REFERENCES submissions(project_id,submission_id),FOREIGN KEY(reviewer_principal_id) REFERENCES principals(principal_id),FOREIGN KEY(project_id,author_shift_id) REFERENCES worker_shifts(project_id,shift_id),FOREIGN KEY(project_id,source_revision_id) REFERENCES source_revisions(project_id,revision_id)) STRICT;
 CREATE TABLE qa_receipts(project_id TEXT NOT NULL,review_id TEXT NOT NULL,validator_digest TEXT NOT NULL,artifact_id TEXT NOT NULL,evidence_digest TEXT NOT NULL,PRIMARY KEY(project_id,review_id,validator_digest,artifact_id),FOREIGN KEY(project_id,review_id) REFERENCES qa_reviews(project_id,review_id),FOREIGN KEY(project_id,artifact_id) REFERENCES artifacts(project_id,artifact_id)) STRICT;
 CREATE TABLE ci_runs(project_id TEXT NOT NULL,ci_id TEXT NOT NULL,source_revision_id TEXT NOT NULL,provider_key TEXT NOT NULL,remote_run_id TEXT NOT NULL,status TEXT NOT NULL CHECK(status IN ('queued','running','passed','failed','unknown')),evidence_digest TEXT,PRIMARY KEY(project_id,ci_id),FOREIGN KEY(project_id,source_revision_id) REFERENCES source_revisions(project_id,revision_id)) STRICT;
 CREATE TABLE integration_intents(project_id TEXT NOT NULL,intent_id TEXT NOT NULL,submission_id TEXT NOT NULL,expected_revision_id TEXT NOT NULL,staged_revision_id TEXT,new_revision_id TEXT,state TEXT NOT NULL CHECK(state IN ('prepared','staged','qa_checked','promoted','conflict','failed','unknown')),request_id TEXT NOT NULL,PRIMARY KEY(project_id,intent_id),UNIQUE(project_id,request_id),FOREIGN KEY(project_id,submission_id) REFERENCES submissions(project_id,submission_id),FOREIGN KEY(project_id,expected_revision_id) REFERENCES source_revisions(project_id,revision_id),FOREIGN KEY(project_id,new_revision_id) REFERENCES source_revisions(project_id,revision_id)) STRICT;
@@ -157,7 +165,6 @@ CREATE INDEX idx_tasks_ready ON tasks(project_id,state,priority DESC,task_id);
 CREATE INDEX idx_leases_live ON leases(project_id,status,expires_at);
 CREATE INDEX idx_effects_pending ON effect_intents(project_id,state,effect_id);
 CREATE INDEX idx_events_cursor ON audit_events(project_id,event_seq);
-CREATE INDEX idx_sessions_active ON sessions(project_id,state,task_id);
 CREATE INDEX idx_review_submission ON qa_reviews(project_id,submission_id,verdict);
 CREATE INDEX idx_artifacts_digest ON artifacts(project_id,content_digest);
 CREATE INDEX idx_canon_current ON active_bible_editions(project_id,kind,bible_id);
@@ -204,9 +211,6 @@ CREATE TRIGGER reject_revoked_decision_dispatch BEFORE UPDATE OF state ON effect
  SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM owner_decisions WHERE project_id=NEW.project_id AND decision_id=NEW.decision_id AND state='approved') THEN RAISE(ABORT,'decision revoked or absent') END;
 END;
 
-CREATE TRIGGER reject_same_author_review BEFORE INSERT ON qa_reviews BEGIN
- SELECT CASE WHEN EXISTS(SELECT 1 FROM sessions s WHERE s.project_id=NEW.project_id AND s.session_id=NEW.author_session_id AND s.author_principal_id=NEW.reviewer_principal_id) THEN RAISE(ABORT,'reviewer is author') END;
-END;
 CREATE TRIGGER decision_owner_must_be_human BEFORE INSERT ON owner_decisions BEGIN
  SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM principals WHERE principal_id=NEW.verified_owner_principal_id AND kind='human') THEN RAISE(ABORT,'verified owner must be human') END;
 END;
@@ -216,11 +220,8 @@ CREATE TRIGGER reject_unconsumed_effect_insert BEFORE INSERT ON effect_intents W
 CREATE TRIGGER reject_unconsumed_effect_transition BEFORE UPDATE OF state ON effect_intents WHEN NEW.approval_required=1 AND NEW.state IN ('observed','unknown') BEGIN
  SELECT CASE WHEN NOT EXISTS (SELECT 1 FROM approval_consumptions c JOIN owner_decisions d ON d.project_id=c.project_id AND d.decision_id=c.decision_id WHERE c.project_id=NEW.project_id AND c.effect_id=NEW.effect_id AND d.state='approved' AND d.snapshot_id IS NEW.snapshot_id) THEN RAISE(ABORT,'unconsumed decision or wrong snapshot') END;
 END;
-CREATE TRIGGER reject_submission_session_mismatch BEFORE INSERT ON submissions BEGIN
- SELECT CASE WHEN NOT EXISTS (SELECT 1 FROM sessions s WHERE s.project_id=NEW.project_id AND s.session_id=NEW.session_id AND s.task_id=NEW.task_id AND s.lease_generation=NEW.lease_generation) THEN RAISE(ABORT,'submission author task/lease mismatch') END;
-END;
 CREATE TRIGGER reject_review_submission_author_mismatch BEFORE INSERT ON qa_reviews BEGIN
- SELECT CASE WHEN NOT EXISTS (SELECT 1 FROM submissions s WHERE s.project_id=NEW.project_id AND s.submission_id=NEW.submission_id AND s.session_id=NEW.author_session_id) THEN RAISE(ABORT,'review author session mismatch') END;
+ SELECT CASE WHEN NOT EXISTS (SELECT 1 FROM submissions s WHERE s.project_id=NEW.project_id AND s.submission_id=NEW.submission_id AND s.shift_id=NEW.author_shift_id) THEN RAISE(ABORT,'review author shift mismatch') END;
 END;
 
 -- Project authorization is separate from physical content-addressed deduplication.
@@ -255,7 +256,7 @@ CREATE UNIQUE INDEX one_active_policy_per_project ON project_policies(project_id
 -- New initial schema: these guards protect cross-object publication/identity even if a domain service is bypassed.
 CREATE TRIGGER immutable_source_revision_identity BEFORE UPDATE OF project_id,revision_id,repo_id,commit_sha,tree_digest ON source_revisions
 BEGIN SELECT RAISE(ABORT,'source revision identity immutable'); END;
-CREATE TRIGGER immutable_artifact_identity BEFORE UPDATE OF project_id,artifact_id,kind,content_digest,manifest_digest,producer_session_id,source_revision_id,snapshot_id ON artifacts
+CREATE TRIGGER immutable_artifact_identity BEFORE UPDATE OF project_id,artifact_id,kind,content_digest,manifest_digest,producer_shift_id,source_revision_id,snapshot_id ON artifacts
 BEGIN SELECT RAISE(ABORT,'artifact identity immutable'); END;
 CREATE TRIGGER forbid_direct_published_release_insert BEFORE INSERT ON releases WHEN NEW.state='published'
 BEGIN SELECT RAISE(ABORT,'release must be prepared first'); END;
@@ -326,39 +327,47 @@ CREATE TRIGGER reject_unverified_restore BEFORE UPDATE OF state ON recovery_jobs
 BEGIN SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM backup_sets b WHERE b.project_id=NEW.project_id AND b.backup_digest=NEW.backup_digest AND b.state='verified') THEN RAISE(ABORT,'restore requires verified backup') END; END;
 
 
--- QA independence can be proven for human and AI reviewers, including common AI session lineage.
-CREATE TABLE session_lineages(
- project_id TEXT NOT NULL,session_id TEXT NOT NULL,
- root_session_id TEXT NOT NULL,parent_session_id TEXT, lineage_digest TEXT NOT NULL,
- PRIMARY KEY(project_id,session_id),
- FOREIGN KEY(project_id,session_id) REFERENCES sessions(project_id,session_id),
- FOREIGN KEY(project_id,root_session_id) REFERENCES sessions(project_id,session_id),
- FOREIGN KEY(project_id,parent_session_id) REFERENCES sessions(project_id,session_id)
-) STRICT;
+-- QA independence can be proven for human and AI reviewers, including common AI worker lineage.
 CREATE TABLE qa_independence_proofs(
  project_id TEXT NOT NULL,review_id TEXT NOT NULL,
- author_session_id TEXT NOT NULL,reviewer_principal_id TEXT NOT NULL,
- reviewer_root_session_id TEXT, independence_evidence_digest TEXT NOT NULL,
+ author_shift_id TEXT NOT NULL,reviewer_principal_id TEXT NOT NULL,
+ reviewer_root_worker_id TEXT, independence_evidence_digest TEXT NOT NULL,
  PRIMARY KEY(project_id,review_id),
  FOREIGN KEY(project_id,review_id) REFERENCES qa_reviews(project_id,review_id),
- FOREIGN KEY(project_id,author_session_id) REFERENCES sessions(project_id,session_id),
+ FOREIGN KEY(project_id,author_shift_id) REFERENCES worker_shifts(project_id,shift_id),
  FOREIGN KEY(reviewer_principal_id) REFERENCES principals(principal_id),
- FOREIGN KEY(project_id,reviewer_root_session_id) REFERENCES sessions(project_id,session_id)
+ FOREIGN KEY(project_id,reviewer_root_worker_id) REFERENCES worker_conversations(project_id,worker_id)
 ) STRICT;
+-- E acceptance rejects an author self-review and a shared worker root.
+CREATE TRIGGER reject_same_author_review BEFORE INSERT ON qa_reviews BEGIN
+ SELECT CASE WHEN EXISTS(
+  SELECT 1 FROM worker_shifts sh
+  JOIN worker_conversations w ON w.project_id=sh.project_id AND w.worker_id=sh.worker_id
+  WHERE sh.project_id=NEW.project_id AND sh.shift_id=NEW.author_shift_id
+    AND w.principal_id=NEW.reviewer_principal_id
+ ) THEN RAISE(ABORT,'reviewer is author') END;
+END;
 CREATE TRIGGER reject_same_lineage_qa_proof BEFORE INSERT ON qa_independence_proofs
 BEGIN
- SELECT CASE WHEN EXISTS(SELECT 1 FROM sessions s WHERE s.project_id=NEW.project_id AND s.session_id=NEW.author_session_id AND s.author_principal_id=NEW.reviewer_principal_id)
+ SELECT CASE WHEN EXISTS(
+  SELECT 1 FROM worker_shifts sh JOIN worker_conversations w
+  ON w.project_id=sh.project_id AND w.worker_id=sh.worker_id
+  WHERE sh.project_id=NEW.project_id AND sh.shift_id=NEW.author_shift_id
+    AND w.principal_id=NEW.reviewer_principal_id)
  THEN RAISE(ABORT,'reviewer is author') END;
- SELECT CASE WHEN NEW.reviewer_root_session_id IS NOT NULL AND EXISTS(
-   SELECT 1 FROM session_lineages x JOIN session_lineages y ON x.project_id=y.project_id
-   WHERE x.project_id=NEW.project_id AND x.session_id=NEW.author_session_id AND y.session_id=NEW.reviewer_root_session_id
-     AND x.root_session_id=y.root_session_id
- ) THEN RAISE(ABORT,'reviewer shares author lineage') END;
+ SELECT CASE WHEN NEW.reviewer_root_worker_id IS NOT NULL AND EXISTS(
+   SELECT 1 FROM worker_shifts sh
+   JOIN worker_lineages a ON a.project_id=sh.project_id AND a.worker_id=sh.worker_id
+   JOIN worker_lineages r ON r.project_id=a.project_id
+   WHERE sh.project_id=NEW.project_id AND sh.shift_id=NEW.author_shift_id
+     AND r.worker_id=NEW.reviewer_root_worker_id
+     AND a.root_worker_id=r.root_worker_id)
+ THEN RAISE(ABORT,'reviewer shares author worker lineage') END;
 END;
 CREATE TRIGGER require_qa_evidence_on_pass BEFORE UPDATE OF verdict ON qa_reviews WHEN NEW.verdict='pass'
 BEGIN
  SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM qa_independence_proofs p WHERE p.project_id=NEW.project_id AND p.review_id=NEW.review_id
-   AND p.author_session_id=NEW.author_session_id AND p.reviewer_principal_id=NEW.reviewer_principal_id)
+   AND p.author_shift_id=NEW.author_shift_id AND p.reviewer_principal_id=NEW.reviewer_principal_id)
  THEN RAISE(ABORT,'QA independence proof missing') END;
  SELECT CASE WHEN NEW.evidence_digest IS NULL OR NOT EXISTS(SELECT 1 FROM qa_receipts q WHERE q.project_id=NEW.project_id AND q.review_id=NEW.review_id)
  THEN RAISE(ABORT,'QA original artifact evidence missing') END;
@@ -376,49 +385,43 @@ CREATE TABLE relay_channels(project_id TEXT NOT NULL,channel_id TEXT NOT NULL,re
 CREATE TABLE relay_observations(project_id TEXT NOT NULL,observation_id TEXT NOT NULL,message_id TEXT NOT NULL,channel_id TEXT NOT NULL,remote_path TEXT NOT NULL,remote_commit_sha TEXT NOT NULL,envelope_digest TEXT NOT NULL,observed_at TEXT NOT NULL,verification TEXT NOT NULL CHECK(verification IN ('verified','rejected','unknown')),PRIMARY KEY(project_id,observation_id),UNIQUE(project_id,message_id,remote_commit_sha),FOREIGN KEY(project_id,message_id,channel_id) REFERENCES relay_messages(project_id,message_id,channel_id),FOREIGN KEY(project_id,channel_id) REFERENCES relay_channels(project_id,channel_id)) STRICT;
 CREATE TABLE relay_receipts(
  project_id TEXT NOT NULL,receipt_id TEXT NOT NULL,message_id TEXT NOT NULL,
- channel_id TEXT NOT NULL,recipient_session_id TEXT NOT NULL,
+ channel_id TEXT NOT NULL,recipient_shift_id TEXT NOT NULL,
  kind TEXT NOT NULL CHECK(kind IN ('SEEN','CHECKPOINT','SUBMITTED','STOP_SEEN')),
  observed_message_sha256 TEXT NOT NULL,contract_digest TEXT NOT NULL,
  remote_path TEXT NOT NULL,remote_commit_sha TEXT NOT NULL,payload_digest TEXT NOT NULL,observed_at TEXT NOT NULL,
  PRIMARY KEY(project_id,receipt_id),UNIQUE(project_id,remote_path),
- UNIQUE(project_id,message_id,recipient_session_id,kind,remote_commit_sha),
+ UNIQUE(project_id,message_id,recipient_shift_id,kind,remote_commit_sha),
  FOREIGN KEY(project_id,message_id,channel_id) REFERENCES relay_messages(project_id,message_id,channel_id),
- FOREIGN KEY(project_id,recipient_session_id) REFERENCES sessions(project_id,session_id)
+ FOREIGN KEY(project_id,recipient_shift_id) REFERENCES worker_shifts(project_id,shift_id)
 ) STRICT;
 CREATE TABLE relay_sync_cursors(project_id TEXT NOT NULL,channel_id TEXT NOT NULL,observed_ref_sha TEXT NOT NULL,observed_at TEXT NOT NULL,PRIMARY KEY(project_id,channel_id),FOREIGN KEY(project_id,channel_id) REFERENCES relay_channels(project_id,channel_id)) STRICT;
 CREATE INDEX idx_relay_observations_message ON relay_observations(project_id,message_id,observed_at);
-CREATE INDEX idx_relay_receipts_session ON relay_receipts(project_id,recipient_session_id,observed_at);
-CREATE TRIGGER verify_relay_receipt_recipient BEFORE INSERT ON relay_receipts BEGIN SELECT CASE WHEN NOT EXISTS (SELECT 1 FROM relay_messages m WHERE m.project_id=NEW.project_id AND m.message_id=NEW.message_id AND m.to_session_id=NEW.recipient_session_id) THEN RAISE(ABORT,'relay receipt recipient mismatch') END; END;
-CREATE TRIGGER forbid_unsourced_session_completion BEFORE UPDATE OF state ON sessions WHEN NEW.state='completed_verified' AND OLD.state<>'completed_verified' BEGIN SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM submissions s WHERE s.project_id=NEW.project_id AND s.session_id=NEW.session_id AND s.state IN ('qa_passed','integrated')) THEN RAISE(ABORT,'no independently verified submission') END; END;
+CREATE INDEX idx_relay_receipts_shift ON relay_receipts(project_id,recipient_shift_id,observed_at);
+CREATE TRIGGER verify_relay_receipt_recipient BEFORE INSERT ON relay_receipts BEGIN SELECT CASE WHEN NOT EXISTS (SELECT 1 FROM relay_messages m WHERE m.project_id=NEW.project_id AND m.message_id=NEW.message_id AND m.to_shift_id=NEW.recipient_shift_id) THEN RAISE(ABORT,'relay receipt recipient mismatch') END; END;
 
 -- A worker cannot be marked active from a self-asserted API field or a local-only assignment.
-CREATE TRIGGER reject_direct_active_session_insert BEFORE INSERT ON sessions WHEN NEW.state='active_observed' BEGIN SELECT RAISE(ABORT,'active session needs observed Github relay'); END;
-CREATE TRIGGER require_observed_hello_before_active BEFORE UPDATE OF state ON sessions WHEN NEW.state='active_observed' AND OLD.state<>'active_observed' BEGIN
- SELECT CASE WHEN NOT EXISTS (
- SELECT 1 FROM relay_messages m JOIN relay_observations o ON o.project_id=m.project_id AND o.message_id=m.message_id AND o.channel_id=m.channel_id
- JOIN leases l ON l.project_id=NEW.project_id AND l.task_id=NEW.task_id AND l.generation=NEW.lease_generation
- WHERE m.project_id=NEW.project_id AND m.from_session_id=NEW.session_id
- AND m.kind='HELLO' AND m.task_id=NEW.task_id AND m.lease_generation=NEW.lease_generation
- AND m.canon_snapshot_id=NEW.snapshot_id AND l.status='active'
- AND o.verification='verified' AND o.remote_path=m.remote_path AND o.envelope_digest=m.envelope_digest
- ) THEN RAISE(ABORT,'no exact verified HELLO for active lease and snapshot') END;
-END;
 
 
 -- R5: enforce relay envelope kind/identity and exact verified GitHub projection.
 -- Database provenance proves recorded remote bytes, not the identity of a shared GitHub user.
-CREATE TRIGGER reject_session_insert_without_manual_prepare BEFORE INSERT ON sessions
 WHEN NEW.state<>'prepared' BEGIN SELECT RAISE(ABORT,'manual session must begin prepared'); END;
-CREATE TRIGGER reject_misbound_relay_envelope BEFORE INSERT ON relay_messages BEGIN
- SELECT CASE WHEN NEW.from_session_id IS NOT NULL AND NOT EXISTS (
-   SELECT 1 FROM sessions s WHERE s.project_id=NEW.project_id AND s.session_id=NEW.from_session_id
-   AND s.task_id=NEW.task_id AND s.lease_generation=NEW.lease_generation AND s.snapshot_id=NEW.canon_snapshot_id
+-- A relay envelope is bound to a verified active shift assignment.
+CREATE TRIGGER reject_misbound_relay_envelope BEFORE INSERT ON relay_messages
+BEGIN
+ SELECT CASE WHEN NEW.from_shift_id IS NOT NULL AND NOT EXISTS (
+  SELECT 1 FROM shift_assignments a
+  JOIN tasks t ON t.project_id=a.project_id AND t.task_id=a.task_id
+  WHERE a.project_id=NEW.project_id AND a.shift_id=NEW.from_shift_id
+   AND a.task_id=NEW.task_id AND a.lease_generation=NEW.lease_generation
+   AND t.snapshot_id=NEW.canon_snapshot_id
  ) THEN RAISE(ABORT,'relay sender task/lease/snapshot mismatch') END;
- SELECT CASE WHEN NEW.kind='HELLO' AND (NEW.from_session_id IS NULL OR NEW.to_session_id<>NEW.from_session_id)
- THEN RAISE(ABORT,'HELLO must be self-addressed by registered browser session') END;
+ SELECT CASE WHEN NEW.kind='HELLO' AND
+  (NEW.from_shift_id IS NULL OR NEW.to_shift_id<>NEW.from_shift_id)
+ THEN RAISE(ABORT,'HELLO must be self-addressed by verified worker shift') END;
  SELECT CASE WHEN NOT EXISTS(
-   SELECT 1 FROM sessions s WHERE s.project_id=NEW.project_id AND s.session_id=NEW.to_session_id
- ) THEN RAISE(ABORT,'relay recipient absent') END;
+  SELECT 1 FROM worker_shifts sh WHERE sh.project_id=NEW.project_id
+  AND sh.shift_id=NEW.to_shift_id)
+ THEN RAISE(ABORT,'relay recipient shift absent') END;
 END;
 CREATE TRIGGER reject_unmatched_verified_relay_observation BEFORE INSERT ON relay_observations
 WHEN NEW.verification='verified' BEGIN
@@ -433,7 +436,7 @@ CREATE TRIGGER immutable_verified_relay_observation BEFORE UPDATE ON relay_obser
 WHEN OLD.verification='verified' BEGIN SELECT RAISE(ABORT,'verified GitHub observation immutable'); END;
 CREATE TRIGGER immutable_verified_relay_observation_delete BEFORE DELETE ON relay_observations
 WHEN OLD.verification='verified' BEGIN SELECT RAISE(ABORT,'verified GitHub observation immutable'); END;
-CREATE TRIGGER immutable_relay_message_identity BEFORE UPDATE OF project_id,message_id,channel_id,from_session_id,to_session_id,kind,task_id,lease_generation,canon_snapshot_id,contract_digest,envelope_digest,payload_digest,remote_path ON relay_messages
+CREATE TRIGGER immutable_relay_message_identity BEFORE UPDATE OF project_id,message_id,channel_id,from_shift_id,to_shift_id,kind,task_id,lease_generation,canon_snapshot_id,contract_digest,envelope_digest,payload_digest,remote_path ON relay_messages
 BEGIN SELECT RAISE(ABORT,'relay envelope identity immutable'); END;
 
 -- R5: QA PASS must be an independently verified review of the submitted bytes.
@@ -444,7 +447,7 @@ WHEN NEW.verdict='pass' AND OLD.verdict<>'pass' BEGIN
  SELECT CASE WHEN NOT EXISTS (
   SELECT 1 FROM submissions s JOIN tasks t ON t.project_id=s.project_id AND t.task_id=s.task_id
   WHERE s.project_id=NEW.project_id AND s.submission_id=NEW.submission_id
-  AND s.session_id=NEW.author_session_id AND s.state IN ('submitted','qa_passed','integrated')
+  AND s.shift_id=NEW.author_shift_id AND s.state IN ('submitted','qa_passed','integrated')
   AND t.acceptance_digest=NEW.acceptance_digest
   AND s.source_revision_id IS NEW.source_revision_id
  ) THEN RAISE(ABORT,'QA review does not match submitted source and acceptance profile') END;
@@ -481,30 +484,13 @@ WHEN NEW.state IN ('qa_passed','integrated') AND OLD.state<>NEW.state BEGIN
  JOIN qa_receipts qr ON qr.project_id=q.project_id AND qr.review_id=q.review_id
  JOIN submission_artifacts sa ON sa.project_id=NEW.project_id AND sa.submission_id=NEW.submission_id AND sa.artifact_id=qr.artifact_id
  WHERE q.project_id=NEW.project_id AND q.submission_id=NEW.submission_id
- AND q.verdict='pass' AND q.author_session_id=NEW.session_id
+ AND q.verdict='pass' AND q.author_shift_id=NEW.shift_id
  AND q.source_revision_id IS NEW.source_revision_id AND q.acceptance_digest=t.acceptance_digest
- AND p.author_session_id=NEW.session_id AND p.reviewer_principal_id=q.reviewer_principal_id
+ AND p.author_shift_id=NEW.shift_id AND p.reviewer_principal_id=q.reviewer_principal_id
  AND q.evidence_digest IS NOT NULL
  ) THEN RAISE(ABORT,'independent exact QA PASS and evidence required for submission state') END;
 END;
-CREATE TRIGGER forbid_direct_completed_session_insert BEFORE INSERT ON sessions
 WHEN NEW.state='completed_verified' BEGIN SELECT RAISE(ABORT,'session must be prepared and reviewed first'); END;
-CREATE TRIGGER require_actual_independent_qa_for_completion BEFORE UPDATE OF state ON sessions
-WHEN NEW.state='completed_verified' AND OLD.state<>'completed_verified' BEGIN
- SELECT CASE WHEN NOT EXISTS (
-  SELECT 1 FROM submissions s JOIN qa_reviews q ON q.project_id=s.project_id AND q.submission_id=s.submission_id
-  JOIN tasks t ON t.project_id=s.project_id AND t.task_id=s.task_id
-  JOIN qa_independence_proofs p ON p.project_id=q.project_id AND p.review_id=q.review_id
-  JOIN qa_receipts qr ON qr.project_id=q.project_id AND qr.review_id=q.review_id
-  JOIN submission_artifacts sa ON sa.project_id=s.project_id AND sa.submission_id=s.submission_id AND sa.artifact_id=qr.artifact_id
-  WHERE s.project_id=NEW.project_id AND s.session_id=NEW.session_id
-   AND s.task_id=NEW.task_id AND s.lease_generation=NEW.lease_generation
-   AND s.state IN ('qa_passed','integrated') AND q.verdict='pass'
-   AND q.author_session_id=NEW.session_id AND q.source_revision_id IS s.source_revision_id
-   AND q.acceptance_digest=t.acceptance_digest AND p.author_session_id=NEW.session_id
-   AND p.reviewer_principal_id=q.reviewer_principal_id AND q.evidence_digest IS NOT NULL
- ) THEN RAISE(ABORT,'cannot complete session without exact independently reviewed submission') END;
-END;
 
 CREATE TRIGGER immutable_relay_observation_any_update BEFORE UPDATE ON relay_observations
 BEGIN SELECT RAISE(ABORT,'relay observations append-only'); END;
@@ -518,9 +504,9 @@ WHEN NEW.delivery_state='observed' AND OLD.delivery_state<>'observed' BEGIN
  THEN RAISE(ABORT,'relay observed needs exact GitHub readback') END;
 END;
 
-CREATE TRIGGER immutable_qa_review_identity BEFORE UPDATE OF project_id,review_id,submission_id,reviewer_principal_id,author_session_id,source_revision_id,acceptance_digest ON qa_reviews
+CREATE TRIGGER immutable_qa_review_identity BEFORE UPDATE OF project_id,review_id,submission_id,reviewer_principal_id,author_shift_id,source_revision_id,acceptance_digest ON qa_reviews
 BEGIN SELECT RAISE(ABORT,'QA review identity immutable'); END;
-CREATE TRIGGER immutable_submission_identity BEFORE UPDATE OF project_id,submission_id,session_id,task_id,lease_generation,source_revision_id,manifest_digest ON submissions
+CREATE TRIGGER immutable_submission_identity BEFORE UPDATE OF project_id,submission_id,shift_id,task_id,lease_generation,source_revision_id,manifest_digest ON submissions
 BEGIN SELECT RAISE(ABORT,'submission identity immutable'); END;
 CREATE TRIGGER immutable_submission_attachment_delete AFTER DELETE ON submission_artifacts
 WHEN EXISTS(SELECT 1 FROM qa_reviews q WHERE q.project_id=OLD.project_id
@@ -531,9 +517,6 @@ WHEN EXISTS(SELECT 1 FROM qa_reviews q WHERE q.project_id=OLD.project_id
  AND q.submission_id=OLD.submission_id AND q.verdict='pass')
 BEGIN SELECT RAISE(ABORT,'accepted submission attachments immutable'); END;
 
-CREATE TRIGGER enforce_sessions_transitions BEFORE UPDATE OF state ON sessions
-WHEN NEW.state<>OLD.state AND NOT ((OLD.state='active_observed' AND NEW.state='quiet') OR (OLD.state='active_observed' AND NEW.state='stop_requested') OR (OLD.state='active_observed' AND NEW.state='completed_verified') OR (OLD.state='active_observed' AND NEW.state='failed_verified') OR (OLD.state='active_observed' AND NEW.state='unknown') OR (OLD.state='awaiting_manual_start' AND NEW.state='active_observed') OR (OLD.state='awaiting_manual_start' AND NEW.state='stop_requested') OR (OLD.state='awaiting_manual_start' AND NEW.state='unknown') OR (OLD.state='failed_verified' AND NEW.state='awaiting_manual_start') OR (OLD.state='prepared' AND NEW.state='awaiting_manual_start') OR (OLD.state='prepared' AND NEW.state='unknown') OR (OLD.state='quiet' AND NEW.state='active_observed') OR (OLD.state='quiet' AND NEW.state='stop_requested') OR (OLD.state='quiet' AND NEW.state='unknown') OR (OLD.state='stop_requested' AND NEW.state='quiet') OR (OLD.state='stop_requested' AND NEW.state='completed_verified') OR (OLD.state='stop_requested' AND NEW.state='failed_verified') OR (OLD.state='stop_requested' AND NEW.state='unknown') OR (OLD.state='unknown' AND NEW.state='active_observed') OR (OLD.state='unknown' AND NEW.state='quiet') OR (OLD.state='unknown' AND NEW.state='stop_requested') OR (OLD.state='unknown' AND NEW.state='failed_verified'))
-BEGIN SELECT RAISE(ABORT,'invalid sessions transition'); END;
 
 CREATE TRIGGER enforce_submissions_transitions BEFORE UPDATE OF state ON submissions
 WHEN NEW.state<>OLD.state AND NOT ((OLD.state='qa_failed' AND NEW.state='rejected') OR (OLD.state='qa_passed' AND NEW.state='integrated') OR (OLD.state='qa_passed' AND NEW.state='rejected') OR (OLD.state='staged' AND NEW.state='submitted') OR (OLD.state='staged' AND NEW.state='rejected') OR (OLD.state='submitted' AND NEW.state='qa_passed') OR (OLD.state='submitted' AND NEW.state='qa_failed') OR (OLD.state='submitted' AND NEW.state='rejected'))
@@ -549,7 +532,7 @@ CREATE TRIGGER verify_original_for_relay_receipt BEFORE INSERT ON relay_receipts
   SELECT 1 FROM relay_messages m JOIN relay_observations o ON o.project_id=m.project_id
     AND o.message_id=m.message_id AND o.channel_id=m.channel_id AND o.verification='verified'
   WHERE m.project_id=NEW.project_id AND m.message_id=NEW.message_id
-  AND m.channel_id=NEW.channel_id AND m.to_session_id=NEW.recipient_session_id
+  AND m.channel_id=NEW.channel_id AND m.to_shift_id=NEW.recipient_shift_id
   AND m.envelope_digest=NEW.observed_message_sha256
   AND m.contract_digest=NEW.contract_digest
   AND o.envelope_digest=m.envelope_digest AND o.remote_path=m.remote_path
@@ -559,3 +542,41 @@ CREATE TRIGGER immutable_relay_receipt_update BEFORE UPDATE ON relay_receipts
 BEGIN SELECT RAISE(ABORT,'verified relay receipt immutable'); END;
 CREATE TRIGGER immutable_relay_receipt_delete BEFORE DELETE ON relay_receipts
 BEGIN SELECT RAISE(ABORT,'verified relay receipt immutable'); END;
+
+-- Submission authorship is bound to the actual worker shift and leased task.
+CREATE TRIGGER require_shift_assignment_on_submission BEFORE INSERT ON submissions
+BEGIN
+ SELECT CASE WHEN NOT EXISTS (
+  SELECT 1 FROM shift_assignments a
+  WHERE a.project_id=NEW.project_id AND a.shift_id=NEW.shift_id
+    AND a.task_id=NEW.task_id AND a.lease_generation=NEW.lease_generation
+ ) THEN RAISE(ABORT,'submission lacks matching shift assignment and lease') END;
+END;
+-- A final response must carry a verified final-GitHub-receipt projection.
+CREATE TRIGGER reject_unverified_shift_completion BEFORE UPDATE OF state ON worker_shifts
+WHEN NEW.state='finished' AND OLD.state<>'finished'
+BEGIN
+ SELECT CASE WHEN NEW.final_commit_sha IS NULL OR NEW.final_digest IS NULL
+ THEN RAISE(ABORT,'worker shift cannot finish without verified final receipt') END;
+END;
+
+-- Database state gates for durable, human-started worker response shifts.
+CREATE TRIGGER reject_direct_nonawaiting_shift_insert BEFORE INSERT ON worker_shifts
+WHEN NEW.state<>'awaiting_hello'
+BEGIN SELECT RAISE(ABORT,'worker shift must begin awaiting verified HELLO'); END;
+CREATE TRIGGER require_verified_shift_hello BEFORE UPDATE OF state ON worker_shifts
+WHEN NEW.state='active' AND OLD.state<>'active'
+BEGIN SELECT CASE WHEN NEW.hello_commit_sha IS NULL OR length(NEW.hello_commit_sha)<>40
+  OR NEW.hello_digest IS NULL OR length(NEW.hello_digest)<>64
+ THEN RAISE(ABORT,'active shift requires verified GitHub HELLO receipt') END;
+END;
+CREATE TRIGGER enforce_worker_shift_transitions BEFORE UPDATE OF state ON worker_shifts
+WHEN NEW.state<>OLD.state AND NOT (
+(OLD.state='awaiting_hello' AND NEW.state IN ('active','interrupted','unknown'))
+OR (OLD.state='active' AND NEW.state IN ('stopping','finished','interrupted','unknown'))
+OR (OLD.state='stopping' AND NEW.state IN ('finished','interrupted','unknown'))
+OR (OLD.state='unknown' AND NEW.state IN ('active','stopping','interrupted'))
+)
+BEGIN SELECT RAISE(ABORT,'invalid persistent worker shift transition'); END;
+CREATE TRIGGER immutable_worker_lineage BEFORE UPDATE ON worker_lineages
+BEGIN SELECT RAISE(ABORT,'persistent worker conversation lineage immutable'); END;

@@ -94,20 +94,20 @@ class ArtifactAPSWCatalog:
             "project_id":meta.project_id,"artifact_id":meta.artifact_id,
             "kind":meta.kind,"content_digest":meta.content_digest,
             "manifest_digest":meta.manifest_digest,
-            "producer_session_id":meta.producer_session_id,
+            "producer_shift_id":meta.producer_shift_id,
             "source_revision_id":meta.source_revision_id,
             "snapshot_id":meta.canon_snapshot_id},sort_keys=True,separators=(",",":"))
         body_digest=hashlib.sha256(record.encode("utf-8")).hexdigest()
 
         def save(tx):
             previous=tx.one(
-                "SELECT kind,content_digest,manifest_digest,producer_session_id,"
+                "SELECT kind,content_digest,manifest_digest,producer_shift_id,"
                 "source_revision_id,snapshot_id FROM artifacts "
                 "WHERE project_id=? AND artifact_id=?",
                 (meta.project_id,meta.artifact_id))
             expected=dict(kind=meta.kind,content_digest=meta.content_digest,
                           manifest_digest=meta.manifest_digest,
-                          producer_session_id=meta.producer_session_id,
+                          producer_shift_id=meta.producer_shift_id,
                           source_revision_id=meta.source_revision_id,
                           snapshot_id=meta.canon_snapshot_id)
             if previous is not None:
@@ -116,10 +116,10 @@ class ArtifactAPSWCatalog:
                 return {"artifact_id":meta.artifact_id}
             tx.change(
                 "INSERT INTO artifacts(project_id,artifact_id,kind,content_digest,"
-                "manifest_digest,producer_session_id,source_revision_id,snapshot_id)"
+                "manifest_digest,producer_shift_id,source_revision_id,snapshot_id)"
                 " VALUES(?,?,?,?,?,?,?,?)",
                 (meta.project_id,meta.artifact_id,meta.kind,meta.content_digest,
-                 meta.manifest_digest,meta.producer_session_id,
+                 meta.manifest_digest,meta.producer_shift_id,
                  meta.source_revision_id,meta.canon_snapshot_id))
             return {"artifact_id":meta.artifact_id}
         try:
@@ -135,7 +135,7 @@ class ArtifactAPSWCatalog:
         identifier(artifact_id)
         row=self.writer.read(project_id,lambda tx:tx.one(
             "SELECT project_id,artifact_id,kind,content_digest,manifest_digest,"
-            "producer_session_id,source_revision_id,snapshot_id FROM artifacts "
+            "producer_shift_id,source_revision_id,snapshot_id FROM artifacts "
             "WHERE project_id=? AND artifact_id=?",(project_id,artifact_id)))
         if row is None:
             raise IntegrationError("missing","project artifact unavailable")
@@ -143,7 +143,7 @@ class ArtifactAPSWCatalog:
         self.get(project_id=project_id,digest=row["manifest_digest"])
         return Artifact(row["project_id"],row["artifact_id"],row["kind"],
                         row["content_digest"],row["manifest_digest"],
-                        row["producer_session_id"],row["source_revision_id"],
+                        row["producer_shift_id"],row["source_revision_id"],
                         row["snapshot_id"],None,"sha256:"+row["content_digest"])
 
     def list_artifacts(self, *, project_id: str) -> list[dict[str,str]]:

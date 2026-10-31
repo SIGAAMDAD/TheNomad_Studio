@@ -36,12 +36,12 @@ def test_stage_and_promote_approved_source_across_restart(tmp_path):
                   "acceptance_digest,state) VALUES('p1','task','feature','p1-cabal','s1',"
                   "'accept','submitted')")
         c.execute("INSERT INTO leases VALUES('p1','task',1,'w1','later','active')")
-        c.execute("INSERT INTO sessions(project_id,session_id,author_principal_id,task_id,"
-                  "lease_generation,package_digest,snapshot_id,state)"
-                  "VALUES('p1','session','owner','task',1,'pack-p1','s1','prepared')")
-        c.execute("INSERT INTO submissions(project_id,submission_id,session_id,task_id,"
+        c.execute("INSERT INTO shift_assignments(project_id,assignment_id,shift_id,"
+                  "worker_id,task_id,lease_generation,state) "
+                  "VALUES('p1','assignment','shift-p1-w1','w1','task',1,'submitted')")
+        c.execute("INSERT INTO submissions(project_id,submission_id,shift_id,task_id,"
                   "lease_generation,source_revision_id,manifest_digest,state) "
-                  "VALUES('p1','sub','session','task',1,'rev1','manifest','submitted')")
+                  "VALUES('p1','sub','shift-p1-w1','task',1,'rev1','manifest','submitted')")
         store=IntegrationAPSWStore(writer,verify)
         stage=dict(project_id="p1",principal_id="owner",request_id="stage1",
                    request_body_sha256="a"*64,intent_id="intent",submission_id="sub",
@@ -67,17 +67,17 @@ def test_stage_and_promote_approved_source_across_restart(tmp_path):
             c.execute("INSERT OR IGNORE INTO project_blobs(project_id,content_digest,purpose) "
                       "VALUES('p1',?,?)",(blob,purpose))
         c.execute("INSERT INTO artifacts(project_id,artifact_id,kind,content_digest,"
-                  "manifest_digest,producer_session_id,source_revision_id,snapshot_id) "
-                  "VALUES('p1','artifact','source',? ,?,'session','rev1','s1')",(blob,blob))
+                  "manifest_digest,producer_shift_id,source_revision_id,snapshot_id) "
+                  "VALUES('p1','artifact','source',? ,?,'shift-p1-w1','rev1','s1')",(blob,blob))
         c.execute("INSERT INTO submission_artifacts VALUES('p1','sub','artifact')")
         c.execute("INSERT INTO qa_reviews(project_id,review_id,submission_id,"
-                  "reviewer_principal_id,author_session_id,source_revision_id,"
+                  "reviewer_principal_id,author_shift_id,source_revision_id,"
                   "acceptance_digest,verdict,evidence_digest) "
-                  "VALUES('p1','review','sub','reviewer','session','rev1',"
+                  "VALUES('p1','review','sub','reviewer','shift-p1-w1','rev1',"
                   "'accept','pending','evidence')")
         c.execute("INSERT INTO qa_independence_proofs(project_id,review_id,"
-                  "author_session_id,reviewer_principal_id,independence_evidence_digest)"
-                  "VALUES('p1','review','session','reviewer',?)",("e"*64,))
+                  "author_shift_id,reviewer_principal_id,independence_evidence_digest)"
+                  "VALUES('p1','review','shift-p1-w1','reviewer',?)",("e"*64,))
         c.execute("INSERT INTO qa_receipts VALUES('p1','review',?,'artifact',?)",
                   ("v"*64,"e"*64))
         c.execute("UPDATE qa_reviews SET verdict='pass',evidence_digest=? "

@@ -9,7 +9,7 @@
     "kind",
     "content_digest",
     "manifest_digest",
-    "producer_session_id",
+    "producer_shift_id",
     "source_revision_id",
     "canon_snapshot_id",
     "validator_digest",
@@ -36,7 +36,7 @@
       "type": "string",
       "minLength": 1
     },
-    "producer_session_id": {
+    "producer_shift_id": {
       "type": [
         "string",
         "null"

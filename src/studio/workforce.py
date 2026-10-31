@@ -78,6 +78,17 @@ class Workforce:
                          VALUES (?,?,?,?,?,'registered')''',
                          (project_id, request['worker_id'], principal, request['role_id'], request['browser_chat_ref'])) != 1:
                 raise WorkforceFault('conflict', 'worker registration failed')
+            # Root identity belongs to the one manually initialized
+            # conversation and remains stable across every subsequent shift.
+            lineage_hash = hashlib.sha256(canonical({
+                'project_id': project_id,
+                'worker_id': request['worker_id'],
+                'browser_chat_ref': request['browser_chat_ref']
+            })).hexdigest()
+            tx.change('''INSERT INTO worker_lineages(
+                project_id,worker_id,root_worker_id,parent_worker_id,lineage_digest)
+                VALUES(?,?,?,NULL,?)''',
+                (project_id,request['worker_id'],request['worker_id'],lineage_hash))
             return {'worker_id': request['worker_id'], 'state': 'registered'}
         return self.storage.command(project_id, 'workers.register', request['request_id'], digest(request), apply)
 

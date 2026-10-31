@@ -208,45 +208,6 @@
         "failed"
       ]
     },
-    "sessions": {
-      "active_observed": [
-        "quiet",
-        "stop_requested",
-        "completed_verified",
-        "failed_verified",
-        "unknown"
-      ],
-      "awaiting_manual_start": [
-        "active_observed",
-        "stop_requested",
-        "unknown"
-      ],
-      "completed_verified": [],
-      "failed_verified": [
-        "awaiting_manual_start"
-      ],
-      "prepared": [
-        "awaiting_manual_start",
-        "unknown"
-      ],
-      "quiet": [
-        "active_observed",
-        "stop_requested",
-        "unknown"
-      ],
-      "stop_requested": [
-        "quiet",
-        "completed_verified",
-        "failed_verified",
-        "unknown"
-      ],
-      "unknown": [
-        "active_observed",
-        "quiet",
-        "stop_requested",
-        "failed_verified"
-      ]
-    },
     "submissions": {
       "integrated": [],
       "qa_failed": [
@@ -330,6 +291,31 @@
         "failed",
         "canceled"
       ]
+    },
+    "worker_shifts": {
+      "awaiting_hello": [
+        "active",
+        "interrupted",
+        "unknown"
+      ],
+      "active": [
+        "stopping",
+        "finished",
+        "interrupted",
+        "unknown"
+      ],
+      "stopping": [
+        "finished",
+        "interrupted",
+        "unknown"
+      ],
+      "unknown": [
+        "active",
+        "stopping",
+        "interrupted"
+      ],
+      "finished": [],
+      "interrupted": []
     }
   }
 }

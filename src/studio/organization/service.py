@@ -397,16 +397,16 @@ class OrganizationService:
 
     def build_cabal_relay_draft(self, actor: TrustedActor, project_id: str,
                                 cabal_id: str, *, kind: str, content_digest: str,
-                                target_session_id: str) -> dict:
+                                target_shift_id: str) -> dict:
         """Draft only. WG-G/I authenticate, publish and observe actual GitHub relays."""
         if kind not in ('ASSIGN','QUESTION','ANSWER','HANDOFF','REVIEW','STOP'):
             raise OrganizationError('invalid','unsupported cabal relay kind')
-        require_id(cabal_id);require_id(target_session_id);require_digest(content_digest)
+        require_id(cabal_id);require_id(target_shift_id);require_digest(content_digest)
         def read(tx):
             cabal=tx.one('cabals',project_id=project_id,cabal_id=cabal_id)
             if not cabal or cabal['state']!='active':
                 raise OrganizationError('missing','active cabal not found')
             return {'project_id':project_id, 'cabal_id':cabal_id,'kind':kind,
-                    'payload_digest':content_digest,'to_session_id':target_session_id,
+                    'payload_digest':content_digest,'to_shift_id':target_shift_id,
                     'delivery_state':'DRAFT_NOT_PUBLISHED'}
         return self._read(actor,project_id,read)

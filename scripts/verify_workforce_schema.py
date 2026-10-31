@@ -13,11 +13,27 @@ def check() -> None:
     try:
         con.executescript(DDL.read_text())
         tables = {x[0] for x in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-        required = {'worker_conversations', 'worker_shifts', 'shift_assignments',
+        required = {'worker_conversations', 'worker_shifts', 'worker_lineages', 'shift_assignments',
                     'command_outbox', 'command_receipts', 'workforce_command_results'}
         missing = required - tables
         if missing:
             raise RuntimeError(f'missing required worker state tables: {sorted(missing)}')
+        obsolete = {'sessions', 'session_lineages'}
+        if obsolete & tables:
+            raise RuntimeError('obsolete task-bound session persistence survived')
+        # Verify the persisted shift identity is the foreign-key target for QA,
+        # submissions, relay receipts and artifact provenance.
+        for table, column, target in (
+            ('submissions', 'shift_id', 'worker_shifts'),
+            ('qa_reviews', 'author_shift_id', 'worker_shifts'),
+            ('artifacts', 'producer_shift_id', 'worker_shifts'),
+            ('relay_receipts', 'recipient_shift_id', 'worker_shifts'),
+            ('worker_lineages', 'root_worker_id', 'worker_conversations'),
+        ):
+            fk = list(con.execute(f'PRAGMA foreign_key_list("{table}")'))
+            columns = {c[3] for c in fk if c[2] == target}
+            if column not in columns:
+                raise RuntimeError(f'{table}.{column} lacks its {target} FK')
         foreign_keys = con.execute('PRAGMA foreign_key_check').fetchall()
         if foreign_keys:
             raise RuntimeError(f'schema foreign-key violations: {foreign_keys}')

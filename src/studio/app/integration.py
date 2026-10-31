@@ -39,7 +39,7 @@ class VerifiedQA:
     candidate_revision_id: str
     submission_id: str
     reviewer_principal_id: str
-    author_session_id: str
+    author_shift_id: str
     review_id: str
     verdict: str
     evidence_digest: str

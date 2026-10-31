@@ -52,7 +52,7 @@
       "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
       "type": "string"
     },
-    "recipient_session_id": {
+    "recipient_shift_id": {
       "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
       "type": "string"
     }
@@ -63,7 +63,7 @@
     "project_id",
     "channel_id",
     "message_id",
-    "recipient_session_id",
+    "recipient_shift_id",
     "kind",
     "observed_message_sha256",
     "checkpoint_digest",

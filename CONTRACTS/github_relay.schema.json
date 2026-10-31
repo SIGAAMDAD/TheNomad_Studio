@@ -14,7 +14,7 @@
       "pattern": "^[a-f0-9]{64}$",
       "type": "string"
     },
-    "from_session_id": {
+    "from_shift_id": {
       "anyOf": [
         {
           "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
@@ -70,7 +70,7 @@
       "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
       "type": "string"
     },
-    "to_session_id": {
+    "to_shift_id": {
       "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,95}$",
       "type": "string"
     }
@@ -80,8 +80,8 @@
     "message_id",
     "project_id",
     "channel_id",
-    "from_session_id",
-    "to_session_id",
+    "from_shift_id",
+    "to_shift_id",
     "task_id",
     "lease_generation",
     "kind",

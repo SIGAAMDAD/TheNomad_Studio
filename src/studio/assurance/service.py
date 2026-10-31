@@ -24,7 +24,7 @@ class AssuranceError(Exception):
 @dataclass(frozen=True)
 class ReviewerAssignment:
     principal_id: str
-    reviewer_root_session_id: str | None
+    reviewer_root_worker_id: str | None
 
 
 @dataclass(frozen=True)
@@ -70,7 +70,7 @@ class ReviewerDirectory(Protocol):
     """Independent reviewer selection under WG-A authorized project policy."""
 
     def choose(self, *, project_id: str, submission_id: str,
-               author_session_id: str) -> ReviewerAssignment: ...
+               author_shift_id: str) -> ReviewerAssignment: ...
 
 
 class CapabilityValidators(Protocol):
@@ -140,53 +140,67 @@ class AssuranceService:
     @staticmethod
     def _independent(tx: ScopedTransaction, project_id: str, author: str,
                      reviewer: str, reviewer_root: str | None) -> dict[str, Any]:
-        author_row = tx.one("SELECT author_principal_id FROM sessions WHERE project_id=? AND session_id=?", (project_id, author))
+        author_row = tx.one("""
+            SELECT w.principal_id AS author_principal_id,sh.worker_id
+            FROM worker_shifts sh JOIN worker_conversations w
+              ON w.project_id=sh.project_id AND w.worker_id=sh.worker_id
+            WHERE sh.project_id=? AND sh.shift_id=?""", (project_id,author))
         principal = tx.one("SELECT kind FROM principals WHERE principal_id=?", (reviewer,))
         if author_row is None or principal is None or author_row["author_principal_id"] == reviewer:
             raise AssuranceError("forbidden", "reviewer must be a distinct trusted principal")
-        if not tx.one("SELECT 1 FROM project_grants WHERE project_id=? AND principal_id=? LIMIT 1", (project_id, reviewer)):
+        if not tx.one("SELECT 1 FROM project_grants WHERE project_id=? AND principal_id=? LIMIT 1",
+                      (project_id,reviewer)):
             raise AssuranceError("forbidden", "reviewer lacks a project grant")
-        author_lineage = tx.one("SELECT root_session_id FROM session_lineages WHERE project_id=? AND session_id=?", (project_id, author))
+        author_lineage = tx.one("SELECT root_worker_id FROM worker_lineages "
+                                "WHERE project_id=? AND worker_id=?",
+                                (project_id,author_row["worker_id"]))
         if author_lineage is None:
-            raise AssuranceError("conflict", "author session lineage has not been verified")
+            raise AssuranceError("conflict", "author persistent conversation lineage unavailable")
         if reviewer_root is None:
             if principal["kind"] != "human":
                 raise AssuranceError("forbidden", "nonhuman reviewer requires independently verified lineage")
         else:
-            root = tx.one("SELECT root_session_id FROM session_lineages WHERE project_id=? AND session_id=?", (project_id, reviewer_root))
-            participant = tx.one("""SELECT 1 FROM session_lineages l JOIN sessions s
-                                  ON s.project_id=l.project_id AND s.session_id=l.session_id
-                                  WHERE l.project_id=? AND l.root_session_id=? AND s.author_principal_id=? LIMIT 1""",
-                                 (project_id, reviewer_root, reviewer))
-            if (root is None or root["root_session_id"] != reviewer_root
-                    or reviewer_root == author_lineage["root_session_id"] or participant is None):
+            root = tx.one("SELECT root_worker_id FROM worker_lineages "
+                          "WHERE project_id=? AND worker_id=?", (project_id,reviewer_root))
+            participant = tx.one("""
+                SELECT 1 AS ok FROM worker_lineages l JOIN worker_conversations w
+                  ON w.project_id=l.project_id AND w.worker_id=l.worker_id
+                WHERE l.project_id=? AND l.root_worker_id=? AND w.principal_id=? LIMIT 1""",
+                (project_id,reviewer_root,reviewer))
+            if (root is None or root["root_worker_id"] != reviewer_root
+                    or reviewer_root == author_lineage["root_worker_id"] or participant is None):
                 raise AssuranceError("forbidden", "reviewer lineage is missing, shared, or untrusted")
-        return {"author_session_id": author, "author_root_session_id": author_lineage["root_session_id"],
-                "reviewer_principal_id": reviewer, "reviewer_root_session_id": reviewer_root}
+        return {"author_shift_id":author,
+                "author_root_worker_id":author_lineage["root_worker_id"],
+                "reviewer_principal_id":reviewer,
+                "reviewer_root_worker_id":reviewer_root}
 
     @staticmethod
     def _submission(tx: ScopedTransaction, project: str, submission_id: str,
                     acceptance_digest: str | None = None) -> Mapping[str, Any]:
-        row = tx.one("""SELECT s.submission_id,s.session_id,s.task_id,s.lease_generation,s.state,
-                    s.source_revision_id,s.manifest_digest,t.acceptance_digest,t.snapshot_id,
-                    sess.snapshot_id AS author_snapshot
-                    FROM submissions s JOIN tasks t ON t.project_id=s.project_id AND t.task_id=s.task_id
-                    JOIN sessions sess ON sess.project_id=s.project_id AND sess.session_id=s.session_id
-                    WHERE s.project_id=? AND s.submission_id=?""", (project, submission_id))
+        row = tx.one("""
+            SELECT s.submission_id,s.shift_id,s.task_id,s.lease_generation,s.state,
+                   s.source_revision_id,s.manifest_digest,
+                   t.acceptance_digest,t.snapshot_id,
+                   t.snapshot_id AS author_snapshot
+            FROM submissions s
+            JOIN tasks t ON t.project_id=s.project_id AND t.task_id=s.task_id
+            JOIN shift_assignments a ON a.project_id=s.project_id
+              AND a.shift_id=s.shift_id AND a.task_id=s.task_id
+              AND a.lease_generation=s.lease_generation
+            WHERE s.project_id=? AND s.submission_id=?""", (project,submission_id))
         if row is None:
-            raise AssuranceError("missing", "submission unavailable in this project")
-        if row["state"] not in ("submitted", "qa_passed", "integrated"):
+            raise AssuranceError("missing", "submission unavailable or unbound to worker shift")
+        if row["state"] not in ("submitted","qa_passed","integrated"):
             raise AssuranceError("conflict", "submission has not reached submitted state")
         if acceptance_digest is not None and row["acceptance_digest"] != acceptance_digest:
             raise AssuranceError("conflict", "task acceptance digest differs")
-        if row["snapshot_id"] != row["author_snapshot"]:
-            raise AssuranceError("stale_snapshot", "author Canon snapshot differs from task")
         return row
 
     def _bound_artifacts(self, tx: ScopedTransaction, project_id: str,
                          s: Mapping[str, Any]) -> list[dict[str, Any]]:
         rows = tx.all("""SELECT a.artifact_id,a.kind,a.content_digest,a.manifest_digest,
-                     a.producer_session_id,a.source_revision_id,a.snapshot_id,
+                     a.producer_shift_id,a.source_revision_id,a.snapshot_id,
                      b.durability
                      FROM submission_artifacts sa JOIN artifacts a
                        ON a.project_id=sa.project_id AND a.artifact_id=sa.artifact_id
@@ -199,13 +213,13 @@ class AssuranceService:
         for row in rows:
             a = dict(row)
             if (a["durability"] != "verified" or a["source_revision_id"] != s["source_revision_id"]
-                    or a["snapshot_id"] != s["snapshot_id"] or a["producer_session_id"] != s["session_id"]):
+                    or a["snapshot_id"] != s["snapshot_id"] or a["producer_shift_id"] != s["shift_id"]):
                 raise AssuranceError("conflict", "original artifact is not verified against author/source/Canon")
             for digest in (a["content_digest"], a["manifest_digest"]):
                 _sha(digest, "artifact digest")
                 if not tx.one("SELECT 1 FROM project_blobs pb JOIN blobs b ON b.content_digest=pb.content_digest WHERE pb.project_id=? AND pb.content_digest=? AND b.durability='verified'", (project_id, digest)):
                     raise AssuranceError("missing", "artifact original or manifest has no verified project-scoped blob")
-            result.append({k: a[k] for k in ("artifact_id", "kind", "content_digest", "manifest_digest", "producer_session_id", "source_revision_id", "snapshot_id")})
+            result.append({k: a[k] for k in ("artifact_id", "kind", "content_digest", "manifest_digest", "producer_shift_id", "source_revision_id", "snapshot_id")})
         return result
 
     def _binding(self, tx: ScopedTransaction, project_id: str, s: Mapping[str, Any]) -> dict[str, Any]:
@@ -214,7 +228,7 @@ class AssuranceService:
             raise AssuranceError("missing", "submitted source revision unavailable")
         return {"project_id": project_id, "submission_id": s["submission_id"],
                 "source_commit_sha": source["commit_sha"], "source_tree_digest": source["tree_digest"],
-                "source_repo_id": source["repo_id"], "author_session_id": s["session_id"], "lease_generation": s["lease_generation"],
+                "source_repo_id": source["repo_id"], "author_shift_id": s["shift_id"], "lease_generation": s["lease_generation"],
                 "submission_manifest_digest": s["manifest_digest"],
                 "source_revision_id": s["source_revision_id"], "acceptance_digest": s["acceptance_digest"],
                 "canon_snapshot_id": s["snapshot_id"], "artifacts": self._bound_artifacts(tx, project_id, s)}
@@ -240,19 +254,19 @@ class AssuranceService:
             if s["state"] != "submitted":
                 raise AssuranceError("conflict", "new review requires a submitted candidate")
             binding = self._binding(tx, project_id, s)
-            assignee = self.reviewers.choose(project_id=project_id, submission_id=submission, author_session_id=s["session_id"])
-            independence = self._independent(tx, project_id, s["session_id"], assignee.principal_id, assignee.reviewer_root_session_id)
+            assignee = self.reviewers.choose(project_id=project_id, submission_id=submission, author_shift_id=s["shift_id"])
+            independence = self._independent(tx, project_id, s["shift_id"], assignee.principal_id, assignee.reviewer_root_worker_id)
             # Persist the exact original submission AND reviewer assignment. The
             # selected root cannot be silently substituted during later review.
             bound_digest = self._evidence(project_id, _canonical({"binding": binding,
                 "reviewer_principal_id": assignee.principal_id,
-                "reviewer_root_session_id": assignee.reviewer_root_session_id,
+                "reviewer_root_worker_id": assignee.reviewer_root_worker_id,
                 "independence": independence}))
             review_id = uuid.uuid4().hex
             tx.execute("""INSERT INTO qa_reviews(project_id,review_id,submission_id,reviewer_principal_id,
-                         author_session_id,source_revision_id,acceptance_digest,verdict,evidence_digest)
+                         author_shift_id,source_revision_id,acceptance_digest,verdict,evidence_digest)
                          VALUES(?,?,?,?,?,?,?,'pending',?)""",
-                       (project_id, review_id, submission, assignee.principal_id, s["session_id"], s["source_revision_id"], acceptance, bound_digest))
+                       (project_id, review_id, submission, assignee.principal_id, s["shift_id"], s["source_revision_id"], acceptance, bound_digest))
             tx.event(event_type="qa.review.requested", subject_id=review_id, payload_digest=bound_digest)
             return {"review_id": review_id, "state": "pending"}
         return self.store.run(project_id=project_id, domain="E", operation="requestReview",
@@ -275,7 +289,7 @@ class AssuranceService:
                 raise AssuranceError("invalid", "original artifact manifest is not JSON") from exc
             expected = {"project_id": project, "artifact_id": artifact["artifact_id"],
                         "kind": artifact["kind"], "content_digest": original_digest,
-                        "producer_session_id": artifact["producer_session_id"],
+                        "producer_shift_id": artifact["producer_shift_id"],
                         "source_revision_id": artifact["source_revision_id"], "canon_snapshot_id": artifact["snapshot_id"]}
             # The frozen manifest schema contains a self-referential manifest_digest.
             # Never require an impossible SHA-256 fixed point; the DB digest is
@@ -335,7 +349,7 @@ class AssuranceService:
             if "source_revision_id" in request and request["source_revision_id"] != q["source_revision_id"]:
                 raise AssuranceError("stale_revision", "review source revision mismatch")
             s = self._submission(tx, project_id, q["submission_id"], q["acceptance_digest"])
-            if s["source_revision_id"] != q["source_revision_id"] or s["session_id"] != q["author_session_id"]:
+            if s["source_revision_id"] != q["source_revision_id"] or s["shift_id"] != q["author_shift_id"]:
                 raise AssuranceError("stale_revision", "submission/source identity changed")
             expected = self._binding(tx, project_id, s)
             bound_digest = q["evidence_digest"]
@@ -349,10 +363,10 @@ class AssuranceService:
                 raise AssuranceError("conflict", "review binding was not valid JSON") from exc
             if not isinstance(bound, dict) or bound.get("binding") != expected or bound.get("reviewer_principal_id") != principal:
                 raise AssuranceError("conflict", "submitted artifact set, source, or assigned reviewer changed")
-            reviewer_root = bound.get("reviewer_root_session_id")
+            reviewer_root = bound.get("reviewer_root_worker_id")
             if reviewer_root is not None and not isinstance(reviewer_root, str):
                 raise AssuranceError("conflict", "invalid pinned reviewer root")
-            proof = self._independent(tx, project_id, q["author_session_id"], principal, reviewer_root)
+            proof = self._independent(tx, project_id, q["author_shift_id"], principal, reviewer_root)
             if bound.get("independence") != proof:
                 raise AssuranceError("conflict", "reviewer provenance changed since request")
             verdict, receipts = self._actual_validation(project_id, expected)
@@ -388,9 +402,9 @@ class AssuranceService:
             elif verdict == "pass" and request["verdict"] != "pass":
                 raise AssuranceError("conflict", "manual negative verdict requires independently read-back finding")
             proof_digest = self._evidence(project_id, _canonical(proof))
-            tx.execute("""INSERT INTO qa_independence_proofs(project_id,review_id,author_session_id,
-                         reviewer_principal_id,reviewer_root_session_id,independence_evidence_digest)
-                         VALUES(?,?,?,?,?,?)""", (project_id, review_id, q["author_session_id"], principal,
+            tx.execute("""INSERT INTO qa_independence_proofs(project_id,review_id,author_shift_id,
+                         reviewer_principal_id,reviewer_root_worker_id,independence_evidence_digest)
+                         VALUES(?,?,?,?,?,?)""", (project_id, review_id, q["author_shift_id"], principal,
                                                  reviewer_root, proof_digest))
             for receipt in receipts:
                 tx.execute("""INSERT INTO qa_receipts(project_id,review_id,validator_digest,artifact_id,evidence_digest)
@@ -428,7 +442,7 @@ class AssuranceService:
             # known project-scoped domain records, never through claimed relay text.
             subjects = (("submissions", "submission_id"), ("qa_reviews", "review_id"),
                         ("tasks", "task_id"), ("artifacts", "artifact_id"),
-                        ("features", "feature_id"), ("sessions", "session_id"),
+                        ("features", "feature_id"), ("worker_shifts", "shift_id"),
                         ("source_revisions", "revision_id"), ("releases", "release_id"),
                         ("owner_decisions", "decision_id"), ("deliberations", "deliberation_id"),
                         ("relay_messages", "message_id"), ("tool_operations", "operation_id"))
@@ -535,11 +549,11 @@ class AssuranceService:
                 raise AssuranceError("stale_revision", "canonical candidate differs from QA-reviewed source")
             binding = self._binding(tx, project_id, s)
             rows = tx.all("""SELECT q.review_id,q.evidence_digest,q.reviewer_principal_id,
-                                    p.reviewer_root_session_id,p.independence_evidence_digest FROM qa_reviews q
+                                    p.reviewer_root_worker_id,p.independence_evidence_digest FROM qa_reviews q
                              JOIN qa_independence_proofs p ON p.project_id=q.project_id AND p.review_id=q.review_id
                              WHERE q.project_id=? AND q.submission_id=? AND q.verdict='pass'
                              AND q.source_revision_id=? AND q.acceptance_digest=?
-                             AND p.author_session_id=q.author_session_id
+                             AND p.author_shift_id=q.author_shift_id
                              AND p.reviewer_principal_id=q.reviewer_principal_id ORDER BY q.review_id""",
                           (project_id, submission_id, candidate_revision_id, s["acceptance_digest"]))
             required_artifacts = {a["artifact_id"] for a in binding["artifacts"]}
@@ -560,7 +574,7 @@ class AssuranceService:
                     pinned = json.loads(bound)
                     if (pinned.get("binding") != binding
                             or pinned.get("reviewer_principal_id") != row["reviewer_principal_id"]
-                            or pinned.get("reviewer_root_session_id") != row["reviewer_root_session_id"]):
+                            or pinned.get("reviewer_root_worker_id") != row["reviewer_root_worker_id"]):
                         continue
                     if evidence["independence_proof_digest"] != row["independence_evidence_digest"]:
                         continue

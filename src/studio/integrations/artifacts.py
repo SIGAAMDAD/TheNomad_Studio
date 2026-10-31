@@ -25,7 +25,7 @@ class Artifact:
     kind: str
     content_digest: str
     manifest_digest: str
-    producer_session_id: str | None
+    producer_shift_id: str | None
     source_revision_id: str | None
     canon_snapshot_id: str | None
     validator_digest: str | None

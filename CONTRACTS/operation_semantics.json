@@ -481,7 +481,7 @@
         "worker_shifts"
       ],
       "required_auth": "project",
-      "success_postcondition": "Read manually enrolled sessions and observed GitHub last activity; distinguish pending, active_observed, quiet, stop_requested and unknown.",
+      "success_postcondition": "Read manually enrolled worker conversations and shifts and observed GitHub last activity; distinguish pending, active_observed, quiet, stop_requested and unknown.",
       "transaction_owner": null
     },
     {
@@ -495,7 +495,7 @@
       "records": [
         "qa_reviews",
         "submissions",
-        "session_lineages"
+        "worker_lineages"
       ],
       "required_auth": "project",
       "success_postcondition": "Create review for exact submitted artifact set/source SHA and acceptance digest, assign independent principal.",
@@ -1137,7 +1137,7 @@
         "tool_grants"
       ],
       "required_auth": "owner",
-      "success_postcondition": "Revoke grant_id in project; reject subsequent dispatch and inform affected sessions.",
+      "success_postcondition": "Revoke grant_id in project; reject subsequent dispatch and inform affected worker shifts.",
       "transaction_owner": "B"
     }
   ],

@@ -55,8 +55,6 @@
   "releases": "WG-M",
   "reports": "WG-F",
   "reservations": "WG-F",
-  "session_lineages": "WG-I",
-  "sessions": "WG-I",
   "shift_assignments": "WG-D",
   "source_revisions": "WG-G",
   "specialist_roles": "WG-B",
@@ -69,6 +67,7 @@
   "tool_operations": "WG-H",
   "usage_receipts": "WG-F",
   "worker_conversations": "WG-I",
+  "worker_lineages": "WG-I",
   "worker_shifts": "WG-I",
   "workforce_command_results": "WG-I"
 }
