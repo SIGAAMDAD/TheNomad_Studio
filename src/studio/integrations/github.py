@@ -140,10 +140,10 @@ class GitHub:
 
     def observe_exact(self, path: str, *, pinned_commit: str | None = None) -> RemoteFile | None:
         commit = git_sha(pinned_commit) if pinned_commit else self.branch_tip()
-        tree = self._tree(commit)
-        if path not in tree:
-            return None
-        return self._read_at(path, commit, tree[path])
+        # A commit-pinned contents GET validates Git's blob SHA in _read_at.
+        # A recursive repository tree scan per mailbox is unnecessary here,
+        # and can fail solely because the repository tree was truncated.
+        return self._read_at(path, commit)
 
     def publish(self, path: str, body: bytes, *, expected_digest: str, effect_intent_recorded: bool) -> RemoteFile:
         """Caller must persist an exact project/path/hash intent first; no optimistic success."""
