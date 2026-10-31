@@ -1,13 +1,19 @@
-# R5 deployment handoff (M owned)
+# R5R deployment handoff
 
-The service has no AI worker daemon or model inference API. Configure **existing** GitHub repo/ref, permitted project channels and credential bindings with WG-G. Do not create workgroup branches during deployment.
+This folder contains the Python coordinator image and a local Compose scaffold. It does not deploy the browser workforce, the C# ToolHost or the TypeScript cockpit.
 
-Runtime construction order is WG-C APSW transaction state, WG-G authenticated GitHub readback/effect reconciler, WG-I cursor and relay observation recovery, WG-D preparation scheduling, WG-J authenticated FastAPI. `studio.app.lifecycle.StudioRuntime` runs all recovery hooks before starting any of these services, and shuts down in reverse order.
+## Production factory
 
-**Current M-only delivery:** `pip install -e '.[dev]'` and `python scripts/verify_r5_contracts.py /path/to/R5-packet` are executable. `python scripts/stage_handoff.py --help` is executable. A full network service cannot be started without the A-L source and real per-project configuration. Do not substitute a fake endpoint or browser runtime to make health checks pass.
+The service launches python -m studio.app.cli. Supply STUDIO_COMPOSITION_FACTORY=studio.app.production_factory:build_from_environment plus an installed STUDIO_TRUSTED_PORTS_FACTORY=<trusted_module>:<factory>. The trusted adapter factory must provide authentication, project-bound GitHub source and relay transports, authorization, source/CI readback, review, release and recovery, all sharing the actual APSW writer.
 
-Operational backups and restores are initiated through C's verified backup set and M's `RecoveryCoordinator`, with uncertain effects reconciled before restore and project CAS validated. External publication and readback are always mediated by WG-G and the source/QA/release gates in `studio.app`.
+Absent configured capabilities and missing 72-operation bindings fail closed, rather than starting a simulated backend.
 
-Required Tier C pilot: actual manual ChatGPT session sends a GitHub relay HELLO; authenticated G observes the remote ref and bytes; I projects the exact receipt; E/L verifies a real submission; M checks canonical integration; G verifies CI and release bytes. Record exact SHA/repo/project and label unavailable checks `NOT_RUN`.
+## Operating constraints
 
-`deploy/Dockerfile` and `deploy/compose.yaml` build the Python service using a **trusted configured composition factory** (`STUDIO_COMPOSITION_FACTORY=module:function`). The CLI fails closed with exit code 78 if the factory is unavailable; it never silently starts incomplete fake services. This production container does not replace WG-H's .NET host or WG-K's TypeScript cockpit, which have separate owners and must be assembled in the final deployment. `docker compose` and clean installation are not yet verified here.
+Keep persistent APSW storage and verified backups. Bind operator HTTP to loopback; place a trusted TLS proxy in front. Optional signed GitHub webhooks are readback hints, not proof of completion. Configure secrets through deployment-secret management, never committed text.
+
+The Compose default restart policy is no. The environment-specific Student profile is optional and is not an AI worker runtime.
+
+## Validation
+
+Before a production pilot, require exact-SHA Python/APSW, TypeScript, .NET, source provenance and control CI with per-language 90% production line-coverage gates, real provider readback and an observed Tier C browser worker execution. See docs/OWNER_SETUP.md and qa/TIER_C_MANUAL_EVIDENCE.md.

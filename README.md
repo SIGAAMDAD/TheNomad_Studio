@@ -1,34 +1,49 @@
 # The Nomad Studio
 
-Control plane for project-scoped game production, manually started ChatGPT browser workers, cabal coordination, GitHub command delivery, deterministic tooling, review and source integration.
+The Nomad Studio is the project-scoped production control plane for manually initialized ChatGPT browser conversations, cabal/task scheduling, source integration, independent QA, GitHub relay evidence and deterministic tooling. It is not an AI model runtime or a browser wake-up service.
 
-## Worker execution
+## Runtime and authority
 
-A registered worker is one persistent browser conversation. A **shift** is one human-started, continuously executing assistant response; within it, the worker may observe and complete multiple GitHub-issued assignments before returning a single final receipt. Worker, shift, assignment, command and external receipt are separately identified. A GitHub write or a database row does not establish browser execution.
+- **Owner:** final authority for architecture, policy, protected source merges, canon and releases.
+- **Workers:** a registered worker is an ordinary browser conversation; a shift is one actually executing assistant response. Assignments, shifts, leases, commands and remote receipts are distinct.
+- **Python/APSW:** project-scoped durable state, transactions, governance, scheduling, leases, outbox, checkpoints and recovery.
+- **GitHub:** immutable addressed communications, verified source refs, CI and exact remote readback. Source and communications branches have separate bindings.
+- **.NET ToolHost:** pinned, bounded, manifest-authorized process runner with fail-closed OS sandbox controls; not a ChatGPT runner.
+- **TypeScript cockpit:** authenticated operator client for the frozen 72-operation API.
+- **Google Drive:** long-form creative bibles under their own owner-approval and revision rules.
 
-`studio.workforce` implements worker enrollment, shift lifecycle, verified HELLO handling, durable outbox reconciliation, exact command receipt processing and final shift receipts. `studio.production.service` atomically issues a GitHub-addressed command outbox record with each lease and resource reservation. `studio.integrations.github` verifies immutable remote bytes and recognizes shift-addressed command envelopes.
+The coordinator cannot autonomously start or resume a ChatGPT browser response. A queued command is not proof of browser execution.
 
-The worker-facing HTTP contract and agent service now use persistent conversation/shift identities. Other production domains still reference the old task-bound SQL `sessions` records, and the complete 72-operation composition is not yet wired. The branch is therefore an **implementation in progress**, not a validated production Studio or live ChatGPT/GitHub execution loop.
+## Source tree
 
-## Technology boundaries
+| Area | Contents |
+| --- | --- |
+| src/studio/ | Live studio domains, APSW state, provider adapters, HTTP and recovery |
+| CONTRACTS/ and schema/ | Frozen operator contracts and storage contracts |
+| host/ | Deterministic ToolHost |
+| ui/ | Operator cockpit |
+| tests/ and qa/ | Regression, security, failure injection and provenance evidence |
+| skills/ and studio/ | Specialist reference material and retained historical contracts |
+| deploy/ and docs/ | Configuration, deployment and acceptance instructions |
 
-- **Python / APSW / SQLite**: coordination, governance, transactional state and scheduling. APSW is required for production, while sqlite3 tests are offline reference checks.
-- **GitHub**: existing communications branch for addressed commands and peer messages, plus canonical project source revisions and CI. The coordinator does not start ChatGPT responses.
-- **.NET**: authorized deterministic process execution, isolation, logs and receipts; not a model runtime.
-- **TypeScript**: operator cockpit against verified API responses; it does not infer active conversations from dispatch state.
-- **Google Drive**: project knowledge and Bibles, separate from source and command authority.
+## Verification
 
-The optional Student Developer Pack deployment profile adds bounded CI and development capacity; `FREE_BASELINE` remains the default and does not require student benefits.
+Install the appropriate Python 3.11+ / APSW, Node/npm and .NET toolchains before running:
 
-## Local development and verification
+    python -m pip install -e '.[dev,coordinator]'
+    python scripts/verify_workforce_schema.py
+    python -m pytest -q tests/unit tests/integration tests/acceptance --cov=src/studio --cov-fail-under=90
+    (cd ui && npm ci && npm run check && npm test && npm run coverage && npm run build)
+    dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Release
 
-```sh
-python -m pip install -e '.[dev,coordinator]'
-python scripts/verify_workforce_schema.py
-python -m pytest -q tests/unit tests/integration tests/acceptance
-node --test tests/unit/k/*.test.mjs
-(cd ui && npm install --ignore-scripts --no-audit --no-fund && npm run build)
-dotnet build host/Nomad.ToolHost/Nomad.ToolHost.csproj -c Release
-```
+Hosted CI additionally verifies source provenance and enforces 90% line coverage independently for Python, complete TS/TSX, authored TS/TSX and production C# ToolHost.
 
-The .NET SDK and npm packages must be installed for their respective builds. These commands check local source, not real ChatGPT browser continuation or remote GitHub acceptance. See `deploy/student-profile.md` for capacity setup and free-tier rollback.
+## Deployment
+
+The real service entry point is studio.app.cli with STUDIO_COMPOSITION_FACTORY=studio.app.production_factory:build_from_environment and an installed STUDIO_TRUSTED_PORTS_FACTORY. The factory constructs all 72 operation handlers around a shared APSW writer; missing trusted adapters fail closed. Operator HTTP binds only to loopback and requires a trusted TLS proxy. See deploy/README.md and docs/SETUP.md.
+
+## Acceptance
+
+The source/coverage/control gates have passed at the verified R5R implementation revision. Tier C browser continuation F-20 still needs live evidence: an already-initialized ordinary browser conversation handles two consecutive GitHub assignments and publishes two authentic receipts during a continuing response. No paid AI API execution is implicitly authorized.
+
+See docs/OWNER_SETUP.md, docs/CHATGPT_SETUP.md, docs/PRODUCTION_PIPELINE.md and docs/REPO_MAINTENANCE.md.
