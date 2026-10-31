@@ -64,6 +64,8 @@ def test_all_72_routes_are_physically_wired_to_one_apsw_writer(tmp_path):
         assert app.projects.store.writer is app.releases.state.writer
         assert app.projects.store.writer is app.recovery.state.writer
         assert app.projects.store.writer is app.integrations.state.writer
+        assert any(component.name=="G-Actions-build-reconciliation"
+                   for component in app.runtime.components)
         with app.runtime:
             assert app.runtime.ready
         assert not app.runtime.ready

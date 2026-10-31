@@ -44,6 +44,7 @@ from studio.storage.reservations import AtomicBudgetReservations
 from studio.storage.workforce import WorkforceStorage
 
 from .assurance_commands import AssuranceCommands
+from .build_recovery import BuildRecoveryPump
 from .composition import StudioComposition
 from .errors import StudioError
 from .governance_commands import GovernanceCommands
@@ -244,6 +245,10 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
             bound_provider=bound_provider.for_writer(writer,blob_root)
         providers=ProviderCommands(ProjectProviderRouter(
             bound_provider),effect_readback=ports.effect_readback)
+        # Missed workflow notifications are reconciled from exact C effect
+        # intents; this readback-only component never dispatches another build.
+        build_recovery=BuildRecoveryPump(
+            writer=writer,provider_for_project=bound_provider)
         workforce=Workforce(writer,require_action=ports.worker_authorize)
         workers=WorkerOperations(workforce,
             verify_receipt=ports.verify_worker_receipt)
@@ -265,6 +270,9 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
         if delivery is not None:
             parts.append(Component("G-I-command-publisher",
                                    recover=lambda:None,start=delivery.start,stop=delivery.stop))
+        parts.append(Component("G-Actions-build-reconciliation",
+                               recover=lambda:None,
+                               start=build_recovery.start,stop=build_recovery.stop))
         runtime=StudioRuntime(parts)
         app=StudioComposition(
             projects=ProjectService(ProjectAPSWStore(writer),ports.capability_probe),
