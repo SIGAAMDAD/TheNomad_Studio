@@ -74,6 +74,105 @@ internal static class AdditionalHostCoverage
         }
     }
 
+    private static async Task VerifyRuntimeFailurePaths(Registry registry, ToolRun baseRun,
+                                                        string temporary)
+    {
+        int sequence = 0;
+        async Task<(ToolReceipt result,List<ToolReceipt> emissions)> Execute(
+            string scenario, string executable, string[] arguments,
+            int deadline = 2000, long maxOutput = 65536, string[]? outputFiles = null,
+            bool cancelDuringRun = false)
+        {
+            string id = "coverage-" + (++sequence).ToString() + "-" + scenario;
+            var operation = registry.Operations[0] with { OperationId=id, RequestId="req-"+id };
+            var tool = baseRun with { OperationId=id, RequestId=operation.RequestId,
+                                      DeadlineMs=deadline };
+            var entry = registry.Packages[0].Entrypoints[0] with
+                { MaxOutputBytes=maxOutput, OutputFiles=outputFiles ?? Array.Empty<string>() };
+            var altered = registry with
+            {
+                Operations = new[] { operation },
+                Packages = new[] { registry.Packages[0] with { Entrypoints = new[] { entry } } }
+            };
+            string home = Path.Combine(temporary,id);
+            Directory.CreateDirectory(home);
+            var journal = new ToolJournal(home);
+            var emissions = new List<ToolReceipt>();
+            var gate = new object();
+            Task Emit(ToolReceipt receipt) { lock (gate) emissions.Add(receipt); return Task.CompletedTask; }
+            var runtime = new HostRuntime(altered, journal, "coverage-host", Emit, (_, _) =>
+            {
+                var psi = new ProcessStartInfo(executable)
+                {
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    WorkingDirectory = temporary
+                };
+                foreach (var argument in arguments) psi.ArgumentList.Add(argument);
+                return psi;
+            });
+            await runtime.RunAsync(tool,Protocol.Serialize(tool));
+            if (cancelDuringRun)
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    if (journal.Read(tool.ProjectId,tool.OperationId)?.Receipt.State == "running") break;
+                    await Task.Delay(20);
+                }
+                await runtime.CancelAsync(new ToolCancel("cancel",Protocol.Version,id,
+                                                        tool.ProjectId,tool.LeaseGeneration,"cancel-"+id));
+            }
+            ToolReceipt? terminal = null;
+            for (int i = 0; i < 250; i++)
+            {
+                terminal = journal.Read(tool.ProjectId,tool.OperationId)?.Receipt;
+                if (terminal is not null && terminal.State is "completed" or "failed" or "canceled" or "unknown")
+                    break;
+                await Task.Delay(20);
+            }
+            await runtime.ShutdownAsync();
+            var final = journal.Read(tool.ProjectId,tool.OperationId)?.Receipt
+                ?? throw new InvalidOperationException("Missing journal result for "+scenario);
+            Check(final.State is "completed" or "failed" or "canceled" or "unknown",
+                  "tool execution produced a terminal state for "+scenario);
+            await runtime.ObserveAsync(new ToolObserve("observe",Protocol.Version,id,tool.ProjectId));
+            Check(emissions.Count > 0 && emissions[^1].State == final.State,
+                  "journal observation returns exact terminal state for "+scenario);
+            return (final,emissions);
+        }
+
+        var failure = await Execute("nonzero","/usr/bin/false",Array.Empty<string>());
+        Check(failure.result.State == "failed" && failure.result.ExitCode != 0,
+              "nonzero child exit persists failed terminal receipt");
+
+        var output = await Execute("output-limit","/usr/bin/sh",
+                                   new[] { "-c", "printf '0123456789012345678901234567890123456789'" },
+                                   maxOutput:8);
+        Check(output.result.State == "failed" && output.result.Reason is not null,
+              "bounded stdout stops oversized tool output");
+
+        var missing = await Execute("missing-output","/usr/bin/true",Array.Empty<string>(),
+                                    outputFiles:new[]{"required-artifact-does-not-exist"});
+        Check(missing.result.State == "failed" && missing.result.Reason?.StartsWith("execution_failure") == true,
+              "missing required output artifact invalidates successful process exit");
+
+        var timeout = await Execute("deadline","/usr/bin/sleep",new[]{"3"},deadline:90);
+        Check(timeout.result.State == "canceled" || timeout.result.State == "failed",
+              "expired operation deadline terminates child without fabricated completion");
+
+        var canceled = await Execute("cancellation","/usr/bin/sleep",new[]{"3"},
+                                     cancelDuringRun:true);
+        Check(canceled.result.State == "canceled" &&
+              canceled.emissions.Any(x=>x.Reason == "cancel_requested"),
+              "authorized in-flight cancellation affects only current lease");
+
+        var clean = await Execute("success-output","/usr/bin/sh",
+                                  new[]{"-c","printf stdout; printf stderr >&2"});
+        Check(clean.result.State == "completed" && clean.result.LogDigests.Length == 2,
+              "stdout and stderr records are flushed and content-hashed");
+    }
+
     public static async Task RunAsync(Registry registry, ToolRun run, string registryPath, string install, string workspace)
     {
         Check(!Config.IsHash("bad") && Config.IsHash(new string('b',64)), "manifest SHA helper enforces byte identity");
@@ -161,5 +260,6 @@ internal static class AdditionalHostCoverage
               "real broker handshake and malformed frame stream recover correctly");
         Check(await RunChild(registryPath,actualHash,journal2,false,false)==4,
               "real broker challenge mismatch fails closed");
+        await VerifyRuntimeFailurePaths(registry,run,Path.GetDirectoryName(registryPath)!);
     }
 }

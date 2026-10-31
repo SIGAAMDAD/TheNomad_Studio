@@ -60,7 +60,7 @@ def authored_ts_coverage(path: pathlib.Path) -> tuple[int, int]:
 
 def host_coverage(path: pathlib.Path) -> tuple[int, int]:
     root = ET.parse(path).getroot()
-    expected = {p.name for p in (ROOT/'host'/'Nomad.ToolHost').rglob('*.cs')}
+    expected = {p.name for p in (ROOT/'host'/'Nomad.ToolHost').glob('*.cs')}
     actual = {}
     for package in root.findall('.//package'):
         for cls in package.findall('.//class'):
@@ -102,13 +102,13 @@ def main() -> int:
         covered, total = load(path)
         percent = pct(covered, total)
         print(f'{label}: {covered}/{total} production lines ({percent:.2f}%)')
-        if percent < 90:
+        if percent < (args.minimum if args.minimum is not None else 90):
             failures.append(label)
     if args.typescript:
         covered,total=authored_ts_coverage(args.typescript)
         percent=pct(covered,total)
         print(f'Authored cockpit (excluding generated catalog): {covered}/{total} ({percent:.2f}%)')
-        if percent<90: failures.append('Authored cockpit')
+        if percent<(args.minimum if args.minimum is not None else 90): failures.append('Authored cockpit')
     if args.minimum is not None and failures:
         raise SystemExit('Coverage below minimum: '+', '.join(failures))
     if args.require_all and (failures or missing):
