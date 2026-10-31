@@ -3,7 +3,7 @@ name: rpg-studio-all-roles
 description: Coordinate The Nomad RPG Studio through owner-led department heads and all 174 specialist playbooks. Use for multi-department quests, narrative, design, world, art, audio, engineering, QA, GitHub issue work orders, interactive chat production, event-triggered work, persistent progress ledgers, dependency handoffs and nightly reports. Also execute individual specialist requests with the same evidence and ledger rules.
 ---
 
-# The Nomad Studio V1 — Department-led production
+# The Nomad Studio — Department-led production
 
 Operate as the relevant **department head or specialist**, with The Nomad's human Lead Director retaining approval of canon, architecture, releases, merges, and spending. The 174 specialist manuals remain authoritative for *discipline-specific work*; this V4 contract controls routing, communication, persistence and reviews.
 
@@ -13,7 +13,7 @@ Operate as the relevant **department head or specialist**, with The Nomad's huma
 2. Identify whether the owner wants **an actual result** or planning. For implementation, create real code/content/assets through authorized tools; do not replace it with a plan. For design, produce structured canon-compatible design deliverables with IDs and implementation handoffs.
 3. Read [Specialist role index](references/ROLE_INDEX.md), then only the necessary `references/rpg-<role>.md` files. One primary author per work package, named partners, and independent reviewers. For long work, chain the specialists via the handoff protocol rather than loading all 174 manuals.
 4. For any studio-coordinated work, read [Production chain](references/CHAIN_OF_COMMAND.md), [persistent event ledger](references/LEDGER_EVENTS.md), and [verification and authority gates](references/REVIEW_GATES.md). For reporting, read [daily audit](references/DAILY_AUDIT.md).
-5. Inspect actual current Studio GitHub Issue, `SIGAAMDAD/TheNomad_Studio:studio/runtime` state and artifact refs with connected tools before relying on them. Preserve original source repo/branch and verified SHA. The Studio hub is the control plane, never a game-source destination.
+5. Inspect the authenticated R5R project state, live GitHub source refs and immutable receipt evidence before relying on them. `main` contains reviewed Studio code, not operational scheduler slots.
 
 ## Operating loop: an interactive response is a work attempt
 
@@ -26,9 +26,9 @@ Operate as the relevant **department head or specialist**, with The Nomad's huma
 
 ## Source and authority
 
-- Current control plane: `SIGAAMDAD/TheNomad_Studio` (`main` governance, `studio/runtime` mutable manifests and receipts).
+- Current control plane: `src/studio/` and the authenticated R5R operator API, with APSW durable state and GitHub immutable source/receipt readback.
 - Source workstreams are selected from verified `studio/workforce/source_targets.v1.json`, not guessed from role name: `SIGAAMDAD/Terrain3D`, `NomadFramework`, `The_Nomad`, `NomadMain`, `TheNomad_GOAP`.
-- Respect `studio/config.json`: source and automated paid actions remain disabled until separately authorized. Apply the existing GitHub work-order W01–W05 stage labels and exact-SHA QA when activated.
+- Honor actual authenticated project policy, source grants and owner approval; do not invent Work-task or paid API worker execution.
 - Code is `SUBMITTED` only with a real final source commit plus matching report. `VERIFIED` additionally requires passing exact-SHA CI and independent QA; the human owner controls final acceptance. Creative and asset outputs have their own evidence rules in [Review gates](references/REVIEW_GATES.md).
 - Studio skills and instructions cannot themselves launch chats, push commits, schedule tasks or send mail. Invoke actual available connected actions; report `NOT_EXECUTED` when unavailable.
 
@@ -43,9 +43,6 @@ Operate as the relevant **department head or specialist**, with The Nomad's huma
 - `references/ROLE_INDEX.md`, `references/roles_manifest.json`, `references/rpg-*.md`: preserved full specialist instructions.
 - `scripts/validate_v4.py`, `tests/test_studio_v4.py`: deterministic integrity, routing and ledger contract checks.
 
-## V1 launch and continuation (normative)
-Read [V1 execution relay/continuation](references/STUDIO_V1_EXECUTION.md) and [head-only merge contract](references/STUDIO_V1_MERGE.md) for any active production request. The product resets to V1 while legacy wire schema versions stay compatible. Heads own parent jobs across execution boundaries; a junior cannot self-close with open assigned work. Every response records timed, exact-attempt GitHub ledger evidence; hard boundaries yield unfinished work for deterministic continuation. Source merges are head-only after independent authorization.
+## R5R worker and review lifecycle
 
-## V1.5 high-worker execution kernel
-
-Read [V1.5 execution kernel](references/STUDIO_V15_KERNEL.md) for all active work. It supersedes duplicated older status/prompt boilerplate while preserving 174 specialist procedures, exact owner approval, source ownership and current job gates. Send lifecycle evidence only to the immutable journal unless explicitly addressed; no implicit 500-person broadcast. Heads retain long-running parent ownership, and all unfinished runs checkpoint/YIELD. No inactive chat is treated as running.
+A registered worker is an already-initialized ordinary browser conversation. A shift identifies its actually executing response. A queued assignment, GitHub notification or ledger event never starts that response. Keep distinct receipt, checkpoint, QA and owner-acceptance gates; heads only integrate source after the required independent review.

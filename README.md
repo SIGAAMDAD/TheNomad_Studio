@@ -23,7 +23,7 @@ The coordinator cannot autonomously start or resume a ChatGPT browser response. 
 | host/ | Deterministic ToolHost |
 | ui/ | Operator cockpit |
 | tests/ and qa/ | Regression, security, failure injection and provenance evidence |
-| skills/ and studio/ | Specialist reference material and retained historical contracts |
+| skills/ and studio/ | Specialist reference material and active department contracts |
 | deploy/ and docs/ | Configuration, deployment and acceptance instructions |
 
 ## Verification

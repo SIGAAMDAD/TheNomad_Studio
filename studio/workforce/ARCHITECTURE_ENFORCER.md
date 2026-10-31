@@ -1,14 +1,14 @@
 # Architecture Enforcer — contributor PR contract
 
-STATUS: REVIEW DRAFT. No active agent, scheduled task, source PR, spending, or source-write permission is created by this change.
+STATUS: REVIEW DRAFT. No active agent, browser-worker shift, source PR, spending, or source-write permission is created by this change.
 
 ## Role in the existing studio hierarchy
 
 Architecture Enforcer is a **governance duty**, not a 175th profession or an
 additional active paid worker:
-- S00 Production Director (Instant): inspect job scope and route potential architecture changes.
-- W05 Independent Technical QA (Sol Medium): inspect actual PR diff, ABI/contracts, source ownership and negative cases independently.
-- W06 Principal Engineer (Sol High): optional architecture analysis only when the owner requests or the issue warrants escalation.
+- Studio Production Director Production Director (Instant): inspect job scope and route potential architecture changes.
+- independent technical QA Independent Technical QA (Sol Medium): inspect actual PR diff, ABI/contracts, source ownership and negative cases independently.
+- authorized technical escalation Principal Engineer (Sol High): optional architecture analysis only when the owner requests or the issue warrants escalation.
 - Human Owner: sole authority to approve/reject an architecture change and accept source merges.
 
 The enforcer may **block work, request a contract, and initiate an
@@ -24,8 +24,8 @@ existing approved architecture contract:
 1. STOP modifications that would violate the current approved contract,
    and checkpoint only safe, independent work. Record the exact source
    commit and reason; mark the original engineering job BLOCKED_ARCHITECTURE.
-2. Notify S00 and invoke the enforcer duty (S00 triage, W05 independent
-   review; optionally W06 principal technical analysis). Set the job's
+2. Notify Studio Production Director and invoke the enforcer duty (Studio Production Director triage, independent technical QA independent
+   review; optionally authorized technical escalation principal technical analysis). Set the job's
    architecture_impact to "change" and architecture_review.verdict to
    "PROPOSAL_REQUIRED"; this is NOT an owner approval.
 3. Determine which repo OWNS the architecture: rendering -> Terrain3D;
@@ -42,9 +42,9 @@ existing approved architecture contract:
    performance and rollback. Include original source/job links and exact
    baseline SHA. A small PoC diff may accompany the proposal only if
    separately authorized; default is a documentation-only PR.
-6. S00 records the **actual source PR URL, number and current head SHA** in
+6. Studio Production Director records the **actual source PR URL, number and current head SHA** in
    architecture_proposal in the Studio job ledger; never create a mock
-   proposal link. W05 independently reviews risk, source ownership,
+   proposal link. independent technical QA independently reviews risk, source ownership,
    protected paths, ABI, migration and negative cases.
 7. The Human Owner responds like a normal maintainer:
    **approve**, **request changes**, or **reject** the proposal.
@@ -56,10 +56,10 @@ existing approved architecture contract:
    must read back the true PR, owner identity, approval SHA, merged
    status and merge SHA. Only then may an architecture_acceptance
    receipt be persisted against the exact source baseline.
-9. S00 rebases/rescopes the original work from the newly approved source
+9. Studio Production Director rebases/rescopes the original work from the newly approved source
    baseline, updates the frozen contract, and revalidates ownership,
    work branch, leases and compiler/test gates. W01–W04 then continue
-   ordinary code implementation; W05 performs separate final QA.
+   ordinary code implementation; independent technical QA performs separate final QA.
 10. If rejected, retain the approved architecture and either implement
     a no-change alternative or cancel the dependent job. Never silently
     apply the proposal's source diff.
@@ -78,7 +78,7 @@ against the actual frozen contract and source diff.
 For impact="none", the job must carry an enforcer review receipt
 `architecture_review` with reviewer_role="architecture_enforcer",
 verdict="NO_CHANGE", and reviewed_baseline_sha equal to the pinned
-source baseline. W05 independently inspects the final diff and
+source baseline. independent technical QA independently inspects the final diff and
 protected paths; a worker's self-assessment is insufficient.
 
 For impact="change", code is blocked until:
@@ -102,7 +102,7 @@ does not itself fetch credentials or open PRs.
 
 Source files listed under `protected_paths` trigger a deterministic
 audit when changed. Semantic API/ABI/ownership changes can occur
-outside those paths, so W05 must inspect actual diffs as well. The
+outside those paths, so independent technical QA must inspect actual diffs as well. The
 existing Studio PR workflow cannot automatically inspect every
 external source-repository PR; equivalent source CI/PR checks require
 a separately installed authorized integration in each source repo.
@@ -113,11 +113,11 @@ a separately installed authorized integration in each source repo.
   needs a planner predicate not supported by the frozen GOAP contract.
 - W01 does NOT add a one-off planner change to NomadMain or quietly
   patch GOAP in the same job.
-- S00 splits the dependency. An enforcer proposal PR is opened in
+- Studio Production Director splits the dependency. An enforcer proposal PR is opened in
   TheNomad_GOAP/main on branch studio/arch/<GOAP_JOB_ID>.
 - Proposal explains predicate scope, reusable semantics, ABI/schema,
   alternatives, other archetypes' interactions and compatibility.
-- W05 reviews independently; the owner approves/changes/rejects the PR.
+- independent technical QA reviews independently; the owner approves/changes/rejects the PR.
 - If accepted, an approved GOAP implementation job is created using
   the new library baseline. Framework adapter gets its own job only
   if needed. The original NomadMain behavior job resumes only when
@@ -126,8 +126,8 @@ a separately installed authorized integration in each source repo.
 ## Operational status
 
 The policy and deterministic checks can be merged to Studio main.
-They do not create extra scheduled tasks, enable paid Work, write source
+They do not create extra browser-worker shift, enable paid Work, write source
 or install external source-repo CI. A native Work worker asked to create
-the proposal must have approved repo write permissions; otherwise S00
+the proposal must have approved repo write permissions; otherwise Studio Production Director
 reports a blocker and provides the contributor's exact proposal packet.
 The user remains the final architectural authority.
