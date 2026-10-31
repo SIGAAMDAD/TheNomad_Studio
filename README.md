@@ -35,11 +35,11 @@ dotnet build host/Nomad.ToolHost/Nomad.ToolHost.csproj --configuration Release
 dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Release
 ```
 
-`ui/package-lock.json` is not committed. Use `npm install` as CI currently does; `npm ci` becomes valid once a matching lockfile is checked in. CI on PRs and `implementation/**` validates Python/APSW, TypeScript/TSX, .NET host, role skills, contracts and provenance. See [.github/workflows/studio-validation.yml](.github/workflows/studio-validation.yml). Successful PR checks establish tested source behavior, not a deployed service or live browser-worker acceptance.
+`ui/package-lock.json` is not committed. Use `npm install` as CI currently does; `npm ci` becomes valid once a matching lockfile is checked in. CI on PRs, `main` pushes and `implementation/**` validates Python/APSW, TypeScript/TSX, .NET host, role skills, contracts and provenance. See [.github/workflows/studio-validation.yml](.github/workflows/studio-validation.yml). Successful PR checks establish tested source behavior, not a deployed service or live browser-worker acceptance.
 
 ## Deployment and acceptance
 
-The CLI entrypoint is `python -m studio.app.cli`, configured with `STUDIO_COMPOSITION_FACTORY=studio.app.production_factory:build_from_environment` and a deployment-provided trusted ports factory. Startup requires real project-scoped adapters and durable paths; absent dependencies fail closed. The provided Docker/Compose files are scaffolding and currently do **not** supply the complete production configuration or package all contract paths. Do not treat `docker compose up` as production proof.
+The CLI entrypoint is `python -m studio.app.cli`, configured with `STUDIO_COMPOSITION_FACTORY=studio.app.production_factory:build_from_environment` and a deployment-provided trusted ports factory. Startup requires real project-scoped adapters and durable paths; absent dependencies fail closed. The provided Docker/Compose files include the schema and frozen contracts, but remain scaffolding and do **not** supply the trusted production provider or complete production configuration. Do not treat `docker compose up` as production proof.
 
 [Documentation index](docs/README.md) | [Setup](docs/SETUP.md) | [Deployment scaffold](deploy/README.md) | [Production pipeline](docs/PRODUCTION_PIPELINE.md) | [Repository cleanup](docs/REPO_MAINTENANCE.md) | [Launch acceptance](docs/OWNER_SETUP.md)
 

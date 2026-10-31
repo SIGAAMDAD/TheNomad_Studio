@@ -2,6 +2,7 @@ name: Studio source, integration and security verification
 on:
   push:
     branches:
+      - main
       - 'implementation/**'
   pull_request:
   workflow_dispatch:
@@ -60,8 +61,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          # Direct dependencies are version-pinned; an npm lockfile has not yet been
-          # generated from the authenticated package registry in this runtime.
+          # Generate a verified npm lockfile before switching this job to npm ci.
       - name: Install declared pinned dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
       - run: npm run check
@@ -119,6 +119,10 @@ jobs:
           python-version: '3.13'
       - run: python -m pip install -e '.[dev]'
       - run: python -m pytest -q tests/unit/m/test_packaging.py tests/acceptance/test_system_contracts.py
+      - name: Build and smoke-test packaged coordinator contracts and schema
+        run: |
+          docker build --file deploy/Dockerfile --tag nomad-studio:ci .
+          docker run --rm --entrypoint python nomad-studio:ci -c "from pathlib import Path; from studio.storage.schema import schema_bytes; from studio.api.contracts import FrozenContracts; assert schema_bytes(); assert len(FrozenContracts(Path('/studio/CONTRACTS')).operations) == 72"
       - name: Verify no executable AI API worker was introduced
         run: |
           python - <<'PY'

@@ -60,7 +60,10 @@ def authored_ts_coverage(path: pathlib.Path) -> tuple[int, int]:
 
 def host_coverage(path: pathlib.Path) -> tuple[int, int]:
     root = ET.parse(path).getroot()
-    expected = {p.name for p in (ROOT/'host'/'Nomad.ToolHost').glob('*.cs')}
+    host_root = ROOT/'host'/'Nomad.ToolHost'
+    # Include nested production files, but exclude SDK-generated build outputs.
+    expected = {p.name for p in host_root.rglob('*.cs')
+                if not {'bin', 'obj'}.intersection(p.relative_to(host_root).parts)}
     actual = {}
     for package in root.findall('.//package'):
         for cls in package.findall('.//class'):
