@@ -1,6 +1,7 @@
 """Production factory binds real C APSW state and refuses missing provider authority."""
 from types import SimpleNamespace
 from unittest.mock import Mock
+import dataclasses
 import pytest
 
 apsw=pytest.importorskip("apsw")
@@ -87,3 +88,71 @@ def test_factory_fails_closed_for_missing_or_wrong_project_services(tmp_path,mon
         binding=SimpleNamespace(project_id="other")))
     with pytest.raises(StudioError,match="bound"):
         router.list_artifacts(project_id="project")
+
+
+def _http(app, token, method, path, body=None):
+    import io
+    import json
+    from wsgiref.util import setup_testing_defaults
+    env={}
+    setup_testing_defaults(env)
+    encoded=json.dumps(body).encode() if body is not None else b''
+    env.update(REQUEST_METHOD=method,PATH_INFO=path,QUERY_STRING='',
+               CONTENT_LENGTH=str(len(encoded)),CONTENT_TYPE='application/json',
+               HTTP_AUTHORIZATION='Bearer '+token,
+               **{'wsgi.input':io.BytesIO(encoded)})
+    recorded=[]
+    response=b''.join(app(env,lambda status,headers:recorded.append(status)))
+    return int(recorded[0][:3]),json.loads(response)
+
+
+def test_live_wsgi_project_governance_and_persistent_worker_lifecycle(tmp_path):
+    import hashlib
+    from studio.api import (ConfiguredOpaqueVerifier, StudioWSGI, VerifiedPrincipal)
+    config=ports()
+    token='owner.'+'z'*60
+    config=dataclasses.replace(config,verifier=ConfiguredOpaqueVerifier({
+        hashlib.sha256(token.encode()).hexdigest():
+            VerifiedPrincipal('owner','trusted','owner','proof',True)}))
+    app=assemble_live_studio(
+        database_path=tmp_path/'studio.sqlite',
+        blob_root=tmp_path/'blobs',source_root=tmp_path/'sources',
+        contracts_root='CONTRACTS',ports=config,fresh=True)
+    service=StudioWSGI(app.operator_service)
+    writer=app.projects.store.writer
+    try:
+        # Bootstrap has no existing project grant; the persisted owner grant
+        # is created in the same C transaction and used on the next request.
+        status, created=_http(service,token,'POST','/v1/projects',{
+            'request_id':'project-create','name':'Nomad','charter_digest':'a'*64})
+        assert status==200
+        project=created['project_id']
+        assert _http(service,token,'POST','/v1/projects',{
+            'request_id':'project-create','name':'Nomad','charter_digest':'a'*64})==(status,created)
+        status, bible=_http(service,token,'POST',f'/v1/projects/{project}/bibles',{
+            'request_id':'bible1','title':'Design','kind':'design'})
+        assert status==200 and bible['bible_id']
+        assert _http(service,token,'GET',f'/v1/projects/{project}/bibles')==(
+            200,{'bibles':[{'bible_id':bible['bible_id'],
+                             'kind':'design','active_edition_id':''}]})
+        writer._connection.execute(
+            "INSERT INTO specialist_roles(role_id,role_revision,role_manifest_digest,state) "
+            "VALUES('coder','1','digest','ready')")
+        status, registered=_http(service,token,'POST',f'/v1/projects/{project}/workers',{
+            'request_id':'worker1','worker_id':'coder-1',
+            'browser_chat_ref':'manual-browser','role_id':'coder'})
+        assert status==200 and registered['state']=='registered'
+        status, shift=_http(service,token,'POST',
+            f'/v1/projects/{project}/workers/coder-1/shifts',{
+                'request_id':'shift-start','shift_id':'shift1'})
+        assert status==200 and shift['state']=='awaiting_hello'
+        assert writer.read(project,lambda tx:tx.one(
+            'SELECT root_worker_id FROM worker_lineages WHERE project_id=? AND worker_id=?',
+            (project,'coder-1'))) == {'root_worker_id':'coder-1'}
+        assert writer.read(project,lambda tx:tx.one(
+            'SELECT state FROM worker_shifts WHERE project_id=? AND shift_id=?',
+            (project,'shift1'))) == {'state':'awaiting_hello'}
+        assert _http(service,token,'GET',
+                     '/v1/projects/other/workers')[0]==403
+    finally:
+        writer.close()
