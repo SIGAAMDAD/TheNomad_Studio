@@ -161,3 +161,108 @@ def test_invalid_persisted_run_id_blocks_provider_readback():
     pump=BuildRecoveryPump(writer=writer,provider_for_project=lambda _:provider)
     assert pump.poll_once()=={'observed':0,'unknown':0,'errors':1}
     assert provider.calls==[]
+
+
+def test_unresolved_readback_uses_exponential_local_backoff_without_reauthenticating():
+    now=[1000.0]
+    writer=CStore();writer.add('p1')
+    provider=Provider('p1')
+    provider.actions.observe=lambda **kwargs: None
+    factory_calls=[]
+    def resolver(project):
+        factory_calls.append(project)
+        return provider
+    pump=BuildRecoveryPump(writer=writer,provider_for_project=resolver,
+                           interval_seconds=10, max_readback_delay_seconds=80,
+                           clock=lambda: now[0])
+    assert pump.poll_once()=={'observed':0,'unknown':1,'errors':0}
+    for _ in range(5):
+        assert pump.poll_once()=={'observed':0,'unknown':0,'errors':0}
+    assert factory_calls==['p1']
+    now[0]+=10
+    assert pump.poll_once()=={'observed':0,'unknown':1,'errors':0}
+    now[0]+=19
+    assert pump.poll_once()=={'observed':0,'unknown':0,'errors':0}
+    now[0]+=1
+    assert pump.poll_once()=={'observed':0,'unknown':1,'errors':0}
+    assert factory_calls==['p1']*3
+    # A signed event supplies a hint; the next cycle checks immediately.
+    pump.request_reconciliation()
+    assert pump.poll_once()=={'observed':0,'unknown':1,'errors':0}
+    assert len(factory_calls)==4
+
+
+def test_webhook_during_slow_remote_response_cannot_be_overridden_by_old_deferral():
+    now=[1000.0]
+    writer=CStore();writer.add('p1')
+    provider=Provider('p1')
+    pump=BuildRecoveryPump(writer=writer,provider_for_project=lambda _: provider,
+                           interval_seconds=30,clock=lambda: now[0])
+    def stale_response(**kwargs):
+        pump.request_reconciliation()
+        return None
+    provider.actions.observe=stale_response
+    assert pump.poll_once()=={'observed':0,'unknown':1,'errors':0}
+    # The previous read completed after the webhook; do not swallow it.
+    provider.actions.observe=lambda **kwargs: None
+    assert pump.poll_once()=={'observed':0,'unknown':1,'errors':0}
+
+
+def test_rate_limit_header_cooldown_is_respected_without_new_network_lookups():
+    now=[1000.0]
+    writer=CStore();writer.add('p1')
+    provider=Provider('p1')
+    class QuotaError(Exception):
+        retry_after=180.0
+    calls=[]
+    def unavailable(**kwargs):
+        calls.append(kwargs)
+        raise QuotaError()
+    provider.actions.observe=unavailable
+    pump=BuildRecoveryPump(writer=writer,provider_for_project=lambda _:provider,
+                           interval_seconds=10,clock=lambda:now[0])
+    assert pump.poll_once()=={'observed':0,'unknown':0,'errors':1}
+    now[0]+=179
+    assert pump.poll_once()=={'observed':0,'unknown':0,'errors':0}
+    assert len(calls)==1
+    now[0]+=1
+    assert pump.poll_once()=={'observed':0,'unknown':0,'errors':1}
+    assert len(calls)==2
+
+
+def test_invalid_readback_backoff_configuration_rejected():
+    import pytest
+    writer=CStore()
+    for params in ({'max_readback_delay_seconds':0},
+                   {'max_readback_delay_seconds':float('nan')},
+                   {'clock':None}):
+        with pytest.raises(ValueError):
+            BuildRecoveryPump(writer=writer,provider_for_project=lambda _:None,**params)
+
+
+def test_provider_credential_failure_uses_same_backoff_budget():
+    now=[1000.0]
+    writer=CStore(); writer.add('p1')
+    calls=[]
+    def failed_resolver(project):
+        calls.append(project)
+        raise RuntimeError('credential provider down')
+    pump=BuildRecoveryPump(writer=writer,provider_for_project=failed_resolver,
+                           interval_seconds=10,clock=lambda:now[0])
+    assert pump.poll_once()=={'observed':0,'unknown':0,'errors':1}
+    for _ in range(7):
+        assert pump.poll_once()=={'observed':0,'unknown':0,'errors':0}
+    assert calls==['p1']
+    now[0]+=10
+    assert pump.poll_once()=={'observed':0,'unknown':0,'errors':1}
+    assert len(calls)==2
+    pump.request_reconciliation()
+    assert pump.poll_once()=={'observed':0,'unknown':0,'errors':1}
+    assert len(calls)==3
+
+
+def test_existing_slow_poll_configuration_remains_supported():
+    writer=CStore()
+    pump=BuildRecoveryPump(writer=writer,provider_for_project=lambda _:None,
+                           interval_seconds=3600)
+    assert pump.max_readback_delay_seconds>=3600

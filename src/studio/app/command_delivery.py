@@ -48,8 +48,9 @@ class CommandDeliveryPump:
         self.last_error: Exception | None = None
 
     def _projects(self) -> list[str]:
-        # The cursor is a scheduling hint only; authoritative state remains C's
-        # durable outbox. Wrap around rather than starving later projects.
+        # Round-robin selection avoids permanent starvation when projects
+        # exceed the per-cycle budget. The cursor is a scheduling hint only;
+        # all authoritative pending rows live in C's durable outbox.
         query = ("SELECT DISTINCT project_id FROM command_outbox "
                  "WHERE state IN ('queued','unknown') AND project_id > ? "
                  "ORDER BY project_id LIMIT ?")
@@ -81,8 +82,8 @@ class CommandDeliveryPump:
                     actor, project_id, provider=provider,
                     limit=self.commands_per_project)
             except Exception as exc:
-                # A failing provider cannot starve unrelated projects.
-                # Its pending commands remain persisted for recovery.
+                # A failing project's identity/provider cannot starve other
+                # projects. Its pending commands stay in the durable outbox.
                 self.last_error = exc
                 continue
             for key in totals:
@@ -91,12 +92,14 @@ class CommandDeliveryPump:
 
     def _loop(self):
         while not self._stop.is_set():
+            # Preserve hints received during an in-flight provider call.
+            self._wake.clear()
             try:
                 self.poll_once()
             except Exception as exc:
                 self.last_error = exc
-            self._wake.wait(self.interval_seconds)
-            self._wake.clear()
+            if not self._stop.is_set():
+                self._wake.wait(self.interval_seconds)
 
     def request_reconciliation(self) -> None:
         """Wake the bounded readback loop without performing provider I/O."""

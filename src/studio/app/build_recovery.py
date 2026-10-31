@@ -7,7 +7,10 @@ from __future__ import annotations
 
 import hashlib
 import json
-from threading import Event, Thread
+import math
+import time
+from collections import OrderedDict
+from threading import Event, Lock, Thread
 from typing import Callable
 
 from studio.integrations.api_ports import GOperatorPorts
@@ -21,7 +24,9 @@ class BuildRecoveryPump:
                  provider_for_project: Callable[[str], GOperatorPorts],
                  interval_seconds: float = 30.0,
                  projects_per_poll: int = 8,
-                 builds_per_project: int = 2):
+                 builds_per_project: int = 2,
+                 max_readback_delay_seconds: float | None = None,
+                 clock: Callable[[], float] = time.monotonic):
         if not isinstance(writer, WorkforceStorage) or not callable(provider_for_project):
             raise TypeError('real C writer and trusted G project resolver required')
         if (type(interval_seconds) not in (int, float) or
@@ -29,6 +34,18 @@ class BuildRecoveryPump:
                 type(projects_per_poll) is not int or not 1 <= projects_per_poll <= 100 or
                 type(builds_per_project) is not int or not 1 <= builds_per_project <= 100):
             raise ValueError('invalid bounded build reconciliation schedule')
+        if max_readback_delay_seconds is None:
+            max_readback_delay_seconds = max(600.0, float(interval_seconds))
+        if (type(max_readback_delay_seconds) not in (int, float) or
+                not math.isfinite(max_readback_delay_seconds) or
+                max_readback_delay_seconds < interval_seconds or
+                not callable(clock)):
+            raise ValueError('invalid bounded CI readback delay or clock')
+        self._clock = clock
+        self.max_readback_delay_seconds = float(max_readback_delay_seconds)
+        self._readback_schedule: OrderedDict[tuple[str, str], tuple[float, int]] = OrderedDict()
+        self._schedule_lock = Lock()
+        self._hint_epoch = 0
         self.writer = writer
         self.providers = provider_for_project
         self.repository = BuildAPSWRepository(writer)
@@ -116,20 +133,66 @@ class BuildRecoveryPump:
             return result
         return self.writer.read(project_id,read)
 
+    def _due(self, project_id: str, ci_id: str) -> bool:
+        with self._schedule_lock:
+            scheduled = self._readback_schedule.get((project_id, ci_id))
+        return scheduled is None or self._clock() >= scheduled[0]
+
+    def _defer(self, project_id: str, ci_id: str, retry_after: float | None,
+               hint_epoch: int) -> None:
+        key = (project_id, ci_id)
+        with self._schedule_lock:
+            # An incoming webhook during a provider read wins over that
+            # read's stale result. Do not overwrite the newly cleared hint.
+            if self._hint_epoch != hint_epoch:
+                return
+            old = self._readback_schedule.get(key)
+            attempts = min(20, (old[1] if old else 0) + 1)
+            delay = min(self.max_readback_delay_seconds,
+                        self.interval_seconds * (2 ** (attempts - 1)))
+            if isinstance(retry_after, (int, float)) and not isinstance(retry_after, bool):
+                if math.isfinite(retry_after) and retry_after > 0:
+                    # Reject implausibly large provider delays as a permanent
+                    # local blackout; G still enforces its credential quota.
+                    delay = min(86400.0, max(delay, retry_after))
+            self._readback_schedule[key] = (self._clock() + delay, attempts)
+            self._readback_schedule.move_to_end(key)
+            # Hints are disposable; C owns durable run state.
+            if len(self._readback_schedule) > 20000:
+                self._readback_schedule.popitem(last=False)
+
     def poll_once(self) -> dict[str,int]:
         totals = {'observed':0,'unknown':0,'errors':0}
         self.last_error = None
+        with self._schedule_lock:
+            hint_epoch = self._hint_epoch
         for project_id in self._projects():
             if self._stop.is_set():
                 break
             try:
-                provider = self.providers(project_id)
-                if not isinstance(provider,GOperatorPorts) or provider.binding.project_id!=project_id:
-                    raise TypeError('G build readback is not bound to authorized project')
-                pending = self._pending(project_id)
+                pending = [record for record in self._pending(project_id)
+                           if self._due(project_id, record['ci_id'])]
+                # Avoid resolving credentials or GET /user if every build in
+                # this project is already awaiting the next readback window.
+                if not pending:
+                    continue
             except Exception as exc:
                 self.last_error = exc
                 totals['errors'] += 1
+                continue
+            try:
+                provider = self.providers(project_id)
+                if not isinstance(provider,GOperatorPorts) or provider.binding.project_id!=project_id:
+                    raise TypeError('G build readback is not bound to authorized project')
+            except Exception as exc:
+                self.last_error = exc
+                totals['errors'] += 1
+                # Authentication and account throttling happen in the G
+                # resolver. One temporary failure should not cause a new
+                # credential-resolution/GET /user on every poll tick.
+                for record in pending:
+                    self._defer(project_id, record['ci_id'],
+                                getattr(exc, 'retry_after', None), hint_epoch)
                 continue
             for record in pending:
                 if self._stop.is_set():
@@ -155,24 +218,38 @@ class BuildRecoveryPump:
                     self.repository.observe(project_id=project_id,
                                             ci_id=record['ci_id'],run=run)
                     totals['observed' if run is not None else 'unknown'] += 1
+                    if (run is not None and run.status == 'completed'
+                            and run.conclusion is not None):
+                        with self._schedule_lock:
+                            self._readback_schedule.pop((project_id, record['ci_id']), None)
+                    else:
+                        self._defer(project_id, record['ci_id'], None, hint_epoch)
                 except Exception as exc:
                     # An uncertain provider result stays in C for later exact
                     # readback; it is never re-dispatched or fabricated.
                     self.last_error = exc
                     totals['errors'] += 1
+                    self._defer(project_id, record['ci_id'],
+                                getattr(exc, 'retry_after', None), hint_epoch)
         return totals
 
     def _loop(self) -> None:
         while not self._stop.is_set():
+            # Clear before working, so a webhook arriving during a slow scan
+            # remains set and starts another reconciliation immediately.
+            self._wake.clear()
             try:
                 self.poll_once()
             except Exception as exc:
                 self.last_error = exc
-            self._wake.wait(self.interval_seconds)
-            self._wake.clear()
+            if not self._stop.is_set():
+                self._wake.wait(self.interval_seconds)
 
     def request_reconciliation(self) -> None:
         """Wake the bounded readback loop without performing provider I/O."""
+        with self._schedule_lock:
+            self._hint_epoch += 1
+            self._readback_schedule.clear()
         self._wake.set()
 
     def start(self) -> None:
