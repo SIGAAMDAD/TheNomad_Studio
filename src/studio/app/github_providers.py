@@ -45,6 +45,8 @@ class ConnectedGitHubProject:
             raise IntegrationError('invalid','trusted exact effect path resolver required')
         GitHubChannel(self.project_id,self.owner,self.repository,self.comms_ref)
         GitHubChannel(self.project_id,self.owner,self.repository,self.source_ref)
+        if any(entry.ref!=self.source_ref for entry in self.builds):
+            raise IntegrationError("invalid","CI target must use configured source ref")
         target_names=[entry.target_id for entry in self.builds]
         if len(target_names)!=len(set(target_names)):
             raise IntegrationError("invalid","duplicate approved CI workflow target")
@@ -101,8 +103,11 @@ class ConnectedGitHubProviders:
         if not isinstance(verified,dict) or verified.get("login")!=target.account_id:
             raise IntegrationError("forbidden","configured GitHub credential identity changed")
         binding=ProjectBinding(project_id,target.account_id)
-        github=GitHub(self.http,lambda:token,
-                      GitHubChannel(project_id,target.owner,target.repository,target.comms_ref),
+        relay=GitHub(self.http,lambda:token,
+                     GitHubChannel(project_id,target.owner,target.repository,target.comms_ref),
+                     binding,rate_governor=self.rate_governor)
+        source=GitHub(self.http,lambda:token,
+                      GitHubChannel(project_id,target.owner,target.repository,target.source_ref),
                       binding,rate_governor=self.rate_governor)
         build_targets={entry.target_id:entry for entry in target.builds}
         return GOperatorPorts(
@@ -111,7 +116,8 @@ class ConnectedGitHubProviders:
             connectors=ConnectorService(
                 self.http,binding,self.credential_resolver,
                 ConnectorAPSWRepository(self.writer)),
-            actions=GitHubActions(github,binding,build_targets),
+            actions=GitHubActions(source,binding,build_targets),
+            relay=relay,
             builds=BuildAPSWRepository(self.writer),
             effects=EffectReconciler(
                 binding, EffectAPSWRepository(

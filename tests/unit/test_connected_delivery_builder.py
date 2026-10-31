@@ -38,7 +38,8 @@ def test_builder_reuses_single_writer_and_verified_per_project_transport(monkeyp
             github = GitHub(NoNetworkHTTP(), lambda: "token",
                             GitHubChannel(project_id, "owner", "repo", "comms"),
                             ProjectBinding(project_id, "account"))
-            return SimpleNamespace(actions=SimpleNamespace(github=github))
+            return SimpleNamespace(relay=github,
+                                   actions=SimpleNamespace(github=None))
         return get
     monkeypatch.setattr(module, "ConnectedGitHubProviders", providers)
     resolve = lambda key: "token"

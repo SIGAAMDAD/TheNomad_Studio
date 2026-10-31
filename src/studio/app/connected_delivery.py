@@ -47,7 +47,7 @@ class ConnectedGitHubCommandDeliveryBuilder:
 
         def verified_github(project_id: str) -> GitHub:
             ports = providers(project_id)
-            github = ports.actions.github
+            github = ports.relay
             if not isinstance(github, GitHub) or github.binding.project_id != project_id:
                 raise TypeError("G returned an unbound GitHub relay transport")
             return github

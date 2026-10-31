@@ -34,9 +34,12 @@ class BuildRepository(Protocol):
 
 class GOperatorPorts:
     def __init__(self, binding: ProjectBinding, artifacts: ArtifactStore, connectors: ConnectorService,
-                 actions: GitHubActions, builds: BuildRepository, effects: EffectReconciler):
+                 actions: GitHubActions, builds: BuildRepository, effects: EffectReconciler,
+                 relay=None):
         self.binding, self.artifacts, self.connectors = binding, artifacts, connectors
         self.actions, self.builds, self.effects = actions, builds, effects
+        # The communications relay has different Git refs from source CI.
+        self.relay = relay
 
     def list_artifacts(self, *, project_id: str) -> dict:
         self.binding.require(project_id)
