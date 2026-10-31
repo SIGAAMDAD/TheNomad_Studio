@@ -95,6 +95,7 @@ class TrustedPorts:
     verified_source_revision: Any
     startup_recovery: Any
     bootstrap_credentials: tuple[str, ...] = ()
+    command_delivery: Any | None = None
 
 
 class ProjectProviderRouter:
@@ -185,6 +186,11 @@ def _validate_external(ports: TrustedPorts) -> None:
                  "verified_source_revision"):
         if not callable(getattr(ports,name)):
             raise TypeError(f"{name} must be a callable trusted provider")
+    if ports.command_delivery is not None and not (
+            callable(getattr(ports.command_delivery,"for_writer",None))
+            or all(callable(getattr(ports.command_delivery,method,None))
+                   for method in ("start","stop"))):
+        raise TypeError("configured GitHub outbox pump is invalid")
     if not hasattr(ports.integration_roster,"paths") or not hasattr(ports.integration_roster,"plan_sha256"):
         raise TypeError("verified integration ownership roster required")
 
@@ -238,21 +244,28 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
             bound_provider=bound_provider.for_writer(writer,blob_root)
         providers=ProviderCommands(ProjectProviderRouter(
             bound_provider),effect_readback=ports.effect_readback)
-        workers=WorkerOperations(Workforce(
-            writer,require_action=ports.worker_authorize),
+        workforce=Workforce(writer,require_action=ports.worker_authorize)
+        workers=WorkerOperations(workforce,
             verify_receipt=ports.verify_worker_receipt)
+        delivery=ports.command_delivery
+        if delivery is not None and callable(getattr(delivery,"for_writer",None)):
+            delivery=delivery.for_writer(writer,blob_root,workforce)
         audit=EventPageService(IndexedEventReader(writer))
         def verify_storage_integrity():
             if writer._connection.execute("PRAGMA quick_check").fetchone() != ("ok",):
                 raise StudioError("internal", "APSW database integrity check failed")
 
-        runtime=StudioRuntime([
+        parts=[
             Component("C-APSW",recover=verify_storage_integrity,
                       start=lambda:None,stop=writer.close),
             Component("G-I-startup-reconciliation",
                       recover=lambda:configured_port(ports.startup_recovery).recover(),
                       start=lambda:None,stop=lambda:None),
-        ])
+        ]
+        if delivery is not None:
+            parts.append(Component("G-I-command-publisher",
+                                   recover=lambda:None,start=delivery.start,stop=delivery.stop))
+        runtime=StudioRuntime(parts)
         app=StudioComposition(
             projects=ProjectService(ProjectAPSWStore(writer),ports.capability_probe),
             releases=ReleaseCoordinator(ReleaseAPSWStore(writer),
@@ -286,6 +299,9 @@ def build_from_environment() -> StudioComposition:
         raise StudioError("invalid","trusted factory import invalid")
     provider=getattr(importlib.import_module(module),func)
     ports=provider()
+    if ports.command_delivery is None:
+        raise StudioError("capability_unavailable",
+                          "durable GitHub command outbox publisher is not configured")
     db=os.environ.get("STUDIO_APSW_DATABASE")
     blobs=os.environ.get("STUDIO_BLOB_ROOT")
     source=os.environ.get("STUDIO_SOURCE_ROOT")
