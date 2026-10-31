@@ -3,11 +3,25 @@ import hashlib
 import json
 import sqlite3
 from types import SimpleNamespace
+import pytest
 
+import studio.app.build_recovery as module
 from studio.app.build_recovery import BuildRecoveryPump
 from studio.integrations.api_ports import GOperatorPorts
 from studio.integrations.ci import BuildObservation
 from studio.storage.workforce import WorkforceStorage
+
+
+class RecordingBuildRepository:
+    def __init__(self, writer):
+        self.observations=[]
+    def observe(self, *, project_id, ci_id, run):
+        self.observations.append((project_id,ci_id,run))
+
+
+@pytest.fixture(autouse=True)
+def isolate_build_repository(monkeypatch):
+    monkeypatch.setattr(module,'BuildAPSWRepository',RecordingBuildRepository)
 
 
 class Tx:
