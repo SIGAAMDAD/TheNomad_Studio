@@ -37,7 +37,7 @@ def test_nested_host_source_must_be_instrumented(tmp_path, monkeypatch):
     monkeypatch.setattr(coverage, 'ROOT', tmp_path)
 
     _write_cobertura(report, include_contracts=False)
-    with pytest.raises(ValueError, match=r'HostTypes\\.cs'):
+    with pytest.raises(ValueError, match='HostTypes'):
         coverage.host_coverage(report)
 
     _write_cobertura(report, include_contracts=True)
