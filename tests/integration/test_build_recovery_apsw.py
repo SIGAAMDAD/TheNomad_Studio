@@ -51,17 +51,25 @@ def test_missed_ci_notification_recovered_from_original_c_intent(tmp_path):
         def resolve(project_id):
             providers.append(project_id)
             return BoundProvider(project_id,actions)
+        monotonic_now=[1000.0]
         pump=BuildRecoveryPump(writer=writer,provider_for_project=resolve,
-                               projects_per_poll=1,builds_per_project=1)
+                               projects_per_poll=1,builds_per_project=1,
+                               clock=lambda:monotonic_now[0])
         assert pump.poll_once()=={'observed':0,'unknown':1,'errors':0}
         assert writer.read('p1',lambda tx:tx.one(
             'SELECT status FROM ci_runs WHERE project_id=? AND ci_id=?',
             ('p1',prepared.ci_id)))=={'status':'unknown'}
         actions.ready=True
+        # The first missing readback applies a 30-second retry window.
+        assert pump.poll_once()=={'observed':0,'unknown':0,'errors':0}
+        monotonic_now[0]+=30.0
         assert pump.poll_once()=={'observed':1,'unknown':0,'errors':0}
         assert writer.read('p1',lambda tx:tx.one(
             'SELECT status,remote_run_id FROM ci_runs WHERE project_id=? AND ci_id=?',
             ('p1',prepared.ci_id)))=={'status':'running','remote_run_id':'911'}
+        # A running run uses the next 60-second window before pinned readback.
+        assert pump.poll_once()=={'observed':0,'unknown':0,'errors':0}
+        monotonic_now[0]+=60.0
         assert pump.poll_once()=={'observed':1,'unknown':0,'errors':0}
         assert writer.read('p1',lambda tx:tx.one(
             'SELECT status,remote_run_id FROM ci_runs WHERE project_id=? AND ci_id=?',
