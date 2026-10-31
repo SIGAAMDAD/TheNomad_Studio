@@ -68,7 +68,9 @@ class StartupRecovery:
         projected = 0
         held = 0
         affected_projects: set[str] = set()
-        for cursor in self.state.channels():
+        # Use one stable channel snapshot for scans and unknown-effect recovery.
+        cursors=tuple(self.state.channels())
+        for cursor in cursors:
             if (not cursor.project_id or not cursor.channel_id or
                     cursor.verified_ref_sha is not None and len(cursor.verified_ref_sha) != 40):
                 raise StudioError("invalid", "invalid persisted relay cursor")
@@ -95,7 +97,7 @@ class StartupRecovery:
                                                channel_id=cursor.channel_id, reason=str(exc))
                 held += 1
                 affected_projects.add(cursor.project_id)
-        for project_id in {c.project_id for c in self.state.channels()}:
+        for project_id in {c.project_id for c in cursors}:
             for effect_id in self.state.outstanding_effects(project_id=project_id):
                 try:
                     reconciled = self.github.reconcile_external_effect(

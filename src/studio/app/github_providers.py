@@ -17,6 +17,7 @@ from studio.integrations.connectors import ConnectorService
 from studio.integrations.effects import EffectReconciler
 from studio.integrations.github import GitHub, GitHubChannel
 from studio.integrations.http import HttpPort, UrllibHttp, JsonProvider
+from studio.integrations.rate_governor import GitHubRateGovernor
 from studio.storage.artifact_catalog import ArtifactAPSWCatalog
 from studio.storage.builds import BuildAPSWRepository
 from studio.storage.connectors import ConnectorAPSWRepository
@@ -67,6 +68,9 @@ class ConnectedGitHubProviders:
         self.projects={p.project_id:p for p in projects}
         self.credential_resolver=credential_resolver
         self.http=http if http is not None else UrllibHttp()
+        # All G provider objects in this production assembly share one
+        # credential-keyed quota gate across projects and ref readers.
+        self.rate_governor=GitHubRateGovernor()
 
     def __call__(self, project_id: str) -> GOperatorPorts:
         identifier(project_id)
@@ -91,13 +95,15 @@ class ConnectedGitHubProviders:
         token=self.credential_resolver(account[1])
         if not isinstance(token,str) or not token:
             raise IntegrationError("capability_unavailable","configured GitHub credential unavailable")
-        verified=JsonProvider(self.http,lambda:token,"https://api.github.com").request("GET","/user")
+        verified=JsonProvider(self.http,lambda:token,"https://api.github.com",
+                              rate_governor=self.rate_governor,
+                              account_scope=target.account_id).request("GET","/user")
         if not isinstance(verified,dict) or verified.get("login")!=target.account_id:
             raise IntegrationError("forbidden","configured GitHub credential identity changed")
         binding=ProjectBinding(project_id,target.account_id)
         github=GitHub(self.http,lambda:token,
                       GitHubChannel(project_id,target.owner,target.repository,target.comms_ref),
-                      binding)
+                      binding,rate_governor=self.rate_governor)
         build_targets={entry.target_id:entry for entry in target.builds}
         return GOperatorPorts(
             binding=binding,

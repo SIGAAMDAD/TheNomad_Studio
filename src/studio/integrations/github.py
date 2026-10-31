@@ -74,11 +74,14 @@ class ScanPage:
 
 
 class GitHub:
-    def __init__(self, http: HttpPort, token_supplier: Callable[[], str], channel: GitHubChannel, binding: ProjectBinding):
+    def __init__(self, http: HttpPort, token_supplier: Callable[[], str], channel: GitHubChannel,
+                 binding: ProjectBinding, *, rate_governor=None):
         binding.require(channel.project_id)
         self.channel = channel
         self.binding = binding
-        self.api = JsonProvider(http, token_supplier, "https://api.github.com")
+        self.api = JsonProvider(http, token_supplier, "https://api.github.com",
+                                rate_governor=rate_governor,
+                                account_scope=binding.provider_account_id)
         self.prefix = f"/repos/{quote(channel.owner, safe='')}/{quote(channel.repo, safe='')}"
 
     def _request(self, method: str, path: str, data: dict | None = None, expect: tuple[int, ...] = (200,)):

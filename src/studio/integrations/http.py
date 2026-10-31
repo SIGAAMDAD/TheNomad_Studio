@@ -6,6 +6,7 @@ import urllib.error
 import urllib.request
 from typing import Callable, Protocol, Mapping
 from .common import ProviderFailure, RemoteUnknown
+from .rate_governor import GitHubRateGovernor
 
 
 class HttpPort(Protocol):
@@ -29,15 +30,23 @@ class UrllibHttp:
 
 class JsonProvider:
     def __init__(self, http: HttpPort, token_supplier: Callable[[], str], base_url: str,
-                 quota_observer: Callable[[Mapping[str, str], int], None] | None = None):
+                 quota_observer: Callable[[Mapping[str, str], int], None] | None = None,
+                 rate_governor: GitHubRateGovernor | None = None,
+                 account_scope: str | None = None):
         if not base_url.startswith("https://"):
             raise ValueError("HTTPS API URL required")
+        if rate_governor is not None and not account_scope:
+            raise ValueError("credential scope required for configured rate governor")
+        self.rate_governor = rate_governor
+        self.account_scope = account_scope
         self.http = http
         self.token_supplier = token_supplier
         self.base_url = base_url.rstrip("/")
         self.quota_observer = quota_observer
 
     def request(self, method: str, path: str, data: dict | None = None, *, expect: tuple[int, ...] = (200,)) -> dict | list | None:
+        if self.rate_governor is not None:
+            self.rate_governor.require_ready(self.account_scope)
         token = self.token_supplier()
         if not token:
             raise ProviderFailure("connector has no configured credential")
@@ -47,6 +56,8 @@ class JsonProvider:
             payload = json.dumps(data, separators=(",", ":")).encode("utf-8")
             headers["Content-Type"] = "application/json"
         status, response_headers, body = self.http.request(method, self.base_url + path, headers, payload)
+        if self.rate_governor is not None:
+            self.rate_governor.observe(self.account_scope, response_headers, status, body)
         if self.quota_observer is not None:
             # Observation is local and non-authoritative; never grants spending.
             self.quota_observer(response_headers, status)
