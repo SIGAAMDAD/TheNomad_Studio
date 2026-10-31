@@ -12,7 +12,8 @@
     "build": "npm run generate && tsc -b && vite build",
     "check": "npm run generate && tsc --noEmit -p tsconfig.json",
     "test": "node --test ../tests/unit/k/*.test.mjs",
-    "verify-handoff": "node scripts/verify-handoff.mjs"
+    "verify-handoff": "node scripts/verify-handoff.mjs",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@tanstack/react-query": "5.83.0",
@@ -24,6 +25,10 @@
     "@types/react-dom": "19.1.7",
     "@vitejs/plugin-react": "4.7.0",
     "typescript": "5.8.3",
-    "vite": "6.3.5"
+    "vite": "6.3.5",
+    "vitest": "3.2.4",
+    "@vitest/coverage-v8": "3.2.4",
+    "jsdom": "26.1.0",
+    "@testing-library/react": "16.3.0"
   }
 }

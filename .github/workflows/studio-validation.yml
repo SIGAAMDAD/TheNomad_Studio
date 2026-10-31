@@ -65,12 +65,17 @@ jobs:
         run: npm install --ignore-scripts --no-audit --no-fund
       - run: npm run check
       - run: npm test
+      - name: Collect complete cockpit TypeScript and TSX coverage
+        run: npm run coverage
       - run: npm run build
       - uses: actions/upload-artifact@v4
         if: success()
         with:
           name: cockpit-${{ github.sha }}
-          path: ui/dist
+          path: |
+            ui/dist
+            ui/coverage/coverage-summary.json
+            ui/coverage/cobertura-coverage.xml
           retention-days: 7
   tool-host:
     name: .NET host and authorization regression
@@ -84,7 +89,17 @@ jobs:
         with:
           dotnet-version: 10.0.x
       - run: dotnet build host/Nomad.ToolHost/Nomad.ToolHost.csproj --configuration Release --nologo
-      - run: dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Release
+      - name: Collect .NET host authorization regression and production coverage
+        run: |
+          dotnet tool install --global dotnet-coverage
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet-coverage collect "dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Release" -f cobertura -o toolhost-coverage.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: toolhost-coverage-${{ github.sha }}
+          path: toolhost-coverage.xml
+          retention-days: 7
   packaging:
     name: Deterministic artifact and source provenance
     runs-on: ubuntu-latest
