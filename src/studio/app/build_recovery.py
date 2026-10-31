@@ -65,7 +65,7 @@ class BuildRecoveryPump:
             # Each project has its own deterministic round-robin cursor.
             # A perpetually UNKNOWN early build must not starve later runs.
             query = (
-                "SELECT c.ci_id,c.source_revision_id,s.commit_sha,e.effect_id,"
+                "SELECT c.ci_id,c.source_revision_id,c.remote_run_id,s.commit_sha,e.effect_id,"
                 "e.request_id FROM ci_runs c JOIN effect_intents e "
                 "ON e.project_id=c.project_id AND e.subject_id=c.ci_id "
                 "AND e.action='build.dispatch' JOIN source_revisions s "
@@ -110,6 +110,7 @@ class BuildRecoveryPump:
                         not isinstance(recorded.get('target_id'),str) or
                         not isinstance(recorded.get('intent_id'),str)):
                     raise ValueError('C build result diverges from source/effect journal')
+                recorded['_remote_run_id'] = row['remote_run_id']
                 result.append(recorded)
             return result
         return self.writer.read(project_id,read)
@@ -133,9 +134,21 @@ class BuildRecoveryPump:
                 if self._stop.is_set():
                     break
                 try:
-                    run = provider.actions.observe(
-                        project_id=project_id,target_id=record['target_id'],
-                        source_sha=record['source_sha'],intent_id=record['intent_id'])
+                    known_run_id = record['_remote_run_id']
+                    if known_run_id:
+                        if (not isinstance(known_run_id,str) or not known_run_id.isdecimal()
+                                or int(known_run_id) < 1):
+                            raise ValueError('invalid C GitHub Actions run ID')
+                        # Once a verified GitHub run ID is persisted, direct
+                        # pinned run readback replaces costly list pagination.
+                        run = provider.actions.verify_run(
+                            project_id=project_id,target_id=record['target_id'],
+                            intent_id=record['intent_id'],run_id=int(known_run_id),
+                            expected_sha=record['source_sha'])
+                    else:
+                        run = provider.actions.observe(
+                            project_id=project_id,target_id=record['target_id'],
+                            source_sha=record['source_sha'],intent_id=record['intent_id'])
                     if run is not None and not isinstance(run,BuildObservation):
                         raise TypeError('G returned an unverified Actions run observation')
                     self.repository.observe(project_id=project_id,

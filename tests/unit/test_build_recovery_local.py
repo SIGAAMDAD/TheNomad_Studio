@@ -39,7 +39,7 @@ class CStore(WorkforceStorage):
     def __init__(self):
         db=sqlite3.connect(':memory:')
         super().__init__(db)
-        db.executescript('''CREATE TABLE ci_runs(project_id TEXT,ci_id TEXT,source_revision_id TEXT,status TEXT);
+        db.executescript('''CREATE TABLE ci_runs(project_id TEXT,ci_id TEXT,source_revision_id TEXT,status TEXT,remote_run_id TEXT);
             CREATE TABLE effect_intents(project_id TEXT,subject_id TEXT,action TEXT,state TEXT,
                                         effect_id TEXT,request_id TEXT);
             CREATE TABLE source_revisions(project_id TEXT,revision_id TEXT,commit_sha TEXT,PRIMARY KEY(project_id,revision_id));
@@ -53,7 +53,7 @@ class CStore(WorkforceStorage):
                  source_sha='a'*40,target_id='build',intent_id='intent'+project+suffix)
         raw=json.dumps(doc,sort_keys=True,separators=(',',':'))
         db=self._connection
-        db.execute('INSERT INTO ci_runs VALUES(?,?,?,?)',(project,doc['ci_id'],'revision','queued'))
+        db.execute('INSERT INTO ci_runs VALUES(?,?,?,?,?)',(project,doc['ci_id'],'revision','queued',''))
         db.execute('INSERT INTO effect_intents VALUES(?,?,?,?,?,?)',
                    (project,doc['ci_id'],'build.dispatch','dispatched',doc['effect_id'],'G.build.'+request))
         db.execute('INSERT OR IGNORE INTO source_revisions VALUES(?,?,?)',(project,'revision',doc['source_sha']))
@@ -136,3 +136,28 @@ def test_unbound_project_cannot_read_actions():
     pump=BuildRecoveryPump(writer=writer,provider_for_project=lambda _:fake)
     assert pump.poll_once()=={'observed':0,'unknown':0,'errors':1}
     assert fake.calls==[]
+
+
+def test_previously_verified_run_id_uses_direct_pinned_readback():
+    writer=CStore(); writer.add('p1')
+    writer._connection.execute("UPDATE ci_runs SET status='running',remote_run_id='911'")
+    provider=Provider('p1')
+    provider.actions.observe=lambda **kwargs: (_ for _ in ()).throw(AssertionError('list scan forbidden'))
+    calls=[]
+    def verified(**kwargs):
+        calls.append(kwargs)
+        return BuildObservation(911,'a'*40,'completed','success','url')
+    provider.actions.verify_run=verified
+    pump=BuildRecoveryPump(writer=writer,provider_for_project=lambda _:provider)
+    assert pump.poll_once()=={'observed':1,'unknown':0,'errors':0}
+    assert calls==[dict(project_id='p1',target_id='build',intent_id='intentp1',
+                       run_id=911,expected_sha='a'*40)]
+
+
+def test_invalid_persisted_run_id_blocks_provider_readback():
+    writer=CStore();writer.add('p1')
+    writer._connection.execute("UPDATE ci_runs SET status='running',remote_run_id='bad-id'")
+    provider=Provider('p1')
+    pump=BuildRecoveryPump(writer=writer,provider_for_project=lambda _:provider)
+    assert pump.poll_once()=={'observed':0,'unknown':0,'errors':1}
+    assert provider.calls==[]
