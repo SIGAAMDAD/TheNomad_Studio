@@ -11,6 +11,8 @@ import json
 from datetime import datetime, timezone
 from typing import Any, Callable, Mapping, Protocol
 
+from studio.integrations.common import RemotePreflightUnavailable
+
 
 class WorkforceFault(RuntimeError):
     def __init__(self, code: str, message: str):
@@ -236,6 +238,10 @@ class Workforce:
                     getattr(remote,'body',None)!=body or
                     len(getattr(remote,'commit_sha',''))!=40):
                     raise WorkforceFault('unknown','unverified remote publication')
+            except RemotePreflightUnavailable:
+                # Trusted G confirms no PUT was sent: leave QUEUED.
+                results['unknown'] += 1
+                continue
             except Exception:
                 results['unknown']+=1
                 self._set_publication(project_id,record['command_id'],'unknown',None)

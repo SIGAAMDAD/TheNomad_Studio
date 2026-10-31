@@ -24,6 +24,16 @@ class RemoteUnknown(IntegrationError):
         super().__init__("unknown_effect", detail)
 
 
+class RemotePreflightUnavailable(IntegrationError):
+    """Verified pre-write readback failed; no mutation was attempted."""
+
+    def __init__(self, detail: str, *, status: int | None = None,
+                 retry_after: float | None = None):
+        super().__init__("preflight_unavailable", detail)
+        self.status = status
+        self.retry_after = retry_after
+
+
 class ProviderFailure(IntegrationError):
     def __init__(self, detail: str, status: int | None = None, retry_after: float | None = None):
         super().__init__("provider_unavailable", detail)

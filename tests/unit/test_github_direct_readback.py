@@ -5,7 +5,8 @@ import json
 
 import pytest
 
-from studio.integrations.common import ProjectBinding, RemoteUnknown
+from studio.integrations.common import (ProjectBinding, RemoteUnknown,
+                                        RemotePreflightUnavailable)
 from studio.integrations.github import GitHub, GitHubChannel
 
 
@@ -65,3 +66,25 @@ def test_tampered_git_blob_is_not_verified():
     github, path = bound_github(http)
     with pytest.raises(RemoteUnknown):
         github.observe_exact(path)
+
+
+class Preflight503HTTP:
+    def __init__(self):
+        self.calls = []
+
+    def request(self, method, url, headers, body=None):
+        self.calls.append(method)
+        assert method == "GET", "no PUT is allowed after a failed preflight read"
+        return 503, {}, b'{"message":"temporary outage"}'
+
+
+def test_preflight_outage_prevents_put_and_is_distinct_from_unknown_write():
+    http = Preflight503HTTP()
+    github, _ = bound_github(http)
+    body = b'{"project_id":"project"}'
+    path = github.channel.path("handoffs", "worker", "checkpoint")
+    with pytest.raises(RemotePreflightUnavailable) as caught:
+        github.publish(path, body, expected_digest=hashlib.sha256(body).hexdigest(),
+                       effect_intent_recorded=True)
+    assert caught.value.status == 503
+    assert http.calls == ["GET"]

@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from typing import Callable
 from urllib.parse import quote
 
-from .common import IntegrationError, ProviderFailure, RemoteUnknown, ProjectBinding, identifier, git_sha, sha256, parse_canonical
+from .common import IntegrationError, ProviderFailure, RemoteUnknown, RemotePreflightUnavailable, ProjectBinding, identifier, git_sha, sha256, parse_canonical
 from .http import HttpPort, JsonProvider
 from .relay import validate_relay, validate_receipt, validate_shift_receipt
 
@@ -152,7 +152,14 @@ class GitHub:
         if sha256(body) != expected_digest:
             raise IntegrationError("invalid", "publication payload hash mismatch")
         self._validate_path(path, body)
-        existing = self.observe_exact(path)
+        try:
+            existing = self.observe_exact(path)
+        except (RemoteUnknown, ProviderFailure) as exc:
+            # A pre-publication outage cannot mean the immutable PUT happened.
+            raise RemotePreflightUnavailable(
+                "GitHub pre-publication readback unavailable",
+                status=getattr(exc, "status", None),
+                retry_after=getattr(exc, "retry_after", None)) from exc
         if existing:
             if existing.body_sha256 != expected_digest:
                 raise IntegrationError("conflict", "immutable remote path already has different bytes")
