@@ -1,28 +1,32 @@
 # R5R Studio production pipeline
 
-## Authority
+## State and approval boundaries
 
-The owner controls project scope, canon and protected source merges. The frozen contracts and verified source SHAs control interface shape; APSW is authoritative for project-scoped machine state; GitHub is authoritative for verified remote bytes. Google Drive provides owner-reviewed creative source documents.
+- **Human owner:** scope, architecture, Canon, protected source merges and final publication.
+- **APSW coordinator:** project-bound feature/task/worker state, leases, outbox, idempotency, checkpoint and recovery transactions.
+- **GitHub:** actual remote command/receipt/source bytes and check-run evidence; commits identify credentials and SHA, not a unique ChatGPT worker identity.
+- **Browser worker:** an already initialized consumer ChatGPT conversation executing an actual response. No scheduler or GitHub event can awaken an idle response.
+- **Independent QA:** distinct reviewer of exact candidate bytes; never self-attested by the producer.
 
-## Pipeline
+## Workflow
 
-1. Authenticate the operator and apply project policy to a verified intake/feature brief.
-2. Resolve current specialist role/capability, source pin and accepted work scope.
-3. Reserve permitted resources; persist an assignment, active fenced lease and exact addressed outbox command in the APSW transaction.
-4. Publish immutable bytes to the project's authenticated GitHub communications branch; a missing response after PUT remains unknown until exact readback.
-5. An actually executing manually initialized browser shift receives its addressed command, produces the artifact and publishes a real receipt.
-6. Independently verify remote receipt, current lease generation and submission evidence. Reject stale leases and cross-worker replay.
-7. Independent QA evaluates exact revisions and records PASS or REWORK with distinct reviewer identity.
-8. Source integration verifies ownership, approved baseline, QA and remote bytes before promotion.
-9. CI runs on the configured source ref. Missed or duplicate webhooks trigger bounded readback; they cannot certify success or cause blind redispatch.
-10. Owner-authorized canon or release publication is committed only after original source, QA, build and final effect readback.
+1. Authenticate operator and check grants and owner-approved scope for the project.
+2. Verify a content-addressed feature brief, immutable Canon snapshot and canonical source revision. Resolve required role and explicit source workstream.
+3. Persist project-scoped task and fenced assignment/lease, permitted resource reservation and exact addressed outbox command atomically.
+4. Publish immutable command bytes to the project GitHub communications branch. If the network outcome is ambiguous, read back the exact address and digest before retrying.
+5. An actually executing browser response reads its addressed command, performs bounded work and publishes real checkpoint/submission/result receipts.
+6. Validate remote receipt bytes, project, recipient, shift, generation, lease and approved task. Reject stale, foreign or replayed results.
+7. Obtain independent exact-revision QA; retain PASS/REWORK with reviewer identity and evidence.
+8. For source work, check the approved workstream against `src/studio/app/source_policy.py` and the trusted per-project source target. The R5R factory validates remote repo identity, canonical branch and Git commit SHA before APSW source promotion. The owner controls protected merges.
+9. Run or observe real CI for the pinned commit. Webhooks are hints for bounded readback, not evidence of success by themselves.
+10. Publish owner-approved Canon or release effects only after accepted original source, independent QA, build results and final remote readback.
 
-## Failure semantics
+## Fault handling
 
-Persist intent before external mutation. Pre-write failure leaves a command queued; ambiguous post-write outcome requires readback-only recovery. Checkpoints are durable, content verified and monotonic. A project failure does not starve unrelated projects; credential rate limits share a governor without repeated API polling. Shutdown preserves APSW ownership until dependent publishers have stopped.
+Persist effects before transmission. Pre-write failures leave commands queued. Ambiguous after-write failures remain UNKNOWN until remote readback. Enforce separate project scope, bounded provider rate limits, restart-safe checkpoints, and orderly publisher shutdown. Distinguish source-promotion state from the external GitHub branch merge.
 
 ## Acceptance
 
-Require passing exact-SHA Python/APSW, TypeScript, .NET, provenance and control checks with >=90% coverage independently in each language. Live browser continuation F-20 is an additional acceptance gate, not implied by the source suite.
+The tested source contract has 72 operator operations. Require separate >=90% Python/APSW, TypeScript/TSX and production C# coverage evidence on the exact intended revision, then execute real configured-provider tests and F-20 browser continuation. Green source CI and generated frontend controls are not evidence of active browser automation or deployed provider readiness.
 
-See SETUP.md, OWNER_SETUP.md and CHATGPT_SETUP.md.
+See [Setup](SETUP.md), [Owner acceptance](OWNER_SETUP.md), [Browser setup](CHATGPT_SETUP.md), and [Source routing](../studio/workforce/SOURCE_REPOSITORIES.md).

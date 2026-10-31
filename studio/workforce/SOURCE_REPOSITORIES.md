@@ -84,10 +84,7 @@ automatically frozen baselines.
 4. Source CI tests the exact source commit. Studio stores immutable
    source commit SHA, PR URL, CI run, Drive completion report and QA
    receipt. Studio receives no implementation source.
-5. W02 can continue W01's branch after an exclusive-lease handoff;
-   W03 performs difficult debugging; W04 integrates independently
-   verified systems under a separate integration job; independent QA reviews
-   the exact source revision without editing it.
+5. A registered specialist may continue another specialist's work only after an authenticated exclusive-lease handoff. The authorized integration owner promotes independently verified systems under a separate integration task; independent QA reviews exact source bytes without editing the producer's result.
 6. Only the owner accepts and merges changes **inside the source repo**.
 
 If a job crosses source boundaries, it must be split into child jobs
@@ -147,19 +144,8 @@ PR revision through a verified GitHub owner review and merge. See
 
 ## Current safety and activation state
 
-- The reviewed `main` controller allowlist can name all five
-  source targets. `studio/runtime/studio/config.json` must be
-  reconciled separately; do not treat this draft as live dispatch.
-- `source_writes_enabled=false` and `auto_ai_enabled=false`
-  remain in effect. Work spending/credentials are separately gated.
-- Studio Production Director must acquire source baselines and actual build evidence before
-  admitting source jobs. The canonical source registry is not frozen.
-- The reusable W01-independent QA native Work tasks may subscribe to *Studio hub
-  work-order PR* activity as a control-plane signal. These PRs contain
-  metadata only; their exact source repository, baseline SHA and source
-  branch are validated against the approved job. All source code commits,
-  source CI and implementation PRs remain exclusively in the actual source
-  repositories. See GENERALIST_WORK_SETUP.md.
-- The reviewed Studio PR routing GitHub Action is only a non-spending
-  audit; it does not itself start native Work executions.
-- The source-repo-specific commit/QA/owner-merge gates remain binding.
+The active R5R trusted factory enforces `src/studio/app/source_policy.py` at the source-revision promotion boundary. Its provider must supply the project-specific `SourceTarget` plus authenticated repository ID and exact commit SHA; `validate_source_target(...)` rejects mismatched workstreams, branches, repository bindings and SHAs. For mod source jobs, `validate_source_job(...)` also requires `language: "C#"`.
+
+The old JSON scheduler configuration and per-slot Work task automation no longer exist in `main`. Current source write permission and work admission must be established by authenticated project policy, grants and owner approval; no published prompt or stale JSON field can enable them. A source job remains blocked if its current baseline, exclusive ownership, CI, QA or acceptance evidence is absent. Browser workers run only during actual responses and use the existing GitHub relay; they are not automatically awakened by source PR activity.
+
+Source repository CI and protections remain external to this Studio repository. The standalone engineering review packet template is retained pending verification of all external consumers, as documented in `docs/LEGACY_DECOMMISSION_STATUS.md`.

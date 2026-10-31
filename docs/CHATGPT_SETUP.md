@@ -1,23 +1,22 @@
 # R5R browser-worker setup
 
-The workforce is made of ordinary ChatGPT browser conversations initialized manually by the owner once. This is neither an hourly ChatGPT scheduled-task pool nor paid API inference.
+Workers are ordinary ChatGPT browser conversations initialized manually by the human owner. Each registered conversation has a `worker_id`. An executing response is a separate `shift_id`; `assignment_id`, `command_id`, lease generation and remote commit identity remain distinct.
 
-A worker_id denotes a registered conversation; a shift_id denotes one actively executing response; assignment_id, command_id and lease generation identify addressed work separately.
+## Bootstrap
 
-For an authorized shift:
+1. Use the authenticated operator API to register an existing, manually created browser conversation for a permitted project and role. `registerWorker` is registration, not browser launch.
+2. Start an actual response in that conversation. Bind its shift, verified project and trusted role identity through the authorized workflow; `beginShift` is a record of observed initiation.
+3. Obtain the current project-bound GitHub communications ref and exact addressed mailbox path from trusted R5R state. Check command recipient, payload SHA-256, project, shift, lease and generation before acting.
+4. Produce real artifacts or bounded source work under the accepted scope. Publish immutable checkpoint, result or terminal receipts to the configured GitHub ref; record the remote path/commit/digest.
+5. Verify the actual remote bytes. Reconcile ambiguous post-write outcomes by exact readback rather than blind repetition.
+6. Observe STOP cooperatively and publish an authenticated end-of-shift receipt. Independent QA and owner approval remain separate gates.
 
-1. Verify the exact project, role, principal, current lease and HELLO record.
-2. Read the project-bound GitHub communications ref and immutable addressed command bytes.
-3. Verify the command path, payload digest, worker, shift, and lease generation before work.
-4. Perform bounded authorized work and publish genuine immutable checkpoint/result receipts to the configured GitHub ref.
-5. Let the control plane reconcile actual remote bytes and receipts; chat text and database rows do not establish execution.
-6. Observe STOP and publish a terminal shift receipt. On uncertain network mutation, read back the exact path/hash before any retry.
-7. Keep source merge, independent QA and canon/release publication under their explicit owner gates.
+## What the coordinator observes
+
+A queued assignment, generated prompt, GitHub notification or persisted database row does not prove an active browser response. The coordinator can publish commands and verify receipts while its service runs, but it cannot awaken a completed/idle browser chat. Do not substitute external scheduled tasks, ChatGPT Work, or paid model API agents for the owner-defined conversation workforce.
 
 ## Live acceptance F-20
 
-Observe one already-initialized ordinary browser conversation process two successive GitHub assignments *within a single continuing response* and produce two authentic remotely verified receipts. Record actual worker/shift IDs, lease generations and GitHub commit SHAs.
+Observe **one already initialized browser conversation**, within **one continuing response**, receive **two successive authorized GitHub assignments** and publish **two independently verified remote receipts**. Collect worker and shift IDs, lease generations, command IDs, real GitHub blob/commit SHAs, publisher/readback evidence, and actual timestamps. A mock relay or contract test is not evidence that F-20 occurred.
 
-The controller can publish and reconcile commands but cannot itself start or awaken a browser response. If the runtime cannot support this behavior, record an external capability blocker instead of substituting Work, scheduled tasks, Codex or model API agents.
-
-See OWNER_SETUP.md and PRODUCTION_PIPELINE.md.
+See [Setup](SETUP.md), [Production pipeline](PRODUCTION_PIPELINE.md), and [Owner acceptance](OWNER_SETUP.md).

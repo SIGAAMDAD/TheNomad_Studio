@@ -1,25 +1,24 @@
 # Legacy decommission verification
 
-Source baseline: PR #36 `c9e5be46370f33a3c2e0b6ebddfc89132c7be68b`.
-The obsolete timed Apps Script code and old Studio intake skill are absent
-from the cleaned implementation source. The engineering-review template and
-packet builder are retained as an isolated external compatibility dependency
-until remaining source-repository consumers can be verified.
+## Source removal: complete
 
-Source-repository workflow census (GitHub authenticated repository listing):
-- `SIGAAMDAD/Terrain3D`: eight workflow files, no `engineering-review.yml`.
-- `SIGAAMDAD/NomadFramework`: one workflow file, no `engineering-review.yml`.
-- `SIGAAMDAD/TheNomad_GOAP`: one workflow file, no `engineering-review.yml`.
-- `SIGAAMDAD/The_Nomad`: workflow directory not accessible from the connection.
-- `SIGAAMDAD/NomadMain`: workflow directory not accessible from the connection.
+- The ten-slot S00-S09 scheduler, cron-driven GitHub workflows, JSON job/slot controller, and Work-era prompts were removed in [PR #36](https://github.com/SIGAAMDAD/TheNomad_Studio/pull/36).
+- The old intake skill, timed Apps Script source, disconnected JSON source policies and historical submission handoff files were removed in [PR #37](https://github.com/SIGAAMDAD/TheNomad_Studio/pull/37).
+- Both PRs are merged into `main`. Current durable worker, shift, command, receipt and source authority is R5R; see [Production pipeline](PRODUCTION_PIPELINE.md).
 
-Separate external installations are NOT_VERIFIED: an Apps Script timed trigger
-may remain configured outside this repository; a previously installed copy
-of the old ChatGPT intake skill or ChatGPT scheduled task may remain.
-An absent source file is **not** a verified external deactivation. The human
-owner or an authorized connected administration workflow must inspect and
-retire those instances separately before claiming full external decommission.
-The private/unavailable repository workflow dependency has not been
-certified absent, so the existing evidence packet helper remains at its original
-path. No source repository or external Apps Script installation was modified by
-this cleanup. Current Studio source CI remains the verified R5R validation workflow.
+## External installations: not verified
+
+Removal of repository source cannot by itself deactivate an installed Google Apps Script trigger, an installed copy of the removed ChatGPT intake skill, or a previously configured ChatGPT scheduled task. These must be independently inspected through their respective administration interfaces before declaring external decommission complete. No such external revocation was performed by the repository cleanup.
+
+## Retained dependency
+
+`integrations/github-actions/engineering-review.yml`, `scripts/engineering_packet.py`, and their tests remain in the repository. Their potential consumers in private/unavailable source repos were not all accessible. The old review packet is **not** an active Studio scheduling service and its removal is deferred until those repo-specific dependencies are verified and migrated.
+
+Source workflow inventory observed during PR #37 planning:
+
+- `SIGAAMDAD/Terrain3D`: eight workflow files; no `engineering-review.yml` in the listed workflow directory.
+- `SIGAAMDAD/NomadFramework`: one workflow file; no `engineering-review.yml` in the listed workflow directory.
+- `SIGAAMDAD/TheNomad_GOAP`: one workflow file; no `engineering-review.yml` in the listed workflow directory.
+- `SIGAAMDAD/The_Nomad` and `SIGAAMDAD/NomadMain`: workflow directories inaccessible from the connected view; no absence claim made.
+
+These observations are historical, not a continuous monitor of other repositories. Runtime acceptance F-20 remains separate from source cleanup and external trigger decommission.
