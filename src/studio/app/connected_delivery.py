@@ -38,12 +38,22 @@ class ConnectedGitHubCommandDeliveryBuilder:
         self.commands_per_project = commands_per_project
 
     def for_writer(self, writer: WorkforceStorage, artifact_root: str | Path,
-                   workforce: Workforce) -> CommandDeliveryPump:
-        providers = ConnectedGitHubProviders(
-            writer=writer, artifact_root=artifact_root,
-            projects=self.projects,
-            credential_resolver=self.credential_resolver,
-            http=self.http)
+                   workforce: Workforce, *, provider_for_project=None) -> CommandDeliveryPump:
+        if provider_for_project is None:
+            providers = ConnectedGitHubProviders(
+                writer=writer, artifact_root=artifact_root,
+                projects=self.projects,
+                credential_resolver=self.credential_resolver,
+                http=self.http)
+        else:
+            if not callable(provider_for_project):
+                raise TypeError("shared trusted G project factory must be callable")
+            if getattr(provider_for_project, 'writer', writer) is not writer:
+                raise TypeError("shared G provider must use the same C writer")
+            # Production composition resolves G only once. Reusing its factory
+            # also reuses the credential-scoped GitHubRateGovernor across both
+            # CI readback and worker mailbox publication.
+            providers = provider_for_project
 
         def verified_github(project_id: str) -> GitHub:
             ports = providers(project_id)

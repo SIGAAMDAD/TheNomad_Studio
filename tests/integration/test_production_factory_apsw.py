@@ -159,3 +159,36 @@ def test_live_wsgi_project_governance_and_persistent_worker_lifecycle(tmp_path):
                      '/v1/projects/other/workers')[0]==403
     finally:
         writer.close()
+
+
+def test_production_mailbox_and_actions_share_one_bound_g_provider(tmp_path):
+    """Connected command delivery must not create an independent quota pool."""
+    from studio.app.connected_delivery import ConnectedGitHubCommandDeliveryBuilder
+    from studio.integrations.common import ProjectBinding
+    from studio.integrations.github import GitHub, GitHubChannel
+
+    github=GitHub(object(),lambda:'trusted-token',
+                  GitHubChannel('p1','owner','repo','comms'),
+                  ProjectBinding('p1','account'))
+    calls=[]
+    def shared(project_id):
+        calls.append(project_id)
+        return SimpleNamespace(relay=github)
+    builder=ConnectedGitHubCommandDeliveryBuilder(
+        projects=(),credential_resolver=lambda _: 'trusted-token',
+        actor_for_project=lambda project: {'project_id':project})
+    config=dataclasses.replace(
+        ports(),provider_for_project=shared,command_delivery=builder)
+    app=assemble_live_studio(
+        database_path=tmp_path/'studio.sqlite',blob_root=tmp_path/'blobs',
+        source_root=tmp_path/'sources',contracts_root='CONTRACTS',
+        ports=config,fresh=True)
+    try:
+        c=next(component for component in app.runtime.components
+               if component.name=='G-I-command-publisher')
+        publisher=c.start.__self__
+        assert publisher.writer is app.projects.store.writer
+        assert publisher.github_for_project('p1') is github
+        assert calls==['p1']
+    finally:
+        app.projects.store.writer.close()

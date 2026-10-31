@@ -46,6 +46,7 @@ from studio.storage.workforce import WorkforceStorage
 from .assurance_commands import AssuranceCommands
 from .build_recovery import BuildRecoveryPump
 from .composition import StudioComposition
+from .connected_delivery import ConnectedGitHubCommandDeliveryBuilder
 from .errors import StudioError
 from .governance_commands import GovernanceCommands
 from .integration_commands import IntegrationService
@@ -253,7 +254,12 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
         workers=WorkerOperations(workforce,
             verify_receipt=ports.verify_worker_receipt)
         delivery=ports.command_delivery
-        if delivery is not None and callable(getattr(delivery,"for_writer",None)):
+        if isinstance(delivery,ConnectedGitHubCommandDeliveryBuilder):
+            # Bind this publisher to the SAME G project resolver already
+            # installed for Actions; share identity and rate-limit state.
+            delivery=delivery.for_writer(
+                writer,blob_root,workforce,provider_for_project=bound_provider)
+        elif delivery is not None and callable(getattr(delivery,"for_writer",None)):
             delivery=delivery.for_writer(writer,blob_root,workforce)
         audit=EventPageService(IndexedEventReader(writer))
         def verify_storage_integrity():

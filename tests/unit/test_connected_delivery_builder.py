@@ -58,3 +58,39 @@ def test_builder_rejects_missing_actor_resolver():
         ConnectedGitHubCommandDeliveryBuilder(
             projects=(), credential_resolver=lambda _: "token",
             actor_for_project=None)
+
+
+def test_installed_shared_provider_is_used_without_second_rate_governor(monkeypatch, tmp_path):
+    conn=sqlite3.connect(':memory:')
+    conn.execute('CREATE TABLE command_outbox(project_id TEXT,state TEXT)')
+    conn.execute("INSERT INTO command_outbox VALUES('project','queued')")
+    store=WorkforceStorage(conn)
+    worker=Worker(store,require_action=lambda *_:None)
+    def unexpected(**kwargs):
+        raise AssertionError('second G provider/rate governor instantiated')
+    monkeypatch.setattr(module,'ConnectedGitHubProviders',unexpected)
+    calls=[]
+    def shared(project_id):
+        calls.append(project_id)
+        github=GitHub(NoNetworkHTTP(),lambda: 'token',
+                      GitHubChannel(project_id,'owner','repo','comms'),
+                      ProjectBinding(project_id,'account'))
+        return SimpleNamespace(relay=github)
+    builder=ConnectedGitHubCommandDeliveryBuilder(
+        projects=(),credential_resolver=lambda _: 'token',
+        actor_for_project=lambda project: {'project_id':project},commands_per_project=2)
+    publisher=builder.for_writer(store,tmp_path,worker,provider_for_project=shared)
+    assert publisher.poll_once()=={'published':1,'unknown':0,'rejected':0}
+    assert calls==['project']
+
+
+def test_shared_provider_requires_callable(tmp_path):
+    conn=sqlite3.connect(':memory:')
+    conn.execute('CREATE TABLE command_outbox(project_id TEXT,state TEXT)')
+    store=WorkforceStorage(conn)
+    builder=ConnectedGitHubCommandDeliveryBuilder(
+        projects=(),credential_resolver=lambda _: 'token',
+        actor_for_project=lambda _: {'project_id':'project'})
+    with pytest.raises(TypeError,match='callable'):
+        builder.for_writer(store,tmp_path,Worker(store,require_action=lambda *_:None),
+                           provider_for_project=object())
