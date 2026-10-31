@@ -197,18 +197,20 @@ class Workforce:
         return self.storage.command(project_id, 'workers.stop_shift',
                                     request['request_id'], digest(request), apply)
 
-    def pending(self, actor: Mapping[str, Any], project_id: str) -> list[dict]:
+    def pending(self, actor: Mapping[str, Any], project_id: str, *, limit: int = 100) -> list[dict]:
         self.require_action(actor, project_id, 'publishCommands')
+        if type(limit) is not int or not 1 <= limit <= 100:
+            raise WorkforceFault('invalid', 'pending command limit outside authorized bound')
         return self.storage.read(project_id, lambda tx: [dict(r) for r in tx.all("""
           SELECT command_id,worker_id,shift_id,remote_path,envelope_digest,envelope_json,state
           FROM command_outbox WHERE project_id=? AND state IN ('queued','unknown')
-          ORDER BY created_at,command_id LIMIT 100""", (project_id,))])
+          ORDER BY created_at,command_id LIMIT ?""", (project_id,limit))])
 
     def publish_pending(self, actor: Mapping[str, Any], project_id: str,
-                        *, provider: VerifiedGitHub) -> dict[str, int]:
+                        *, provider: VerifiedGitHub, limit: int = 100) -> dict[str, int]:
         """Publish after DB commit; remote ambiguity stays UNKNOWN until exact readback."""
         results={'published':0,'unknown':0,'rejected':0}
-        for record in self.pending(actor,project_id):
+        for record in self.pending(actor,project_id,limit=limit):
             body=record['envelope_json'].encode('utf-8')
             if hashlib.sha256(body).hexdigest()!=record['envelope_digest']:
                 results['rejected'] += 1

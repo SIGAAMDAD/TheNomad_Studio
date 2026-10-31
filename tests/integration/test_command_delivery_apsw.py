@@ -16,6 +16,7 @@ class VerifiedRemote:
         self.posts=[]
         self.objects={}
         self.readable=True
+        self.drop_first_reply=False
 
     def publish(self, path, body, *, expected_digest, effect_intent_recorded):
         assert effect_intent_recorded
@@ -24,6 +25,9 @@ class VerifiedRemote:
         receipt=SimpleNamespace(path=path,body=body,body_sha256=expected_digest,
                                 verified=True,commit_sha="a"*40)
         self.objects[path]=receipt
+        if self.drop_first_reply:
+            self.drop_first_reply=False
+            raise TimeoutError('remote accepted publication but reply disappeared')
         return receipt
 
     def observe_exact(self, path):
@@ -55,27 +59,30 @@ def test_c_command_delivery_and_unknown_readback_no_second_write(tmp_path):
                   "VALUES('project','stop','worker','shift','STOP',?,?,?,'now','queued')",
                   (expected,envelope,".nomad/relays/project/mail/worker/stop.json"))
         remote=VerifiedRemote()
+        remote.drop_first_reply=True
         pump=CommandDeliveryPump(writer=db,workforce=worker,
                                  actor_for_project=lambda project:actor,
                                  github_for_project=lambda project:remote)
-        assert pump.poll_once()=={"published":1,"unknown":0,"rejected":0}
+        # The remote write succeeds before the reply is lost.
+        assert pump.poll_once()=={"published":0,"unknown":1,"rejected":0}
         assert remote.posts==[".nomad/relays/project/mail/worker/stop.json"]
         assert db.read("project",lambda tx:tx.one(
             "SELECT state,remote_commit_sha FROM command_outbox "
             "WHERE project_id=? AND command_id=?",("project","stop")))=={
-                "state":"published","remote_commit_sha":"a"*40}
-        c.execute("UPDATE command_outbox SET state='unknown',remote_commit_sha=NULL "
-                  "WHERE project_id='project' AND command_id='stop'")
+                "state":"unknown","remote_commit_sha":None}
+        # The remote is temporarily unreadable; repeated reconciliation is
+        # strictly read-only and cannot issue a duplicate publication.
+        remote.readable=False
+        for _ in range(3):
+            assert pump.poll_once()=={"published":0,"unknown":1,"rejected":0}
+        assert len(remote.posts)==1
+        remote.readable=True
         assert pump.poll_once()=={"published":1,"unknown":0,"rejected":0}
         assert len(remote.posts)==1
-        c.execute("UPDATE command_outbox SET state='unknown',remote_commit_sha=NULL "
-                  "WHERE project_id='project' AND command_id='stop'")
-        remote.readable=False
-        assert pump.poll_once()=={"published":0,"unknown":1,"rejected":0}
-        assert len(remote.posts)==1
         assert db.read("project",lambda tx:tx.one(
-            "SELECT state FROM command_outbox WHERE project_id=? AND command_id=?",
-            ("project","stop"))) == {"state":"unknown"}
+            "SELECT state,remote_commit_sha FROM command_outbox "
+            "WHERE project_id=? AND command_id=?",("project","stop")))=={
+                "state":"published","remote_commit_sha":"a"*40}
     finally:
         db.close()
 

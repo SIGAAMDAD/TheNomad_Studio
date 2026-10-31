@@ -17,43 +17,75 @@ class CommandDeliveryPump:
     def __init__(self, *, writer: WorkforceStorage,
                  workforce: Workforce, actor_for_project: Callable[[str], Mapping],
                  github_for_project: Callable[[str], object],
-                 interval_seconds: float = 3.0):
-        if not isinstance(writer,WorkforceStorage) or not isinstance(workforce,Workforce):
+                 interval_seconds: float = 3.0,
+                 projects_per_poll: int = 8,
+                 commands_per_project: int = 1):
+        if not isinstance(writer, WorkforceStorage) or not isinstance(workforce, Workforce):
             raise TypeError("real C/I workforce required for GitHub outbox delivery")
         if not callable(actor_for_project) or not callable(github_for_project):
             raise TypeError("trusted operator proof and GitHub binding required")
-        if not isinstance(interval_seconds,(int,float)) or not 0.25<=interval_seconds<=3600:
+        if (isinstance(interval_seconds, bool) or
+                not isinstance(interval_seconds, (int, float)) or
+                not 0.25 <= interval_seconds <= 3600):
             raise ValueError("outbox polling interval outside authorized bound")
-        self.writer=writer
-        self.workforce=workforce
-        self.actor_for_project=actor_for_project
-        self.github_for_project=github_for_project
-        self.interval_seconds=interval_seconds
-        self._stop=Event()
-        self._thread:Thread|None=None
-        self.last_error:Exception|None=None
+        if (type(projects_per_poll) is not int or
+                not 1 <= projects_per_poll <= 100):
+            raise ValueError("invalid outbox project scan bound")
+        if (type(commands_per_project) is not int or
+                not 1 <= commands_per_project <= 100):
+            raise ValueError("invalid outbox command publication bound")
+        self.writer = writer
+        self.workforce = workforce
+        self.actor_for_project = actor_for_project
+        self.github_for_project = github_for_project
+        self.interval_seconds = interval_seconds
+        self.projects_per_poll = projects_per_poll
+        self.commands_per_project = commands_per_project
+        self._last_project = ""
+        self._stop = Event()
+        self._thread: Thread | None = None
+        self.last_error: Exception | None = None
 
-    def poll_once(self) -> dict[str,int]:
+    def _projects(self) -> list[str]:
+        # The cursor is a scheduling hint only; authoritative state remains C's
+        # durable outbox. Wrap around rather than starving later projects.
+        query = ("SELECT DISTINCT project_id FROM command_outbox "
+                 "WHERE state IN ('queued','unknown') AND project_id > ? "
+                 "ORDER BY project_id LIMIT ?")
         with self.writer._lock:
-            projects=[item[0] for item in self.writer._connection.execute(
-                "SELECT DISTINCT project_id FROM command_outbox "
-                "WHERE state IN ('queued','unknown') ORDER BY project_id LIMIT 101")]
-        if len(projects)>100:
-            raise RuntimeError("ready project count exceeds bounded publisher scan")
-        totals={"published":0,"unknown":0,"rejected":0}
-        self.last_error=None
-        for project_id in projects:
+            connection = self.writer._connection
+            projects = [row[0] for row in connection.execute(
+                query, (self._last_project, self.projects_per_poll))]
+            if len(projects) < self.projects_per_poll and self._last_project:
+                remaining = self.projects_per_poll - len(projects)
+                projects.extend(row[0] for row in connection.execute(
+                    "SELECT DISTINCT project_id FROM command_outbox "
+                    "WHERE state IN ('queued','unknown') AND project_id <= ? "
+                    "ORDER BY project_id LIMIT ?",
+                    (self._last_project, remaining)))
+        if projects:
+            self._last_project = projects[-1]
+        return projects
+
+    def poll_once(self) -> dict[str, int]:
+        totals = {"published": 0, "unknown": 0, "rejected": 0}
+        self.last_error = None
+        for project_id in self._projects():
+            if self._stop.is_set():
+                break
             try:
-                actor=self.actor_for_project(project_id)
-                provider=self.github_for_project(project_id)
-                result=self.workforce.publish_pending(actor,project_id,provider=provider)
+                actor = self.actor_for_project(project_id)
+                provider = self.github_for_project(project_id)
+                result = self.workforce.publish_pending(
+                    actor, project_id, provider=provider,
+                    limit=self.commands_per_project)
             except Exception as exc:
-                # One project's unavailable credentials/provider cannot starve
-                # independent project outboxes. Its durable rows remain queued.
-                self.last_error=exc
+                # A failing provider cannot starve unrelated projects.
+                # Its pending commands remain persisted for recovery.
+                self.last_error = exc
                 continue
             for key in totals:
-                totals[key]+=int(result[key])
+                totals[key] += int(result[key])
         return totals
 
     def _loop(self):
@@ -61,39 +93,42 @@ class CommandDeliveryPump:
             try:
                 self.poll_once()
             except Exception as exc:
-                # A single unavailable provider must not invent success or
-                # discard the C outbox. The next bounded cycle retries QUEUED
-                # or strictly readbacks UNKNOWN without repeating its write.
-                self.last_error=exc
+                self.last_error = exc
             self._stop.wait(self.interval_seconds)
 
     def start(self):
         if self._thread is not None and self._thread.is_alive():
             raise RuntimeError("GitHub outbox pump already started")
         self._stop.clear()
-        self._thread=Thread(target=self._loop,name="studio-github-outbox",daemon=True)
+        self._thread = Thread(target=self._loop, name="studio-github-outbox", daemon=True)
         self._thread.start()
 
     def stop(self):
         self._stop.set()
         if self._thread is not None:
-            self._thread.join(timeout=max(5.0,self.interval_seconds+1.0))
+            self._thread.join(timeout=max(5.0, self.interval_seconds + 1.0))
             if self._thread.is_alive():
                 raise RuntimeError("GitHub outbox publisher did not stop cleanly")
-            self._thread=None
+            self._thread = None
 
 
 class CommandDeliveryPumpBuilder:
     def __init__(self, *, actor_for_project, github_for_project,
-                 interval_seconds: float = 3.0):
-        self.actor_for_project=actor_for_project
-        self.github_for_project=github_for_project
-        self.interval_seconds=interval_seconds
+                 interval_seconds: float = 3.0,
+                 projects_per_poll: int = 8,
+                 commands_per_project: int = 1):
+        self.actor_for_project = actor_for_project
+        self.github_for_project = github_for_project
+        self.interval_seconds = interval_seconds
+        self.projects_per_poll = projects_per_poll
+        self.commands_per_project = commands_per_project
 
     def for_writer(self, writer: WorkforceStorage, _root,
                    workforce: Workforce) -> CommandDeliveryPump:
         return CommandDeliveryPump(
-            writer=writer,workforce=workforce,
+            writer=writer, workforce=workforce,
             actor_for_project=self.actor_for_project,
             github_for_project=self.github_for_project,
-            interval_seconds=self.interval_seconds)
+            interval_seconds=self.interval_seconds,
+            projects_per_poll=self.projects_per_poll,
+            commands_per_project=self.commands_per_project)
