@@ -45,6 +45,19 @@ def ts_coverage(path: pathlib.Path) -> tuple[int, int]:
     return sum(int(v['covered']) for v in observed.values()), sum(int(v['total']) for v in observed.values())
 
 
+def authored_ts_coverage(path: pathlib.Path) -> tuple[int, int]:
+    data=json.loads(path.read_text(encoding='utf-8'))
+    sources={p.resolve() for p in (ROOT/'ui'/'src').rglob('*')
+             if p.is_file() and p.suffix in ('.ts','.tsx')
+             and not p.name.endswith('.d.ts')
+             and '/generated/' not in p.as_posix()}
+    observed={pathlib.Path(name).resolve():val['lines'] for name,val in data.items()
+              if name!='total' and pathlib.Path(name).resolve() in sources}
+    if sources.difference(observed):
+        raise ValueError('Untested authored cockpit files: '+', '.join(sorted(str(x) for x in sources.difference(observed))))
+    return sum(int(v['covered']) for v in observed.values()),sum(int(v['total']) for v in observed.values())
+
+
 def host_coverage(path: pathlib.Path) -> tuple[int, int]:
     root = ET.parse(path).getroot()
     expected = {p.name for p in (ROOT/'host'/'Nomad.ToolHost').rglob('*.cs')}
@@ -75,6 +88,7 @@ def main() -> int:
     cli.add_argument('--typescript', type=pathlib.Path)
     cli.add_argument('--dotnet', type=pathlib.Path)
     cli.add_argument('--require-all', action='store_true')
+    cli.add_argument('--minimum', type=float)
     args = cli.parse_args()
     checks = {'Python': (args.python, python_coverage),
               'TypeScript': (args.typescript, ts_coverage),
@@ -90,6 +104,13 @@ def main() -> int:
         print(f'{label}: {covered}/{total} production lines ({percent:.2f}%)')
         if percent < 90:
             failures.append(label)
+    if args.typescript:
+        covered,total=authored_ts_coverage(args.typescript)
+        percent=pct(covered,total)
+        print(f'Authored cockpit (excluding generated catalog): {covered}/{total} ({percent:.2f}%)')
+        if percent<90: failures.append('Authored cockpit')
+    if args.minimum is not None and failures:
+        raise SystemExit('Coverage below minimum: '+', '.join(failures))
     if args.require_all and (failures or missing):
         raise SystemExit('Coverage below 90% or missing instrumentation: '+', '.join(failures+missing))
     return 0

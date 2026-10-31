@@ -149,6 +149,7 @@ static class Checks
         Assert(journal.Read("project-a", "op-interrupted")!.Receipt.State == "unknown",
             "restart marks interrupted run unknown, never completed");
         await runtime.ShutdownAsync();
+        await AdditionalHostCoverage.RunAsync(loaded,run,registryPath,install,workspace);
         Console.WriteLine($"PASS completed {completed} isolated checks; OS isolation, .NET clean build, and integration remain separate gates");
         Directory.Delete(temporary, recursive: true);
     }

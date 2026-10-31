@@ -63,7 +63,14 @@ public static class Sandbox
             throw new InvalidOperationException("capability_unavailable: unrecognized/unverified isolation requirement");
         if (!LinuxPreflight(out string reason))
             throw new InvalidOperationException("capability_unavailable: " + reason);
+        return BuildVerifiedCommand(resolved, deadlineMs);
+    }
 
+    // Internal deterministic command construction is independently unit-tested.
+    // Only Create() can be used by production HostRuntime, and Create() always
+    // executes the real OS isolation preflight before returning this command.
+    internal static ProcessStartInfo BuildVerifiedCommand(ResolvedRun resolved, int deadlineMs)
+    {
         EntryPoint entry = resolved.Entrypoint;
         // RLIMITs are inherited by the sandbox and its descendants. CPU, address space,
         // file size and per-UID process count are kernel enforced; deadline is separately

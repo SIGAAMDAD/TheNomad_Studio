@@ -8,4 +8,7 @@
     <AnalysisLevel>latest</AnalysisLevel>
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Nomad.ToolHost.Tests" />
+  </ItemGroup>
 </Project>

@@ -67,6 +67,9 @@ jobs:
       - run: npm test
       - name: Collect complete cockpit TypeScript and TSX coverage
         run: npm run coverage
+      - name: Enforce 90 percent on all and authored cockpit source
+        working-directory: .
+        run: python scripts/verify_studio_coverage.py --typescript ui/coverage/coverage-summary.json --minimum 90
       - run: npm run build
       - uses: actions/upload-artifact@v4
         if: success()
@@ -94,6 +97,8 @@ jobs:
           dotnet tool install --global dotnet-coverage
           export PATH="$PATH:$HOME/.dotnet/tools"
           dotnet-coverage collect "dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Release" -f cobertura -o toolhost-coverage.xml
+      - name: Report complete .NET production host denominator
+        run: python scripts/verify_studio_coverage.py --dotnet toolhost-coverage.xml
       - uses: actions/upload-artifact@v4
         if: always()
         with:

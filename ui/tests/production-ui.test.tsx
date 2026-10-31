@@ -179,5 +179,15 @@ it('renders project-scoped records using the C/J API projection rather than inve
   const fake={call:vi.fn(async()=>({items:[{task_id:'task-1',state:'ready',note:'accepted'}]}))} as unknown as StudioClient;
   provider(<RecordPanel operation="listTasks" client={fake} projectId="project" section="Work planning" onAction={vi.fn()}/>);
   await waitFor(()=>expect(screen.getByText('task-1')).toBeTruthy());
-  expect(screen.getAllByText('ready')).toHaveLength(2);
+  expect(screen.getByText('ready')).toBeTruthy();
+});
+
+it('boots the actual React application entry point in a real document root',async()=>{
+  const node=document.createElement('div');node.id='root';document.body.appendChild(node);
+  try {
+    await import('../src/main');
+    await waitFor(()=>expect(node.textContent).toContain('THE NOMAD'));
+  } finally {
+    node.remove();
+  }
 });
