@@ -113,7 +113,8 @@ def test_live_wsgi_project_governance_and_persistent_worker_lifecycle(tmp_path):
     token='owner.'+'z'*60
     config=dataclasses.replace(config,verifier=ConfiguredOpaqueVerifier({
         hashlib.sha256(token.encode()).hexdigest():
-            VerifiedPrincipal('owner','trusted','owner','proof',True)}))
+            VerifiedPrincipal('owner','trusted','owner','proof',True)}),
+        bootstrap_credentials=(token,))
     app=assemble_live_studio(
         database_path=tmp_path/'studio.sqlite',
         blob_root=tmp_path/'blobs',source_root=tmp_path/'sources',

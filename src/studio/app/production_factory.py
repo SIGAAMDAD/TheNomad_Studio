@@ -19,6 +19,7 @@ from typing import Any, Callable
 
 from studio.agents.operations import WorkerOperations
 from studio.api import EventPageService
+from studio.api.identity import PrincipalProvisioner
 from studio.assurance.service import AssuranceService
 from studio.integrations.api_ports import GOperatorPorts
 from studio.operations.core import Operations
@@ -36,6 +37,7 @@ from studio.storage.operations import OperationsAPSWRunner
 from studio.storage.organization import OrganizationAPSWStore
 from studio.storage.production import ProductionAPSWStorage
 from studio.storage.projects import ProjectAPSWStore
+from studio.storage.principals import PrincipalAPSWStore
 from studio.storage.recovery import RecoveryAPSWStore
 from studio.storage.releases import ReleaseAPSWStore
 from studio.storage.reservations import AtomicBudgetReservations
@@ -92,6 +94,7 @@ class TrustedPorts:
     integration_remote: Any
     verified_source_revision: Any
     startup_recovery: Any
+    bootstrap_credentials: tuple[str, ...] = ()
 
 
 class ProjectProviderRouter:
@@ -196,6 +199,12 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
     _validate_external(ports)
     writer=WorkforceStorage.open(database_path,fresh=fresh)
     try:
+        # Credentials are trusted deployment configuration, never HTTP inputs.
+        # J verifies identity and C persists the immutable principal before
+        # M can create its first project and owner grant.
+        provisioner=PrincipalProvisioner(ports.verifier,PrincipalAPSWStore(writer))
+        for credential in ports.bootstrap_credentials:
+            provisioner.provision_bearer(credential)
         governance=GovernanceCommands(GovernanceAPSWService(
             writer,blobs=VerifiedGovernanceBlobSource(writer,blob_root),
             impacts=CanonImpactAPSWCatalog(writer)))
