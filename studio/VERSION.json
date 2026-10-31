@@ -1,18 +1,9 @@
 {
   "studio_product_version": "1.0.0",
   "name": "The Nomad Studio",
-  "controller_baseline": "2026-10-27",
-  "schema_compatibility": {
-    "runtime": 1,
-    "comms": 1,
-    "department_ledgers": 4,
-    "department_registry": 4
-  },
-  "legacy_labels_archived": [
-    "V2",
-    "V3",
-    "V4"
-  ],
+  "controller_baseline": "R5R",
+  "operator_contract": "CONTRACTS/openapi.json",
+  "worker_model": "registered-browser-conversations-and-active-shifts",
   "operational_branch_policy": {
     "governance": "main",
     "runtime": "studio/runtime",

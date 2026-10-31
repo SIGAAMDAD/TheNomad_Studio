@@ -2,8 +2,8 @@
 
 ## Canonical truths
 
-1. `TheNomad_Studio` GitHub **Issues/Projects**: task identity, owner intent, priority and approvals. Existing issue -> `FEATURE-N` controller admission remains authoritative; do not create competing feature identities.
-2. `TheNomad_Studio:studio/runtime`: jobs, worker slots, immutable `studio/receipts` and **department event ledgers**. A ledger is an evidence-linked activity timeline and materialized projection, not an alternative issue status owner.
+1. `TheNomad_Studio` owner-approved GitHub Issues/Projects provide intake evidence; authoritative work state, identity, leases and state transitions live in the authenticated R5R APSW coordinator.
+2. `TheNomad_Studio:studio/runtime`: retained GitHub department-event evidence and historical data; it does not own current project jobs, scheduler slots or worker-shift authority.
 3. Source repositories and exact Git commits; immutable Drive/doc revisions or real asset bytes and hashes: actual deliverable authority.
 4. CI and independent QA records: verification authority. Owner-approved events: accepted/finalized authority.
 
@@ -15,7 +15,7 @@ Create one UTF-8 JSON file for **every substantive worker response**, even for p
 
 `studio/ledgers/events/<department_id>/<job_or_request_id>/<event_id>.json`
 
-on branch `studio/runtime` of `SIGAAMDAD/TheNomad_Studio`. `department_id` must appear in `departments.v4.json`; path components must match `[a-zA-Z0-9_-]+`. Use a stable response/attempt identifier and a unique event ID such as `S03-20261027T201500Z-0001` or `CHAT-20261027T201500Z-<unique-suffix>`; no overwrites. Record `event_id` in JSON equal to basename. For different authored tasks, create separate event files even if the chat response summarizes several.
+on branch `studio/runtime` of `SIGAAMDAD/TheNomad_Studio`. `department_id` must appear in `departments.v4.json`; path components must match `[a-zA-Z0-9_-]+`. Use a stable response/attempt identifier and a unique event ID such as `WORKER-20261027T201500Z-0001` or `CHAT-20261027T201500Z-<unique-suffix>`; no overwrites. Record `event_id` in JSON equal to basename. For different authored tasks, create separate event files even if the chat response summarizes several.
 
 Read the existing event index/issue before create. Use GitHub `create_file` with the exact branch; retry a transient branch-head collision only after readback confirms the file is absent and current authority is unchanged. If file exists, compare content and treat a semantically identical event as idempotent, not as a new attempt. Never rewrite another worker's ledger or the shared runtime queue; let the deterministic controller aggregate it.
 
@@ -37,9 +37,9 @@ See [`ledger_event.schema.json`](ledger_event.schema.json) for machine validatio
 
 When creating a parent or downstream child Issue, record an `ISSUE_REGISTERED` event in the responsible department **in the same work attempt** with the issue's exact number and URL; include `parent_issue_number` where relevant. Create per-department cross-link events for cross-team dependencies. If an Issue already exists, link it rather than duplicating it.
 
-The scanner or 23:00 reconciliation also enumerates the owner-approved and open Issues, verifies that each is represented, and backfills an `ISSUE_REGISTERED` event for missing entries (idempotent key `repo + issue_number + event_type`). A scanner unable to read Issues marks `INVENTORY_UNAVAILABLE`, never claims the ledger is complete.
+The configured report reconciliation also enumerates the owner-approved and open Issues, verifies that each is represented, and backfills an `ISSUE_REGISTERED` event for missing entries (idempotent key `repo + issue_number + event_type`). A scanner unable to read Issues marks `INVENTORY_UNAVAILABLE`, never claims the ledger is complete.
 
-A downstream issue should have `Parent: #N`, `Department: <id>`, unique task ID, accepted inputs, objective, output format, requested role, dependencies, acceptance gates and protected paths. Do not add the trusted `studio:approved`/`studio:accepted` labels on behalf of the owner; those are verified owner events and label duplication could create a second controller intake.
+A downstream issue should have `Parent: #N`, `Department: <id>`, unique task ID, accepted inputs, objective, output format, requested role, dependencies, acceptance gates and protected paths. Do not add trusted owner-approval labels on behalf of the owner. The R5R authorization service must verify owner provenance.
 
 ## Response-final write obligation
 

@@ -39,7 +39,7 @@ in `TheNomad_GOAP/main`.
 
 **Worker role alone does not determine source ownership.** A gameplay
 programmer may be assigned either `core_gameplay` or `mod_gameplay`.
-S00 must select an explicit workstream in the *owner-approved job spec*;
+Studio Production Director must select an explicit workstream in the *owner-approved job spec*;
 the same worker's GitHub repository access then follows that job.
 No heuristic based on role name, default branch or file suffix is allowed.
 
@@ -73,7 +73,7 @@ automatically frozen baselines.
 
 ## Worker pull, commit, push and source PR rules
 
-1. S00 admits an owner-approved scoped job with exact source repository,
+1. Studio Production Director admits an owner-approved scoped job with exact source repository,
    workstream, branch, baseline SHA, authorized paths and exclusivity.
 2. W01–W04 fetch from THAT source repository. The work branch is
    `studio/<JOB_ID>` **inside that same source repository**.
@@ -135,7 +135,7 @@ code or create any implicit feature dependencies.
 ## Architecture-change ownership
 
 An implementation that needs an architectural change cannot silently
-cross repositories or modify approved interfaces. S00 invokes the
+cross repositories or modify approved interfaces. Studio Production Director invokes the
 Architecture Enforcer and creates a contributor-style **architecture
 proposal PR in the repository that owns the affected contract**, using
 `studio/arch/<JOB_ID>` as its dedicated proposal branch.
@@ -152,7 +152,7 @@ PR revision through a verified GitHub owner review and merge. See
   reconciled separately; do not treat this draft as live dispatch.
 - `source_writes_enabled=false` and `auto_ai_enabled=false`
   remain in effect. Work spending/credentials are separately gated.
-- S00 must acquire source baselines and actual build evidence before
+- Studio Production Director must acquire source baselines and actual build evidence before
   admitting source jobs. The canonical source registry is not frozen.
 - The reusable W01-W05 native Work tasks may subscribe to *Studio hub
   work-order PR* activity as a control-plane signal. These PRs contain

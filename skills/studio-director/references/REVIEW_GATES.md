@@ -12,7 +12,7 @@
 
 ## Evidence ladder
 
-`SCOPING -> READY -> IN_PROGRESS -> SUBMITTED -> VERIFIED -> OWNER_ACCEPTED -> FINALIZED` with `BLOCKED` and `REWORK` as explicit nonterminal paths. This is a derived work-item lifecycle; the V3 controller's actual enumerated statuses remain authoritative and must not be overwritten by these labels.
+`SCOPING -> READY -> IN_PROGRESS -> SUBMITTED -> VERIFIED -> OWNER_ACCEPTED -> FINALIZED` with `BLOCKED` and `REWORK` as explicit nonterminal paths. This is a derived work-item lifecycle; R5R service state is authoritative; projections cannot invent or override lifecycle transitions.
 
 - `IN_PROGRESS` requires observed authored work or a checkpoint; a discussion alone cannot imply an external worker ran.
 - `SUBMITTED` design/content requires real artifact URI with exact revision plus structured acceptance review input.
@@ -30,7 +30,7 @@
 
 **Balance/system design:** explicit assumptions and formulas, tunables, negative/edge fixtures, deterministic simulations where feasible, constraints from enemy AI, weapons, progression and economy.
 
-**Code:** build and test only in the authorized repo; compile and static analysis as available, correct source ownership and lease, actual performance measurements when claimed; architecture Enforcer on ABI/ownership change; integrations through W04 and independent W05 QA, never self-review.
+**Code:** build and test only in the authorized repo; compile and static analysis as available, correct source ownership and lease, actual performance measurements when claimed; architecture Enforcer on ABI/ownership change; integrations through integration reviewer and independent independent technical QA QA, never self-review.
 
 **Assets:** hashes, file paths, export/import provenance and visual/audio review; do not represent placeholder descriptions as completed 3D models, animation, sound or footage.
 

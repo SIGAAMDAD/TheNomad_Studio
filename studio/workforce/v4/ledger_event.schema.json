@@ -3,26 +3,308 @@
   "title": "The Nomad Studio V4 department ledger event",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "event_id", "recorded_at_utc", "request_id", "department_id", "role_id", "mode", "event_type", "status", "summary", "issue", "todo", "dependencies", "artifacts", "checks", "owner_decisions"],
+  "required": [
+    "schema_version",
+    "event_id",
+    "recorded_at_utc",
+    "request_id",
+    "department_id",
+    "role_id",
+    "mode",
+    "event_type",
+    "status",
+    "summary",
+    "issue",
+    "todo",
+    "dependencies",
+    "artifacts",
+    "checks",
+    "owner_decisions"
+  ],
   "properties": {
-    "schema_version": {"const": 4},
-    "event_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]+$", "minLength": 5},
-    "recorded_at_utc": {"type": "string", "format": "date-time"},
-    "request_id": {"type": "string", "minLength": 3},
-    "department_id": {"type": "string", "enum": ["production", "design", "narrative", "engineering", "visual_art", "tech_art", "animation", "audio", "ux", "qa", "publishing", "studio_ops"]},
-    "role_id": {"type": "string", "pattern": "^rpg-[a-z0-9-]+$"},
-    "mode": {"enum": ["interactive", "scheduled", "event_work", "controller"]},
-    "event_type": {"enum": ["ISSUE_REGISTERED", "TASK_STARTED", "CHECKPOINT", "ARTIFACT_SUBMITTED", "QA_PASS", "QA_REWORK", "BLOCKED", "DEPENDENCY_UPDATE", "OWNER_DECISION", "CLOSED", "LEDGER_REPAIR"]},
-    "status": {"enum": ["SCOPING", "READY", "IN_PROGRESS", "BLOCKED", "SUBMITTED", "REWORK", "VERIFIED", "OWNER_ACCEPTED", "FINALIZED"]},
-    "summary": {"type": "string", "minLength": 5},
-    "issue": {"anyOf": [{"type": "null"}, {"type": "object", "additionalProperties": false, "required": ["repo", "number", "url"], "properties": {"repo": {"type": "string", "pattern": "^[^/]+/[^/]+$"}, "number": {"type": "integer", "minimum": 1}, "url": {"type": "string", "format": "uri"}, "parent_issue_number": {"type": ["integer", "null"], "minimum": 1}}}]},
-    "job_id": {"type": ["string", "null"]},
-    "attempt_id": {"type": ["string", "null"]},
-    "worker_slot": {"type": ["string", "null"]},
-    "todo": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "description", "state"], "properties": {"id": {"type": "string"}, "description": {"type": "string"}, "state": {"enum": ["OPEN", "DOING", "BLOCKED", "DONE"]}, "issue_number": {"type": "integer", "minimum": 1}}}},
-    "dependencies": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["department_id", "state", "reason"], "properties": {"issue_number": {"type": "integer", "minimum": 1}, "department_id": {"type": "string"}, "state": {"enum": ["WAITING", "READY", "RESOLVED", "BLOCKED"]}, "reason": {"type": "string"}}}},
-    "artifacts": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["kind", "uri", "revision", "verified"], "properties": {"kind": {"type": "string"}, "uri": {"type": "string", "minLength": 1}, "revision": {"type": "string", "minLength": 1}, "verified": {"type": "boolean"}}}},
-    "checks": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["name", "status"], "properties": {"name": {"type": "string"}, "status": {"enum": ["PASS", "FAIL", "NOT_RUN", "BLOCKED"]}, "evidence_uri": {"type": "string"}}}},
-    "owner_decisions": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["question", "status"], "properties": {"question": {"type": "string"}, "status": {"enum": ["REQUESTED", "APPROVED", "REJECTED"]}, "evidence_uri": {"type": "string"}}}}
+    "schema_version": {
+      "const": 4
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "minLength": 5
+    },
+    "recorded_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "department_id": {
+      "type": "string",
+      "enum": [
+        "production",
+        "design",
+        "narrative",
+        "engineering",
+        "visual_art",
+        "tech_art",
+        "animation",
+        "audio",
+        "ux",
+        "qa",
+        "publishing",
+        "studio_ops"
+      ]
+    },
+    "role_id": {
+      "type": "string",
+      "pattern": "^rpg-[a-z0-9-]+$"
+    },
+    "mode": {
+      "enum": [
+        "interactive",
+        "scheduled",
+        "event_work",
+        "controller"
+      ]
+    },
+    "event_type": {
+      "enum": [
+        "ISSUE_REGISTERED",
+        "TASK_STARTED",
+        "CHECKPOINT",
+        "ARTIFACT_SUBMITTED",
+        "QA_PASS",
+        "QA_REWORK",
+        "BLOCKED",
+        "DEPENDENCY_UPDATE",
+        "OWNER_DECISION",
+        "CLOSED",
+        "LEDGER_REPAIR"
+      ]
+    },
+    "status": {
+      "enum": [
+        "SCOPING",
+        "READY",
+        "IN_PROGRESS",
+        "BLOCKED",
+        "SUBMITTED",
+        "REWORK",
+        "VERIFIED",
+        "OWNER_ACCEPTED",
+        "FINALIZED"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 5
+    },
+    "issue": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repo",
+            "number",
+            "url"
+          ],
+          "properties": {
+            "repo": {
+              "type": "string",
+              "pattern": "^[^/]+/[^/]+$"
+            },
+            "number": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "parent_issue_number": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "job_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "attempt_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "todo": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "description",
+          "state"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "OPEN",
+              "DOING",
+              "BLOCKED",
+              "DONE"
+            ]
+          },
+          "issue_number": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "department_id",
+          "state",
+          "reason"
+        ],
+        "properties": {
+          "issue_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "department_id": {
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "WAITING",
+              "READY",
+              "RESOLVED",
+              "BLOCKED"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "uri",
+          "revision",
+          "verified"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verified": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "status"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_RUN",
+              "BLOCKED"
+            ]
+          },
+          "evidence_uri": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "owner_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question",
+          "status"
+        ],
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "REQUESTED",
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "evidence_uri": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "worker_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "shift_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
   }
 }

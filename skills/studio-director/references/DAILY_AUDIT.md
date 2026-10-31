@@ -2,14 +2,14 @@
 
 ## Cadence and authority
 
-At **23:00 `America/Chicago` every calendar day**, an explicitly configured scheduled Studio audit runs against the authoritative GitHub Issue inventory, `studio/runtime` jobs/slots/receipts/department event ledgers, actual source PRs/commits/CI/QA, and versioned content artifacts in Drive. Use the IANA zone, not a fixed UTC hour, so daylight saving transitions are respected. Reuse an existing scheduled S00 at 23:00 if actually configured, rather than adding an unapproved extra paid worker/task.
+At **23:00 `America/Chicago`**, a configured report process must reconcile authenticated R5R project/worker/shift/task/receipt state, GitHub Issues, exact source PRs/commits/CI/QA and versioned Drive artifacts. Reports are derived from real evidence, not a ten-slot scheduled ChatGPT workforce.
 
 A Skill alone cannot create the schedule or send the email. The scheduled task must be created/verified through real task controls; Gmail delivery requires an authorized connector and a verified recipient. Record actual sent message ID. If delivery is impossible, retain the report and mark `DAILY_EMAIL_BLOCKED`; don't claim it was delivered.
 
 ## Reconciliation algorithm
 
 1. Read owner-approved and open Studio Issues and Project fields, preserving issue ID, title, state, priority, parent, department, labels, issue link. Include every Issue in at least one department's ledger projection. Backfill missing `ISSUE_REGISTERED` events deterministically when authorized. Do not convert stale inferred state into a trusted owner event.
-2. Fetch current runtime jobs, immutable receipts, role slots, accepted output revisions, source PR state and exact-SHA CI/QA. Canonical evidence overrides a worker-reported status.
+2. Fetch the authenticated R5R runtime tasks, worker shifts and verified receipts, accepted artifact revisions, source PR state and exact-SHA CI/QA. Canonical evidence overrides a worker-reported status.
 3. Group all ledger events by `(repo,issue_number,job_id,department_id)` and order by timestamps/event IDs, accounting for multiple worker attempts. Deduplicate repeated retries by stable key. Do not count a task done merely because an event says DONE.
 4. Derive **today's completed items** with links to actual verified artifacts, **in progress**, **blocked**, **QA/rework**, and **owner decisions**. Carry forward every unfinished TODO with owner/dependency, age, exact next action, and source link. Report totals and real worker utilization where observable.
 5. Construct a **cross-department waiting-on matrix**: blocked department/job -> provider department/Issue/artifact -> blocking gate -> elapsed time -> next action. Flag dependency cycles and unassigned blockers.

@@ -4,21 +4,20 @@ Audit date: 2026-10-31. The implementation branch contains 1,244 tracked blobs (
 
 ## Branch roles
 
-- main: protected reviewed source and frozen contracts.
+- main: reviewed R5R source and frozen contracts; enforce branch protection in repository settings.
 - studio/runtime: mutable machine job records and historical receipts; preserve.
 - studio/comms: mutable communications branch and immutable-addressed relay history; preserve.
-- implementation/r5r-student-one-wave-20261030: integration branch; consider deletion only after its PR has merged and the target commit has been independently verified.
+- cleanup/removal work uses a validated PR and does not rewrite operational evidence.
 
 ## Cleanup already made
 
 The root README and superseded V2/V3 ChatGPT scheduling, owner setup and production pipeline documents have been replaced with R5R configuration, authority and pre-pilot instructions. An early source-only R5 deployment handoff was also refreshed.
 
-## Intentionally retained
+## Current retention
 
-- QA evidence logs and past submission proofs; these are tracked audit records, not accidental runtime log output.
-- Specialist role and department manifests, including copies needed by independently installable skills.
-- Historical studio/v1 and hyperscale architectural materials. Historical versions are references, not live production authority. Do not delete their paths without checking active workflows, imports and user-authored references.
-- Both operational GitHub branches and their receipts. Do not rewrite history as a cosmetic cleanup technique.
+- R5R Python, API, database, C# host, frontend and canonical contracts remain installed.
+- Verified QA evidence and independently installable specialist manuals remain preserved.
+- The S00-S09 slot scheduler, its JSON control state, scheduled GitHub workflows and V1/Work-era worker prompts were removed from `main`. Existing operational branch history has not been rewritten.
 
 ## Deletion criteria
 
