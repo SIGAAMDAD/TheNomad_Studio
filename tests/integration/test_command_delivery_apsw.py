@@ -37,7 +37,8 @@ def test_c_command_delivery_and_unknown_readback_no_second_write(tmp_path):
         c.execute("INSERT INTO principals VALUES('operator','configured','operator','human')")
         c.execute("INSERT INTO projects VALUES('project','Project','digest',1,'active')")
         c.execute("INSERT INTO project_grants VALUES('project','operator','owner')")
-        c.execute("INSERT INTO specialist_roles VALUES('coder','1','digest','ready')")
+        c.execute("INSERT INTO specialist_roles(role_id,role_revision,role_manifest_digest,state) "
+                  "VALUES('coder','1','digest','ready')")
         worker=Workforce(db,require_action=lambda actor,project,action:None)
         actor={"principal_id":"operator","issuer":"configured",
                "trusted_proof_ref":"proof","allowed_project_ids":["project"]}
