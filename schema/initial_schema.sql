@@ -404,7 +404,6 @@ CREATE TRIGGER verify_relay_receipt_recipient BEFORE INSERT ON relay_receipts BE
 
 -- R5: enforce relay envelope kind/identity and exact verified GitHub projection.
 -- Database provenance proves recorded remote bytes, not the identity of a shared GitHub user.
-WHEN NEW.state<>'prepared' BEGIN SELECT RAISE(ABORT,'manual session must begin prepared'); END;
 -- A relay envelope is bound to a verified active shift assignment.
 CREATE TRIGGER reject_misbound_relay_envelope BEFORE INSERT ON relay_messages
 BEGIN
@@ -490,7 +489,6 @@ WHEN NEW.state IN ('qa_passed','integrated') AND OLD.state<>NEW.state BEGIN
  AND q.evidence_digest IS NOT NULL
  ) THEN RAISE(ABORT,'independent exact QA PASS and evidence required for submission state') END;
 END;
-WHEN NEW.state='completed_verified' BEGIN SELECT RAISE(ABORT,'session must be prepared and reviewed first'); END;
 
 CREATE TRIGGER immutable_relay_observation_any_update BEFORE UPDATE ON relay_observations
 BEGIN SELECT RAISE(ABORT,'relay observations append-only'); END;
