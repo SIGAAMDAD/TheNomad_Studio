@@ -230,7 +230,8 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
             ports.assurance_reviewers,ports.assurance_validators))
         operations=OperationsCommands(
             Operations(OperationsAPSWRunner(writer)),
-            profiles=ports.report_profiles,blobs=ports.report_blobs,
+            profiles=configured_port(ports.report_profiles),
+            blobs=configured_port(ports.report_blobs),
             relay=ports.report_relay)
         bound_provider=ports.provider_for_project
         if callable(getattr(bound_provider, "for_writer", None)):
