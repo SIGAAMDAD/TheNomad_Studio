@@ -130,3 +130,49 @@ def test_backup_integrity_detects_mismatched_manifest_fields(whole_studio):
                                   backup_digest=hashlib.sha256((descriptor.database_blob_digest+":"+changed.digest).encode()).hexdigest())
         with pytest.raises(Invalid):
             manager.verify(next_descriptor)
+
+
+def test_whole_studio_backup_includes_and_rechecks_registered_blob_bytes(whole_studio):
+    store,blobs,manager,tmp=whole_studio
+    stored=blobs.put(b'original durable source blob')
+    store._conn.execute('INSERT INTO blobs(content_digest,byte_size,store_key,durability) '
+                        "VALUES(?,?,?,'verified')",(stored.digest,stored.byte_size,stored.store_key))
+    descriptor=manager.create_whole_studio(store)
+    assert descriptor.blob_count==1
+    assert manager.verify(descriptor)['blobs']==[{'digest':stored.digest,'size':stored.byte_size}]
+    manager.verify_sqlite_image(descriptor)
+    original=blobs._file(stored.digest).read_bytes()
+    blobs._file(stored.digest).write_bytes(b'corruption')
+    try:
+        with pytest.raises(Invalid):manager.verify(descriptor)
+        with pytest.raises(Invalid):manager.create_whole_studio(store)
+    finally:
+        blobs._file(stored.digest).write_bytes(original)
+    assert manager.verify(descriptor)['blobs'][0]['digest']==stored.digest
+
+
+def test_backup_inventory_size_mismatch_fails_without_publication(whole_studio):
+    store,blobs,manager,tmp=whole_studio
+    stored=blobs.put(b'actual bytes')
+    store._conn.execute('INSERT INTO blobs(content_digest,byte_size,store_key,durability) '
+                        "VALUES(?,?,?,'verified')",(stored.digest,stored.byte_size+1,stored.store_key))
+    with pytest.raises(Invalid,match='size'):
+        manager.create_whole_studio(store)
+
+
+def test_backup_registration_requires_c_and_both_verified_references(whole_studio,monkeypatch):
+    from studio.storage.errors import Forbidden
+    store,blobs,manager,tmp=whole_studio
+    descriptor=manager.create_whole_studio(store)
+    monkeypatch.setattr(manager,'verify_sqlite_image',lambda _:None)
+    class Cursor:
+        def __init__(self,ok):self.ok=ok
+        def fetchone(self):return (1,) if self.ok else None
+    class Tx:
+        def __init__(self,owner,ok):self.domain_owner=owner;self.ok=ok;self.calls=[];self.project_id='p'
+        def _execute(self,sql,params):self.calls.append((sql,params));return Cursor(self.ok)
+    with pytest.raises(Forbidden):manager.register_verified(Tx('WG-I',True),descriptor,created_at='now')
+    with pytest.raises(Missing):manager.register_verified(Tx('WG-C',False),descriptor,created_at='now')
+    authorized=Tx('WG-C',True)
+    manager.register_verified(authorized,descriptor,created_at='now')
+    assert any('INSERT INTO backup_sets' in sql for sql,args in authorized.calls)

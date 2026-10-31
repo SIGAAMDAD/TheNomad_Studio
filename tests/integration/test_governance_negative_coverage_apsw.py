@@ -135,3 +135,64 @@ def test_decision_revision_effect_and_resolution_replays(governance):
         svc.resolveDecision(actor(),'p',did,{
         'request_id':'duplicate','expected_revision':2,'expected_effect_digest':'e'*64,'decision':'approve'})
     assert svc.listDecisions(actor(),'p')['decisions'][0]['state']=='rejected'
+
+
+def test_policy_evaluation_follows_exact_rules_and_default_owner_boundary(governance):
+    svc,writer=governance
+    scope='a'*64
+    assert svc.evaluate_policy(actor(),'p',subject_type='bible',action='read',scope_digest=scope)=='owner_required'
+    rules=[{'rule_id':'d','subject_type':'bible','action':'read',
+            'scope_digest':scope,'disposition':'delegated'},
+           {'rule_id':'f','subject_type':'bible','action':'delete',
+            'scope_digest':scope,'disposition':'forbidden'},
+           {'rule_id':'o','subject_type':'bible','action':'publish',
+            'scope_digest':scope,'disposition':'owner_required'}]
+    result=svc.setProjectPolicy(actor(),'p',{'request_id':'policy-1',
+               'expected_revision':0,'policy_digest':digest(rules),'rules':rules})
+    assert result['revision']==1
+    for action,expected in [('read','delegated'),('delete','forbidden'),
+                            ('publish','owner_required'),('unlisted','owner_required')]:
+        assert svc.evaluate_policy(actor(),'p',subject_type='bible',
+                                   action=action,scope_digest=scope)==expected
+    assert svc.getProjectPolicy(actor(),'p')['revision']==1
+    assert svc.setProjectPolicy(actor(),'p',{'request_id':'policy-1',
+               'expected_revision':0,'policy_digest':digest(rules),'rules':rules})==result
+
+
+def test_effect_authorization_must_bind_exact_owner_approval(governance):
+    svc,writer=governance
+    b=svc.createBible(actor(),'p',{'request_id':'bible1','kind':'design','title':'Design'})['bible_id']
+    request={'request_id':'d1','subject_type':'bible','subject_id':b,
+             'action':'bible.verify','effect_digest':'e'*64}
+    did=svc.requestDecision(actor(),'p',request)['decision_id']
+    params=dict(effect_id='eff-1',subject_type='bible',subject_id=b,
+                action='bible.verify',effect_digest='e'*64,snapshot_id=None,
+                decision_id=did,request_id='eff-req',scope_digest='a'*64)
+    with pytest.raises(GovernanceError,match='approval'):
+        svc.authorize_effect(actor(),'p',**params)
+    svc.resolveDecision(actor(),'p',did,{'request_id':'approval','expected_revision':1,
+         'expected_effect_digest':'e'*64,'decision':'approve'})
+    with pytest.raises(GovernanceError,match='identity'):
+        svc.authorize_effect(actor(),'p',**{**params,'effect_digest':'0'*64})
+    with pytest.raises(GovernanceError,match='snapshot'):
+        svc.authorize_effect(actor(),'p',**{**params,'snapshot_id':'old'})
+    recorded=svc.authorize_effect(actor(),'p',**params)
+    assert recorded.effect_id=='eff-1'
+    assert svc.authorize_effect(actor(),'p',**params)==recorded
+    with pytest.raises(GovernanceError,match='reused'):
+        svc.authorize_effect(actor(),'p',**{**params,'action':'different'})
+    with pytest.raises(GovernanceError,match='used'):
+        svc.authorize_effect(actor(),'p',**{**params,'effect_id':'eff-2'})
+
+
+def test_owner_decision_replay_and_unknown_snapshot_are_rejected(governance):
+    svc,writer=governance
+    b=svc.createBible(actor(),'p',{'request_id':'b','kind':'technical','title':'Tech'})['bible_id']
+    req={'request_id':'decision1','subject_type':'bible','subject_id':b,
+         'action':'bible.verify','effect_digest':'e'*64}
+    first=svc.requestDecision(actor(),'p',req)
+    assert svc.requestDecision(actor(),'p',req)==first
+    with pytest.raises(GovernanceError,match='snapshot'):
+        svc.requestDecision(actor(),'p',{**req,'request_id':'decision2','snapshot_id':'no-such-canon'})
+    with pytest.raises(GovernanceError,match='intent'):
+        svc.prepare_publication_effect(actor(),'p',b,'unobserved-intent')

@@ -182,6 +182,7 @@ def connected(tmp_path):
     c=ConnectedC();svc.state=c
     tree=FakeCanonical(tmp_path);svc._tree=lambda project:tree
     qa=ConfigurableQA();svc.qa=qa
+    remote=ConfigurableRemote();svc.remote=remote
     return svc,c,tree,qa,remote
 
 
