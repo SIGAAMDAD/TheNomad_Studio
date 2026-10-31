@@ -249,7 +249,7 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
             Component("C-APSW",recover=verify_storage_integrity,
                       start=lambda:None,stop=writer.close),
             Component("G-I-startup-reconciliation",
-                      recover=lambda:ports.startup_recovery.recover(),
+                      recover=lambda:configured_port(ports.startup_recovery).recover(),
                       start=lambda:None,stop=lambda:None),
         ])
         app=StudioComposition(
