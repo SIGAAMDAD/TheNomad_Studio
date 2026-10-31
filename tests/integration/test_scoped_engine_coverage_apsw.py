@@ -25,13 +25,13 @@ def begin(store,binding,project='p1',request='request'):
     return store.begin(actor=actor(project),project_id=project,request_id=request,domain_owner=binding)
 
 
-@pytest.mark.parametrize('identity,project,request',[
+@pytest.mark.parametrize('identity,project,request_id',[
     ({},'p1','r1'),(actor('p2'),'p1','r2'),(actor(),'','r3'),(actor(),'p1',''),
 ])
-def test_invalid_identity_or_scope_never_begins_transaction(store,identity,project,request):
+def test_invalid_identity_or_scope_never_begins_transaction(store,identity,project,request_id):
     domain=bound(store,'projects')
     with pytest.raises((Forbidden,Invalid)):
-        store.begin(actor=identity,project_id=project,request_id=request,domain_owner=domain)
+        store.begin(actor=identity,project_id=project,request_id=request_id,domain_owner=domain)
     assert store._conn.getautocommit()
 
 
