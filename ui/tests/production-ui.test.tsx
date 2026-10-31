@@ -179,5 +179,5 @@ it('renders project-scoped records using the C/J API projection rather than inve
   const fake={call:vi.fn(async()=>({items:[{task_id:'task-1',state:'ready',note:'accepted'}]}))} as unknown as StudioClient;
   provider(<RecordPanel operation="listTasks" client={fake} projectId="project" section="Work planning" onAction={vi.fn()}/>);
   await waitFor(()=>expect(screen.getByText('task-1')).toBeTruthy());
-  expect(screen.getByText('ready')).toBeTruthy();
+  expect(screen.getAllByText('ready')).toHaveLength(2);
 });
