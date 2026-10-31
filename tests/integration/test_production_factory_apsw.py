@@ -192,3 +192,47 @@ def test_production_mailbox_and_actions_share_one_bound_g_provider(tmp_path):
         assert calls==['p1']
     finally:
         app.projects.store.writer.close()
+
+
+def test_webhook_ingress_is_composed_after_c_and_signals_readback(tmp_path):
+    """A signed source event only nudges existing C/G reconciliation workers."""
+    import hashlib
+    import hmac
+    import io
+    import json
+    import uuid
+    from studio.app.github_webhooks import GitHubWebhookBinding,GitHubWebhookHintsBuilder
+
+    builder=GitHubWebhookHintsBuilder((
+        GitHubWebhookBinding('p1','owner','repo','main','comms',b'webhook-test-secret-value'),))
+    app=assemble_live_studio(
+        database_path=tmp_path/'studio.sqlite',blob_root=tmp_path/'blobs',
+        source_root=tmp_path/'source',contracts_root='CONTRACTS',
+        ports=dataclasses.replace(ports(),github_webhook_hints=builder),fresh=True)
+    try:
+        assert app.webhook_wsgi is not None
+        writer=app.projects.store.writer
+        writer._connection.execute(
+            "INSERT INTO projects(project_id,name,charter_digest,state) "
+            "VALUES('p1','Project','digest','active')")
+        body=json.dumps({'repository':{'full_name':'owner/repo'},
+                         'ref':'refs/heads/main'}).encode()
+        signature='sha256='+hmac.new(
+            b'webhook-test-secret-value',body,hashlib.sha256).hexdigest()
+        env={'PATH_INFO':'/webhooks/github','REQUEST_METHOD':'POST',
+             'CONTENT_LENGTH':str(len(body)),'CONTENT_TYPE':'application/json',
+             'HTTP_X_GITHUB_EVENT':'push',
+             'HTTP_X_GITHUB_DELIVERY':str(uuid.UUID(int=29)),
+             'HTTP_X_HUB_SIGNATURE_256':signature,
+             'wsgi.input':io.BytesIO(body)}
+        statuses=[]
+        assert app.webhook_wsgi(env,lambda st,headers:statuses.append(st))==[b'']
+        assert statuses==['202 Accepted']
+        runtime_component=next(c for c in app.runtime.components
+                               if c.name=='G-Actions-build-reconciliation')
+        assert runtime_component.start.__self__._wake.is_set()
+        assert writer.read('p1',lambda tx:tx.one(
+            "SELECT COUNT(*) AS n FROM workforce_command_results "
+            "WHERE project_id='p1' AND action_owner='WG-G'"))=={'n':1}
+    finally:
+        app.projects.store.writer.close()

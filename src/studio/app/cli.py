@@ -18,6 +18,7 @@ from studio.api.server import create_http_server
 from collections.abc import Callable
 
 from .composition import StudioComposition
+from .github_webhooks import WebhookMuxWSGI
 from .errors import StudioError
 
 
@@ -57,7 +58,10 @@ def configure_operator_server(app: StudioComposition):
         raise StudioError('invalid', 'HTTP port must be an integer') from exc
     if not 1 <= port <= 65535:
         raise StudioError('invalid', 'HTTP port must be in 1..65535')
-    return create_http_server(StudioWSGI(service),host=host,port=port)
+    operator_wsgi=StudioWSGI(service)
+    if app.webhook_wsgi is not None:
+        operator_wsgi=WebhookMuxWSGI(operator_wsgi,app.webhook_wsgi)
+    return create_http_server(operator_wsgi,host=host,port=port)
 
 
 def main() -> int:

@@ -38,6 +38,7 @@ class BuildRecoveryPump:
         self._last_project = ''
         self._last_builds: dict[str, str] = {}
         self._stop = Event()
+        self._wake = Event()
         self._thread: Thread | None = None
         self.last_error: Exception | None = None
 
@@ -167,17 +168,24 @@ class BuildRecoveryPump:
                 self.poll_once()
             except Exception as exc:
                 self.last_error = exc
-            self._stop.wait(self.interval_seconds)
+            self._wake.wait(self.interval_seconds)
+            self._wake.clear()
+
+    def request_reconciliation(self) -> None:
+        """Wake the bounded readback loop without performing provider I/O."""
+        self._wake.set()
 
     def start(self) -> None:
         if self._thread is not None and self._thread.is_alive():
             raise RuntimeError('build reconciliation pump already running')
         self._stop.clear()
+        self._wake.clear()
         self._thread = Thread(target=self._loop,name='studio-github-build-readback',daemon=True)
         self._thread.start()
 
     def stop(self) -> None:
         self._stop.set()
+        self._wake.set()
         if self._thread is not None:
             self._thread.join(timeout=max(5.0,self.interval_seconds+1.0))
             if self._thread.is_alive():

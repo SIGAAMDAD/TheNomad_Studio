@@ -98,6 +98,7 @@ class TrustedPorts:
     startup_recovery: Any
     bootstrap_credentials: tuple[str, ...] = ()
     command_delivery: Any | None = None
+    github_webhook_hints: Any | None = None
 
 
 class ProjectProviderRouter:
@@ -193,6 +194,9 @@ def _validate_external(ports: TrustedPorts) -> None:
             or all(callable(getattr(ports.command_delivery,method,None))
                    for method in ("start","stop"))):
         raise TypeError("configured GitHub outbox pump is invalid")
+    if (ports.github_webhook_hints is not None and
+            not callable(getattr(ports.github_webhook_hints,"for_writer",None))):
+        raise TypeError("trusted GitHub webhook builder required")
     if not hasattr(ports.integration_roster,"paths") or not hasattr(ports.integration_roster,"plan_sha256"):
         raise TypeError("verified integration ownership roster required")
 
@@ -261,6 +265,16 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
                 writer,blob_root,workforce,provider_for_project=bound_provider)
         elif delivery is not None and callable(getattr(delivery,"for_writer",None)):
             delivery=delivery.for_writer(writer,blob_root,workforce)
+        webhooks=ports.github_webhook_hints
+        if webhooks is not None:
+            def wake_reconciliation():
+                build_recovery.request_reconciliation()
+                if delivery is not None and callable(
+                        getattr(delivery,"request_reconciliation",None)):
+                    delivery.request_reconciliation()
+            webhooks=webhooks.for_writer(writer,wake_reconciliation)
+            if not callable(webhooks):
+                raise TypeError("trusted GitHub webhook factory returned no HTTP endpoint")
         audit=EventPageService(IndexedEventReader(writer))
         def verify_storage_integrity():
             if writer._connection.execute("PRAGMA quick_check").fetchone() != ("ok",):
@@ -285,7 +299,7 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
             releases=ReleaseCoordinator(ReleaseAPSWStore(writer),
                                         ports.release_evidence,ports.release_publisher),
             recovery=RecoveryCoordinator(RecoveryAPSWStore(writer)),
-            runtime=runtime,
+            runtime=runtime,webhook_wsgi=webhooks,
             integrations=IntegrationService(
                 roster=ports.integration_roster,tree_root=source_root,
                 submissions=ports.integration_submissions,

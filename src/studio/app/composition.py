@@ -28,6 +28,7 @@ class StudioComposition:
     runtime: StudioRuntime
     integrations: IntegrationService | None = None
     operator_service: StudioOperatorService | None = None
+    webhook_wsgi: Any | None = None
 
     # All M mutations use their own C-backed atomic state ports. J must not
     # open an unrelated outer transaction around project, release, recovery or
