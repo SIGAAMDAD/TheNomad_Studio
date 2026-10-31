@@ -217,8 +217,11 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
             Operations(OperationsAPSWRunner(writer)),
             profiles=ports.report_profiles,blobs=ports.report_blobs,
             relay=ports.report_relay)
+        bound_provider=ports.provider_for_project
+        if callable(getattr(bound_provider, "for_writer", None)):
+            bound_provider=bound_provider.for_writer(writer,blob_root)
         providers=ProviderCommands(ProjectProviderRouter(
-            ports.provider_for_project),effect_readback=ports.effect_readback)
+            bound_provider),effect_readback=ports.effect_readback)
         workers=WorkerOperations(Workforce(
             writer,require_action=ports.worker_authorize),
             verify_receipt=ports.verify_worker_receipt)
