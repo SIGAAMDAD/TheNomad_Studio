@@ -177,7 +177,8 @@ def _validate_external(ports: TrustedPorts) -> None:
     }
     for name, methods in required.items():
         entry=getattr(ports,name)
-        if any(not callable(getattr(entry,method,None)) for method in methods):
+        if not callable(getattr(entry,"for_writer",None)) and any(
+                not callable(getattr(entry,method,None)) for method in methods):
             raise TypeError(f"{name} missing trusted operation: {methods}")
     for name in ("provider_for_project","effect_readback",
                  "worker_authorize","verify_worker_receipt",
@@ -212,10 +213,15 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
             OrganizationAPSWStore(writer),ports.organization_policy,
             source=ports.organization_source,trust=ports.organization_trust,
             host=ports.organization_host))
+        def configured_port(value):
+            if callable(getattr(value,"for_writer",None)):
+                return value.for_writer(writer,blob_root)
+            return value
+
         production=ProductionCommands(ProductionService(
             storage=ProductionAPSWStorage(writer),
-            authorization=ports.production_authorization,
-            briefs=ports.production_briefs,
+            authorization=configured_port(ports.production_authorization),
+            briefs=configured_port(ports.production_briefs),
             reservations=AtomicBudgetReservations(),
             acceptance=ports.production_acceptance,
             progress=ports.production_progress,stop=ports.production_stop))
