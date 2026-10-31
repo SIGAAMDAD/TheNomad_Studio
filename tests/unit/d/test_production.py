@@ -504,7 +504,8 @@ class ProductionTests(unittest.TestCase):
         from studio.workforce import Workforce,WorkforceFault
         task=self.plan(self.submit())[0]
         out=self.svc.dispatchTask(self.actor,'p1',task,{'request_id':'one','expected_revision':1,'worker_id':'w1'})
-        workflow=Workforce(self.storage,require_action=lambda *a: None)
+        workflow=Workforce(self.storage,require_action=lambda *a: None,
+                           clock=lambda: self.now)
         class Remote:
             def observe_exact(self,path):return None
             def publish(self,path,body,*,expected_digest,effect_intent_recorded):

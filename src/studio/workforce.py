@@ -64,9 +64,13 @@ class VerifiedGitHub(Protocol):
 
 class Workforce:
     """Transaction-only writes. Caller supplies project authorization before entry."""
-    def __init__(self, storage: Storage, *, require_action: Callable[[Mapping[str, Any], str, str], None]):
+    def __init__(self, storage: Storage, *, require_action: Callable[[Mapping[str, Any], str, str], None],
+                 clock: Callable[[], datetime] | None = None):
         self.storage = storage
         self.require_action = require_action
+        self.clock = clock if clock is not None else (lambda: datetime.now(timezone.utc))
+        if not callable(self.clock):
+            raise TypeError('workforce clock must be callable')
 
     def register(self, actor: Mapping[str, Any], project_id: str, request: Mapping[str, Any]) -> dict:
         self.require_action(actor, project_id, 'registerWorker')
@@ -308,7 +312,9 @@ class Workforce:
                     expiry=datetime.fromisoformat(assignment['expires_at'])
                 except (TypeError,ValueError) as exc:
                     raise WorkforceFault('conflict','invalid assignment lease expiry') from exc
-                if expiry.tzinfo is None or expiry<=datetime.now(timezone.utc):
+                current=self.clock()
+                if (not isinstance(current,datetime) or current.tzinfo is None
+                        or expiry.tzinfo is None or expiry<=current):
                     raise WorkforceFault('conflict','expired assignment lease receipt')
             tx.change('''INSERT INTO command_receipts(project_id,receipt_id,command_id,worker_id,shift_id,
                           kind,result_digest,remote_commit_sha,observed_at) VALUES (?,?,?,?,?,?,?,?,?)''',
