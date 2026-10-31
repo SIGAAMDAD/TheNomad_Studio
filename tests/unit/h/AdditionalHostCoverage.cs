@@ -74,6 +74,33 @@ internal static class AdditionalHostCoverage
         }
     }
 
+    private static async Task VerifyRuntimeAuthorizationBoundaries(Registry registry, ToolRun source,
+                                                                  string home)
+    {
+        string path = Path.Combine(home, "host-runtime-auth-boundaries");
+        Directory.CreateDirectory(path);
+        var journal = new ToolJournal(path);
+        var observed = new List<ToolReceipt>();
+        Task Collect(ToolReceipt receipt) { observed.Add(receipt); return Task.CompletedTask; }
+        var runtime = new HostRuntime(registry,journal,"authorization-test",Collect,
+            (_,_) => throw new InvalidOperationException("unverified request started a process"));
+        await runtime.ObserveAsync(new ToolObserve("observe",Protocol.Version,
+                                                  source.OperationId,source.ProjectId));
+        Check(observed[^1].State == "failed" && observed[^1].Reason == "operation_not_found",
+              "authorized operation without journal receipt is not fabricated as active");
+        await runtime.CancelAsync(new ToolCancel("cancel",Protocol.Version,
+                                                 source.OperationId,source.ProjectId,
+                                                 source.LeaseGeneration,"cancel-before-run"));
+        Check(observed[^1].State == "failed" && observed[^1].Reason == "operation_not_found",
+              "valid lease cancellation before dispatch reports no running operation");
+        var invalid = source with { SourceRevisionId="unapproved-source-revision" };
+        await runtime.RunAsync(invalid,Protocol.Serialize(invalid));
+        Check(observed[^1].State == "failed" &&
+              observed[^1].Reason?.StartsWith("unauthorized:") == true,
+              "runtime refuses unapproved source revision before subprocess start");
+        await runtime.ShutdownAsync();
+    }
+
     private static async Task VerifyRuntimeFailurePaths(Registry registry, ToolRun baseRun,
                                                         string temporary)
     {
@@ -261,5 +288,6 @@ internal static class AdditionalHostCoverage
         Check(await RunChild(registryPath,actualHash,journal2,false,false)==4,
               "real broker challenge mismatch fails closed");
         await VerifyRuntimeFailurePaths(registry,run,Path.GetDirectoryName(registryPath)!);
+        await VerifyRuntimeAuthorizationBoundaries(registry,run,Path.GetDirectoryName(registryPath)!);
     }
 }
