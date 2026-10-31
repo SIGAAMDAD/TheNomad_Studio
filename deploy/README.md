@@ -14,9 +14,9 @@ The CLI executes `python -m studio.app.cli`. Supply an installed trusted `module
 
 The factory must bind all 72 operator routes, owner/project authorization, GitHub source and command delivery, receipt verification, independent QA, releases and restart recovery. Missing inputs intentionally fail startup; a bare green build is not a running Studio.
 
-## Known image packaging gap
+## Image packaging
 
-The checked-in `Dockerfile` currently copies `src/`, `README.md` and `pyproject.toml` but **does not copy `CONTRACTS/` or `schema/`**. Production contract loading and APSW schema installation require those files. Before running an integrated Docker deployment, update the image and mount/copy verified contracts, test schema initialization and startup with real trusted ports, and check relative paths from the container working directory.
+The Docker image packages `src/`, `CONTRACTS/` and `schema/` with the Python coordinator, so frozen contract and schema files can resolve from `/studio`. CI builds the image and checks that the embedded APSW schema digest and 72-operation API contract load successfully. A trusted ports provider and integration startup acceptance remain deployment responsibilities.
 
 The Compose volume alone does not set the required durable database, blob and source root variables, install the external factory or establish host connectivity. It must be completed and verified separately; `docker compose up` as currently distributed is not a valid live acceptance gate.
 
