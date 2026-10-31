@@ -286,6 +286,30 @@ class Workforce:
                 raise WorkforceFault('conflict','command has no verified GitHub publication')
             if (cmd['worker_id'],cmd['shift_id']) != (request['worker_id'],request['shift_id']):
                 raise WorkforceFault('forbidden','receipt worker or shift mismatch')
+            if cmd['assignment_id'] is not None:
+                assignment=tx.one('''SELECT a.task_id,a.shift_id AS assignment_shift_id,
+                          a.worker_id AS assigned_worker,a.lease_generation,
+                          a.state AS assignment_state,l.status AS lease_status,
+                          l.expires_at,l.worker_id,
+                          (SELECT MAX(generation) FROM leases WHERE project_id=a.project_id
+                           AND task_id=a.task_id) AS newest_generation
+                          FROM shift_assignments a JOIN leases l ON l.project_id=a.project_id
+                           AND l.task_id=a.task_id AND l.generation=a.lease_generation
+                          WHERE a.project_id=? AND a.assignment_id=?''',
+                          (project_id,cmd['assignment_id']))
+                if (assignment is None or assignment['worker_id']!=request['worker_id']
+                        or assignment['assigned_worker']!=request['worker_id']
+                        or assignment['assignment_shift_id']!=request['shift_id']
+                        or assignment['assignment_state'] not in ('assigned','observed')
+                        or assignment['lease_status']!='active'
+                        or assignment['lease_generation']!=assignment['newest_generation']):
+                    raise WorkforceFault('conflict','stale assignment lease receipt')
+                try:
+                    expiry=datetime.fromisoformat(assignment['expires_at'])
+                except (TypeError,ValueError) as exc:
+                    raise WorkforceFault('conflict','invalid assignment lease expiry') from exc
+                if expiry.tzinfo is None or expiry<=datetime.now(timezone.utc):
+                    raise WorkforceFault('conflict','expired assignment lease receipt')
             tx.change('''INSERT INTO command_receipts(project_id,receipt_id,command_id,worker_id,shift_id,
                           kind,result_digest,remote_commit_sha,observed_at) VALUES (?,?,?,?,?,?,?,?,?)''',
                       (project_id,request['receipt_id'],request['command_id'],request['worker_id'],
