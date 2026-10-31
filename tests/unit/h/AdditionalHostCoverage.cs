@@ -236,6 +236,59 @@ internal static class AdditionalHostCoverage
         finally { File.WriteAllBytes(registryPath,original); }
 
         var resolved = Config.Authorize(registry,run);
+
+        // Exercise manifest argument parsing against the installed, SHA-pinned
+        // package while varying only the trusted registry's argument contract.
+        var choice = new ArgumentRule("mode", "enum", new[] { "safe", "fast" });
+        var declared = registry.Packages[0].Entrypoints[0] with { Arguments = new[] { choice } };
+        var extended = registry with
+        {
+            Packages = new[] { registry.Packages[0] with { Entrypoints = new[] { declared } } }
+        };
+        using var validArgs = JsonDocument.Parse("{\"mode\":\"safe\"}");
+        var supplied = run with { Args = validArgs.RootElement.Clone() };
+        var approved = Config.Authorize(extended, supplied);
+        Check(approved.Args.SequenceEqual(new[] { "safe" }, StringComparer.Ordinal),
+              "declared enum argument survives pinned authorization");
+        using var forbiddenArgs = JsonDocument.Parse("{\"mode\":\"denied\"}");
+        Reject(() => Config.Authorize(extended, supplied with { Args = forbiddenArgs.RootElement.Clone() }),
+               "unapproved enum value denied");
+        using var missingArgs = JsonDocument.Parse("{}");
+        Reject(() => Config.Authorize(extended, supplied with { Args = missingArgs.RootElement.Clone() }),
+               "missing declared argument denied");
+        using var wrongTypeArgs = JsonDocument.Parse("{\"mode\":123}");
+        Reject(() => Config.Authorize(extended, supplied with { Args = wrongTypeArgs.RootElement.Clone() }),
+               "nonstring enum argument denied");
+        using var duplicateArgs = JsonDocument.Parse("{\"mode\":\"safe\",\"mode\":\"safe\"}");
+        Reject(() => Config.Authorize(extended, supplied with { Args = duplicateArgs.RootElement.Clone() }),
+               "duplicate argument keys denied");
+        using var enormousArgs = JsonDocument.Parse(JsonSerializer.Serialize(
+            new Dictionary<string, string> { ["mode"] = new string('a', 4097) }));
+        Reject(() => Config.Authorize(extended, supplied with { Args = enormousArgs.RootElement.Clone() }),
+               "oversized argument value denied");
+        var untrustedRule = declared with { Arguments = new[] { new ArgumentRule("mode", "shell", new[] { "safe" }) } };
+        var untrusted = extended with
+        {
+            Packages = new[] { registry.Packages[0] with { Entrypoints = new[] { untrustedRule } } }
+        };
+        Reject(() => Config.Authorize(untrusted, supplied), "non-enum argument rule denied");
+        var badEnvironment = declared with
+        {
+            Environment = new Dictionary<string, string> { ["BAD=KEY"] = "value" }
+        };
+        var unsafeEnvironment = extended with
+        {
+            Packages = new[] { registry.Packages[0] with { Entrypoints = new[] { badEnvironment } } }
+        };
+        Reject(() => Config.Authorize(unsafeEnvironment, supplied),
+               "invalid environment variable name denied");
+        var invalidFixedArgs = declared with { FixedArgs = new[] { "nul\0argument" } };
+        var unsafeFixed = extended with
+        {
+            Packages = new[] { registry.Packages[0] with { Entrypoints = new[] { invalidFixedArgs } } }
+        };
+        Reject(() => Config.Authorize(unsafeFixed, supplied),
+               "embedded NUL in pinned argument denied");
         // Only construction is unit-tested here. Production Sandbox.Create still
         // MUST execute its real OS isolation probe before using this command.
         var command = Sandbox.BuildVerifiedCommand(resolved,run.DeadlineMs);
