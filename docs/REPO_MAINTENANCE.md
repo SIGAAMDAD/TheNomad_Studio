@@ -1,28 +1,31 @@
-# Repository hygiene and branch ownership — R5R
+# Repository hygiene and source ownership - R5R
 
-Audit baseline: PR #36 at c9e5be46370f33a3c2e0b6ebddfc89132c7be68b. The staged cleanup inventory contains 899 tracked files, versus 933 in the PR #36 baseline; Git verifies the exact final commit tree at publication.
+## Reviewed cleanup history
+
+- [PR #36](https://github.com/SIGAAMDAD/TheNomad_Studio/pull/36), merged as `4e1d1604208f5ace27207f2ebfa1faff79a64fa6`, removed the ten-slot S00-S09 scheduler, JSON controller state, old scheduled workflows, Work-era worker prompts and dependent scripts.
+- [PR #37](https://github.com/SIGAAMDAD/TheNomad_Studio/pull/37), merged as `7d18db7483c69c89cad92183dd598c133f184b41`, removed remaining obsolete intake/policy scripts, timed Apps Script source and historical workgroup handoffs, repaired active skill instructions, and added R5R source-route and mirror checks.
+- The merged PR #37 source tree is `9eccfcb5e0d822f4777741b8baab7180b1fd31db`. The historical cleanup inventory recorded 899 tracked files; recompute file totals on any later branch instead of treating that count as current.
 
 ## Branch roles
 
-- main: reviewed R5R source and frozen contracts; enforce branch protection in repository settings.
-- studio/runtime: mutable machine job records and historical receipts; preserve.
-- studio/comms: mutable communications branch and immutable-addressed relay history; preserve.
-- cleanup/removal work uses a validated PR and does not rewrite operational evidence.
+| Branch | Purpose | Allowed changes |
+| --- | --- | --- |
+| `main` | Reviewed implementation source and frozen contracts | Tested PRs with independent review and owner-authorized merge |
+| `studio/runtime` | Operational/historical department events and receipts | Authenticated, correctly scoped operational writes only |
+| `studio/comms` | Project-addressed relay records | Immutable, authenticated command and receipt publication |
 
-## Cleanup already made
+Neither operational branch is a source-code integration target. Never reset, force-rewrite or delete operational history as part of cleanup.
 
-The root README and superseded V2/V3 ChatGPT scheduling, owner setup and production pipeline documents have been replaced with R5R configuration, authority and pre-pilot instructions. An early source-only R5 deployment handoff was also refreshed.
+## Retained source
 
-## Current retention
+Keep `src/studio/` (including APSW, source policy, operation handlers and providers), `CONTRACTS/`, `schema/`, `host/`, `ui/`, runnable `tests/`, `qa/`, the 174-role catalog, and independently installable skill mirrors. The 526 catalog entries are content-addressed and have an integrity index. `scripts/verify_canonical_mirrors.py` checks required duplicate distribution files against canonical sources; do not replace them with symlinks or remove them before consumer migration.
 
-- R5R Python, API, database, C# host, frontend and canonical contracts remain installed.
-- Executable QA harnesses, exact-head CI evidence, and independently installable specialist manuals remain preserved; archived workgroup records remain in Git history.
-- The legacy scheduler and all remaining active legacy skill/policy instructions have been removed from this implementation branch, pending a separately authorized merge to `main`. Existing operational branch history has not been rewritten.
+The legacy engineering packet helper and review workflow under `scripts/engineering_packet.py` and `integrations/github-actions/engineering-review.yml` remain because not every external source repository's workflow dependencies were accessible for inspection. This is an explicitly retained dependency, not a second Studio scheduler.
 
-## Deletion criteria
+Historical workgroup handoffs and logs are retrievable from Git commits; the runnable 92-case pre-pilot matrix remains in `tests/prepilot/fixtures/`. See [Historical source evidence](HISTORICAL_SOURCE_EVIDENCE.md).
 
-For future removals, confirm the candidate is unused in current workflows, tests, launch prompts, role loaders and external source contracts. Document exact paths, run the full frozen-contract and CI suites at the resulting commit, and preserve audit history. Do not delete the runtime/comms branches or remove files solely because their names contain v1, backup, or log.
+## Review and removal standard
 
-## Remaining external gate
+Before deleting a file: identify actual imports/build/CI references; inspect external source consumers; preserve exact contractual bytes; update generated consumers and documentation; prove negative behavior and unrelated behavior on one integrated revision. No compatibility layer may recreate the removed ten-slot controller.
 
-Source CI and code coverage are separate from F-20: real browser worker continuation across two successive addressed GitHub assignments with authentic receipts.
+A completed cleanup does not mean the deployment scaffolding and live browser pilot are finished. See [Owner acceptance](OWNER_SETUP.md) and [External decommission](LEGACY_DECOMMISSION_STATUS.md).

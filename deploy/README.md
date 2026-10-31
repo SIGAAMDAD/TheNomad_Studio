@@ -1,19 +1,25 @@
-# R5R deployment handoff
+# R5R deployment scaffold and operating requirements
 
-This folder contains the Python coordinator image and a local Compose scaffold. It does not deploy the browser workforce, the C# ToolHost or the TypeScript cockpit.
+`deploy/Dockerfile` and `deploy/compose.yaml` currently define a **Python-only coordinator scaffold**. They do not provision an authenticated Studio service, an HTTPS proxy, React cockpit, C# ToolHost, or any ChatGPT browser sessions. The Compose default is `restart: "no"`.
 
-## Production factory
+## Required environment
 
-The service launches python -m studio.app.cli. Supply STUDIO_COMPOSITION_FACTORY=studio.app.production_factory:build_from_environment plus an installed STUDIO_TRUSTED_PORTS_FACTORY=<trusted_module>:<factory>. The trusted adapter factory must provide authentication, project-bound GitHub source and relay transports, authorization, source/CI readback, review, release and recovery, all sharing the actual APSW writer.
+The CLI executes `python -m studio.app.cli`. Supply an installed trusted `module:function` factory returning `TrustedPorts` for the complete R5R service. See [`deploy/studio.env.example`](studio.env.example) for the actual variable names and [`docs/SETUP.md`](../docs/SETUP.md) for the setup sequence.
 
-Absent configured capabilities and missing 72-operation bindings fail closed, rather than starting a simulated backend.
+- `STUDIO_COMPOSITION_FACTORY=studio.app.production_factory:build_from_environment`
+- `STUDIO_TRUSTED_PORTS_FACTORY=<installed.module>:<factory>`
+- `STUDIO_APSW_DATABASE`, `STUDIO_BLOB_ROOT`, `STUDIO_SOURCE_ROOT` on durable, writable storage.
+- `STUDIO_CONTRACT_DIR` pointing to the verified frozen `CONTRACTS/` directory.
+- `STUDIO_OPERATOR_HOST=127.0.0.1` (loopback only) and a reviewed TLS proxy for remote operator access.
 
-## Operating constraints
+The factory must bind all 72 operator routes, owner/project authorization, GitHub source and command delivery, receipt verification, independent QA, releases and restart recovery. Missing inputs intentionally fail startup; a bare green build is not a running Studio.
 
-Keep persistent APSW storage and verified backups. Bind operator HTTP to loopback; place a trusted TLS proxy in front. Optional signed GitHub webhooks are readback hints, not proof of completion. Configure secrets through deployment-secret management, never committed text.
+## Known image packaging gap
 
-The Compose default restart policy is no. The environment-specific Student profile is optional and is not an AI worker runtime.
+The checked-in `Dockerfile` currently copies `src/`, `README.md` and `pyproject.toml` but **does not copy `CONTRACTS/` or `schema/`**. Production contract loading and APSW schema installation require those files. Before running an integrated Docker deployment, update the image and mount/copy verified contracts, test schema initialization and startup with real trusted ports, and check relative paths from the container working directory.
 
-## Validation
+The Compose volume alone does not set the required durable database, blob and source root variables, install the external factory or establish host connectivity. It must be completed and verified separately; `docker compose up` as currently distributed is not a valid live acceptance gate.
 
-Before a production pilot, require exact-SHA Python/APSW, TypeScript, .NET, source provenance and control CI with per-language 90% production line-coverage gates, real provider readback and an observed Tier C browser worker execution. See docs/OWNER_SETUP.md and qa/TIER_C_MANUAL_EVIDENCE.md.
+## Validation before launch
+
+Run source CI for the exact candidate, the Python/APSW integration suite, 72-route startup check, authenticated GitHub effect readback, failure/restart tests, complete ToolHost sandbox checks on the actual target OS, and live F-20 browser continuation. See [Owner acceptance](../docs/OWNER_SETUP.md), [Browser setup](../docs/CHATGPT_SETUP.md), and [ToolHost](../host/README.md).
