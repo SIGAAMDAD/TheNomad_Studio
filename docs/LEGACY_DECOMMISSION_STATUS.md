@@ -22,3 +22,18 @@ Source workflow inventory observed during PR #37 planning:
 - `SIGAAMDAD/The_Nomad` and `SIGAAMDAD/NomadMain`: workflow directories inaccessible from the connected view; no absence claim made.
 
 These observations are historical, not a continuous monitor of other repositories. Runtime acceptance F-20 remains separate from source cleanup and external trigger decommission.
+
+## External decommission evidence contract
+
+For each known legacy Google Apps Script deployment, record the actual script
+project ID, installed trigger IDs, administrative actor, trigger listing and
+post-revocation readback. For each old scheduled task or installed intake skill,
+record exact installation identity, enabled status and its administrative removal
+or disablement receipt. Keep an item `NOT_VERIFIED` until the relevant provider
+confirms it; repository Git history is not proof that external schedulers stopped.
+
+Likewise, remove the retained engineering-review helper/template only after
+all five source repository owners confirm their downstream workflow consumers.
+The repository connector can currently inspect the public Terrain3D,
+NomadFramework and TheNomad_GOAP workflows; private The_Nomad and NomadMain
+remain outside the verified source set.

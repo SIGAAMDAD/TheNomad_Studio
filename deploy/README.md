@@ -16,9 +16,9 @@ The factory must bind all 72 operator routes, owner/project authorization, GitHu
 
 ## Image packaging
 
-The Docker image packages `src/`, `CONTRACTS/` and `schema/` with the Python coordinator. Installed wheels include the frozen schema files under the environment's `share/nomad-studio/schema/`; the schema loader verifies the frozen digest. CI validates these resources and the complete 72-operation API contract. Bootstrap a new volume before first startup using `docker compose run --rm --entrypoint python studio /studio/scripts/bootstrap_studio_database.py --database /var/lib/nomad-studio/studio.sqlite3`. This refuses to overwrite an existing database. A trusted ports provider and integration startup acceptance remain deployment responsibilities.
+The Docker image packages `src/`, `CONTRACTS/` and `schema/` with the Python coordinator. Installed wheels include the frozen schema files under the environment's `share/nomad-studio/schema/`; the schema loader verifies the frozen digest. CI validates these resources and the complete 72-operation API contract. Bootstrap a new volume before first startup using `docker compose -f deploy/compose.yaml run --rm --entrypoint python studio /studio/scripts/bootstrap_studio_database.py --database /var/lib/nomad-studio/studio.sqlite3`. This refuses to overwrite an existing database. A trusted ports provider and integration startup acceptance remain deployment responsibilities.
 
-The Compose volume alone does not set the required durable database, blob and source root variables, install the external factory or establish host connectivity. It must be completed and verified separately; `docker compose up` as currently distributed is not a valid live acceptance gate.
+Compose supplies persistent volumes and reads the required paths from the private `deploy/studio.env`. The mounted trusted factory and its authorized credentials must still exist before startup; the Compose file alone is not a complete external-provider acceptance gate.
 
 ## Validation before launch
 
@@ -32,3 +32,13 @@ Run source CI for the exact candidate, the Python/APSW integration suite, 72-rou
 4. Deploy the separately built C# ToolHost with its actual broker and Linux isolation prerequisites. The cockpit is an operator interface, not an executable tool broker.
 
 The `deploy/providers` and `deploy/certs` directories intentionally contain no committed production credentials. Startup fails closed when required trusted adapters or TLS certificate bytes are absent. The exposed port is loopback-only until an authorized ingress configuration is supplied.
+
+## Running-service acceptance
+
+After installing private trusted providers, TLS certificates and the initial
+database, set `STUDIO_OPERATOR_TOKEN` in a private shell and run
+`python scripts/verify_live_operator.py --url https://localhost:8443`
+with a trusted local CA (`SSL_CERT_FILE`, if needed). This tests both the
+unauthenticated reject path and the authenticated project list over the real
+TLS proxy. The separate GitHub two-receipt readback command and its manual
+browser-continuity evidence are described in [Owner acceptance](../docs/OWNER_SETUP.md).

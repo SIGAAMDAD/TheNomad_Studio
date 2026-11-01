@@ -20,3 +20,11 @@ A queued assignment, generated prompt, GitHub notification or persisted database
 Observe **one already initialized browser conversation**, within **one continuing response**, receive **two successive authorized GitHub assignments** and publish **two independently verified remote receipts**. Collect worker and shift IDs, lease generations, command IDs, real GitHub blob/commit SHAs, publisher/readback evidence, and actual timestamps. A mock relay or contract test is not evidence that F-20 occurred.
 
 See [Setup](SETUP.md), [Production pipeline](PRODUCTION_PIPELINE.md), and [Owner acceptance](OWNER_SETUP.md).
+
+## Remote evidence verifier
+
+Use `python -m qa.f20_remote --evidence /secure/f20-observed.json` with a
+privately provisioned `STUDIO_GITHUB_TOKEN` to independently read back both
+immutable GitHub command and receipt files at their exact commit SHAs. See
+[Owner acceptance](OWNER_SETUP.md) for evidence fields. The returned remote
+readback verdict is distinct from human observation of one continuous response.

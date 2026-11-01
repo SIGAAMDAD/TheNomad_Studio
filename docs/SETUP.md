@@ -58,3 +58,12 @@ Expose the loopback operator API through a reviewed TLS reverse proxy. Compose b
 Check remote identity/project separation, backup/restore, exact GitHub readback, outbox recovery under ambiguous writes, shift lease fencing, independently reviewed QA, owner-gated source promotion, and a live two-command browser shift (F-20). See [Owner acceptance](OWNER_SETUP.md) and [Browser-worker setup](CHATGPT_SETUP.md).
 
 The deployed image includes frozen contracts and schema files, and CI verifies the packaged resource paths. Initialize a new database explicitly with `python /studio/scripts/bootstrap_studio_database.py --database /var/lib/nomad-studio/studio.sqlite3` before normal startup. This command refuses to overwrite an existing database. See [Deployment](../deploy/README.md).
+
+## Running deployment verification
+
+Verify the actual TLS ingress and operator credentials after Compose starts
+with `python scripts/verify_live_operator.py --url https://localhost:8443`
+and a private `STUDIO_OPERATOR_TOKEN`. For an actual two-command browser shift,
+run `python -m qa.f20_remote --evidence /secure/f20-observed.json` with
+`STUDIO_GITHUB_TOKEN` and record independent browser continuity separately.
+See [Owner acceptance](OWNER_SETUP.md).

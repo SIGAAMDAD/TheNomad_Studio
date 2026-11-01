@@ -3,15 +3,26 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 
 from studio.storage.workforce import WorkforceStorage
 
 
 def bootstrap_database(path: Path) -> None:
-    if str(path) in ('', ':memory:') or path.exists():
-        raise ValueError('new on-disk database path required; existing state is protected')
+    if str(path) in ('', ':memory:'):
+        raise ValueError('new on-disk database path required')
     path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        # Reserve the filename atomically; two concurrent bootstrap attempts
+        # must never race to initialize the same on-disk Studio database.
+        handle = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    except FileExistsError as exc:
+        raise ValueError('existing state is protected') from exc
+    else:
+        os.close(handle)
+    # A failed initialization retains the reserved file for explicit inspection
+    # instead of silently retrying potentially incomplete database creation.
     store = WorkforceStorage.open(path, fresh=True)
     store.close()
 
