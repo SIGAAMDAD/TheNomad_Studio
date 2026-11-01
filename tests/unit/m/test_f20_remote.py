@@ -49,7 +49,8 @@ def test_rejects_wrong_shift_and_replayed_receipt():
         verify_remote_pairs(evidence,lambda path, sha: remote[(path, sha)])
     evidence,remote=sample()
     evidence['pairs'][1]['receipt_commit_sha']='3'*40
-    with pytest.raises(ValueError):
+    remote[('receipts/2.json','3'*40)] = remote[('receipts/2.json','4'*40)]
+    with pytest.raises(ValueError, match='duplicate'):
         verify_remote_pairs(evidence,lambda path, sha: remote[(path, sha)])
 
 
