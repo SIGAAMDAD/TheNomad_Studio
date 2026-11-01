@@ -47,3 +47,17 @@ The currently implemented production backend is **Linux bubblewrap + user namesp
 This backend does **not** claim seccomp, cgroup accounting, authenticated Windows restricted tokens, or Windows Job Object enforcement. On Windows or systems without functioning bubblewrap/prlimit/user namespaces, a run fails closed as `capability_unavailable`. A real Windows backend is an outstanding WG-H requirement. A run requested with an unavailable required isolation never degrades to unsandboxed execution.
 
 The integration broker must verify remote/staged bytes and source SHA separately and persist an effect intent with WG-C **before** transmitting `run`; it must reconcile host `unknown` receipts rather than crediting success. This implementation does not fabricate WG-G, WG-B, WG-C or WG-M integrations.
+
+## CI-hosted distributable
+
+The Studio source verification workflow publishes a `toolhost-publish/` directory
+and SHA256SUMS along with the production C# coverage report. The binary is built
+from the exact workflow source SHA using .NET 10 `dotnet publish`. Verify the
+artifact SHA256SUMS and the associated workflow identity before installation.
+
+A real trusted local broker must launch the verified binary with
+`--registry`, `--registry-sha256`, and `--journal` arguments, own its
+private pipes and provision only authorized operations. The binary is a
+sandboxed execution component, not a standalone remote API service. It must
+run on an OS supporting the declared sandbox features (Linux bubblewrap +
+userns/prlimit) and requires operational acceptance on that OS.

@@ -101,11 +101,17 @@ jobs:
           dotnet-coverage collect "dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Release" -f cobertura -o toolhost-coverage.xml
       - name: Report complete .NET production host denominator
         run: python scripts/verify_studio_coverage.py --dotnet toolhost-coverage.xml --minimum 90
+      - name: Publish distributable .NET 10 ToolHost
+        run: |
+          dotnet publish host/Nomad.ToolHost/Nomad.ToolHost.csproj --configuration Release --no-restore --output toolhost-publish
+          (cd toolhost-publish && sha256sum Nomad.ToolHost.dll > SHA256SUMS)
       - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: toolhost-coverage-${{ github.sha }}
-          path: toolhost-coverage.xml
+          path: |
+            toolhost-coverage.xml
+            toolhost-publish/
           retention-days: 7
   packaging:
     name: Deterministic artifact and source provenance

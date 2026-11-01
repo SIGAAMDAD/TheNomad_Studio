@@ -39,7 +39,7 @@ dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Re
 
 ## Deployment and acceptance
 
-The CLI entrypoint is `python -m studio.app.cli`, configured with `STUDIO_COMPOSITION_FACTORY=studio.app.production_factory:build_from_environment` and a deployment-provided trusted ports factory. Startup requires real project-scoped adapters and durable paths; absent dependencies fail closed. The provided Docker/Compose files include the schema and frozen contracts, but remain scaffolding and do **not** supply the trusted production provider or complete production configuration. Do not treat `docker compose up` as production proof.
+The CLI entrypoint is `python -m studio.app.cli`, configured with `STUDIO_COMPOSITION_FACTORY=studio.app.production_factory:build_from_environment` and a deployment-provided trusted ports factory. Startup requires real project-scoped adapters and durable paths; absent dependencies fail closed. Compose builds a Python coordinator and HTTPS React cockpit, packages frozen contracts/schema and installs a read-only provider-module mount. The trusted production provider, .NET ToolHost broker, deployment secrets and live verification still require owner-controlled configuration. Do not treat `docker compose up` as production proof.
 
 [Documentation index](docs/README.md) | [Setup](docs/SETUP.md) | [Deployment scaffold](deploy/README.md) | [Production pipeline](docs/PRODUCTION_PIPELINE.md) | [Repository cleanup](docs/REPO_MAINTENANCE.md) | [Launch acceptance](docs/OWNER_SETUP.md)
 
