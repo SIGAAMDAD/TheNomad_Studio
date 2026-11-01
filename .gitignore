@@ -11,3 +11,10 @@ coverage/
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
+
+# Local production configuration and secrets
+deploy/studio.env
+deploy/providers/*.py
+deploy/providers/**/*.py
+deploy/certs/*.crt
+deploy/certs/*.key
