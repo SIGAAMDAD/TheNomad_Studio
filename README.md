@@ -1,3 +1,5 @@
+> **R5R historical-state notice (2026-10-31):** The V1 scheduler, ten-slot JSON controller and scheduled-task setup below are historical evidence, not current Studio operating instructions. The active implementation and deployment guidance are on [`main`](https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/README.md) and [`docs/SETUP.md`](https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/docs/SETUP.md). Preserve this branch's historical records; do not execute the obsolete controller from it.
+
 # TheNomad_Studio
 
 Private, deterministic control plane for **The Nomad** AI production studio. The design uses the existing ChatGPT scheduled tasks as bounded workers, GitHub Actions for scheduling/reconciliation, and Google Drive for original creative documents.
