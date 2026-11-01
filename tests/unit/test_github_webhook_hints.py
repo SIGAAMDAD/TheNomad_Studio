@@ -4,6 +4,7 @@ import hmac
 import io
 import json
 import sqlite3
+import weakref
 import uuid
 
 from studio.app.github_webhooks import GitHubWebhookBinding, GitHubWebhookHints
@@ -14,6 +15,7 @@ from studio.workforce import WorkforceFault
 class RecordingC(WorkforceStorage):
     def __init__(self):
         super().__init__(sqlite3.connect(':memory:'))
+        weakref.finalize(self, self._connection.close)
         self.events={}
     def command(self, project, operation, request, digest, callback):
         key=(project,request)

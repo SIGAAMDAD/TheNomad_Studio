@@ -109,6 +109,13 @@ def test_build_environment_validates_required_storage_and_outbox(monkeypatch,tmp
         seen.append(kwargs)
         return 'composed'
     monkeypatch.setattr(factory,'assemble_live_studio',fake_assemble)
+    with pytest.raises(StudioError,match='ToolHost broker'):
+        factory.build_from_environment()
+    module.get_ports=lambda:replace(
+        ports(),
+        command_delivery=SimpleNamespace(start=lambda:None,stop=lambda:None),
+        source_target_for_project=lambda project:None,
+        toolhost_broker=SimpleNamespace(for_writer=lambda writer,root:None))
     assert factory.build_from_environment() == 'composed'
     assert seen[0]['database_path'].name=='studio.sqlite'
     assert seen[0]['ports'].command_delivery is not None

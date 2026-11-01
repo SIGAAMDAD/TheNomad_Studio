@@ -127,15 +127,34 @@ def test_main_records_server_thread_failure(monkeypatch):
     assert server.closed and server.shutdown_calls==1
 
 
-def test_main_runtime_failure_still_closes_server(monkeypatch):
+def test_main_runtime_failure_never_opens_operator_listener(monkeypatch):
     runtime,server=setup_main(monkeypatch,runtime_fails=True)
     assert cli.main()==1
-    assert server.closed
+    assert runtime.entries==1 and runtime.exits==0
+    assert not server.closed and server.shutdown_calls==0
 
 
 def test_main_configuration_failure(monkeypatch):
     monkeypatch.setattr(cli,'load_composition',lambda _: (_ for _ in ()).throw(StudioError('invalid','broken factory')))
     assert cli.main()==78
-    monkeypatch.setattr(cli,'load_composition',lambda _: SimpleNamespace())
+    monkeypatch.setattr(cli,'load_composition',lambda _: SimpleNamespace(runtime=Runtime()))
     monkeypatch.setattr(cli,'configure_operator_server',lambda _: (_ for _ in ()).throw(OSError('no socket')))
+    monkeypatch.setattr(cli.signal,'signal',lambda *a:None)
     assert cli.main()==78
+
+def test_runtime_recovery_precedes_operator_bind(monkeypatch):
+    events=[]
+    class OrderedRuntime:
+        def __enter__(self):
+            events.append('recover')
+        def __exit__(self,*_args):
+            events.append('shutdown')
+    server=Server()
+    monkeypatch.setattr(cli,'load_composition',lambda _:SimpleNamespace(runtime=OrderedRuntime()))
+    monkeypatch.setattr(cli,'configure_operator_server',lambda _:events.append('bind') or server)
+    monkeypatch.setattr(cli.threading,'Event',SignalEvent)
+    monkeypatch.setattr(cli.threading,'Thread',FakeThread)
+    monkeypatch.setattr(cli.signal,'signal',lambda *a:None)
+    assert cli.main()==0
+    assert events==['recover','bind','shutdown']
+    assert server.closed

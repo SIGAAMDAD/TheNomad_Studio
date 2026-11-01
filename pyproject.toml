@@ -13,6 +13,9 @@ dependencies = []
 coordinator = ["apsw>=3.46", "fastapi>=0.110", "uvicorn>=0.29"]
 dev = ["pytest>=8.0", "pytest-cov>=5.0", "jsonschema>=4.0,<5"]
 
+[tool.setuptools.data-files]
+"share/nomad-studio/schema" = ["schema/initial_schema.sql", "schema/schema.sha256", "schema/state_machines.json", "schema/state_machines.sha256", "schema/table_owners.json"]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 namespaces = true

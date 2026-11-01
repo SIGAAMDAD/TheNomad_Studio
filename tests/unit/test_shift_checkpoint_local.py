@@ -1,5 +1,6 @@
 """Local checkpoint atomicity and tamper checks using a minimal C store shape."""
 import sqlite3
+import weakref
 import pytest
 
 from studio.storage.workforce import WorkforceStorage
@@ -23,6 +24,7 @@ class MemoryC(WorkforceStorage):
     def __init__(self):
         db = sqlite3.connect(':memory:', isolation_level=None)
         super().__init__(db)
+        weakref.finalize(self, db.close)
         db.executescript('''CREATE TABLE worker_shifts(project_id TEXT,shift_id TEXT,worker_id TEXT,state TEXT);
                          CREATE TABLE checkpoints(project_id TEXT,checkpoint_id TEXT,shift_id TEXT,
                          context_digest TEXT,relay_cursor TEXT,recorded_at TEXT);''')

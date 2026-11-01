@@ -1,5 +1,6 @@
 """Bounded and fair polling must not lose ready projects or replay by itself."""
 import sqlite3
+import weakref
 
 import pytest
 
@@ -29,6 +30,7 @@ def make_pump(count=23, *, projects_per_poll=4, commands_per_project=2, fail=())
         "INSERT INTO command_outbox VALUES(?, 'queued')",
         [(f"project-{i:03d}",) for i in range(count)])
     store = WorkforceStorage(connection)
+    weakref.finalize(store, connection.close)
     worker = CountingWorkforce(fail=fail)
     pump = CommandDeliveryPump(
         writer=store, workforce=worker,

@@ -59,6 +59,8 @@ from .provider_commands import ProviderCommands
 from .projects import ProjectService
 from .releases import RecoveryCoordinator, ReleaseCoordinator
 from .source_policy import SourceTarget, validate_source_target
+from .toolhost_broker import PrivateToolHostBroker
+from .toolhost_authorization import CurrentToolHostAuthorizer
 
 
 @dataclass(frozen=True)
@@ -100,6 +102,7 @@ class TrustedPorts:
     bootstrap_credentials: tuple[str, ...] = ()
     command_delivery: Any | None = None
     github_webhook_hints: Any | None = None
+    toolhost_broker: Any | None = None
     # Resolved from authenticated deployment/project configuration, never chat input.
     source_target_for_project: Callable[[str], SourceTarget] | None = None
 
@@ -200,6 +203,9 @@ def _validate_external(ports: TrustedPorts) -> None:
     if (ports.github_webhook_hints is not None and
             not callable(getattr(ports.github_webhook_hints,"for_writer",None))):
         raise TypeError("trusted GitHub webhook builder required")
+    if ports.toolhost_broker is not None and not callable(
+            getattr(ports.toolhost_broker, 'for_writer', None)):
+        raise TypeError('trusted same-writer ToolHost broker builder required')
     if not hasattr(ports.integration_roster,"paths") or not hasattr(ports.integration_roster,"plan_sha256"):
         raise TypeError("verified integration ownership roster required")
 
@@ -290,6 +296,15 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
                       recover=lambda:configured_port(ports.startup_recovery).recover(),
                       start=lambda:None,stop=lambda:None),
         ]
+        broker = configured_port(ports.toolhost_broker) if ports.toolhost_broker is not None else None
+        if broker is not None:
+            if not isinstance(broker, PrivateToolHostBroker):
+                raise TypeError('configured ToolHost builder returned an untrusted transport')
+            if (not isinstance(broker.authorize, CurrentToolHostAuthorizer)
+                    or broker.authorize.writer is not writer):
+                raise TypeError('ToolHost broker must authorize against the same C writer')
+            parts.append(Component('H-ToolHost', recover=lambda:None,
+                                   start=broker.start, stop=broker.close))
         if delivery is not None:
             parts.append(Component("G-I-command-publisher",
                                    recover=lambda:None,start=delivery.start,stop=delivery.stop))
@@ -358,6 +373,9 @@ def build_from_environment() -> StudioComposition:
     if not all((db,blobs,source)):
         raise StudioError("capability_unavailable",
                           "Studio durable database, blob root and source root required")
+    if ports.toolhost_broker is None:
+        raise StudioError('capability_unavailable',
+                          'trusted current-lease ToolHost broker is not configured')
     return assemble_live_studio(
         database_path=Path(db),blob_root=Path(blobs),
         source_root=Path(source),contracts_root=Path(

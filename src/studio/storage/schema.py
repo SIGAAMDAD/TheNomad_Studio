@@ -3,12 +3,18 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import sys
 from pathlib import Path
 from typing import Any
 
 from .errors import Conflict, Invalid
 
-SCHEMA_DIR = Path(__file__).resolve().parents[3] / "schema"
+_source_schema = Path(__file__).resolve().parents[3] / "schema"
+SCHEMA_DIR = Path(os.environ["STUDIO_SCHEMA_DIR"]) if os.environ.get("STUDIO_SCHEMA_DIR") else (
+    _source_schema if (_source_schema / "initial_schema.sql").is_file()
+    else Path(sys.prefix) / "share" / "nomad-studio" / "schema"
+)
 
 
 def schema_bytes() -> bytes:

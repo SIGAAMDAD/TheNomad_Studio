@@ -1,6 +1,7 @@
 """Connected command publisher retains the authoritative C/G/I owner boundary."""
 from types import SimpleNamespace
 import sqlite3
+import weakref
 
 import pytest
 
@@ -30,6 +31,7 @@ def test_builder_reuses_single_writer_and_verified_per_project_transport(monkeyp
     conn.execute("CREATE TABLE command_outbox(project_id TEXT,state TEXT)")
     conn.execute("INSERT INTO command_outbox VALUES('project','queued')")
     store = WorkforceStorage(conn)
+    weakref.finalize(store, conn.close)
     workers = Worker(store, require_action=lambda *_: None)
     captured = []
     def providers(*, writer, artifact_root, projects, credential_resolver, http):
@@ -65,6 +67,7 @@ def test_installed_shared_provider_is_used_without_second_rate_governor(monkeypa
     conn.execute('CREATE TABLE command_outbox(project_id TEXT,state TEXT)')
     conn.execute("INSERT INTO command_outbox VALUES('project','queued')")
     store=WorkforceStorage(conn)
+    weakref.finalize(store,conn.close)
     worker=Worker(store,require_action=lambda *_:None)
     def unexpected(**kwargs):
         raise AssertionError('second G provider/rate governor instantiated')
@@ -88,6 +91,7 @@ def test_shared_provider_requires_callable(tmp_path):
     conn=sqlite3.connect(':memory:')
     conn.execute('CREATE TABLE command_outbox(project_id TEXT,state TEXT)')
     store=WorkforceStorage(conn)
+    weakref.finalize(store,conn.close)
     builder=ConnectedGitHubCommandDeliveryBuilder(
         projects=(),credential_resolver=lambda _: 'token',
         actor_for_project=lambda _: {'project_id':'project'})

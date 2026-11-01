@@ -62,14 +62,29 @@ def host_coverage(path: pathlib.Path) -> tuple[int, int]:
     root = ET.parse(path).getroot()
     host_root = ROOT/'host'/'Nomad.ToolHost'
     # Include nested production files, but exclude SDK-generated build outputs.
-    expected = {p.name for p in host_root.rglob('*.cs')
+    expected = {p.relative_to(host_root).as_posix() for p in host_root.rglob('*.cs')
                 if not {'bin', 'obj'}.intersection(p.relative_to(host_root).parts)}
+    basenames = {}
+    for relative_path in expected:
+        basenames.setdefault(pathlib.PurePosixPath(relative_path).name, set()).add(relative_path)
     actual = {}
     for package in root.findall('.//package'):
         for cls in package.findall('.//class'):
-            filename = pathlib.Path(cls.attrib.get('filename', '')).name
-            if filename not in expected:
+            reported = cls.attrib.get('filename', '').replace('\\', '/')
+            basename = pathlib.PurePosixPath(reported).name
+            candidates = basenames.get(basename, set())
+            if not candidates:
                 continue
+            # Coverage may report absolute paths or just a basename. A basename
+            # is only sufficient when exactly one production source owns it.
+            if len(candidates) > 1:
+                matching = {p for p in candidates if reported.endswith('/' + p)
+                            or reported == p}
+                if len(matching) != 1:
+                    raise ValueError('Ambiguous .NET coverage path: ' + reported)
+                filename = matching.pop()
+            else:
+                filename = next(iter(candidates))
             source_name = cls.attrib.get('name', '')
             # Collect every host class under the production assembly, ignoring
             # instrumented tests with coincidentally matching file basenames.

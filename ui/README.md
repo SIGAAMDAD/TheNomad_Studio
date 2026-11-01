@@ -8,7 +8,7 @@ From the canonical integration tree (with `CONTRACTS/openapi.json` and `CONTRACT
 
 ```sh
 cd ui
-npm install
+npm ci
 npm run generate
 npm run check
 npm run build
@@ -33,6 +33,6 @@ Configure `VITE_STUDIO_API_URL` to override the default same-origin `/v1` servic
 
 ## Dependencies and validation
 
-Selected packages: React + React DOM 19.1.1 (MIT), Vite 6.3.5 (MIT), `@vitejs/plugin-react` 4.7.0 (MIT), `@tanstack/react-query` 5.83.0 (MIT), TypeScript 5.8.3 (Apache-2.0), `@types/react`/`@types/react-dom` (MIT). React Query was chosen to scope and invalidate server projections; no second browser persistence layer is added. Actual resolved package hashes, CVE audit and OS clean-install remain **NOT_RUN** where registry access is unavailable. A lockfile must be produced with `npm install --package-lock-only` in a network-enabled environment, retained in the canonical integration tree, and verified with `npm ci` before a reproducible production build can be certified. Pinning exact package.json versions is not proof of a reproducible dependency install.
+Selected packages: React + React DOM 19.1.1 (MIT), Vite 6.3.5 (MIT), `@vitejs/plugin-react` 4.7.0 (MIT), `@tanstack/react-query` 5.83.0 (MIT), TypeScript 5.8.3 (Apache-2.0), `@types/react`/`@types/react-dom` (MIT). React Query was chosen to scope and invalidate server projections; no second browser persistence layer is added. The tracked `ui/package-lock.json` records resolved dependency tarballs and integrity hashes. CI runs `npm ci` to verify the clean install against this graph. External CVE review and the production-host browser test are separate acceptance checks.
 
 The offline contract-generator unit tests use only the Node built-in test runner and verify 72/72 coverage, route identity, no invented inference/worker invocation, path encoding, error envelopes, mutable-request UNKNOWN handling, project separation and continuous shift handoff constraints. Real React build and browser interaction require installed dependencies and the actual J backend; report them separately as NOT_RUN if unavailable.

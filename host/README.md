@@ -47,3 +47,32 @@ The currently implemented production backend is **Linux bubblewrap + user namesp
 This backend does **not** claim seccomp, cgroup accounting, authenticated Windows restricted tokens, or Windows Job Object enforcement. On Windows or systems without functioning bubblewrap/prlimit/user namespaces, a run fails closed as `capability_unavailable`. A real Windows backend is an outstanding WG-H requirement. A run requested with an unavailable required isolation never degrades to unsandboxed execution.
 
 The integration broker must verify remote/staged bytes and source SHA separately and persist an effect intent with WG-C **before** transmitting `run`; it must reconcile host `unknown` receipts rather than crediting success. This implementation does not fabricate WG-G, WG-B, WG-C or WG-M integrations.
+
+## CI-hosted distributable
+
+The Studio source verification workflow publishes a `toolhost-publish/` directory
+and SHA256SUMS along with the production C# coverage report. The binary is built
+from the exact workflow source SHA using .NET 10 `dotnet publish`. Verify the
+artifact SHA256SUMS and the associated workflow identity before installation.
+
+A real trusted local broker must launch the verified binary with
+`--registry`, `--registry-sha256`, and `--journal` arguments, own its
+private pipes and provision only authorized operations. The binary is a
+sandboxed execution component, not a standalone remote API service. It must
+run on an OS supporting the declared sandbox features (Linux bubblewrap +
+userns/prlimit) and requires operational acceptance on that OS.
+
+## Trusted local private-pipe broker
+
+`studio.app.toolhost_broker.PrivateToolHostBroker` starts the compiled host
+with SHA-256 pinned registry and host assembly bytes. It checks a one-time
+nonce handshake, isolates the pipe from HTTP/relay callers, rejects unexpected
+receipts and requires a **current trusted authorization callback for each
+request**. It refuses `run` without a pinned expected sandbox capability.
+Host revocation is performed by closing this child and using a new pinned
+registry. Nothing in the transport provisions grants: the current C/A/B/D
+authorization adapter must supply them before a tool can be launched.
+
+The .NET CI job runs a genuine Python-to-.NET pipe integration check and
+verifies real fail-closed denial for an unregistered operation. It does not
+claim that an owner-configured production broker has been installed.
