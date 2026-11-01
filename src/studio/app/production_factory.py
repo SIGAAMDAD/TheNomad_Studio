@@ -358,9 +358,6 @@ def build_from_environment() -> StudioComposition:
         raise StudioError("invalid","trusted factory import invalid")
     provider=getattr(importlib.import_module(module),func)
     ports=provider()
-    if ports.toolhost_broker is None:
-        raise StudioError('capability_unavailable',
-                          'trusted current-lease ToolHost broker is not configured')
     if ports.command_delivery is None:
         raise StudioError("capability_unavailable",
                           "durable GitHub command outbox publisher is not configured")
@@ -373,6 +370,9 @@ def build_from_environment() -> StudioComposition:
     if not all((db,blobs,source)):
         raise StudioError("capability_unavailable",
                           "Studio durable database, blob root and source root required")
+    if ports.toolhost_broker is None:
+        raise StudioError('capability_unavailable',
+                          'trusted current-lease ToolHost broker is not configured')
     return assemble_live_studio(
         database_path=Path(db),blob_root=Path(blobs),
         source_root=Path(source),contracts_root=Path(
