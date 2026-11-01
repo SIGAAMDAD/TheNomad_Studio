@@ -1,11 +1,16 @@
-> **R5R communications-branch notice (2026-10-31):** The V1 seed description below predates the current R5R GitHub relay design. Follow the reviewed [`main`](https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/README.md) documentation for current source authority, command/receipt verification and project-scoped APSW state. The branch's existing evidence remains intact; its presence does not establish a live broker.
+# Studio communications evidence branch
 
-# Studio Communications Data Branch (V1 seed)
+This branch is reserved for authenticated, immutable, project-scoped GitHub
+command and receipt records. Its historical V1 seed remains preserved in Git
+history; source and current deployment authority live on
+[main](https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/README.md).
 
-Status: INERT / DESIGN SEED. No broker installed. No workers are triggered by this branch.
+The R5R coordinator owns APSW worker/shift/lease state and persists the effect
+intent before a configured GitHub publisher writes a command. It accepts a
+receipt only after trusted, exact-commit remote readback. A branch write alone
+does not prove browser execution, lease ownership, QA or source approval.
 
-Authoritative governance: main. Authoritative job/runtime state: studio/runtime. Actual source and QA: owning repositories and exact SHA.
-
-This branch is reserved for append-only normalized communications events, versioned daily digests, and snapshots. Proposed on main at studio/communications/. No private oversight case details belong here.
-
-When activated, only the reviewed broker principal writes accepted events. Workers post structured messages to their assigned job Issues. No force-push/deletion and no unverified state mutation.
+Do not use this branch as a source integration target, scheduled worker pool,
+queue authority or repository for secrets. Preserve the immutable history and
+refuse force-push/deletion. See
+[docs/CHATGPT_SETUP.md](https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/docs/CHATGPT_SETUP.md).
