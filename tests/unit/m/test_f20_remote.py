@@ -35,7 +35,7 @@ def sample():
 
 def test_exact_two_remote_receipts_produce_limited_verdict():
     evidence,remote = sample()
-    output = verify_remote_pairs(evidence, remote.__getitem__)
+    output = verify_remote_pairs(evidence, lambda path, sha: remote[(path, sha)])
     assert output['distinct_receipts'] == 2
     assert output['browser_continuity'] == 'REQUIRES_INDEPENDENT_OBSERVATION'
 
@@ -46,26 +46,26 @@ def test_rejects_wrong_shift_and_replayed_receipt():
     message['recipient_shift_id']='another'
     remote[('receipts/2.json','4'*40)]=json.dumps(message).encode()
     with pytest.raises(ValueError, match='receipt does not authenticate'):
-        verify_remote_pairs(evidence,remote.__getitem__)
+        verify_remote_pairs(evidence,lambda path, sha: remote[(path, sha)])
     evidence,remote=sample()
     evidence['pairs'][1]['receipt_commit_sha']='3'*40
     with pytest.raises(ValueError):
-        verify_remote_pairs(evidence,remote.__getitem__)
+        verify_remote_pairs(evidence,lambda path, sha: remote[(path, sha)])
 
 
 def test_rejects_forged_command_bytes_and_malformed_locator():
     evidence,remote=sample()
     remote[('commands/1.json','1'*40)]=b'{}'
     with pytest.raises(ValueError, match='remote assignment'):
-        verify_remote_pairs(evidence,remote.__getitem__)
+        verify_remote_pairs(evidence,lambda path, sha: remote[(path, sha)])
     evidence,remote=sample()
     evidence['pairs'][0]['command_path']='../outside'
     with pytest.raises(ValueError, match='unsafe'):
-        verify_remote_pairs(evidence,remote.__getitem__)
+        verify_remote_pairs(evidence,lambda path, sha: remote[(path, sha)])
 
 
 def test_rejects_fewer_than_two_receipts():
     evidence,remote=sample()
     evidence['pairs'].pop()
     with pytest.raises(ValueError, match='exactly two'):
-        verify_remote_pairs(evidence,remote.__getitem__)
+        verify_remote_pairs(evidence,lambda path, sha: remote[(path, sha)])
