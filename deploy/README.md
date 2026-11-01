@@ -1,6 +1,6 @@
 # R5R deployment scaffold and operating requirements
 
-`deploy/Dockerfile` and `deploy/compose.yaml` currently define a **Python-only coordinator scaffold**. They do not provision an authenticated Studio service, an HTTPS proxy, React cockpit, C# ToolHost, or any ChatGPT browser sessions. The Compose default is `restart: "no"`.
+`deploy/compose.yaml` builds the Python coordinator and a production React cockpit behind a Caddy TLS reverse proxy. The proxy shares the coordinator network namespace, so the Python API remains loopback-only. The stack does not install an owner-authorized trusted ports implementation or a C# ToolHost broker. Compose defaults to `restart: "no"`.
 
 ## Required environment
 
@@ -23,3 +23,12 @@ The Compose volume alone does not set the required durable database, blob and so
 ## Validation before launch
 
 Run source CI for the exact candidate, the Python/APSW integration suite, 72-route startup check, authenticated GitHub effect readback, failure/restart tests, complete ToolHost sandbox checks on the actual target OS, and live F-20 browser continuation. See [Owner acceptance](../docs/OWNER_SETUP.md), [Browser setup](../docs/CHATGPT_SETUP.md), and [ToolHost](../host/README.md).
+
+## Cockpit and encrypted ingress
+
+1. Put the trusted Python provider module implementing `TrustedPorts` in `deploy/providers/`, and set `STUDIO_TRUSTED_PORTS_FACTORY` to its actual `module:function` identity in the untracked `deploy/studio.env`. This directory is mounted read-only at `/studio/providers`, not shipped in the image.
+2. Provision real TLS certificate and key files at `deploy/certs/tls.crt` and `deploy/certs/tls.key` (kept out of Git). Caddy serves the built React UI and proxies `/v1/*` and `/webhooks/github` to the local Python API. The published TLS port is `127.0.0.1:8443` by default.
+3. Initialize the database volume with the explicit bootstrap command above; then start `docker compose -f deploy/compose.yaml up --build` from the repository root, using `--env-file` when appropriate. Verify an authenticated `/v1/projects` response, then independently inspect GitHub effect/receipt readback.
+4. Deploy the separately built C# ToolHost with its actual broker and Linux isolation prerequisites. The cockpit is an operator interface, not an executable tool broker.
+
+The `deploy/providers` and `deploy/certs` directories intentionally contain no committed production credentials. Startup fails closed when required trusted adapters or TLS certificate bytes are absent. The exposed port is loopback-only until an authorized ingress configuration is supplied.

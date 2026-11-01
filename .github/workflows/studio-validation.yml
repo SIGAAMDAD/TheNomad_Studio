@@ -127,6 +127,10 @@ jobs:
       - name: Verify one-time persisted APSW bootstrap and installed wheel resource paths
         run: |
           docker run --rm --entrypoint sh nomad-studio:ci -c 'cd /tmp && python /studio/scripts/bootstrap_studio_database.py --database /tmp/new-studio.sqlite3 && python -c "from studio.storage.workforce import WorkforceStorage; s = WorkforceStorage.open(\"/tmp/new-studio.sqlite3\"); s.close()"'
+      - name: Build production cockpit and check TLS proxy configuration
+        run: |
+          docker build --file deploy/Frontend.Dockerfile --tag nomad-studio-cockpit:ci .
+          docker run --rm --entrypoint sh nomad-studio-cockpit:ci -c 'test -s /srv/index.html && grep -q /v1/ /etc/caddy/Caddyfile'
       - name: Verify no executable AI API worker was introduced
         run: |
           python - <<'PY'

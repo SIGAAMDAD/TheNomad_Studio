@@ -1,0 +1,15 @@
+:443 {
+    tls /etc/caddy/certs/tls.crt /etc/caddy/certs/tls.key
+    encode gzip
+    @operator {
+        path /v1/* /webhooks/github
+    }
+    handle @operator {
+        reverse_proxy 127.0.0.1:8000
+    }
+    handle {
+        root * /srv
+        try_files {path} /index.html
+        file_server
+    }
+}

@@ -51,7 +51,7 @@ Start only after the required configuration and persistent paths are available:
 python -m studio.app.cli
 ```
 
-Expose the loopback operator API through a reviewed TLS reverse proxy. The TypeScript cockpit is a separate frontend process/build, and ToolHost is a separately managed .NET executable. The Python Compose scaffold does not start either one.
+Expose the loopback operator API through a reviewed TLS reverse proxy. Compose builds the TypeScript cockpit behind Caddy TLS. The proxy shares the Python coordinator network namespace; operator HTTP stays on loopback. Configure a trusted provider module in `deploy/providers`, real TLS certificates in `deploy/certs`, then start both Compose services. ToolHost is still a separately managed .NET executable with its authorized broker and Linux isolation prerequisites.
 
 ## 4. Verify before pilot
 

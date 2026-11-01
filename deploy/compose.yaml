@@ -5,8 +5,26 @@ services:
       dockerfile: deploy/Dockerfile
     env_file:
       - studio.env
+    environment:
+      PYTHONPATH: /studio/providers
     volumes:
       - studio_state:/var/lib/nomad-studio
-    restart: "no"  # no silent live deployment or unsafe reboot policy
+      - ./providers:/studio/providers:ro
+    ports:
+      # Keep TLS ingress on the operator host; use a reviewed gateway for WAN.
+      - "127.0.0.1:8443:443"
+    restart: "no"
+  cockpit:
+    build:
+      context: ..
+      dockerfile: deploy/Frontend.Dockerfile
+    # The operator HTTP server deliberately binds to loopback only.
+    # Sharing the namespace lets the trusted TLS proxy reach 127.0.0.1:8000.
+    network_mode: "service:studio"
+    depends_on:
+      - studio
+    volumes:
+      - ./certs:/etc/caddy/certs:ro
+    restart: "no"
 volumes:
   studio_state: {}
