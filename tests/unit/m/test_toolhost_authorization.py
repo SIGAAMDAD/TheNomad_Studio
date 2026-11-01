@@ -103,3 +103,12 @@ def test_broker_builder_constructs_authorizer_bound_to_one_c_writer(tmp_path):
         assert broker.authorize.writer is writer
     finally:
         writer.close()
+
+
+def test_actual_apsw_schema_rejects_unregistered_tool_operation(tmp_path):
+    writer = WorkforceStorage.open(tmp_path / 'authorizer.sqlite', fresh=True)
+    try:
+        _, frame = sample()
+        assert CurrentToolHostAuthorizer(writer)(frame) is False
+    finally:
+        writer.close()
