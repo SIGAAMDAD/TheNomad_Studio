@@ -1,32 +1,23 @@
-> **R5R historical-state notice (2026-10-31):** The V1 scheduler, ten-slot JSON controller and scheduled-task setup below are historical evidence, not current Studio operating instructions. The active implementation and deployment guidance are on [`main`](https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/README.md) and [`docs/SETUP.md`](https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/docs/SETUP.md). Preserve this branch's historical records; do not execute the obsolete controller from it.
+# Studio runtime evidence branch
 
-# TheNomad_Studio
+This branch retains historical operational records from the retired V1 Studio
+controller. It is **not** the current job scheduler, state database, source
+integration target or authority for production assignments.
 
-Private, deterministic control plane for **The Nomad** AI production studio. The design uses the existing ChatGPT scheduled tasks as bounded workers, GitHub Actions for scheduling/reconciliation, and Google Drive for original creative documents.
+The V1 ten-slot scheduler, its four GitHub Actions workflow definitions,
+JSON job controller and periodic reconciliation were retired from active
+source, and the historical branch workflows were removed on October 31, 2026.
+The old event and evidence records remain available at their exact Git SHAs.
 
-## What is implemented
+## Current authority
 
-- [Validated ten-slot allocator](scripts/studio.py) with dependency gates, approved job admission, source-write protection, per-slot assignment epochs, maximum writer/reviewer limits, and overlapping writable-path exclusion.
-- [Immutable worker receipt protocol](studio/WORKER_CONTRACT.md) that allows hourly reconciliation to advance a partial job from an exact checkpoint or release a blocked slot.
-- [Hourly GitHub Actions reconciliation](.github/workflows/studio-reconcile.yml) with a **dedicated `studio/runtime` state branch**; it cannot automatically change the default branch, launch ChatGPT, or invoke paid inference.
-- [Deterministic regression tests](tests/test_studio.py) and [validation workflow](.github/workflows/studio-check.yml).
-- [Deployment instructions](docs/SETUP.md), including the required manual binding of actual scheduled ChatGPT tasks and engineering source-freeze gates.
+- Reviewed implementation and operator contracts: [main](https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/README.md)
+- Durable project, worker, shift, command and effect state: authenticated
+  Studio APSW coordinator
+- GitHub communications: configured project-bound `studio/comms` channel
+- Source integrations: each approved source repository at its pinned revision
 
-## Immediate deployment
-
-1. Review and merge this control-plane change to `main`.
-2. Run **Studio control validation**, then **Studio hourly reconciliation** from the repository's Actions tab. The latter initializes `studio/runtime` if needed.
-3. On `studio/runtime`, opt into deterministic dispatch using `auto_dispatch_enabled: true` and enable only real worker slots after binding their ChatGPT task prompts. Leave `auto_ai_enabled` and `source_writes_enabled` false.
-4. Add a real approved non-code job, and test the complete reservation → worker artifact → immutable receipt → independent QA loop.
-
-Full instructions: **[docs/SETUP.md](docs/SETUP.md)**.
-
-## Authority
-
-- Operations: `SIGAAMDAD/TheNomad_Studio:studio/runtime`
-- Game: `SIGAAMDAD/The_Nomad:Nomad3D`
-- Native framework: `SIGAAMDAD/NomadFramework:develop`
-- Terrain fork: `SIGAAMDAD/Terrain3D:Terrain3D_NomadRenderer`
-- Studio source registry: https://docs.google.com/document/d/1HVUomdnsfZv0xb1sFvN1U-eXWpoMwKLVV3IlBBco1RQ/edit
-
-The current engineering source freeze remains pending. No model inference, code generation, source integration, owner approval or API spend is triggered by this repository's deterministic controller. The optional existing `ai-manual.yml` is an eligibility check only.
+Do not run the historical `scripts/studio.py` controller or activate V1 slot
+assignments. Preserve existing records and avoid branch resets or force-pushes.
+The current setup procedure lives in
+[docs/SETUP.md](https://github.com/SIGAAMDAD/TheNomad_Studio/blob/main/docs/SETUP.md).
