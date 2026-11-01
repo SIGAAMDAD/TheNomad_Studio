@@ -2,6 +2,7 @@
 import hashlib
 import json
 import sqlite3
+import weakref
 from types import SimpleNamespace
 import pytest
 
@@ -39,6 +40,9 @@ class CStore(WorkforceStorage):
     def __init__(self):
         db=sqlite3.connect(':memory:')
         super().__init__(db)
+        # Reference test stores also serve the cross-module pre-pilot fixtures.
+        # Close their SQLite handle when the last writer owner is collected.
+        weakref.finalize(self, db.close)
         db.executescript('''CREATE TABLE ci_runs(project_id TEXT,ci_id TEXT,source_revision_id TEXT,status TEXT,remote_run_id TEXT);
             CREATE TABLE effect_intents(project_id TEXT,subject_id TEXT,action TEXT,state TEXT,
                                         effect_id TEXT,request_id TEXT);
@@ -266,3 +270,15 @@ def test_existing_slow_poll_configuration_remains_supported():
     pump=BuildRecoveryPump(writer=writer,provider_for_project=lambda _:None,
                            interval_seconds=3600)
     assert pump.max_readback_delay_seconds>=3600
+
+
+def test_reference_store_connection_is_closed_on_finalization():
+    import gc
+    writer = CStore()
+    db = writer._connection
+    reference = weakref.ref(writer)
+    del writer
+    gc.collect()
+    assert reference() is None
+    with pytest.raises(sqlite3.ProgrammingError, match='closed'):
+        db.execute('SELECT 1')
