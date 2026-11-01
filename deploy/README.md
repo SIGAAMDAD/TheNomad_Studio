@@ -42,3 +42,15 @@ with a trusted local CA (`SSL_CERT_FILE`, if needed). This tests both the
 unauthenticated reject path and the authenticated project list over the real
 TLS proxy. The separate GitHub two-receipt readback command and its manual
 browser-continuity evidence are described in [Owner acceptance](../docs/OWNER_SETUP.md).
+
+## Mandatory trusted ToolHost lifecycle
+
+The production environment factory now requires `TrustedPorts.toolhost_broker` in
+addition to the authenticated GitHub delivery and source-target adapters.
+The broker may be a verified `PrivateToolHostBroker` or a trusted builder
+providing `for_writer(writer, blob_root)`; the factory rejects all other
+outputs. The broker starts **after APSW startup recovery** and stops before
+closing the C writer. A current-lease authorization callback must be bound
+to the same trusted C/A/B/D owner context, and the actual host assembly and
+registry bytes must be SHA-256 pinned. ToolHost transport validation in CI
+does not constitute installed owner/project authorizations.

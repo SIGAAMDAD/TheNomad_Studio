@@ -59,6 +59,7 @@ from .provider_commands import ProviderCommands
 from .projects import ProjectService
 from .releases import RecoveryCoordinator, ReleaseCoordinator
 from .source_policy import SourceTarget, validate_source_target
+from .toolhost_broker import PrivateToolHostBroker
 
 
 @dataclass(frozen=True)
@@ -100,6 +101,7 @@ class TrustedPorts:
     bootstrap_credentials: tuple[str, ...] = ()
     command_delivery: Any | None = None
     github_webhook_hints: Any | None = None
+    toolhost_broker: Any | None = None
     # Resolved from authenticated deployment/project configuration, never chat input.
     source_target_for_project: Callable[[str], SourceTarget] | None = None
 
@@ -200,6 +202,10 @@ def _validate_external(ports: TrustedPorts) -> None:
     if (ports.github_webhook_hints is not None and
             not callable(getattr(ports.github_webhook_hints,"for_writer",None))):
         raise TypeError("trusted GitHub webhook builder required")
+    if ports.toolhost_broker is not None and not (
+            isinstance(ports.toolhost_broker, PrivateToolHostBroker)
+            or callable(getattr(ports.toolhost_broker, 'for_writer', None))):
+        raise TypeError('trusted ToolHost broker or same-writer builder required')
     if not hasattr(ports.integration_roster,"paths") or not hasattr(ports.integration_roster,"plan_sha256"):
         raise TypeError("verified integration ownership roster required")
 
@@ -290,6 +296,12 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
                       recover=lambda:configured_port(ports.startup_recovery).recover(),
                       start=lambda:None,stop=lambda:None),
         ]
+        broker = configured_port(ports.toolhost_broker) if ports.toolhost_broker is not None else None
+        if broker is not None:
+            if not isinstance(broker, PrivateToolHostBroker):
+                raise TypeError('configured ToolHost builder returned an untrusted transport')
+            parts.append(Component('H-ToolHost', recover=lambda:None,
+                                   start=broker.start, stop=broker.close))
         if delivery is not None:
             parts.append(Component("G-I-command-publisher",
                                    recover=lambda:None,start=delivery.start,stop=delivery.stop))
@@ -346,6 +358,9 @@ def build_from_environment() -> StudioComposition:
         raise StudioError("invalid","trusted factory import invalid")
     provider=getattr(importlib.import_module(module),func)
     ports=provider()
+    if ports.toolhost_broker is None:
+        raise StudioError('capability_unavailable',
+                          'trusted current-lease ToolHost broker is not configured')
     if ports.command_delivery is None:
         raise StudioError("capability_unavailable",
                           "durable GitHub command outbox publisher is not configured")

@@ -270,3 +270,59 @@ def test_trusted_r5r_source_target_fences_remote_revision_before_cas(tmp_path):
     finally:
         if app.runtime.ready:
             app.runtime.stop()
+
+
+def test_toolhost_broker_uses_same_writer_and_starts_after_recovery(tmp_path, monkeypatch):
+    """The real broker class is the required type; lifecycle never starts it pre-recovery."""
+    from studio.app import production_factory
+    from studio.app.lifecycle import StudioRuntime
+
+    events = []
+    class FakeBroker:
+        def __init__(self, writer):
+            self.writer = writer
+            self.running = False
+        def start(self):
+            events.append('host_start')
+            self.running = True
+            return self
+        def close(self):
+            events.append('host_stop')
+            self.running = False
+
+    class BrokerBuilder:
+        def for_writer(self, writer, _root):
+            self.writer = writer
+            self.broker = FakeBroker(writer)
+            return self.broker
+
+    builder = BrokerBuilder()
+    monkeypatch.setattr(production_factory, 'PrivateToolHostBroker', FakeBroker)
+    config = dataclasses.replace(ports(), toolhost_broker=builder)
+    config.startup_recovery.recover.side_effect = lambda: events.append('recovered')
+    app = assemble_live_studio(
+        database_path=tmp_path/'host.sqlite', blob_root=tmp_path/'blobs',
+        source_root=tmp_path/'sources', contracts_root='CONTRACTS',
+        ports=config, fresh=True)
+    try:
+        assert builder.writer is app.projects.store.writer
+        assert any(c.name == 'H-ToolHost' for c in app.runtime.components)
+        with app.runtime:
+            assert events[:2] == ['recovered', 'host_start']
+            assert builder.broker.running
+        assert events[-1] == 'host_stop'
+        assert not builder.broker.running
+    finally:
+        if app.runtime.ready:
+            app.runtime.stop()
+
+
+def test_toolhost_broker_rejects_unauthorized_builder_output(tmp_path):
+    class Builder:
+        def for_writer(self, writer, root):
+            return object()
+    with pytest.raises(TypeError, match='untrusted transport'):
+        assemble_live_studio(
+            database_path=tmp_path/'host-invalid.sqlite', blob_root=tmp_path/'blobs',
+            source_root=tmp_path/'sources', contracts_root='CONTRACTS',
+            ports=dataclasses.replace(ports(), toolhost_broker=Builder()), fresh=True)
