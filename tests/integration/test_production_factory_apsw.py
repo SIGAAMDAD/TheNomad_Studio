@@ -275,12 +275,14 @@ def test_trusted_r5r_source_target_fences_remote_revision_before_cas(tmp_path):
 def test_toolhost_broker_uses_same_writer_and_starts_after_recovery(tmp_path, monkeypatch):
     """The real broker class is the required type; lifecycle never starts it pre-recovery."""
     from studio.app import production_factory
+    from studio.app.toolhost_authorization import CurrentToolHostAuthorizer
     from studio.app.lifecycle import StudioRuntime
 
     events = []
     class FakeBroker:
         def __init__(self, writer):
             self.writer = writer
+            self.authorize = CurrentToolHostAuthorizer(writer)
             self.running = False
         def start(self):
             events.append('host_start')

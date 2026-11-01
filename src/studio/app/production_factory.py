@@ -60,6 +60,7 @@ from .projects import ProjectService
 from .releases import RecoveryCoordinator, ReleaseCoordinator
 from .source_policy import SourceTarget, validate_source_target
 from .toolhost_broker import PrivateToolHostBroker
+from .toolhost_authorization import CurrentToolHostAuthorizer
 
 
 @dataclass(frozen=True)
@@ -202,10 +203,9 @@ def _validate_external(ports: TrustedPorts) -> None:
     if (ports.github_webhook_hints is not None and
             not callable(getattr(ports.github_webhook_hints,"for_writer",None))):
         raise TypeError("trusted GitHub webhook builder required")
-    if ports.toolhost_broker is not None and not (
-            isinstance(ports.toolhost_broker, PrivateToolHostBroker)
-            or callable(getattr(ports.toolhost_broker, 'for_writer', None))):
-        raise TypeError('trusted ToolHost broker or same-writer builder required')
+    if ports.toolhost_broker is not None and not callable(
+            getattr(ports.toolhost_broker, 'for_writer', None)):
+        raise TypeError('trusted same-writer ToolHost broker builder required')
     if not hasattr(ports.integration_roster,"paths") or not hasattr(ports.integration_roster,"plan_sha256"):
         raise TypeError("verified integration ownership roster required")
 
@@ -300,6 +300,9 @@ def assemble_live_studio(*, database_path: Path, blob_root: Path,
         if broker is not None:
             if not isinstance(broker, PrivateToolHostBroker):
                 raise TypeError('configured ToolHost builder returned an untrusted transport')
+            if (not isinstance(broker.authorize, CurrentToolHostAuthorizer)
+                    or broker.authorize.writer is not writer):
+                raise TypeError('ToolHost broker must authorize against the same C writer')
             parts.append(Component('H-ToolHost', recover=lambda:None,
                                    start=broker.start, stop=broker.close))
         if delivery is not None:
