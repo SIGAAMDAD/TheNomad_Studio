@@ -71,42 +71,51 @@ def main() -> int:
     except (StudioError, ImportError, AttributeError, TypeError) as exc:
         print(f"Studio configuration invalid: {exc}", file=sys.stderr)
         return 78
-    # A headless lifecycle-only process is not a working operator service.
-    try:
-        server = configure_operator_server(app)
-    except (StudioError, ValueError, TypeError, OSError) as exc:
-        print(f"Studio operator API unavailable: {exc}", file=sys.stderr)
-        return 78
+
     signal_event = threading.Event()
     def shutdown(*_args: object) -> None:
         signal_event.set()
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
+
+    # Runtime recovery must complete before the operator socket is bound.
+    # Binding first can expose a port on an unreconciled coordinator.
+    server = None
+    worker = None
     server_faults: list[BaseException] = []
-    def serve() -> None:
-        try:
-            server.serve_forever()
-        except BaseException as exc:
-            server_faults.append(exc)
-            signal_event.set()
-    worker = threading.Thread(target=serve, name='studio-operator-http', daemon=True)
     try:
         with app.runtime:
+            try:
+                server = configure_operator_server(app)
+            except (StudioError, ValueError, TypeError, OSError) as exc:
+                print(f"Studio operator API unavailable: {exc}", file=sys.stderr)
+                return 78
+
+            def serve() -> None:
+                try:
+                    server.serve_forever()
+                except BaseException as exc:
+                    server_faults.append(exc)
+                    signal_event.set()
+
+            worker = threading.Thread(
+                target=serve, name='studio-operator-http', daemon=True)
             worker.start()
             signal_event.wait()
     except Exception as exc:
         print(f"Studio startup/shutdown failed: {exc}", file=sys.stderr)
         return 1
     finally:
-        if worker.is_alive():
-            server.shutdown()
-            worker.join(timeout=5)
-        server.server_close()
+        if server is not None:
+            if worker is not None and worker.is_alive():
+                server.shutdown()
+                worker.join(timeout=5)
+            server.server_close()
+
     if server_faults:
         print(f"Studio HTTP service stopped unexpectedly: {server_faults[0]}", file=sys.stderr)
         return 1
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
