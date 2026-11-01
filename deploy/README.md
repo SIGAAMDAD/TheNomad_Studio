@@ -16,7 +16,7 @@ The factory must bind all 72 operator routes, owner/project authorization, GitHu
 
 ## Image packaging
 
-The Docker image packages `src/`, `CONTRACTS/` and `schema/` with the Python coordinator, so frozen contract and schema files can resolve from `/studio`. CI builds the image and checks that the embedded APSW schema digest and 72-operation API contract load successfully. A trusted ports provider and integration startup acceptance remain deployment responsibilities.
+The Docker image packages `src/`, `CONTRACTS/` and `schema/` with the Python coordinator. Installed wheels include the frozen schema files under the environment's `share/nomad-studio/schema/`; the schema loader verifies the frozen digest. CI validates these resources and the complete 72-operation API contract. Bootstrap a new volume before first startup using `docker compose run --rm --entrypoint python studio /studio/scripts/bootstrap_studio_database.py --database /var/lib/nomad-studio/studio.sqlite3`. This refuses to overwrite an existing database. A trusted ports provider and integration startup acceptance remain deployment responsibilities.
 
 The Compose volume alone does not set the required durable database, blob and source root variables, install the external factory or establish host connectivity. It must be completed and verified separately; `docker compose up` as currently distributed is not a valid live acceptance gate.
 

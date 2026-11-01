@@ -11,7 +11,7 @@ The source cleanup was merged through [PR #36](https://github.com/SIGAAMDAD/TheN
 1. Record exact reviewed `main` SHA. Verify full Python/APSW, TypeScript, .NET ToolHost, skill and source-provenance CI for the actual deployment revision, including the separate >=90% production coverage checks.
 2. Provision persistent APSW storage and verified blob/source roots. Exercise backup, restore and restart checkpoint reconciliation.
 3. Install a real `STUDIO_TRUSTED_PORTS_FACTORY` with owner-proof, project bindings, GitHub relay/source/CI readback, scope authorization, independent QA, command outbox publisher and release/effect adapters. Configure `STUDIO_COMPOSITION_FACTORY=studio.app.production_factory:build_from_environment`.
-4. Install `CONTRACTS/` and `schema/` with the running Python service. The current Dockerfile needs correction to package both; the supplied Compose file alone is not a complete production deployment.
+4. Install `CONTRACTS/` and `schema/` with the running Python service. The Docker image includes verified resources; initialize the empty APSW database explicitly using the bootstrap command in [Deployment](../deploy/README.md). Compose remains a Python-only service scaffold.
 5. Bind operator HTTP to loopback behind TLS. Configure the React cockpit separately. Deploy ToolHost separately on a platform with verified sandbox support (current implemented backend: Linux bubblewrap/userns/prlimit; Windows execution fails closed).
 6. Confirm the five owner-approved repository/branch routes in `src/studio/app/source_policy.py` and reject unauthorized source targets and stale source revisions.
 7. Manually initialize browser worker conversations, register them in the correct project, and verify actual shift/relay/receipt behavior.

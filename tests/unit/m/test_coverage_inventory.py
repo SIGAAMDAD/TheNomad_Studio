@@ -42,3 +42,18 @@ def test_nested_host_source_must_be_instrumented(tmp_path, monkeypatch):
 
     _write_cobertura(report, include_contracts=True)
     assert coverage.host_coverage(report) == (1, 2)
+
+
+def test_ambiguous_basename_does_not_merge_host_instrumentation(tmp_path, monkeypatch):
+    host = tmp_path / 'host' / 'Nomad.ToolHost'
+    for folder in ('One', 'Two'):
+        (host / folder).mkdir(parents=True)
+        (host / folder / 'Common.cs').write_text('class Common {}')
+    monkeypatch.setattr(coverage, 'ROOT', tmp_path)
+    report = tmp_path / 'coverage.xml'
+    report.write_text('<coverage><packages><package name="Nomad.ToolHost">'
+                      '<classes><class name="Nomad.ToolHost.One.Common" '
+                      'filename="Common.cs"><lines><line number="1" hits="1" />'
+                      '</lines></class></classes></package></packages></coverage>')
+    with pytest.raises(ValueError, match='Ambiguous'):
+        coverage.host_coverage(report)

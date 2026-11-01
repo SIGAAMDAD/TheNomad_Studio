@@ -21,10 +21,10 @@ jobs:
       STUDIO_SCHEMA_PATH: ${{ github.workspace }}/schema/initial_schema.sql
       STUDIO_CONTRACT_DIR: ${{ github.workspace }}/CONTRACTS
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
           cache: pip
@@ -39,7 +39,7 @@ jobs:
         run: python -m pytest -q tests/unit tests/integration tests/acceptance --cov=src/studio --cov-fail-under=90 --cov-report=xml:python-coverage.xml --junitxml=python-results.xml
       - name: Verify APSW is actually installed
         run: python -c 'import apsw; print("APSW", apsw.apswversion())'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: python-tests-${{ github.sha }}
@@ -55,15 +55,18 @@ jobs:
       run:
         working-directory: ui
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
           # Generate a verified npm lockfile before switching this job to npm ci.
       - name: Install declared pinned dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Capture resolved dependency lock for the final source commit
+        run: |
+          node -e "const fs=require('fs'); const b=fs.readFileSync('package-lock.json').toString('base64'); for(let i=0;i<b.length;i+=3000) console.log('STUDIO_LOCK_CHUNK_'+String(i/3000).padStart(4,'0')+'='+b.slice(i,i+3000));"
       - run: npm run check
       - run: npm test
       - name: Collect complete cockpit TypeScript and TSX coverage
@@ -72,7 +75,7 @@ jobs:
         working-directory: .
         run: python scripts/verify_studio_coverage.py --typescript ui/coverage/coverage-summary.json --minimum 90
       - run: npm run build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: success()
         with:
           name: cockpit-${{ github.sha }}
@@ -86,10 +89,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
       - run: dotnet build host/Nomad.ToolHost/Nomad.ToolHost.csproj --configuration Release --nologo
@@ -100,7 +103,7 @@ jobs:
           dotnet-coverage collect "dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Release" -f cobertura -o toolhost-coverage.xml
       - name: Report complete .NET production host denominator
         run: python scripts/verify_studio_coverage.py --dotnet toolhost-coverage.xml --minimum 90
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: toolhost-coverage-${{ github.sha }}
@@ -111,10 +114,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
       - run: python -m pip install -e '.[dev]'
@@ -123,6 +126,9 @@ jobs:
         run: |
           docker build --file deploy/Dockerfile --tag nomad-studio:ci .
           docker run --rm --entrypoint python nomad-studio:ci -c "from pathlib import Path; from studio.storage.schema import schema_bytes; from studio.api.contracts import FrozenContracts; assert schema_bytes(); assert len(FrozenContracts(Path('/studio/CONTRACTS')).operations) == 72"
+      - name: Verify one-time persisted APSW bootstrap and installed wheel resource paths
+        run: |
+          docker run --rm --entrypoint sh nomad-studio:ci -c 'cd /tmp && python /studio/scripts/bootstrap_studio_database.py --database /tmp/new-studio.sqlite3 && python -c "from studio.storage.workforce import WorkforceStorage; s = WorkforceStorage.open(\"/tmp/new-studio.sqlite3\"); s.close()"'
       - name: Verify no executable AI API worker was introduced
         run: |
           python - <<'PY'
