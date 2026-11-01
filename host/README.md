@@ -61,3 +61,18 @@ private pipes and provision only authorized operations. The binary is a
 sandboxed execution component, not a standalone remote API service. It must
 run on an OS supporting the declared sandbox features (Linux bubblewrap +
 userns/prlimit) and requires operational acceptance on that OS.
+
+## Trusted local private-pipe broker
+
+`studio.app.toolhost_broker.PrivateToolHostBroker` starts the compiled host
+with SHA-256 pinned registry and host assembly bytes. It checks a one-time
+nonce handshake, isolates the pipe from HTTP/relay callers, rejects unexpected
+receipts and requires a **current trusted authorization callback for each
+request**. It refuses `run` without a pinned expected sandbox capability.
+Host revocation is performed by closing this child and using a new pinned
+registry. Nothing in the transport provisions grants: the current C/A/B/D
+authorization adapter must supply them before a tool can be launched.
+
+The .NET CI job runs a genuine Python-to-.NET pipe integration check and
+verifies real fail-closed denial for an unregistered operation. It does not
+claim that an owner-configured production broker has been installed.
