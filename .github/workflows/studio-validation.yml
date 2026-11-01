@@ -133,10 +133,16 @@ jobs:
           grep -Fxq 'deploy/certs/**' .dockerignore
           grep -Fxq 'deploy/providers/**' .dockerignore
           grep -Fxq 'deploy/studio.env' .gitignore
-      - name: Build production cockpit and check TLS proxy configuration
+      - name: Build production cockpit and validate HTTPS proxy configuration
         run: |
           docker build --file deploy/Frontend.Dockerfile --tag nomad-studio-cockpit:ci .
           docker run --rm --entrypoint sh nomad-studio-cockpit:ci -c 'test -s /srv/index.html && grep -q /v1/ /etc/caddy/Caddyfile'
+          mkdir -p "$RUNNER_TEMP/studio-tls"
+          openssl req -x509 -newkey rsa:2048 -noenc -days 1 -nodes -subj /CN=localhost \
+            -keyout "$RUNNER_TEMP/studio-tls/tls.key" -out "$RUNNER_TEMP/studio-tls/tls.crt" >/dev/null 2>&1
+          docker run --rm --entrypoint caddy \
+            --mount "type=bind,source=$RUNNER_TEMP/studio-tls,target=/etc/caddy/certs,readonly" \
+            nomad-studio-cockpit:ci validate --config /etc/caddy/Caddyfile
       - name: Verify no executable AI API worker was introduced
         run: |
           python - <<'PY'
