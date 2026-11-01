@@ -4,6 +4,7 @@ import hmac
 import io
 import json
 import sqlite3
+import weakref
 import uuid
 from types import SimpleNamespace
 
@@ -24,9 +25,13 @@ def pump():
     db=sqlite3.connect(':memory:',check_same_thread=False)
     db.execute('CREATE TABLE command_outbox(project_id TEXT,state TEXT)')
     writer=WorkforceStorage(db)
-    return CommandDeliveryPump(writer=writer,workforce=WorkforceStub(writer,require_action=lambda *_:None),
+    pump = CommandDeliveryPump(writer=writer,workforce=WorkforceStub(writer,require_action=lambda *_:None),
                                actor_for_project=lambda p:{'principal_id':'owner'},
                                github_for_project=lambda p:object(), interval_seconds=0.25)
+    try:
+        yield pump
+    finally:
+        writer.close()
 
 
 def test_publisher_real_thread_start_stop_is_idempotent(pump):
@@ -72,6 +77,7 @@ def test_publisher_loop_records_internal_exception_and_recovers(pump):
 class RecordingC(WorkforceStorage):
     def __init__(self):
         super().__init__(sqlite3.connect(':memory:'))
+        weakref.finalize(self, self._connection.close)
         self.events=[]
     def command(self,project,operation,request,digest,fn):
         self.events.append((project,operation,request,digest))
