@@ -30,12 +30,12 @@ python -m pip install -e '.[coordinator,dev]'
 python scripts/verify_workforce_schema.py
 python scripts/verify_canonical_mirrors.py
 python -m pytest -q tests/unit tests/integration tests/acceptance --cov=src/studio --cov-fail-under=90
-(cd ui && npm install --ignore-scripts --no-audit --no-fund && npm run check && npm test && npm run coverage && npm run build)
+(cd ui && npm ci --ignore-scripts --no-audit --no-fund && npm run check && npm test && npm run coverage && npm run build)
 dotnet build host/Nomad.ToolHost/Nomad.ToolHost.csproj --configuration Release
 dotnet run --project tests/unit/h/Nomad.ToolHost.Tests.csproj --configuration Release
 ```
 
-`ui/package-lock.json` is not committed. Use `npm install` as CI currently does; `npm ci` becomes valid once a matching lockfile is checked in. CI on PRs, `main` pushes and `implementation/**` validates Python/APSW, TypeScript/TSX, .NET host, role skills, contracts and provenance. See [.github/workflows/studio-validation.yml](.github/workflows/studio-validation.yml). Successful PR checks establish tested source behavior, not a deployed service or live browser-worker acceptance.
+`ui/package-lock.json` is committed and CI installs its exact resolved versions with `npm ci`. CI on PRs, `main` pushes and `implementation/**` validates Python/APSW, TypeScript/TSX, .NET host, role skills, contracts and provenance. See [.github/workflows/studio-validation.yml](.github/workflows/studio-validation.yml). Successful PR checks establish tested source behavior, not a deployed service or live browser-worker acceptance.
 
 ## Deployment and acceptance
 
