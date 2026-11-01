@@ -70,3 +70,12 @@ def test_rejects_fewer_than_two_receipts():
     evidence['pairs'].pop()
     with pytest.raises(ValueError, match='exactly two'):
         verify_remote_pairs(evidence,lambda path, sha: remote[(path, sha)])
+
+
+def test_rejects_unapproved_repository_or_project_scope():
+    evidence,remote = sample()
+    evidence['repository']='owner/repo'
+    approved={'repository':'owner/another','project_id':'p','channel_id':'c',
+              'shift_id':'s','contract_digest':'f'*64}
+    with pytest.raises(ValueError, match='trusted deployment scope'):
+        verify_remote_pairs(evidence,lambda path,sha:remote[(path,sha)],trusted_scope=approved)

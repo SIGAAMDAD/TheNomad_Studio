@@ -41,7 +41,7 @@ def _timestamp(value: str) -> datetime:
         if parsed.tzinfo is None:
             raise ValueError('timezone required')
         return parsed
-    except (TypeError, ValueError) as exc:
+    except (AttributeError, TypeError, ValueError) as exc:
         raise ValueError('invalid receipt/command time') from exc
 
 
@@ -73,9 +73,14 @@ class GitHubReadback:
         return raw
 
 
-def verify_remote_pairs(evidence: dict, readback) -> dict:
+def verify_remote_pairs(evidence: dict, readback, *, trusted_scope: dict | None = None) -> dict:
     if not isinstance(evidence, dict):
         raise ValueError('evidence must be a record')
+    if trusted_scope is not None:
+        required = ('repository', 'project_id', 'channel_id', 'shift_id', 'contract_digest')
+        if any(not trusted_scope.get(key) or evidence.get(key) != trusted_scope[key]
+               for key in required):
+            raise ValueError('remote evidence differs from trusted deployment scope')
     project = _identity(evidence.get('project_id'), 'project_id')
     channel = _identity(evidence.get('channel_id'), 'channel_id')
     shift = _identity(evidence.get('shift_id'), 'shift_id')
@@ -146,9 +151,15 @@ def main() -> int:
     cli.add_argument('--evidence', required=True)
     cli.add_argument('--token-env', default='STUDIO_GITHUB_TOKEN')
     args = cli.parse_args()
-    source = json.loads(open(args.evidence, encoding='utf-8').read())
+    with open(args.evidence, encoding='utf-8') as evidence_file:
+        source = json.load(evidence_file)
+    # These values come from the independent operator's trusted configuration,
+    # never from the evidence JSON or an unverified GitHub receipt.
+    scope = {key:os.environ.get('STUDIO_F20_'+key.upper(), '')
+             for key in ('repository','project_id','channel_id','shift_id','contract_digest')}
     token = os.environ.get(args.token_env, '')
-    result = verify_remote_pairs(source, GitHubReadback(source.get('repository'), token))
+    result = verify_remote_pairs(source,
+        GitHubReadback(scope['repository'], token), trusted_scope=scope)
     print(json.dumps(result, sort_keys=True))
     return 0
 

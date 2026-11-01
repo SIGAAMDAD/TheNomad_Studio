@@ -35,3 +35,10 @@ python -m qa.f20_remote --evidence /secure/f20-observed.json
 ```
 
 The command reads `STUDIO_GITHUB_TOKEN` from the private environment, verifies both sets of remote bytes, matching shift/contract/project identity, distinct commands, distinct receipts, SHA256 digests and ordering. It reports `TWO_REMOTE_RECEIPTS_VERIFIED` and leaves browser continuity for independent owner observation. Record that observation and the authenticated worker binding separately before calling F-20 accepted.
+
+Before the remote verifier runs, load the independent operator-approved scope
+into private environment variables `STUDIO_F20_REPOSITORY`,
+`STUDIO_F20_PROJECT_ID`, `STUDIO_F20_CHANNEL_ID`,
+`STUDIO_F20_SHIFT_ID`, and `STUDIO_F20_CONTRACT_DIGEST`.
+The script compares those values against the evidence and refuses a mismatched
+repo/project/shift even when both GitHub files are authentic.

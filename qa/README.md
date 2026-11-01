@@ -29,3 +29,9 @@ GitHub commit/path evidence and `STUDIO_GITHUB_TOKEN` to verify two distinct
 addressed commands and their immutable receipts in the same shift. It checks
 remote bytes and SHA256 identities but explicitly does not infer browser
 continuity from GitHub metadata. Record independent observation separately.
+
+The remote F-20 verifier additionally requires independently configured
+`STUDIO_F20_REPOSITORY`, `STUDIO_F20_PROJECT_ID`,
+`STUDIO_F20_CHANNEL_ID`, `STUDIO_F20_SHIFT_ID`, and
+`STUDIO_F20_CONTRACT_DIGEST`; these must come from the authenticated
+coordinator/deployment, not from the untrusted evidence file.
